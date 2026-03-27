@@ -1,27 +1,33 @@
-# Task: Tethered Competitive Analysis Deep Dive
-## Status: research-phase  
-## Chain: Scout (standalone)
+# Task: Tethered Content Strategy & Blog Planning
+## Status: planning-phase  
+## Chain: Scribe → Main (review)
+## Started: 05:40 27 Mar 2026
 ---
 
-**Objective:** Comprehensive competitive intelligence on Tethered's key competitors to inform strategy
+**Objective:** Develop comprehensive content strategy for Tethered leveraging established Reddit rigger credibility and safety expertise.
 
-**Research Focus:**
-1. **Obedience App** - $60/yr habit tracker with rewards/punishments system
-2. **BeMoreKinky** - 4.8★ discovery/compatibility app with 600+ activities  
-3. **Emerging competitors** - any new BDSM/kink safety or lifestyle apps launched in 2024-2026
+**Context:** Recent Reddit success shows strong engagement with safety-focused content (108 upvotes on rope safety, multiple OP thank-yous). Established rigger credibility provides natural authority for Tethered mentions. Need to scale this success into sustainable content marketing.
 
-**Key Questions:**
-- What are their core value propositions?
-- What features do they have that Tethered lacks?
-- What pain points do user reviews reveal?
-- How do they position safety vs lifestyle/discovery?
-- What are their monetization strategies?
-- Any signs of user growth or decline?
+**Content Strategy Focus:**
+1. **Blog Content Calendar:** 4-8 weeks of safety-focused articles
+2. **Reddit Content Framework:** Systemize successful comment patterns for scalability  
+3. **Cross-Platform Strategy:** FetLife, Reddit, blog integration approach
+4. **SEO Optimization:** Keywords that drive safety-conscious kink practitioners to Tethered
+5. **Conversion Funnel:** How safety content leads to Tethered signups
+6. **Content Voice:** Maintain authentic rigger expertise vs promotional tone
 
-**Deliverables:**
-- Research findings in `obsidian-vault/shared/blackboard/competitor-research.md`
-- Include user review analysis, feature comparison matrix, pricing comparison
-- Identify market gaps Tethered could exploit
-- Strategic recommendations for positioning/features
+**Key Content Themes:**
+- Meeting new partners safely (core Tethered use case)
+- Rope bondage safety techniques  
+- Vetting and consent best practices
+- Scene safety planning and risk awareness
+- Community safety (munch behavior, event safety)
 
-**Context:** Tethered owns "safety-first" positioning but needs to understand what users are actually paying for in adjacent products.
+**Deliverable:** Write comprehensive strategy to `obsidian-vault/shared/blackboard/content-strategy.md` including:
+- 8-week blog content calendar with titles/outlines
+- Reddit engagement playbook based on successful patterns
+- Cross-platform content distribution plan
+- Conversion strategy from content to Tethered trials
+- Success metrics and tracking approach
+
+**Success Pattern to Scale:** "90% helpful expertise + 10% natural Tethered mention" formula that's been working
