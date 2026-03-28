@@ -1,33 +1,41 @@
-# Task: Tethered Content Strategy & Blog Planning
+# Task: Haven Family App Enhancement Planning
 ## Status: planning-phase  
-## Chain: Scribe → Main (review)
-## Started: 05:40 27 Mar 2026
+## Chain: Dev → Main (review)
+## Started: 03:52 28 Mar 2026
 ---
 
-**Objective:** Develop comprehensive content strategy for Tethered leveraging established Reddit rigger credibility and safety expertise.
+**Objective:** Create comprehensive enhancement plan for Haven family app, focusing on backend integration, data persistence, and feature improvements to make it more useful for the family's daily management.
 
-**Context:** Recent Reddit success shows strong engagement with safety-focused content (108 upvotes on rope safety, multiple OP thank-yous). Established rigger credibility provides natural authority for Tethered mentions. Need to scale this success into sustainable content marketing.
+**Context:** Haven is currently a localStorage-based family management app (port 3004) with meal planning and chores tracking. It's functional but needs backend integration and enhanced features to become truly useful for the family. Recent focus has been on Mission Control (system monitoring) and Tethered (growth), but Haven deserves strategic attention.
 
-**Content Strategy Focus:**
-1. **Blog Content Calendar:** 4-8 weeks of safety-focused articles
-2. **Reddit Content Framework:** Systemize successful comment patterns for scalability  
-3. **Cross-Platform Strategy:** FetLife, Reddit, blog integration approach
-4. **SEO Optimization:** Keywords that drive safety-conscious kink practitioners to Tethered
-5. **Conversion Funnel:** How safety content leads to Tethered signups
-6. **Content Voice:** Maintain authentic rigger expertise vs promotional tone
+**Current Haven Features:**
+- Weekly meal planner with family member selector
+- Chores tracker with kid earnings system
+- Warm, family-friendly aesthetic (cream/terracotta/sage)
+- Docker containerized on port 3004
+- Health monitoring via HA sensors
 
-**Key Content Themes:**
-- Meeting new partners safely (core Tethered use case)
-- Rope bondage safety techniques  
-- Vetting and consent best practices
-- Scene safety planning and risk awareness
-- Community safety (munch behavior, event safety)
+**Enhancement Focus Areas:**
+1. **Backend Architecture:** Design database schema and API structure for persistent data
+2. **Advanced Meal Planning:** Shopping lists, dietary restrictions, leftover tracking, meal history
+3. **Enhanced Chores System:** Recurring tasks, completion tracking, reward systems, family progress
+4. **Calendar Integration:** Sync with family calendars for meal planning and task scheduling
+5. **Mobile Optimization:** PWA features for on-the-go family management
+6. **Family Communication:** Simple messaging, task assignments, shared shopping lists
 
-**Deliverable:** Write comprehensive strategy to `obsidian-vault/shared/blackboard/content-strategy.md` including:
-- 8-week blog content calendar with titles/outlines
-- Reddit engagement playbook based on successful patterns
-- Cross-platform content distribution plan
-- Conversion strategy from content to Tethered trials
-- Success metrics and tracking approach
+**Technical Considerations:**
+- Maintain existing React/TypeScript/Tailwind stack
+- Consider SQLite vs PostgreSQL for backend
+- API design for future mobile app integration
+- Data migration strategy from localStorage
+- Family member authentication/profiles
 
-**Success Pattern to Scale:** "90% helpful expertise + 10% natural Tethered mention" formula that's been working
+**Deliverable:** Write comprehensive plan to `obsidian-vault/shared/blackboard/haven-enhancement-plan.md` including:
+- Technical architecture recommendations
+- Feature prioritization and development phases
+- Database schema design
+- API endpoint specifications
+- UI/UX improvements roadmap
+- Implementation timeline and effort estimates
+
+**Success Criteria:** Clear roadmap for transforming Haven from prototype to production family management platform.
