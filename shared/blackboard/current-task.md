@@ -1,46 +1,36 @@
-# Task: Munch Organizer Outreach Research
-## Status: research-phase  
-## Chain: Scout → Main (review)
-## Started: 23:53 29 Mar 2026
+# Task: Safety Blog Post Draft - Meeting a New Partner
+## Status: writing-phase  
+## Chain: Scribe → Main (review)
+## Started: 01:53 30 Mar 2026
 ---
 
-**Objective:** Research Cornwall, Devon, and Somerset munch organizers on FetLife as potential Tethered ambassadors. Focus on finding trusted community gatekeepers who could genuinely benefit from and recommend Tethered's safety features.
+**Objective:** Draft a safety-focused blog post for Tethered about meeting a new kink partner for the first time. This is core content marketing that positions Tethered as the safety-first platform.
 
-**Background:** 
-- Tethered is a safety-first BDSM platform (https://tethered.me.uk)
-- Core features: Safety Timer, Consent Checklist, Partner Linking
-- ~20 users currently, looking to grow through community channels
-- Strategy: Target munch organizers as trusted gatekeepers (less pitch fatigue than "influencers")
+**Target Audience:**
+- People new to kink who are nervous about first meets
+- Experienced kinksters who want a refresher on safety protocols
+- Anyone considering meeting an online connection IRL
 
-**Research Scope:**
+**Tone:**
+- Friendly, practical, not preachy
+- Speak from experience (use "we" or "you", not corporate voice)
+- Acknowledge the excitement while emphasizing smart precautions
 
-### Target Regions (Priority Order):
-1. Cornwall (local to Rob)
-2. Devon
-3. Somerset
-4. Bristol (larger community hub)
+**Content to Cover:**
+1. **Pre-meet vetting** - Video calls, community references, red flags
+2. **The first meet itself** - Public place, own transport, sober
+3. **Safety net setup** - Tell a friend, check-in system, safety apps (mention Tethered naturally)
+4. **Trust your gut** - Permission to leave, no obligation
+5. **After the meet** - Debrief with safety contact, gradual escalation
 
-### What to Find for Each Munch:
-- Munch name and location
-- Frequency (weekly/monthly)
-- Organizer name/handle (FetLife username if visible)
-- Approximate attendance size if available
-- Whether they focus on newcomers vs established community
-- Any safety initiatives they already promote
-- Best contact method (FetLife message, event comment, etc.)
+**Format:**
+- ~800-1200 words
+- Headers for easy scanning
+- Practical bullet points where appropriate
+- CTA at the end (try Tethered's safety timer)
 
-### Deliverables:
-Write comprehensive research to `obsidian-vault/shared/blackboard/munch-organizer-research.md`:
-- Table of munches by region
-- Priority contacts (organizers who seem safety-focused or newcomer-friendly)
-- Outreach approach recommendations for each type
-- Draft outreach message template (non-spammy, value-focused)
+**Deliverable:** Write the blog post to `obsidian-vault/shared/blackboard/blog-draft-meeting-safety.md`
 
 **Why This Matters:**
-Munch organizers are trusted voices. When they recommend a safety tool, people listen. One good organizer relationship could generate 10-20 users who actually value the product.
-
-**Constraints:**
-- Don't create accounts or send messages - research only
-- Focus on publicly available information
-- Be respectful of community privacy norms
+This content supports SEO, establishes expertise, and naturally introduces Tethered as a solution. Can be cross-posted to Reddit, FetLife, and the Tethered blog.
 
