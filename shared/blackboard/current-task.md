@@ -1,36 +1,35 @@
-# Task: Safety Blog Post Draft - Meeting a New Partner
-## Status: writing-phase  
+# Task: Tethered Safety Content Creation
+## Status: writing-phase
 ## Chain: Scribe → Main (review)
-## Started: 01:53 30 Mar 2026
+## Assigned: April 4 00:24
+
 ---
 
-**Objective:** Draft a safety-focused blog post for Tethered about meeting a new kink partner for the first time. This is core content marketing that positions Tethered as the safety-first platform.
+**Objective:** Create compelling safety-focused content for Tethered's blog/social media to support user acquisition and establish thought leadership.
 
-**Target Audience:**
-- People new to kink who are nervous about first meets
-- Experienced kinksters who want a refresher on safety protocols
-- Anyone considering meeting an online connection IRL
+**Content Type:** Blog post series starter - "The BDSM Safety Series"
 
-**Tone:**
-- Friendly, practical, not preachy
-- Speak from experience (use "we" or "you", not corporate voice)
-- Acknowledge the excitement while emphasizing smart precautions
+**Target Article:** "Meeting Someone New: The First Scene Safety Checklist"
+- **Audience:** BDSM newcomers and experienced practitioners meeting new partners
+- **SEO Keywords:** BDSM safety, first scene, meeting new dom/sub, safety checklist
+- **Length:** 800-1200 words
+- **Format:** Markdown blog post ready for Tethered.me.uk
 
-**Content to Cover:**
-1. **Pre-meet vetting** - Video calls, community references, red flags
-2. **The first meet itself** - Public place, own transport, sober
-3. **Safety net setup** - Tell a friend, check-in system, safety apps (mention Tethered naturally)
-4. **Trust your gut** - Permission to leave, no obligation
-5. **After the meet** - Debrief with safety contact, gradual escalation
+**Content Strategy:**
+- Address real safety concerns (not just legal disclaimers)
+- Position Tethered's safety timer as natural solution
+- Include practical actionable advice
+- Reference recent Reddit discussions for authenticity
+- Avoid over-promotional tone - lead with value
 
-**Format:**
-- ~800-1200 words
-- Headers for easy scanning
-- Practical bullet points where appropriate
-- CTA at the end (try Tethered's safety timer)
+**Required Elements:**
+- Introduction hook (personal story or statistic)
+- Pre-scene communication checklist
+- During-scene safety practices
+- Post-scene follow-up importance
+- Natural mention of safety tools/apps without hard sell
+- Call-to-action for Tethered registration
 
-**Deliverable:** Write the blog post to `obsidian-vault/shared/blackboard/blog-draft-meeting-safety.md`
+**Output:** Complete blog post to `obsidian-vault/shared/blackboard/blog-post-first-scene-safety.md`
 
-**Why This Matters:**
-This content supports SEO, establishes expertise, and naturally introduces Tethered as a solution. Can be cross-posted to Reddit, FetLife, and the Tethered blog.
-
+**Context:** Rob's expertise in rigger safety + recent Reddit engagement success provides credibility foundation. School holidays starting tomorrow means family time - autonomous content creation perfect timing.
