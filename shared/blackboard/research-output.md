@@ -1,21 +1,27 @@
-# Competitor Pulse Check - March 2026
 
-## Obedience ($60/yr)
-- Just released v10.20.6 (1 week ago) with **image support** for habits/rewards/punishments
-- Active content marketing with fresh blog posts on relationship dynamics
-- No pricing changes detected
+## Apr 6 Reddit Thread Ideas
 
-## BeMoreKinky (4.8★, $34.99/yr)
-- **Significant pricing advantage** over Obedience
-- Major data intelligence push - published research insights from **11,000 couples** (Mar 17-18, 2026)
-- Large user base growth, positioning as data-driven thought leader
-- 2000+ activities with comprehensive discovery features
+1. **Navigating BDSM Safety: Beginner's Guide**
+   - **Angle:** Focus on fundamental safety practices for newcomers entering the BDSM scene.
+   - **Value:** Provides crucial information to those just starting, establishing a foundation for safe and consensual experiences.
+   - **Opening Line:** "Embarking on a BDSM journey? Let's chat about the essential safety practices everyone should know to ensure consensual and joyful experiences."
 
-## Strategic Opportunities for Tethered
-1. **Hybrid positioning** between Obedience's habit focus and BeMoreKinky's discovery approach
-2. **Premium-but-accessible pricing** ($45-50/year) between the two competitors
-3. **Advanced feature innovation** beyond basic visual support
-4. **Content marketing gaps** in practical guides and safety education
+2. **Establishing Safe Words and Their Importance**
+   - **Angle:** Discuss the significance of safe words in maintaining boundaries and trust within BDSM play.
+   - **Value:** Reinforces the importance of communication and consent, ensuring that all parties feel secure.
+   - **Opening Line:** "Curious about safe words? Discover why they are crucial for trust and safety in any BDSM scene."
 
----
-*Research: Scout agent, 2026-03-19 00:05*
+3. **Meeting New Partners: Online vs. Offline Safety Tips**
+   - **Angle:** Explore the nuances of safely meeting potential BDSM partners both online and in person.
+   - **Value:** Offers strategies for reducing risk and enhancing safety when connecting within the community.
+   - **Opening Line:** "Meet someone interesting? Learn how to safely transition from online chats to in-person meetings in the BDSM world."
+
+4. **Scene Preparation: The Checklist for Every Session**
+   - **Angle:** Provide a comprehensive checklist for preparing a BDSM scene, emphasizing safety gear and communication.
+   - **Value:** Ensures thorough preparation, helping to prevent mishaps and enhance the overall experience.
+   - **Opening Line:** "Ready to dive into a scene? Here's the ultimate checklist to ensure everything's set for a safe and satisfying session."
+
+5. **Long-Distance Relationships in BDSM: Keeping It Safe**
+   - **Angle:** Discuss the unique safety challenges of maintaining a BDSM relationship over long distances.
+   - **Value:** Helps couples navigate trust and consent boundaries in virtual settings.
+   - **Opening Line:** "In a long-distance BDSM relationship? Discover ways to keep the play engaging and safe, no matter the distance."
