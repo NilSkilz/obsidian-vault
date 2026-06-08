@@ -36,8 +36,9 @@
 
 ## Family Context
 ### Children's Awareness
-- **[[Dexter]] (15yo):** Age-appropriate understanding of family structure
-- **[[Logan]] (12yo):** Basic awareness with appropriate boundaries
+- **[[Dexter]] (15yo):** NOT aware — believes his parents are monogamous
+- **[[Logan]] (12yo):** NOT aware — believes his parents are monogamous
+- **Discretion:** The ENM arrangement is kept entirely private from the kids
 - **Integration:** Respectful presence that doesn't disrupt family dynamics
 - **Boundaries:** Clear separation of D/s activities from family spaces
 

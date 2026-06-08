@@ -18,7 +18,7 @@
 - **Primary relationship:** [[Rob]] and [[Aimee]] (married, family)
 - **Secondary relationship:** Rob and Tash (ongoing, established)
 - **Parallel relationship:** [[Aimee]] and [[Sean]] (Dom in Andover)
-- **Family integration:** Kids ([[Dexter]], [[Logan]]) aware of family structure
+- **Family integration:** Kids ([[Dexter]], [[Logan]]) are NOT aware — they believe their parents are monogamous
 
 ### Work-Life Integration
 - **Schedule coordination:** Office visits planned around partner availability
@@ -34,7 +34,7 @@
 
 ## Impact on Family Dynamics
 - **[[Aimee]]'s perspective:** Supportive of Rob's additional relationship
-- **Kids' understanding:** Age-appropriate awareness of family structure  
+- **Kids' understanding:** None — the kids do not know about the ENM arrangement; they believe their parents are monogamous  
 - **Scheduling:** Coordinated to minimize family disruption
 - **Balance:** Maintains primary family commitment while allowing secondary relationship
 

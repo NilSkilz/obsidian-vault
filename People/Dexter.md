@@ -33,7 +33,7 @@
 
 ## Family Dynamics
 - **Parents:** [[Rob]] (father), [[Aimee]] (mother)
-- **ENM awareness:** Age-appropriate understanding of family structure
+- **ENM awareness:** None — Dexter is NOT aware of the ENM arrangement; as far as he knows, his parents are monogamous
 - **Technology exposure:** Natural integration with Jarvis and smart home
 
 ## Tags

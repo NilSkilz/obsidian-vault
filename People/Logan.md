@@ -34,7 +34,7 @@
 ## Family Dynamics
 - **Parents:** [[Rob]] (father), [[Aimee]] (mother)
 - **Sibling:** Looks up to older brother [[Dexter]]
-- **ENM context:** Age-appropriate family structure understanding
+- **ENM awareness:** None — Logan is NOT aware of the ENM arrangement; as far as he knows, his parents are monogamous
 - **Jarvis interaction:** Comfortable with AI assistance in daily life
 
 ## Activities & Interests
