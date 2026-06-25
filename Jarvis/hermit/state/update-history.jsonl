@@ -1,0 +1,1 @@
+{"ts": "2026-06-19T11:46:54Z", "trigger": "hermit-docker update", "mode": "full", "cc_before": "2.1.183", "cc_after": "2.1.183", "marketplaces_refreshed": ["--", "claude-code-hermit"], "marketplaces_failed": [], "plugins_before_count": 6, "plugins_after_count": 6, "reload_plugins_sent": false}

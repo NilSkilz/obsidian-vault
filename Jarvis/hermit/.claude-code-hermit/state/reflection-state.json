@@ -1,0 +1,20 @@
+{
+  "last_reflection": "2026-06-21T08:32:40.907Z",
+  "last_resolution_check": null,
+  "last_digest_at": null,
+  "last_sparse_nudge": null,
+  "counters": {
+    "total_runs": 1,
+    "runs_with_candidates": 0,
+    "empty_runs": 1,
+    "judge_accept": 0,
+    "judge_downgrade": 0,
+    "judge_suppress": 0,
+    "judge_suppress_by_code": {},
+    "proposals_created": 0,
+    "micro_proposals_queued": 0,
+    "last_run_at": "2026-06-21T08:32:40.907Z",
+    "last_output_at": null,
+    "since": null
+  }
+}

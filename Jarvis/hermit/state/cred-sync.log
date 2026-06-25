@@ -1,0 +1,5 @@
+[2026-06-21T03:30:01+0100] container creds broken AND host creds invalid — run `claude /login` on the host
+[2026-06-21T11:45:01+0100] container creds broken AND host creds invalid — run `claude /login` on the host
+[2026-06-21T12:00:01+0100] container creds broken AND host creds invalid — run `claude /login` on the host
+[2026-06-22T12:00:01+0100] healed: copied valid host creds into container (was broken). Running session picks them up on its next auth cycle; restart for immediate effect.
+[2026-06-22T20:00:01+0100] container creds broken AND host creds invalid — run `claude /login` on the host

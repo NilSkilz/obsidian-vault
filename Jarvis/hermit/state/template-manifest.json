@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "files": {
+    "templates/SHELL.md.template": {
+      "sha256": "bd0da79a22ec6fc163bb5d78a6c444632faeed275b84078dcecac01dd083248c",
+      "plugin_version": "1.2.8"
+    },
+    "templates/PROPOSAL.md.template": {
+      "sha256": "0f90f998c08a7a8b4131704fe53607f280bd3fdb2c88389a0842dd54a901706e",
+      "plugin_version": "1.2.8"
+    },
+    "templates/SESSION-REPORT.md.template": {
+      "sha256": "fcb822504416d5143a54230f381a6cc91daa3ef5a972e7e8a3ec4b2d55caeb4f",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-attach": {
+      "sha256": "1f6b8ae1b646d4b5f344775cccf064c0a9daebe68be079e84c148a8c17b5ecef",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-docker": {
+      "sha256": "bf21a0ac4df24f910a2945b0242b227fbdae136a28fd43c53cbb1220156f34a7",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-run": {
+      "sha256": "5dca62d30004bf57d72faa8cbaa3a569ea47871805566025db0e7f09430c4a91",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-start": {
+      "sha256": "b3ef894525e530fc0aeb009cfd936cb4d8b4d40b056c223a14b713a9de08669d",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-status": {
+      "sha256": "f2a610203dccca2dbefbc173df1ec8270c8e621ae727d21d97afd32a8228006b",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-stop": {
+      "sha256": "99e981464f268c602564c69ec9e63b84bd0de7d703362f389ac94e0e536d4481",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-update": {
+      "sha256": "9cc5813c39c1fb86a7a93e34d49e9ecc7c00d56d087da2111153942ea27c951d",
+      "plugin_version": "1.2.8"
+    },
+    "bin/hermit-watchdog": {
+      "sha256": "917869d97c40b2e031dfa85ba18aa3470e11781fc90f152244cd8056336b39c6",
+      "plugin_version": "1.2.8"
+    },
+    "docker/docker-entrypoint.hermit.sh": {
+      "sha256": "9e66940908c1d9257abb317e9494cadd895847c70a818f703c69055dfd758e29",
+      "plugin_version": "1.2.8"
+    }
+  }
+}

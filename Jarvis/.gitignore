@@ -1,0 +1,42 @@
+# Volatile hermit runtime state
+hermit/state/runtime.json
+hermit/state/monitors.runtime.json
+hermit/state/heartbeat-monitor.runtime.json
+hermit/state/heartbeat-liveness.json
+hermit/state/heartbeat-liveness.json
+hermit/state/.lifecycle.lock
+hermit/state/tasks-snapshot.md
+hermit/state/pending-close.json
+hermit/state/last-operator-action.json
+hermit/state/channel-activity.json
+hermit/state/cc-stop-snapshot.json
+hermit/state/session-diff.json
+hermit/state/clear-requested.json
+hermit/state/watchdog-state.json
+hermit/state/watchdog.log
+hermit/state/.heartbeat
+hermit/state/trello-pickup.json
+
+# Active session tracking
+hermit/sessions/.status.json
+hermit/tasks-snapshot.md
+
+# Nested hermit runtime state
+hermit/.claude-code-hermit/state/runtime.json
+hermit/.claude-code-hermit/state/heartbeat-liveness.json
+hermit/.claude-code-hermit/state/routine-metrics.jsonl
+
+# Cost log (noisy, very large over time)
+hermit/.claude/cost-log.jsonl
+hermit/state/.claude/cost-log.jsonl
+
+# Active session doc — archived S-NNN-REPORT.md are what matters
+hermit/sessions/SHELL.md
+hermit/sessions/.eval-hash
+
+# Executables (tracked separately as scripts)
+hermit/bin/
+
+# Backups
+*.bak
+hermit/config.json.bak-pre-evolve-*

@@ -1,0 +1,24 @@
+# Memory Index
+
+- [User: Rob Stokes](user_rob.md) — communication style, expertise, Jarvis persona; full personal/family context in vault
+- [Feedback: Rob rough patch](project_rob_rough_patch.md) — low/anxious as of mid-June 2026; reduce his load, decide for him, short updates, no platitudes (revisit when it passes)
+- [Feedback: No em dashes](feedback_no_em_dashes.md) — never use em dashes in messages to Rob; reads "very AI" (flagged 2026-06-20)
+- [Project: Native systemd](project_native_systemd.md) — hermit runs as `hermit.service` user unit; needs Type=forking + load-bearing `container=docker` env (don't remove)
+- [Project: Cost model](project_cost_model.md) — always-on daemon runs on Sonnet for cost; escalate to Opus via /model for real interactive work; context-clear depends on entrypoint watchdog loop
+- [Project: Tethered](project_tethered.md) — dev rules (branch/PR/tsc), path/stack; strategy in vault
+- [Project: Infra](project_infra.md) — Mission Control, Haven, Home Assistant, Docker; vault at /home/rob/obsidian-vault
+- [Reference: Trello](reference_trello.md) — Jarvis-v2 board, creds in .claude.local/secrets/trello.env
+- [Feedback: Relationship](feedback_relationship.md) — Rob wants friend-collaborator dynamic, engage with personal context same as work, no sympathy theatre
+- [Feedback: Telegram Ack](feedback_telegram_ack.md) — Always send immediate ack via Telegram before starting work on a task; typing indicator alone is not enough
+- [Project: DAKboard Alerts](project_dakboard_alerts.md) — Wall display at localhost:3006; use dakboard-notify.sh for notable alerts (service down, disk low, etc.) in addition to Telegram
+- [Project: Telegram Bridge](project_telegram_bridge.md) — custom scripts (notify/poll/inbox watch), NOT the MCP; the telegram@claude-plugins-official plugin steals getUpdates (409) if enabled — keep it disabled
+- [Project: Kids & ENM Privacy](project_kids_enm_privacy.md) — Dexter & Logan do NOT know about the ENM arrangement; they believe their parents are monogamous. Never imply otherwise
+- [Project: Reverse Proxy](project_reverse_proxy.md) — remote access via Nginx Proxy Manager (HA add-on) on cracky.co.uk; add subdomains via NPM API (needs admin creds + DNS record), per-host Let's Encrypt SSL
+- [Project: Partner Search](project_partner_search.md) — Rob seeking a play partner (Aimee-endorsed); help with tracker/profile/openers, human stays in discovery seat; won't scrape/auto-enumerate FetLife (ToS + profiling)
+- [Project: session-mgr Close](project_session_mgr_close.md) — session-mgr pauses before the final runtime.json swap on auto-close; main loop finishes it manually (seen S-003 & S-004)
+- [Project: Cloudflare DDNS](project_cloudflare_ddns.md) — cracky.co.uk points direct at Rob's dynamic home IP; rebuilt updater script + 5-min hermit watch keep *.cracky.co.uk current
+- [Project: Full Host Access](project_full_host_access.md) — Rob wants Jarvis fully empowered; privileged/host-fs compose change staged but apply blocked pending Rob (classifier gates self-escalation)
+- [Project: Todoist Integration](project_todoist.md) — nudge scripts, Build Queue project (id: 6gwgGfCq7J6hr6P6), creds in todoist.env; systemd timers written (need daemon-reload or reboot)
+- [Project: Home Assistant Control](project_ha_control.md) — full HA control via ha-api.sh; creds in ha.env; TV volume + lights confirmed 2026-06-23; reach at 192.168.1.2:8123
+- [Feedback: End-to-end execution](feedback_e2e_execution.md) — complete tasks fully without Rob's manual involvement; only block if genuinely impossible (physical access, missing creds, classifier gate)
+- **Obsidian vault** (`/home/rob/obsidian-vault/`) is the source of truth for people, projects, history — read vault files at session start per OPERATOR.md Knowledge Sources table

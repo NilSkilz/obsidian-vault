@@ -1,0 +1,7 @@
+{
+  "target": "local",
+  "core_install_scope": "local",
+  "stamped_at": "2026-06-04T13:26:34+01:00",
+  "stamped_by": "claude-code-hermit:hatch",
+  "version": "1.1.9"
+}

@@ -1,0 +1,6 @@
+# Heartbeat Checklist
+<!-- Keep under 10 items. Move periodic checks to routines (/hermit-settings routines). -->
+
+## Standing Checks
+- Review `proposals/` for any with `status: proposed` needing operator review. Skip `accepted` (operator-owned, implementation underway), `resolved`, `deferred`, and `dismissed`.
+- **Trello card pickup.** Only when session is `idle` or `in_progress` (skip when `waiting`). Run `node /home/rob/Projects/Personal/tools/jarvis-tools/trello/pickup.mjs`. If the JSON output is a non-empty array, for each card spawn a background subagent (Agent tool, `subagent_type: general-purpose`, `run_in_background: true`) using the template at `/home/rob/Projects/Personal/tools/jarvis-tools/trello/SUBAGENT-BRIEF.md` with `{{title}}`, `{{short_link}}`, `{{url}}`, `{{desc}}` substituted. After spawning, also `node /home/rob/Projects/Personal/tools/jarvis-tools/trello/trello.mjs move <short-link> "In Progress"` and `comment <short-link> "Jarvis picked this up — working in background."` Do NOT generate a heartbeat alert for this — pickup is an action, not a problem. The pickup script itself handles dedup (won't re-pick a card already in flight) and stale-recovery (6h timeout).

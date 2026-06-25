@@ -1,0 +1,11 @@
+{"ts":"2026-06-05T08:40:00Z","type":"triage-verdict","verdict":"CREATE","caller":"scheduled-checks"}
+{"ts":"2026-06-05T08:40:01Z","type":"micro-queued","micro_id":"MP-20260605-0","tier":1,"question":"Haven has TypeScript + ESLint configured but no PostToolUse hook to auto-run lint on edits. Without a hook, lint/type errors only surface at manual build time. Proposed change: add a PostToolUse hook to /home/rob/.claude/settings.json that runs `cd /home/rob/Projects/Personal/apps/haven && npx eslint --max-warnings=0` after editing .ts/.tsx files in Haven. Small reversible config addition. Add it? Yes / No"}
+{"ts":"2026-06-10T08:00:41.470Z","type":"micro-resolved","micro_id":"MP-20260605-0","action":"expired","question":"Add PostToolUse ESLint hook for Haven (auto-lint .ts/.tsx edits)"}
+{"ts":"2026-06-11T08:38:57+01:00","type":"triage-verdict","verdict":"CREATE","caller":"proposal-create","evidence_source":"current-session"}
+{"ts":"2026-06-11T08:39:51+01:00","type":"created","proposal_id":"PROP-001-preserve-always-on-infra-watches-083857","source":"manual","category":"improvement","tags":["reliability","infra"]}
+{"ts":"2026-06-22T20:26:00+01:00","type":"responded","proposal_id":"PROP-001","action":"accept"}
+{"ts":"2026-06-22T20:26:00+01:00","type":"resolved","proposal_id":"PROP-001"}
+{"ts":"2026-06-25T13:47:00+01:00","type":"triage-verdict","verdict":"CREATE","caller":"proposal-create","evidence_source":"operator-request","tags":["cost-optimization","seed-context"]}
+{"ts":"2026-06-25T14:42:28+01:00","type":"created","proposal_id":"PROP-002-trim-claude-local-md-reduce-144228","source":"operator-request","category":"improvement","tags":["cost-optimization","seed-context"]}
+{"ts":"2026-06-25T15:33:58+01:00","type":"responded","proposal_id":"PROP-002-trim-claude-local-md-reduce-144228","action":"accept"}
+{"ts":"2026-06-25T15:36:00+01:00","type":"resolved","proposal_id":"PROP-002-trim-claude-local-md-reduce-144228"}

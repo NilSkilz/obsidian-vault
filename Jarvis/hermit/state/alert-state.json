@@ -1,0 +1,26 @@
+{
+  "alerts": {},
+  "last_digest_date": "2026-06-22",
+  "last_clean_eval_at": "2026-06-25T11:47:53.000Z",
+  "self_eval": {
+    "checklist:reviewpr": {
+      "text": "Review proposals for any with status proposed needing operator review",
+      "clean_ticks": 0,
+      "noise_ticks": 0,
+      "sessions_seen": 1,
+      "last_session_id": "S-008",
+      "first_observed": "2026-06-06T21:31:46.286Z",
+      "proposed": false
+    },
+    "checklist:trelloca": {
+      "text": "Trello card pickup only when session is idle or in_progress",
+      "clean_ticks": 6,
+      "noise_ticks": 0,
+      "sessions_seen": 1,
+      "last_session_id": "S-008",
+      "first_observed": "2026-06-06T21:31:46.286Z",
+      "proposed": false
+    }
+  },
+  "total_ticks": 28
+}

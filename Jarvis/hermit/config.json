@@ -1,0 +1,208 @@
+{
+  "_hermit_versions": {
+    "claude-code-hermit": "1.2.8"
+  },
+  "agent_name": "Jarvis",
+  "language": "en",
+  "timezone": "Europe/London",
+  "escalation": "balanced",
+  "sign_off": null,
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "dm_channel_id": "7331133695",
+      "state_dir": ".claude.local/channels/telegram"
+    }
+  },
+  "remote": true,
+  "model": "claude-sonnet-4-6",
+  "permission_mode": "bypassPermissions",
+  "tmux_session_name": "hermit-rob",
+  "auto_session": true,
+  "always_on": true,
+  "chrome": false,
+  "push_notifications": true,
+  "idle_behavior": "discover",
+  "routines": [
+    {
+      "id": "heartbeat-restart",
+      "schedule": "0 4 * * *",
+      "skill": "claude-code-hermit:heartbeat start",
+      "run_during_waiting": true,
+      "enabled": true
+    },
+    {
+      "id": "reflect",
+      "schedule": "0 9 * * *",
+      "skill": "claude-code-hermit:reflect",
+      "enabled": true
+    },
+    {
+      "id": "scheduled-checks",
+      "schedule": "5 9 * * *",
+      "skill": "claude-code-hermit:reflect-scheduled-checks",
+      "run_during_waiting": true,
+      "enabled": true
+    },
+    {
+      "id": "weekly-review",
+      "schedule": "0 23 * * 0",
+      "skill": "claude-code-hermit:weekly-review",
+      "enabled": true
+    },
+    {
+      "id": "daily-auto-close",
+      "schedule": "0 0 * * *",
+      "skill": "claude-code-hermit:daily-auto-close",
+      "run_during_waiting": true,
+      "enabled": true
+    },
+    {
+      "id": "morning",
+      "schedule": "30 8 * * *",
+      "skill": "claude-code-hermit:brief --morning",
+      "enabled": true,
+      "run_during_waiting": true
+    },
+    {
+      "id": "evening",
+      "schedule": "30 22 * * *",
+      "skill": "claude-code-hermit:brief --evening",
+      "enabled": true,
+      "run_during_waiting": true
+    },
+    {
+      "id": "ha-updates",
+      "schedule": "0 21 * * 0",
+      "skill": "ha-updates",
+      "enabled": true
+    },
+    {
+      "id": "weekly-movies",
+      "schedule": "0 19 * * 0",
+      "skill": "weekly-movies",
+      "enabled": true
+    }
+  ],
+  "monitors": [
+    {
+      "id": "telegram-poll",
+      "enabled": true,
+      "description": "telegram-poll: long-polls @haven_ai_chatbot",
+      "command": "bash /home/rob/.claude.local/scripts/telegram-poll.sh /home/rob/.claude.local/channels/haven-bot/inbox.jsonl",
+      "timeout_ms": 86400000,
+      "persistent": true,
+      "survive_auto_close": true
+    },
+    {
+      "id": "telegram-inbox",
+      "enabled": true,
+      "description": "telegram-inbox: new Telegram message from Rob",
+      "command": "tail -n 0 -f /home/rob/.claude.local/channels/haven-bot/inbox.jsonl | grep --line-buffered \"\"",
+      "timeout_ms": 86400000,
+      "persistent": true,
+      "survive_auto_close": true
+    }
+  ],
+  "env": {
+    "AGENT_HOOK_PROFILE": "standard",
+    "COMPACT_THRESHOLD": "75",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "65",
+    "MAX_THINKING_TOKENS": "10000"
+  },
+  "boot_skill": null,
+  "shutdown_skill": null,
+  "scheduled_checks": [
+    {
+      "id": "automation-recommender",
+      "plugin": "claude-code-setup",
+      "skill": "/claude-code-setup:claude-automation-recommender",
+      "enabled": true,
+      "trigger": "interval",
+      "interval_days": 7
+    },
+    {
+      "id": "md-audit",
+      "plugin": "claude-md-management",
+      "skill": "/claude-md-management:claude-md-improver",
+      "enabled": true,
+      "trigger": "interval",
+      "interval_days": 7
+    },
+    {
+      "id": "md-revise",
+      "plugin": "claude-md-management",
+      "skill": "/claude-md-management:revise-claude-md",
+      "enabled": true,
+      "trigger": "session"
+    }
+  ],
+  "docker": {
+    "packages": [],
+    "recommended_plugins": [
+      {
+        "plugin": "claude-code-setup",
+        "marketplace": "anthropics/claude-plugins-official",
+        "scope": "project",
+        "enabled": true
+      },
+      {
+        "plugin": "claude-md-management",
+        "marketplace": "anthropics/claude-plugins-official",
+        "scope": "project",
+        "enabled": true
+      },
+      {
+        "plugin": "feature-dev",
+        "marketplace": "anthropics/claude-plugins-official",
+        "scope": "project",
+        "enabled": true
+      },
+      {
+        "plugin": "skill-creator",
+        "marketplace": "anthropics/claude-plugins-official",
+        "scope": "project",
+        "enabled": true
+      }
+    ],
+    "network_mode": "bridge"
+  },
+  "compact": {
+    "monitoring_threshold": 30,
+    "monitoring_keep": 20,
+    "summary_threshold": 30,
+    "summary_keep": 15
+  },
+  "heartbeat": {
+    "enabled": true,
+    "every": "2h",
+    "active_hours": {
+      "start": "08:00",
+      "end": "23:00"
+    },
+    "stale_threshold": "2h",
+    "waiting_timeout": null,
+    "clean_recheck_cooldown": "6h",
+    "model": "haiku"
+  },
+  "quality_gate": {
+    "tier": "budget"
+  },
+  "knowledge": {
+    "raw_retention_days": 14,
+    "compiled_budget_chars": 2500,
+    "working_set_warn": 20,
+    "archive_retention_days": null
+  },
+  "watchdog": {
+    "enabled": true,
+    "stale_factor": 2,
+    "escalate_after": 3,
+    "operator_grace": "15m",
+    "context_clear_tokens": 700000
+  },
+  "reflection": {
+    "graduation_min_sessions": 1
+  },
+  "post_close_clear": true
+}

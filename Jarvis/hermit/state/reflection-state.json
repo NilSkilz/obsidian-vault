@@ -1,0 +1,30 @@
+{
+  "last_reflection": "2026-06-24T08:30:24.078Z",
+  "counters": {
+    "total_runs": 7,
+    "empty_runs": 7,
+    "runs_with_candidates": 0,
+    "judge_accept": 0,
+    "judge_downgrade": 0,
+    "judge_suppress": 0,
+    "proposals_created": 0,
+    "micro_proposals_queued": 0,
+    "last_run_at": "2026-06-24T08:30:24.078Z",
+    "last_output_at": null,
+    "since": "2026-06-04T13:26:34+01:00",
+    "judge_suppress_by_code": {}
+  },
+  "last_resolution_check": null,
+  "last_digest_at": "2026-06-08T09:30:00.000Z",
+  "last_sparse_nudge": null,
+  "scheduled_checks": {
+    "automation-recommender": {
+      "last_run": "2026-06-21T08:35:13Z",
+      "consecutive_empty": 1
+    },
+    "md-audit": {
+      "last_run": "2026-06-23T08:39:23Z",
+      "consecutive_empty": 0
+    }
+  }
+}

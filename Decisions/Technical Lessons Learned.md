@@ -108,6 +108,13 @@
 **PodPoint monitoring:** Direct Telegram alerts for reliability  
 **Overnight work:** System cron more reliable than OpenClaw cron
 
+### Cron Direct-Exec Needs the Executable Bit
+**Problem:** Host cron DDNS line never actually ran — `*/5 * * * * /path/cloudflare-ddns.sh` fired on schedule (journal confirmed `(rob) CMD`) but the script died instantly with EACCES (exit 126) before it could log anything. Script was mode 644 (no `+x`). Symptom: empty DDNS log with multi-day gaps despite a healthy cron daemon (pid 589) and a correctly-installed crontab.  
+**Why it hid:** Cron invokes the script *directly*, which requires the executable bit. Testing with `bash script.sh` runs fine *without* `+x`, so "verified working for cron" checks missed it.  
+**Solution:** `chmod +x` the script (or change the cron line to `bash /path/script.sh`).  
+**Result:** Host cron DDNS now runs every 5 min independently of any agent session — closes the stale-DNS outage where `*.cracky.co.uk` went dead because coverage relied on an in-container watch that died with the session.  
+**Date:** Jun 19, 2026
+
 ## Tags
 #lessons-learned #technical #development #infrastructure #home-automation #ai-strategy #community-building
 

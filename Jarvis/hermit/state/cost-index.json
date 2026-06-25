@@ -1,0 +1,96 @@
+{
+  "version": 2,
+  "byte_offset": 74857,
+  "total_cost_usd": 297.58240000000023,
+  "total_tokens": 176870277,
+  "total_sessions": 15,
+  "last_session_id": "3ab6017c-12f1-4181-bc8a-1e702d3fc916",
+  "by_source": {
+    "other": {
+      "cost": 232.53490000000014,
+      "tokens": 141398182
+    },
+    "heartbeat": {
+      "cost": 22.600599999999993,
+      "tokens": 18443979
+    },
+    "routine:morning": {
+      "cost": 35.8329,
+      "tokens": 8887774
+    },
+    "routine:evening": {
+      "cost": 3.7312,
+      "tokens": 3395464
+    },
+    "routine:reflect": {
+      "cost": 0.8478999999999999,
+      "tokens": 2012527
+    },
+    "routine:ha-updates": {
+      "cost": 0.8146,
+      "tokens": 580312
+    },
+    "routine:weekly-movies": {
+      "cost": 1.2203,
+      "tokens": 2152039
+    }
+  },
+  "by_date": {
+    "2026-06-19": {
+      "cost": 7.379700000000001,
+      "tokens": 3157552,
+      "session_ids": [
+        "S-006"
+      ]
+    },
+    "2026-06-20": {
+      "cost": 46.54349999999999,
+      "tokens": 14642315,
+      "session_ids": [
+        "S-006",
+        "S-007",
+        "S-008"
+      ]
+    },
+    "2026-06-21": {
+      "cost": 141.9791,
+      "tokens": 49936841,
+      "session_ids": [
+        "S-008"
+      ]
+    },
+    "2026-06-22": {
+      "cost": 9.2118,
+      "tokens": 10511551,
+      "session_ids": [
+        "S-008",
+        "S-009"
+      ]
+    },
+    "2026-06-23": {
+      "cost": 21.478599999999997,
+      "tokens": 32912601,
+      "session_ids": [
+        "S-009"
+      ]
+    },
+    "2026-06-24": {
+      "cost": 40.69589999999999,
+      "tokens": 41129131,
+      "session_ids": [
+        "S-009",
+        "bee6d270-1ca3-4561-845d-c11ef0310235"
+      ]
+    },
+    "2026-06-25": {
+      "cost": 11.776699999999998,
+      "tokens": 12147313,
+      "session_ids": [
+        "71032107-4ffb-478c-aed6-20d4bc7beb6f",
+        "3ab6017c-12f1-4181-bc8a-1e702d3fc916"
+      ]
+    }
+  },
+  "skipped_corrupt_lines": 0,
+  "updated_at": "2026-06-25T14:56:42.346Z"
+}
