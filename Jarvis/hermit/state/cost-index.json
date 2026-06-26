@@ -1,18 +1,18 @@
 {
   "version": 2,
-  "byte_offset": 74857,
-  "total_cost_usd": 297.58240000000023,
-  "total_tokens": 176870277,
+  "byte_offset": 75777,
+  "total_cost_usd": 298.86380000000025,
+  "total_tokens": 178026616,
   "total_sessions": 15,
   "last_session_id": "3ab6017c-12f1-4181-bc8a-1e702d3fc916",
   "by_source": {
     "other": {
-      "cost": 232.53490000000014,
-      "tokens": 141398182
+      "cost": 233.01810000000015,
+      "tokens": 141740287
     },
     "heartbeat": {
-      "cost": 22.600599999999993,
-      "tokens": 18443979
+      "cost": 23.398799999999994,
+      "tokens": 19258213
     },
     "routine:morning": {
       "cost": 35.8329,
@@ -83,8 +83,8 @@
       ]
     },
     "2026-06-25": {
-      "cost": 11.776699999999998,
-      "tokens": 12147313,
+      "cost": 13.058099999999998,
+      "tokens": 13303652,
       "session_ids": [
         "71032107-4ffb-478c-aed6-20d4bc7beb6f",
         "3ab6017c-12f1-4181-bc8a-1e702d3fc916"
@@ -92,5 +92,5 @@
     }
   },
   "skipped_corrupt_lines": 0,
-  "updated_at": "2026-06-25T14:56:42.346Z"
+  "updated_at": "2026-06-25T19:47:36.583Z"
 }
