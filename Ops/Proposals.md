@@ -24,3 +24,8 @@ Format per entry:
 **Problem:** Trello "Jarvis" board, To Do list, has a card "Install Plausible on Proxmox" (self-host Plausible Analytics in its own container/VM). This is a real infra build (new container/VM, installing and configuring a service) — not a safe/reversible read-only action for the heartbeat to take unattended.
 **Option:** Rob confirms scope (new LXC vs VM, resource sizing, which domain/analytics sites it should track) and either does it together in a session or explicitly clears me to build it solo.
 **Risk:** Creating a new container/VM and exposing a service is exactly the kind of external/irreversible-ish action the heartbeat rules say to propose rather than just do. Card left in To Do, untouched.
+
+## Upgrade briefing.sh with weather/calendar/overnight-summary — Trello card (2026-07-02)
+**Problem:** Trello "Jarvis" board, To Do list, has a card asking to upgrade `briefing.sh` beyond Trello/Tasks.md checks: weather forecast, today's calendar events, and an overnight summary (cron/heartbeat/alert activity since the last briefing).
+**Option:** Weather and calendar both need a source decision from Rob first — which weather API/location, and where calendar events actually live (Google Calendar? something else? no calendar integration exists yet). Once that's settled I can build it as a dev task on the existing `briefing.sh` (see [[project-morning-evening-briefing]]).
+**Risk:** Picking a weather/calendar provider means signing up for or wiring in a new third-party API unattended, which the heartbeat rules say to clear with Rob first rather than just choosing one. Card left in To Do, untouched.
