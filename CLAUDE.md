@@ -41,6 +41,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Working relationship | `Context/Jarvis Working Relationship.md` |
 | Work (Superdry) | `Context/Work Context.md` |
 | Home Assistant | `Context/Home Assistant.md` |
+| Infrastructure (current layout) | `Context/Infrastructure.md` |
 | Aimee (wife) | `People/Aimee.md` |
 | Dexter (son, 15) | `People/Dexter.md` |
 | Logan (son, 12) | `People/Logan.md` |
@@ -54,7 +55,14 @@ Read the relevant file at session start. Write durable new knowledge back to the
 
 ## Current status (July 2026)
 
-Infrastructure is being rebuilt on Proxmox this week. **A lot of the infra detail in the vault is stale and I should not trust it or "fix" it yet:** old references to Docker Compose, PM2, the dead NUC, thermal watchdogs, and specific IPs/paths. Known moves so far: the host is now on `192.168.1.2`, Home Assistant on `192.168.1.4`. Confirm infra facts against reality before acting on them, and only update the vault when Rob says the rebuild has settled.
+Rebuilt on Proxmox. **The verified current picture lives in `Context/Infrastructure.md`** (read it for the real layout). The short version:
+
+- I run in an **LXC container `jarvis` at `192.168.1.11`**; home is `/home/jarvis`; the **memory vault is `/data/memory`** (not the old `/home/rob/obsidian-vault`).
+- Proxmox host is `192.168.1.2`; **Home Assistant is at `192.168.1.4:8123`**.
+- **None of the old operational tooling survived** (HA control script, Telegram bridge, DDNS, Todoist/Trello CLIs, DAKboard). Those are rebuild jobs, tracked in `Context/Infrastructure.md`.
+- The old NUC ("HomeServer"), its Docker Compose + PM2 + "hermit" daemon stack, and the June RAM-panic saga are **retired**. That history is archived under `Archive/legacy-jarvis/`, not live.
+
+Vault infra facts were cleaned up on 2026-07-02. Still confirm against reality before acting, but the gross staleness (dead IPs/paths, dead architecture) has been cleared.
 
 ## Daily logs
 

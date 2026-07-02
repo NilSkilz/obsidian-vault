@@ -3,10 +3,11 @@
 **Family home management app named after Crackington Haven**
 
 ## Overview
-- **Path:** `/home/rob/Projects/haven`
+- **Path:** not migrated to the new Proxmox box yet (was `/home/rob/Projects/haven` on the old NUC) — TBD
 - **Stack:** Vite + React + TypeScript + Tailwind v4
-- **Running:** Docker container `haven` on port 3004
-- **Status:** NEW Feb 2026 (split from [[Mission Control]])
+- **Status:** In development as of Feb 2026 (split from [[Mission Control]]); not currently running post-rebuild
+
+> **Post-rebuild note (2026-07-02):** deployment details below (Docker port, IPs like `192.168.1.2`, PM2) are pre-rebuild and no longer live. See `Context/Infrastructure.md`.
 
 ## Features
 - **Weekly meal planner** with family preferences

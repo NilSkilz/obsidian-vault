@@ -39,15 +39,13 @@ This vault is the **source of truth** for all memory, project context, and decis
 ## 🏠 Technical Infrastructure
 
 ### Smart Home
-- **[[Home Assistant]]** - Automation hub (192.168.1.2:8123)
+- **[[Home Assistant]]** - Automation hub (192.168.1.4:8123)
   - Thread/Matter: IKEA devices working (ZBT-2 border router)
   - Alexa integration across all rooms
   - Tesla "Timmy" integration
 
 ### Project Architecture
-- **Docker Compose** orchestration for Mission Control + Haven
-- **PM2 services** for various monitoring tools
-- **Health checks** and service monitoring
+- Rebuilt on Proxmox July 2026. Current layout, IPs, and what tooling still needs rebuilding: see **[[Infrastructure]]** (`Context/Infrastructure.md`). The old Docker Compose + PM2 + hermit-daemon stack is retired (archived under `Archive/legacy-jarvis/`).
 
 ## 📈 Community Building
 
@@ -69,8 +67,7 @@ This vault is the **source of truth** for all memory, project context, and decis
 - **Testing:** Well-tested, clean code, proper error handling
 
 ### AI Collaboration
-- **Model strategy:** Haiku → Sonnet → Opus by complexity
-- **Sub-agents:** [[Dev]], [[Scout]], [[Scribe]], [[House]] for specialized tasks
+- **Operating spine:** `CLAUDE.md` (voice, hard rules, working defaults, knowledge sources)
 - **Communication:** Async for build tasks, responsive for quick questions
 
 ## 📊 Recent Activity
@@ -87,10 +84,8 @@ This vault is the **source of truth** for all memory, project context, and decis
 ---
 
 ## 🔄 Sync Status
-- **Source of Truth:** HomeServer Git repository
-- **Access:** Mac Obsidian via git clone
-- **Workflow:** Pull → Edit → Commit → Push
+- **Location:** `/data/memory` in the `jarvis` LXC on Proxmox (`192.168.1.11`)
+- **Workflow:** Git-versioned; edits committed here, nightly sync job commits automatically
 - **Backup:** Full version history in Git
 
-*Vault migrated: 2026-03-08*  
-*Repository:** `/home/rob/.openclaw/workspace/obsidian-vault/`
+*Vault migrated to Obsidian: 2026-03-08. Moved to Proxmox: July 2026.*

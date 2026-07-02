@@ -5,7 +5,7 @@
 ## Overview
 - **URL:** https://tethered.me.uk
 - **Status:** ~20 users from Reddit/FetLife  
-- **Path:** `/home/rob/Projects/Personal/tethered`
+- **Path:** local source not migrated to the new Proxmox box yet (was `/home/rob/Projects/Personal/tethered`) — TBD. Note it's Amplify-deployed (cloud), so the live site is unaffected by the home rebuild.
 - **Stack:** React + TS + Vite, AWS Amplify Gen2, DynamoDB, Stripe, Twilio
 
 ## Features

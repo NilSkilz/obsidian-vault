@@ -3,10 +3,11 @@
 **Jarvis/system monitoring dashboard with terminal/sci-fi aesthetic**
 
 ## Overview
-- **Path:** `/home/rob/Projects/mission-control`
+- **Path:** not migrated to the new Proxmox box yet (was `/home/rob/Projects/mission-control` on the old NUC) — TBD
 - **Stack:** Vite + React + Tailwind + Express API
-- **Running:** Docker container `mission-control` (ports 3001 API, 3003 UI)
-- **Status:** COMPLETED Feb 2026
+- **Status:** COMPLETED Feb 2026; not currently running post-rebuild
+
+> **Post-rebuild note (2026-07-02):** deployment details below (Docker ports, IPs like `192.168.1.2`, compose/env paths) are pre-rebuild and no longer live. See `Context/Infrastructure.md`.
 
 ## Features
 - **Environment cards** with sparkline graphs (temp/power/solar)

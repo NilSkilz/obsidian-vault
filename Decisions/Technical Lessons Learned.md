@@ -2,13 +2,15 @@
 
 **Key insights from development and system administration work**
 
+> **Note (2026-07-02):** The development lessons here (TypeScript, git flow, Thread/Matter, browser sandboxing, cron executable bit) remain valid. Some infra items predate the Proxmox rebuild and reference the retired NUC/OpenClaw/Docker stack — treat those as historical. Current infra lives in `Context/Infrastructure.md`.
+
 ## System Infrastructure
 
-### OpenClaw Cron Reliability
-**Problem:** OpenClaw cron unreliable for critical scheduled tasks  
-**Solution:** Migrate to system crontab + `openclaw system event`  
+### System Cron Over Agent-Managed Scheduling
+**Problem:** Agent-/daemon-managed scheduling was unreliable for critical tasks (they die with the session/container)  
+**Solution:** Use the host's own crontab/systemd timers for anything that must run regardless of whether an agent is up  
 **Result:** Much better reliability for DDNS updates, monitoring, autonomous work  
-**Date:** Early 2026
+**Date:** Early 2026 (learned on the old OpenClaw/hermit stack; principle still applies)
 
 ### Docker Container Limitations
 **Problem:** Dev subagent can't access host filesystem (Docker sandbox)  
@@ -99,9 +101,9 @@
 ## Infrastructure Monitoring
 
 ### Service Health Checks
-**Best practice:** Use internal IP (192.168.1.2) not localhost  
+**Best practice:** Use the service's actual internal LAN IP, not `localhost`  
 **Context:** [[Mission Control]] dashboard monitoring  
-**Reason:** More reliable for cross-container communication
+**Reason:** `localhost` inside a container resolves to the container, not the host/other services; the real internal IP is reliable for cross-host checks
 
 ### System Reliability
 **DDNS:** Every 5 min with fallback IP sources  

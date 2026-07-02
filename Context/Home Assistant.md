@@ -3,10 +3,10 @@
 **Smart home automation platform - the central hub**
 
 ## Connection Details
-- **URL:** http://192.168.1.2:8123 (localhost:8123 from homeserver)
-- **Status:** Supervised on Debian 12
-- **Health:** `healthy: true`, `supported: false` (Plausible runs alongside)
+- **URL:** http://192.168.1.4:8123 (verified reachable 2026-07-02)
 - **User:** jarvis (admin)
+
+> **Post-rebuild note (2026-07-02):** HA moved to `192.168.1.4` in the Proxmox rebuild. The device/entity lists below are carried over from the old NUC and have NOT yet been re-confirmed against the new instance. Verify with `GET /api/states` before relying on any specific entity_id. See `Context/Infrastructure.md`.
 
 ## Current State
 **Rob's assessment:** "collection of stuff" without clear vision  
@@ -72,8 +72,7 @@
 - **Calendar parsing:** Away events for smart meal suggestions
 
 ## System Services
-- **Dakboard:** pm2 service `jarvis-dakboard` on port 18850
-- **Additional services:** Plausible analytics running alongside
+- Pre-rebuild this box ran a Dakboard service and Plausible analytics alongside HA. Not yet re-confirmed on the Proxmox setup. See `Context/Infrastructure.md` for the current tooling picture.
 
 ## Technical Lessons
 - **Docker/BLE limitation:** Can't access Bluetooth from containers
