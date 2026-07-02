@@ -25,18 +25,25 @@ TELEGRAM_ALLOWED_CHAT=...   # Rob's chat id; bridge ignores everyone else
 
 ## Run
 
-Today it runs manually in tmux (survives logout, not reboot):
+`run.sh` launches it in tmux, idempotently:
 ```
-tmux new -d -s jarvis-bridge 'python3 /data/memory/Jarvis/bridge/bridge.py'
-tmux attach -t jarvis-bridge     # watch it
+/data/memory/Jarvis/bridge/run.sh          # start if not already up
+tmux attach -t jarvis-bridge               # watch it
 ```
 
-The reboot-proof version (systemd user service + `enable-linger`) needs a
-one-time root action in the container — a later step.
+**Reboot-proof via cron** (no root needed): the `jarvis` crontab has
+`@reboot run.sh` plus a `*/5 * * * * run.sh` watchdog that relaunches it if it
+ever dies. Survives container reboots. (A systemd user service would be tidier
+but needs a one-time root `enable-linger` — cron does the job without it.)
 
-## Knobs / follow-ups
+## Autonomy
+
+The bridge's `claude` calls run with `--dangerously-skip-permissions` (Rob's
+call, 2026-07-02), so phone-Jarvis can actually *act* — write the vault, run
+commands, hit the media/HA APIs — not just chat. Blast radius is the `jarvis`
+user (no root) and is locked to Rob's chat id. **Any message from that chat can
+trigger arbitrary autonomous action** — that's the deal, eyes open.
+
+## Knobs
 
 - `JARVIS_MODEL` env (default `sonnet`) — chat runs on Sonnet for cost; bump for heavier work.
-- v1 is conversational + vault-read. Letting it take **actions** (write todos,
-  run commands autonomously) is the next permission dial, and a deliberate
-  decision for Rob — headless `claude -p` needs a permission mode set for that.

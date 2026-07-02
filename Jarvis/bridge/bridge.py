@@ -14,6 +14,7 @@ State:  ~/.local/state/jarvis-bridge/  (offset, conversation.log, bridge.log)
 import json
 import os
 import pathlib
+import shutil
 import subprocess
 import time
 import urllib.parse
@@ -26,6 +27,8 @@ VAULT = "/data/memory"
 MODEL = os.environ.get("JARVIS_MODEL", "sonnet")   # cheap default for chat; override via env
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 240       # seconds
+# Absolute path so it works under a minimal cron PATH too.
+CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
 
 STATE.mkdir(parents=True, exist_ok=True)
 OFFSET_FILE = STATE / "offset"
@@ -90,7 +93,7 @@ Rob's new message: {text}
 Reply as Jarvis (just the reply, no preamble)."""
     try:
         out = subprocess.run(
-            ["claude", "-p", prompt, "--model", MODEL],
+            [CLAUDE_BIN, "-p", prompt, "--model", MODEL, "--dangerously-skip-permissions"],
             cwd=VAULT, capture_output=True, text=True, timeout=CLAUDE_TIMEOUT,
             stdin=subprocess.DEVNULL,
         )
