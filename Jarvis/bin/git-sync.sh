@@ -5,7 +5,7 @@
 set -euo pipefail
 
 VAULT="/data/memory"
-LOG="/var/log/memory-git-sync.log"
+LOG="/home/jarvis/.local/state/memory-git-sync.log"
 
 # Non-interactive SSH so cron never hangs waiting on a prompt; fail fast instead.
 export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new"
