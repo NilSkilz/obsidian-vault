@@ -12,6 +12,30 @@ The current, verified picture of where I live and what's around me, after the Ju
 - **Vault backup (set up 2026-07-02):** git remote is `github-personal:NilSkilz/obsidian-vault.git` (private) via an SSH deploy key at `~/.ssh/github-personal` (no passphrase, so cron can push). Backup is two-layer: **per-change** commits+pushes as work happens, plus a **nightly safety net** via `Jarvis/bin/git-sync.sh` (pull-rebase → commit → push) on a **`jarvis` user cron at 02:30**, logging to `~/.local/state/memory-git-sync.log`. Script hardcodes `VAULT=/data/memory`; don't move it without updating the crontab.
 - No systemd `--user` bus / linger yet (no `/run/user/1000`), so always-on *services* still need a one-time root action. Cron works fine as `jarvis` without it.
 
+## Home network map
+
+| Host | Address | Notes |
+|---|---|---|
+| Proxmox host | https://192.168.1.2:8006 | Hypervisor. No SSH key for `jarvis` by design — host-level work goes through Rob. |
+| Plex | http://192.168.1.3:32400 | Media server |
+| Home Assistant | http://192.168.1.4:8123 | Whole-house automation |
+| Prowlarr | http://192.168.1.5:9696 | Indexer manager |
+| SABnzbd | http://192.168.1.7:7777 | Usenet downloader |
+| Sonarr | http://192.168.1.8:8989 | TV |
+| Radarr | http://192.168.1.9:7878 | Movies |
+| Homepage dashboard | http://192.168.1.10 | Home dashboard |
+| **Jarvis (me)** | 192.168.1.11 | This LXC |
+
+## Media stack API keys
+
+Repo is private and Rob is fine with these living here. Used for media status/suggestions (north-star feature). All verified reachable from this container 2026-07-02.
+
+- **Plex:** `jLzjydWMj6xzykLFPyKp` — `X-Plex-Token` query param, e.g. `/identity?X-Plex-Token=`
+- **Sonarr:** `dfbacfa36ecc4d70b1acdf44f33ef421` — API v3, `/api/v3/...?apikey=` (v4.0.19)
+- **Radarr:** `74b3d479445e4e19b26bd11197d006e2` — API v3 (v6.2.1)
+- **Prowlarr:** `24ad1e0e672c422b80f3573cb382b8be` — API v1 (v2.4.0)
+- **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`)
+
 ## Tooling that did NOT survive the migration (needs rebuilding)
 
 None of the old operational scripts or secrets are present on this box (`/home/jarvis/.claude.local` does not exist). If Rob wants any of these capabilities back, they're a rebuild job, not a config tweak. What used to exist (from pre-rebuild memory, now archived under `Archive/legacy-jarvis/`):
