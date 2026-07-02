@@ -9,7 +9,8 @@ The current, verified picture of where I live and what's around me, after the Ju
 - **Proxmox host** is `192.168.1.2` (per CLAUDE.md). I'm a guest on it, not the host itself. No `/host` mount into this container.
 - **Home Assistant** answers on **`http://192.168.1.4:8123`** (HTTP 200 confirmed). Any older reference to HA on `.2:8123` is stale.
 - The vault was root-owned on first boot and had to be `chown`ed to `jarvis:jarvis` (2026-07-02) before I could write to my own memory. If a future rebuild leaves memory read-only to me, that's the fix.
-- No `jarvis`-user crontab or systemd timers. The one piece of active automation is the **nightly memory sync**: `Jarvis/bin/git-sync.sh` (pull-rebase → commit → push `origin main`), run by a **root cron at 02:30 Europe/London**, logging to `/var/log/memory-git-sync.log`. It hardcodes `VAULT=/data/memory`, so don't move the script without updating that cron.
+- **Vault backup (set up 2026-07-02):** git remote is `github-personal:NilSkilz/obsidian-vault.git` (private) via an SSH deploy key at `~/.ssh/github-personal` (no passphrase, so cron can push). Backup is two-layer: **per-change** commits+pushes as work happens, plus a **nightly safety net** via `Jarvis/bin/git-sync.sh` (pull-rebase → commit → push) on a **`jarvis` user cron at 02:30**, logging to `~/.local/state/memory-git-sync.log`. Script hardcodes `VAULT=/data/memory`; don't move it without updating the crontab.
+- No systemd `--user` bus / linger yet (no `/run/user/1000`), so always-on *services* still need a one-time root action. Cron works fine as `jarvis` without it.
 
 ## Tooling that did NOT survive the migration (needs rebuilding)
 
