@@ -92,6 +92,7 @@ Reply as Jarvis (just the reply, no preamble)."""
         out = subprocess.run(
             ["claude", "-p", prompt, "--model", MODEL],
             cwd=VAULT, capture_output=True, text=True, timeout=CLAUDE_TIMEOUT,
+            stdin=subprocess.DEVNULL,
         )
         reply = out.stdout.strip()
         if not reply:
