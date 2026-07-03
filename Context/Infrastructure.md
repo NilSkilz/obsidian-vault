@@ -42,13 +42,15 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - **Sonarr:** `dfbacfa36ecc4d70b1acdf44f33ef421` — API v3, `/api/v3/...?apikey=` (v4.0.19)
 - **Radarr:** `74b3d479445e4e19b26bd11197d006e2` — API v3 (v6.2.1)
 - **Prowlarr:** `24ad1e0e672c422b80f3573cb382b8be` — API v1 (v2.4.0)
-- **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`)
+- **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`). Web UI login **rob / Tlwts46t2bApn2plc4** (set 2026-07-03 before exposing nzb.cracky.co.uk; UI had no auth before).
 
 ## Nginx Proxy Manager (CT 108, installed 2026-07-03)
 
 - LXC at **192.168.1.14** (static), built with the community-scripts helper, NPM v2.15.1 running natively (systemd `npm.service`, no Docker). 2 CPU / 2GB / 8GB on `data1-backups`.
 - Admin UI: `http://192.168.1.14:81`. Login **rob@cracky.co.uk / Ylgb3sPlGzEWl4JeD5285Rrx** (set via API on install day; repo is private, Rob is fine with creds here).
-- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts so far: `plausible.cracky.co.uk` → `192.168.1.15:8000` (SSL forced, HTTP/2).
+- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts (all on wildcard cert 2, SSL forced, HTTP/2, websockets): plausible→.15:8000, ha→.4:8123, plex→.3:32400, sonarr→.8:8989, radarr→.9:7878, prowlarr→.5:9696, nzb→.7:7777, seerr→.12:5055. **Deliberately NOT exposed:** Tdarr and Homepage (no auth of any kind), Proxmox UI.
+- **Exposure hardening (2026-07-03):** the *arrs had auth "disabled for local addresses", and NPM's LAN IP counts as local (X-Forwarded-For is NOT trusted), so externally they were wide open — flipped all three to `authenticationRequired: enabled` via their APIs (login now required on LAN too; API keys unaffected). SABnzbd UI had no auth at all — set rob + password (see API keys section). Lesson: **"disabled for local addresses" is meaningless behind a same-LAN reverse proxy; always spoof-test with `X-Forwarded-For: 8.8.8.8` before exposing.**
+- **`ha.cracky.co.uk` currently 400s**: HA only trusts the old add-on's proxy network. Needs Rob (or HA access for me) to add `192.168.1.14` to `trusted_proxies` in configuration.yaml's `http:` block.
 - **Wildcard cert** `*.cracky.co.uk` + apex (cert id 2, expires 2026-10-01, auto-renews) issued via **Let's Encrypt DNS-01 with the Cloudflare token**, so renewal never depends on port forwards. Future subdomains just need a proxy host attached to cert 2 — no new cert, no DNS work (wildcard A record covers them).
 - **External path verified working 2026-07-03:** UDM forwards 80/443 → 192.168.1.14 (repointed the stale rules that aimed at .2), DNS current, `https://plausible.cracky.co.uk` serves publicly with valid TLS. The old UDM rule exposing port 81 (NPM admin) to WAN was **disabled deliberately** — admin UI stays LAN-only.
 
