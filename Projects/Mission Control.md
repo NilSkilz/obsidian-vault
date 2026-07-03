@@ -5,7 +5,7 @@
 ## Overview
 - **Repo:** `github-personal:NilSkilz/mission-control` (branch `master`; dev clone at `~/projects/mission-control` on the jarvis LXC)
 - **Stack:** Vite + React + Tailwind + Express API
-- **Status:** REDEPLOYED 2026-07-03 on Proxmox — CT 112 at `192.168.1.16:3001`, `https://mc.cracky.co.uk` (LAN open, external basic-auth; creds in `Context/Infrastructure.md`)
+- **Status:** LIVE on Proxmox running the **Tide** family site — CT 112 at `192.168.1.16:3001`, `https://mc.cracky.co.uk` (no basic-auth; **real server-side login**, starter passwords in `Context/Infrastructure.md`). Runs `feature/tide-build`.
 
 > **Tide build (2026-07-03 →):** MC is now the family's home surface (replaces [[Haven]]), Tide design signed off. **Cards 1-10 built** on branch `feature/tide-build` (stacks card 1's SQLite store; the single Tide PR, awaiting Rob's review/merge; not yet deployed to CT 112). Card 11 (hallway display) parked. Built: Tide shell (theme tokens + real-sun day/night crossfade for Crackington Haven, nav, login, sci-fi pages relocated to `/system`), home, chores/wallet/approvals, notes (targeting/pin/expiry/receipts), calendar (ICS backend `server/lib/icsCalendar.js` + `/api/family/calendar`), meals+shopping (16-meal catalogue carried over — the "~200" was aspirational), cinema (real Plex + local film-request approval + Seerr deep link), house (config-driven HA allow-list `src/tide/houseConfig.js`; HA is sparse — only living/snug lights exist), jarvis chat (grounded, no LLM). Design system in `src/tide/tide.css`. **Live preview:** http://192.168.1.11:3002 (LAN) / https://tide.cracky.co.uk (TLS). Still no `gh`/token on the LXC (PR via compare link).
 
