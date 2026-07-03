@@ -23,7 +23,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 | SABnzbd | http://192.168.1.7:7777 | Usenet downloader |
 | Sonarr | http://192.168.1.8:8989 | TV |
 | Radarr | http://192.168.1.9:7878 | Movies |
-| Homepage dashboard | http://192.168.1.10 | Home dashboard |
+| Homepage dashboard | http://192.168.1.10:3000 | Home dashboard (not port 80 — corrected 2026-07-03) |
 | **Jarvis (me)** | 192.168.1.11 | This LXC |
 
 ## Media stack API keys
