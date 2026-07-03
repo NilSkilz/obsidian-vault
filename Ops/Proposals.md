@@ -15,17 +15,12 @@ Format per entry:
 **Risk:** what could go wrong / why I didn't just do it
 ```
 
-## Set up SSH access from jarvis container to Proxmox host (2026-07-02, updated 21:0x)
-**Problem:** The "check all LXC/VMs are up" recurring heartbeat task needs `pct list`/`qm list` on 192.168.1.2. Status has moved twice now: first host-key verification failure (no known_hosts entry), then a full port-22 timeout (host/port unreachable). As of this run, the host is reachable again and SSH is answering — but `ssh root@192.168.1.2` now fails on auth: "Permission denied (publickey,password)". The jarvis container has no local keypair (`~/.ssh` has no `id_ed25519`/`id_rsa`) to offer, and root password login isn't set up for it either.
-**Option:** Rob's call on the approach: (a) generate a keypair in the jarvis container and add the pubkey to the Proxmox host's `root` `authorized_keys`, or (b) create a dedicated non-root user on the host with sudo for just `pct list`/`qm list`, or (c) skip SSH entirely and expose container/VM status some other way (e.g. Proxmox API token). Whichever way, needs a decision + action on the host side that I can't do from inside the container.
-**Risk:** Nothing risky actioned. Flagging the auth failure is now the actual blocker (network path is fine) so the next fix attempt goes straight to credentials, not the network.
-
 ## Install Plausible on Proxmox — Trello card (2026-07-02)
 **Problem:** Trello "Jarvis" board, To Do list, has a card "Install Plausible on Proxmox" (self-host Plausible Analytics in its own container/VM). This is a real infra build (new container/VM, installing and configuring a service) — not a safe/reversible read-only action for the heartbeat to take unattended.
 **Option:** Rob confirms scope (new LXC vs VM, resource sizing, which domain/analytics sites it should track) and either does it together in a session or explicitly clears me to build it solo.
 **Risk:** Creating a new container/VM and exposing a service is exactly the kind of external/irreversible-ish action the heartbeat rules say to propose rather than just do. Card left in To Do, untouched.
 
-## Upgrade briefing.sh with weather/calendar/overnight-summary — Trello card (2026-07-02)
-**Problem:** Trello "Jarvis" board, To Do list, has a card asking to upgrade `briefing.sh` beyond Trello/Tasks.md checks: weather forecast, today's calendar events, and an overnight summary (cron/heartbeat/alert activity since the last briefing).
-**Option:** Weather and calendar both need a source decision from Rob first — which weather API/location, and where calendar events actually live (Google Calendar? something else? no calendar integration exists yet). Once that's settled I can build it as a dev task on the existing `briefing.sh` (see [[project-morning-evening-briefing]]).
-**Risk:** Picking a weather/calendar provider means signing up for or wiring in a new third-party API unattended, which the heartbeat rules say to clear with Rob first rather than just choosing one. Card left in To Do, untouched.
+## Upgrade briefing.sh: overnight summary still missing — Trello card (2026-07-02, updated 2026-07-03)
+**Problem:** Trello "Jarvis" board, To Do list, card asks for three things in `briefing.sh`: weather forecast, today's calendar events, and an overnight summary (cron/heartbeat/alert activity since the last briefing). Weather (`weather.sh`, Open-Meteo) and calendar (`calendar.sh`, published iCloud ICS) are both built and live in the briefing as of 2026-07-02/03 (see [[project-morning-evening-briefing]]). Only the overnight-summary piece remains.
+**Option:** Have `briefing.sh` pull a short summary of heartbeat runs / cron activity / alerts since the last briefing (likely from the daily log's timestamped entries plus heartbeat's own log) and fold it in. Small, well-scoped dev task now that the provider decisions are settled — could be done in a normal session with Rob or handed to me explicitly.
+**Risk:** Low now — no new third-party integration needed, just log-reading logic. Not actioned by the heartbeat itself since it means editing the script that sends Rob unattended messages twice a day; wanted his eyes on the change first. Card left in To Do, untouched.
