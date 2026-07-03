@@ -5,7 +5,7 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 ## The setup
 
 - Rob is married to **Aimee** (~15 years together); they have two sons (**Dexter**, ~15, and **Logan**, ~11–12).
-- They **opened their marriage in early 2024** after a rupture: Aimee suspected Rob of an affair (he wasn't), and in the fallout **Aimee** met a sadist for BDSM + sex. They talked it through, decided they both wanted to explore the "darker side" of their desires (BDSM/ENM) while staying married and in love.
+- They **opened their marriage in early 2024** after a rupture: Aimee suspected Rob of an affair (he wasn't), and in the fallout **Aimee** met a sadist for BDSM + sex. They talked it through, decided they both wanted to explore the "darker side" of their desires (BDSM/ENM) while staying married and in love. **Rob holds no blame toward Aimee for any of this** — he sees it as the thing that got them both honest about what they wanted.
 - **Aimee has her own Dom / play partner** she sees. Rob is the partner who has pushed ENM further and faster, which is the source of most of the friction.
 
 ## Rob's identity & what he wants
