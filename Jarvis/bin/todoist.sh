@@ -3,6 +3,7 @@
 # Usage:
 #   todoist.sh today          # tasks due today (includes overdue), across all projects
 #   todoist.sh projects       # list projects
+#   todoist.sh list <project-name>   # all open tasks in a project, due date or not
 #   todoist.sh add <content> [project-name]   # quick-add a task, optionally into a project
 set -euo pipefail
 
@@ -28,6 +29,11 @@ case "$cmd" in
     ;;
   projects)
     curl -s -H "$AUTH_HEADER" "$API/projects" | jq -r '.results[] | "\(.id)\t\(.name)"'
+    ;;
+  list)
+    project_name="${1:?usage: todoist.sh list <project-name>}"
+    curl -s -H "$AUTH_HEADER" -G "$API/tasks/filter" --data-urlencode "query=##${project_name}" \
+      | jq -r '.results[] | "- \(.content)" + (if .due then " [due: \(.due.date)]" else "" end)'
     ;;
   add)
     content="${1:?usage: todoist.sh add <content> [project-name]}"
