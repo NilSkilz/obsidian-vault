@@ -46,4 +46,4 @@ trigger arbitrary autonomous action** — that's the deal, eyes open.
 
 ## Knobs
 
-- `JARVIS_MODEL` env (default `sonnet`) — chat runs on Sonnet for cost; bump for heavier work.
+- `JARVIS_MODEL` env (default `claude-opus-4-8`) — anything that messages Rob runs Opus 4.8 or higher; background/subagent work can stay on Sonnet.

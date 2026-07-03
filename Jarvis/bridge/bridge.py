@@ -24,7 +24,7 @@ HOME = pathlib.Path.home()
 CONF = HOME / ".config/jarvis/telegram.env"
 STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
-MODEL = os.environ.get("JARVIS_MODEL", "sonnet")   # cheap default for chat; override via env
+MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 240       # seconds
 # Absolute path so it works under a minimal cron PATH too.

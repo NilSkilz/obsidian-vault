@@ -27,7 +27,7 @@ fi
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
 
 cd "$VAULT"
-BRIEF="$("$CLAUDE_BIN" -p "$PROMPT" --model sonnet --dangerously-skip-permissions 2>/tmp/jarvis-briefing-err.$$)" || {
+BRIEF="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-4-8 --dangerously-skip-permissions 2>/tmp/jarvis-briefing-err.$$)" || {
   echo "$(date -Iseconds) ERROR: claude invocation failed"
   cat /tmp/jarvis-briefing-err.$$
   rm -f /tmp/jarvis-briefing-err.$$
