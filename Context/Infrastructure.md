@@ -17,7 +17,8 @@ The current, verified picture of where I live and what's around me, after the Ju
 
 | Host | Address | Notes |
 |---|---|---|
-| Proxmox host | https://192.168.1.2:8006 | Hypervisor. No SSH key for `jarvis` by design — host-level work goes through Rob. |
+| UniFi Dream Machine | https://192.168.1.1 | Router/DHCP/port forwards. API key in `~/.config/jarvis/unifi.env` (`X-API-KEY` header, works on both `/proxy/network/integration/v1/` and legacy `/proxy/network/api/s/default/`), granted 2026-07-03. |
+| Proxmox host | https://192.168.1.2:8006 | Hypervisor. `ssh proxmox` (root, key `~/.ssh/proxmox-root`) works — granted 2026-07-03, see above. |
 | Plex | http://192.168.1.3:32400 | Media server |
 | Home Assistant | http://192.168.1.4:8123 | Whole-house automation |
 | Prowlarr | http://192.168.1.5:9696 | Indexer manager |
@@ -31,7 +32,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
 
-Anything else on the LAN gets its address from the BT hub's DHCP pool (which starts above these; NPM originally leased .177 before I pinned it static).
+Anything else on the LAN gets its address from the UDM's DHCP pool (which starts above these; NPM originally leased .177 before I pinned it static). Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
 
 ## Media stack API keys
 
@@ -47,8 +48,9 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 
 - LXC at **192.168.1.14** (static), built with the community-scripts helper, NPM v2.15.1 running natively (systemd `npm.service`, no Docker). 2 CPU / 2GB / 8GB on `data1-backups`.
 - Admin UI: `http://192.168.1.14:81`. Login **rob@cracky.co.uk / Ylgb3sPlGzEWl4JeD5285Rrx** (set via API on install day; repo is private, Rob is fine with creds here).
-- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts so far: `plausible.cracky.co.uk` → `192.168.1.15:8000` (no SSL cert yet, see blockers below).
-- **Blocked on Rob for external access:** (1) BT hub port forwards 80/443 → 192.168.1.14, (2) Cloudflare DNS for `*.cracky.co.uk` still points at the OLD home IP `109.148.234.141`; current WAN is `86.145.166.218`. DDNS rebuild needs a Cloudflare API token. Until both are done, Let's Encrypt issuance and all remote access stay dead.
+- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts so far: `plausible.cracky.co.uk` → `192.168.1.15:8000` (SSL forced, HTTP/2).
+- **Wildcard cert** `*.cracky.co.uk` + apex (cert id 2, expires 2026-10-01, auto-renews) issued via **Let's Encrypt DNS-01 with the Cloudflare token**, so renewal never depends on port forwards. Future subdomains just need a proxy host attached to cert 2 — no new cert, no DNS work (wildcard A record covers them).
+- **External path verified working 2026-07-03:** UDM forwards 80/443 → 192.168.1.14 (repointed the stale rules that aimed at .2), DNS current, `https://plausible.cracky.co.uk` serves publicly with valid TLS. The old UDM rule exposing port 81 (NPM admin) to WAN was **disabled deliberately** — admin UI stays LAN-only.
 
 ## Plausible Analytics (CT 111, installed 2026-07-03)
 
@@ -64,7 +66,7 @@ None of the old operational scripts or secrets are present on this box (`/home/j
 
 - **HA control** — `ha-api.sh` helper + `ha.env` (bearer token). HA REST pattern: `GET /api/states`, `POST /api/services/<domain>/<service>` with `{"entity_id": "..."}`. Rebuild target: reach HA at `192.168.1.4:8123`.
 - **Telegram bridge** — custom `telegram-notify.sh` / `telegram-poll.sh` scripts (NOT the MCP plugin). Bot `@haven_ai_chatbot`, chat id `7331133695`, token was in `telegram-bridge.env`. **Durable lesson:** Telegram allows only ONE `getUpdates` consumer, so the `telegram@claude-plugins-official` plugin and a custom poller fight over the bot token (409 Conflict) and inbound silently dies. Keep the plugin disabled if the custom bridge is rebuilt.
-- **Cloudflare DDNS** — `cloudflare-ddns.sh` kept `*.cracky.co.uk` pointed at the dynamic home IP. Needed because the domain points DIRECTLY at Rob's BT residential IP (not Cloudflare-proxied).
+- ~~**Cloudflare DDNS**~~ — **rebuilt 2026-07-03**: `Jarvis/bin/cloudflare-ddns.sh`, cron every 10 min as `jarvis`, token in `~/.config/jarvis/cloudflare.env`, logs to `~/.local/state/cloudflare-ddns.log`. Keeps apex + wildcard A records on the dynamic BT IP (not Cloudflare-proxied).
 - **Todoist nudges** — `todoist-nudge.sh` (morning/afternoon executive-function nudges) + `build-queue-nudge.sh`. Creds in `todoist.env`.
 - **DAKboard alerts** — `dakboard-notify.sh` posted notable alerts to the wall display (was `localhost:3006`, will differ on the new setup).
 
@@ -72,7 +74,7 @@ None of the old operational scripts or secrets are present on this box (`/home/j
 
 These live outside the box so the rebuild didn't touch them, but confirm before relying on them:
 
-- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP, **currently stale** (points at old IP `109.148.234.141` as of 2026-07-03; DDNS rebuild pending, needs Cloudflare API token). Remote access now proxied by the **standalone NPM LXC at 192.168.1.14** (the old `a0d7b954_nginxproxymanager` HA add-on is gone). Subdomains seen pre-rebuild: ha, plex, sonarr, radarr, nzb, portainer, api — none recreated yet. Adding one = NPM REST API + DNS record.
+- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP, kept current by the rebuilt DDNS cron (see above). Remote access proxied by the **standalone NPM LXC at 192.168.1.14** (the old `a0d7b954_nginxproxymanager` HA add-on is gone). Live subdomains: plausible. Pre-rebuild ones (ha, plex, sonarr, radarr, nzb, portainer, api) not recreated yet — adding one is a single NPM proxy-host API call attached to wildcard cert 2, nothing else.
 - **Trello:** wired back up 2026-07-02, creds in `/home/jarvis/.config/jarvis/trello.env` on the jarvis LXC. Live board is **"Jarvis"** — https://trello.com/b/IMUJxUvx/jarvis (board id `6981c75edb5758a1a2d689e7`, lists: Ideas, Backlog, To Do, In Progress, Review, Done). CLI is `Jarvis/bin/trello.sh` (curl+jq, no node on this box — `lists`/`cards <list>`/`move <id> <list>`/`comment <id> <text>`). Heartbeat checks the **To Do** list every run and treats cards like `Ops/Tasks.md` items. Note: the old "Jarvis-v2" board (https://trello.com/b/YkZEamyj/jarvis-v2) is now **closed/archived**, not in use. Other boards visible: PRISM (open), Order Injector, Framework v2.5 (both closed).
 - **Todoist:** "Build Queue" project id `6gwgGfCq7J6hr6P6` (violet) — Rob's creative/make-projects list he picks from on demand.
 - **Tethered** is AWS Amplify-deployed (cloud), live at https://tethered.me.uk — unaffected by the home rebuild.
