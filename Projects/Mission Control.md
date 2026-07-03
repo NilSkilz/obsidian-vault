@@ -7,6 +7,8 @@
 - **Stack:** Vite + React + Tailwind + Express API
 - **Status:** REDEPLOYED 2026-07-03 on Proxmox — CT 112 at `192.168.1.16:3001`, `https://mc.cracky.co.uk` (LAN open, external basic-auth; creds in `Context/Infrastructure.md`)
 
+> **Tide build (2026-07-03 →):** MC is now the family's home surface (replaces [[Haven]]), Tide design signed off, build tracked as 11 "MC Tide" Trello cards. Card 1 done: local SQLite store (`server/lib/familyDb.js` + `/api/family` routes) replaced Amplify entirely, on branch `feature/tide-data-store` (stacked on the redeploy PR, not yet deployed to CT 112). Frontend data layer signatures unchanged. Notes + seen-by receipts schema already in.
+
 > **Redeploy notes (2026-07-03):** runs the `feature/proxmox-redeploy` branch (PR open) — service health checks moved to per-LXC IPs (env-overridable), Express serves the built frontend on one port, Amplify made optional. The AWS Amplify backend (DynamoDB, family chores/meals data) is STUBBED — those pages fall back to mocks. The repo README/CLAUDE.md still describe the pre-pivot family-dashboard era; trust the code, not the docs. Old-NUC deployment details below are historical.
 
 ## Features
