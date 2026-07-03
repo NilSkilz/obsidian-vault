@@ -20,12 +20,8 @@
 - **Snug:** `switch.snug_lights`
 - **IKEA Matter/Thread:** KAJPLATS bulbs, BILRESA switch (working as of Mar 2026)
 
-### Tesla Integration
-**"Timmy" - Family Tesla:**
-- `switch.timmy_charger`
-- `switch.timmy_sentry_mode`  
-- `button.timmy_horn`
-- `climate.timmy_hvac_climate_system`
+### Tesla Integration (GONE)
+**"Timmy" the family Tesla is no longer owned (confirmed by Rob 2026-07-03).** The `timmy_*` entities are dead; the integration should be removed from HA if it's still installed. Tesla widget/cards were stripped from Mission Control the same day.
 
 ### Alexa Ecosystem
 **Device List:**
