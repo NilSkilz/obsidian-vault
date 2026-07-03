@@ -15,7 +15,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 
 ## Home network map
 
-> **All service CTs are now pinned to static IPs** in their `/etc/pve/lxc/<id>.conf` (`net0 ... ip=192.168.1.X/24,gw=192.168.1.1`), edited 2026-07-03 after Seerr drifted on DHCP and 502'd. The UniFi integration/legacy API rejected client fixed-IP writes with the API key (301/redirect wall), so pinning was done Proxmox-side instead — same result, no DHCP dependence. `.conf` edits are live for next boot; running leases already matched so no restart was needed (except Seerr, which was rebooted to move off its pool address). Backups at `*.conf.bak-ipfix`.
+> **Service-CT IP addressing (belt-and-braces):** **most CTs already have DHCP reservations on the Dream Machine** (Rob confirmed) — which is why they stayed on their low IPs. Seerr was the exception (no reservation → drifted on DHCP → seerr.cracky.co.uk 502'd, 2026-07-03). Fix: on top of the DM reservations, **all service CTs are now also pinned static in their `/etc/pve/lxc/<id>.conf`** (`net0 ... ip=192.168.1.X/24,gw=192.168.1.1`). Having both is fine and intended — a CT with a static config never asks DHCP, so the reservation is just a matching record; the Proxmox static always wins. (I couldn't add a DM reservation for Seerr via API — the key hits a 301/redirect wall on client writes, needs a controller session — so Seerr is held by the Proxmox static alone, which is sufficient.) `.conf` edits apply at next boot; running leases already matched so no restart was needed except Seerr (rebooted off its pool address). Backups at `*.conf.bak-ipfix`.
 
 | Host | Address | Notes |
 |---|---|---|
