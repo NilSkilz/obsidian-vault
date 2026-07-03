@@ -91,6 +91,13 @@ These live outside the box so the rebuild didn't touch them, but confirm before 
 
 Mission Control, Haven and Tethered source were on the old NUC at `/home/rob/Projects/...` and are **not on this container**. Paths are TBD until Rob migrates them or tells me where they now live. See `Projects/Mission Control.md`, `Projects/Haven.md`, `Projects/Tethered/overview.md`.
 
+## Jarvis family chat bridge (2026-07-03)
+
+The Mission Control family chat ("jarvis" screen) is wired to a real LLM **through my own Claude Code subscription**, not an API key (Rob's choice — no per-use cost). How it works:
+- **`Jarvis/bin/jarvis_chat_bridge.mjs`** on the jarvis LXC (CT 110) — a tiny LAN-only HTTP service (`:3040`), **systemd `jarvis-chat-bridge.service`** (enabled, User=jarvis so it inherits my Claude Code auth). Token in `~/.config/jarvis/bridge.env`; model `claude-sonnet-5` (configurable there). It shells out to `claude -p` headless with **no tools** and cwd `/tmp` — a pure text generator, so the family (incl. kids) can't reach the filesystem or any tool through it.
+- The MC server (CT 112) posts `{name, role, context, message}` to the bridge with the shared token (`JARVIS_BRIDGE_URL`/`JARVIS_BRIDGE_TOKEN` in its `.env`). It builds a compact family context (dinner, calendar, the person's chores/wallet, notice board, shopping) so replies are grounded and per-person scoped (kids get "I'll check with a grown-up"). Actions stay deterministic in the MC server (add-to-shopping writes; a kid's "can I…" logs a parent note); grounded responder is the fallback if the bridge is down.
+- Uses my Claude subscription quota; gated by login + LAN + token. Restart: `ssh proxmox "pct exec 110 -- systemctl restart jarvis-chat-bridge"`.
+
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.
