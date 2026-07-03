@@ -5,6 +5,7 @@
 #   trello.sh cards <list-name-substring>   # e.g. "To Do"
 #   trello.sh move <card-id> <list-name-substring>
 #   trello.sh comment <card-id> <text>
+#   trello.sh create <list-name-substring> <name> [desc]
 set -euo pipefail
 
 ENV_FILE="/home/jarvis/.config/jarvis/trello.env"
@@ -46,8 +47,17 @@ case "$cmd" in
     text="$*"
     curl -s -X POST "$API/cards/$card_id/actions/comments?${AUTH}" --data-urlencode "text=$text"
     ;;
+  create)
+    list_name="${1:?usage: trello.sh create <list-name> <name> [desc]}"
+    name="${2:?usage: trello.sh create <list-name> <name> [desc]}"
+    desc="${3:-}"
+    list_id="$(find_list_id "$list_name")"
+    [ -n "$list_id" ] || { echo "no list matching '$list_name'" >&2; exit 1; }
+    curl -s -X POST "$API/cards?${AUTH}&idList=$list_id" \
+      --data-urlencode "name=$name" --data-urlencode "desc=$desc"
+    ;;
   *)
-    echo "usage: trello.sh {lists|cards <list>|move <card-id> <list>|comment <card-id> <text>}" >&2
+    echo "usage: trello.sh {lists|cards <list>|move <card-id> <list>|comment <card-id> <text>|create <list> <name> [desc]}" >&2
     exit 1
     ;;
 esac
