@@ -15,6 +15,8 @@ The current, verified picture of where I live and what's around me, after the Ju
 
 ## Home network map
 
+> **All service CTs are now pinned to static IPs** in their `/etc/pve/lxc/<id>.conf` (`net0 ... ip=192.168.1.X/24,gw=192.168.1.1`), edited 2026-07-03 after Seerr drifted on DHCP and 502'd. The UniFi integration/legacy API rejected client fixed-IP writes with the API key (301/redirect wall), so pinning was done Proxmox-side instead — same result, no DHCP dependence. `.conf` edits are live for next boot; running leases already matched so no restart was needed (except Seerr, which was rebooted to move off its pool address). Backups at `*.conf.bak-ipfix`.
+
 | Host | Address | Notes |
 |---|---|---|
 | UniFi Dream Machine | https://192.168.1.1 | Router/DHCP/port forwards. API key in `~/.config/jarvis/unifi.env` (`X-API-KEY` header, works on both `/proxy/network/integration/v1/` and legacy `/proxy/network/api/s/default/`), granted 2026-07-03. |
@@ -27,8 +29,8 @@ The current, verified picture of where I live and what's around me, after the Ju
 | Radarr | http://192.168.1.9:7878 | Movies |
 | Homepage dashboard | http://192.168.1.10:3000 | Home dashboard (not port 80 — corrected 2026-07-03) |
 | **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
-| Seerr | http://192.168.1.12 | Media requests (CT 107, was missing from this map) |
-| Tdarr | http://192.168.1.13 | Transcoding (CT 109, was missing from this map) |
+| Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
+| Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
 | Mission Control | http://192.168.1.16:3001 | Family site (Tide), CT 112, static IP. **Running the Tide build (`feature/tide-build`) as of 2026-07-03**, `/opt/mission-control`, systemd `mission-control.service`, single port (API + built dist). Public: **https://mc.cracky.co.uk (no basic-auth)** — the NPM access list was removed once real server-side auth landed (`app.use('/api', authGuard)`: scrypt passwords in the users table, HMAC bearer token; only `/api/auth` + the Plex art proxy are unauthenticated). Login is the app's own (starter passwords family123 / dexter1 / logan1, changeable via `/api/auth/change-password`). Auth token secret persists at `db/.auth_secret`. Local SQLite store at `db/family.sqlite` (better-sqlite3); recipe book seeded (16 meals), `CALENDAR_ICS_URL` in `.env` feeds the calendar. **Served at three domains, all → .16:3001 on cert 2, no access list (app login only):** apex **`cracky.co.uk`** (NPM host 11), **`mc.cracky.co.uk`** (host 9), **`tide.cracky.co.uk`** (host 10, repointed off the old .11:3010 preview 2026-07-03). Apex resolves because the DDNS cron patches every A record in the zone. Dev preview when needed: `http://192.168.1.11:3002` (vite) + `:3010` (built) on the jarvis LXC. |
