@@ -48,6 +48,9 @@
 - **Birthday:** 11 Oct (annual reminder needed)
 - **Sean visits:** ~every 3 weeks
 
+## Calendar signal
+- When Aimee is marked **"away"** on the calendar, that usually means she's seeing Sean (her Dom). Rob is fine with her going but tends to have a **short fuse** during those times and things get to him quickly. Keep his plate light, don't pile on decisions, be around if a rough evening lands.
+
 ## Tags
 #family #wife #aimee #enm #home-management #user-feedback
 

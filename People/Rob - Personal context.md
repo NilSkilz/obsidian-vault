@@ -43,6 +43,11 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 
 - Aimee has been **more encouraging** lately about Rob having connections and says she's "trying" (though not magically "fixed"). Rob is in a **calmer place** but still wrestling with the MM scene (how far to take it sexually), the pull toward casual sex versus his discomfort that his self-worth rides on it, and periodic low/lonely days.
 
+## Calendar signals
+
+- **Aimee "away"** on the calendar usually = she's seeing Sean. Rob's okay with it but runs a **short fuse** those days and things get to him fast. Keep his plate light, no piled-on decisions, be around if the evening turns rough.
+- **Rob "away"** on the calendar usually = he's at work, and roughly 50/50 he's also seeing [[Tash]]. Assume work unless something says otherwise, don't read into a quiet day, keep the boring stuff handled.
+
 ## Wellbeing thread (worth holding gently)
 
 Across the 15 months there's a steady undercurrent of **low mood, loneliness (especially when Aimee's away, when working from home, or at events alone), guilt, and burnout**, with some notably dark moments (autumn 2025). He looked into finding a **therapist near Bude**. This is a heavy, ongoing emotional load, not just logistics.

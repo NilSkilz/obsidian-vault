@@ -45,6 +45,9 @@
 - **Planning:** Advanced coordination for visit scheduling
 - **Flexibility:** Remote work arrangement enables relationship maintenance
 
+## Calendar signal
+- When **Rob is marked "away"** on the calendar, that usually means he's at work, and roughly **50/50** he's also seeing Tash. Combines work travel with partner time.
+
 ## Tags
 #enm #partner #tash #cheltenham #work-coordination #relationships
 

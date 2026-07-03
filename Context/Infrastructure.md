@@ -43,7 +43,7 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - **Sonarr:** `dfbacfa36ecc4d70b1acdf44f33ef421` — API v3, `/api/v3/...?apikey=` (v4.0.19)
 - **Radarr:** `74b3d479445e4e19b26bd11197d006e2` — API v3 (v6.2.1)
 - **Prowlarr:** `24ad1e0e672c422b80f3573cb382b8be` — API v1 (v2.4.0)
-- **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`). Web UI login **rob / Tlwts46t2bApn2plc4** (set 2026-07-03 before exposing nzb.cracky.co.uk; UI had no auth before).
+- **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`). Web UI login **rob / Tlwts46t2bApn2plc4** (set 2026-07-03 before exposing nzb.cracky.co.uk; UI had no auth before). **SAB is CT 103 at .7**, config `/root/.sabnzbd/sabnzbd.ini`. **2026-07-03: that ini (and its `.bak`) were found zeroed to null bytes — collateral from the local-lvm disk-full io-error event earlier that day — so SAB crash-looped and nzb.cracky.co.uk 502'd. Restored the ini from the 2026-07-01 vzdump (`data1-backups`), which had the intact provider creds + the same api_key; re-set the web login via `set_config`. Lesson: that fs-corruption event can silently zero a running LXC's files; the weekly vzdump is the recovery path.**
 
 ## Nginx Proxy Manager (CT 108, installed 2026-07-03)
 
