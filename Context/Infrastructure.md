@@ -7,6 +7,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 - I'm in an **LXC container named `jarvis` at `192.168.1.11`**. Home dir `/home/jarvis`.
 - The **memory vault is `/data/memory`** (this repo). It is NOT at the old `/home/rob/obsidian-vault` path, and there is no `/home/rob` on this box.
 - **Proxmox host** is `192.168.1.2` (per CLAUDE.md). I'm a guest on it, not the host itself. No `/host` mount into this container.
+- **I have root SSH to the Proxmox host** (granted by Rob 2026-07-03): `ssh proxmox` (alias in `~/.ssh/config`, key `~/.ssh/proxmox-root`). Host is PVE 9.2.3, 39GB RAM. I can create/manage LXCs myself now; the old "host goes through Rob" rule is retired. Storage note: `local-lvm` thin pool is ~79% full, so new LXC disks go on `data1-backups` (460GB dir storage, rootdir content enabled 2026-07-03).
 - **Home Assistant** answers on **`http://192.168.1.4:8123`** (HTTP 200 confirmed). Any older reference to HA on `.2:8123` is stale.
 - The vault was root-owned on first boot and had to be `chown`ed to `jarvis:jarvis` (2026-07-02) before I could write to my own memory. If a future rebuild leaves memory read-only to me, that's the fix.
 - **Vault backup (set up 2026-07-02):** git remote is `github-personal:NilSkilz/obsidian-vault.git` (private) via an SSH deploy key at `~/.ssh/github-personal` (no passphrase, so cron can push). Backup is two-layer: **per-change** commits+pushes as work happens, plus a **nightly safety net** via `Jarvis/bin/git-sync.sh` (pull-rebase → commit → push) on a **`jarvis` user cron at 02:30**, logging to `~/.local/state/memory-git-sync.log`. Script hardcodes `VAULT=/data/memory`; don't move it without updating the crontab.
@@ -24,7 +25,13 @@ The current, verified picture of where I live and what's around me, after the Ju
 | Sonarr | http://192.168.1.8:8989 | TV |
 | Radarr | http://192.168.1.9:7878 | Movies |
 | Homepage dashboard | http://192.168.1.10:3000 | Home dashboard (not port 80 — corrected 2026-07-03) |
-| **Jarvis (me)** | 192.168.1.11 | This LXC |
+| **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
+| Seerr | http://192.168.1.12 | Media requests (CT 107, was missing from this map) |
+| Tdarr | http://192.168.1.13 | Transcoding (CT 109, was missing from this map) |
+| Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
+| Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
+
+Anything else on the LAN gets its address from the BT hub's DHCP pool (which starts above these; NPM originally leased .177 before I pinned it static).
 
 ## Media stack API keys
 
@@ -35,6 +42,21 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - **Radarr:** `74b3d479445e4e19b26bd11197d006e2` — API v3 (v6.2.1)
 - **Prowlarr:** `24ad1e0e672c422b80f3573cb382b8be` — API v1 (v2.4.0)
 - **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`)
+
+## Nginx Proxy Manager (CT 108, installed 2026-07-03)
+
+- LXC at **192.168.1.14** (static), built with the community-scripts helper, NPM v2.15.1 running natively (systemd `npm.service`, no Docker). 2 CPU / 2GB / 8GB on `data1-backups`.
+- Admin UI: `http://192.168.1.14:81`. Login **rob@cracky.co.uk / Ylgb3sPlGzEWl4JeD5285Rrx** (set via API on install day; repo is private, Rob is fine with creds here).
+- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts so far: `plausible.cracky.co.uk` → `192.168.1.15:8000` (no SSL cert yet, see blockers below).
+- **Blocked on Rob for external access:** (1) BT hub port forwards 80/443 → 192.168.1.14, (2) Cloudflare DNS for `*.cracky.co.uk` still points at the OLD home IP `109.148.234.141`; current WAN is `86.145.166.218`. DDNS rebuild needs a Cloudflare API token. Until both are done, Let's Encrypt issuance and all remote access stay dead.
+
+## Plausible Analytics (CT 111, installed 2026-07-03)
+
+- LXC at **192.168.1.15** (static), hostname `plausible`, 2 CPU / 4GB / 20GB on `data1-backups`, unprivileged with `nesting=1,keyctl=1`.
+- Runs **Plausible CE v3.2.1** via the official Docker Compose stack (only supported install method) at `/opt/plausible-ce` inside the container. Docker 29.6.1. Three containers (app, Postgres, ClickHouse), all `restart=always`.
+- `BASE_URL=https://plausible.cracky.co.uk`, listens on `:8000`, TLS terminates at NPM. `SECRET_KEY_BASE` is in `/opt/plausible-ce/.env`.
+- **First user not yet registered** — whoever hits `/register` first owns the instance, so do this soon after external access works (or locally via `http://192.168.1.15:8000`).
+- Upgrades: `cd /opt/plausible-ce && git pull && docker compose pull && docker compose up -d`.
 
 ## Tooling that did NOT survive the migration (needs rebuilding)
 
@@ -50,7 +72,7 @@ None of the old operational scripts or secrets are present on this box (`/home/j
 
 These live outside the box so the rebuild didn't touch them, but confirm before relying on them:
 
-- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP. Remote access proxied by **Nginx Proxy Manager** (the `a0d7b954_nginxproxymanager` HA add-on), per-host Let's Encrypt SSL. Subdomains seen pre-rebuild: ha, plex, sonarr, radarr, nzb, portainer, api. Adding one = drive the NPM REST API (admin creds) + a DNS record.
+- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP, **currently stale** (points at old IP `109.148.234.141` as of 2026-07-03; DDNS rebuild pending, needs Cloudflare API token). Remote access now proxied by the **standalone NPM LXC at 192.168.1.14** (the old `a0d7b954_nginxproxymanager` HA add-on is gone). Subdomains seen pre-rebuild: ha, plex, sonarr, radarr, nzb, portainer, api — none recreated yet. Adding one = NPM REST API + DNS record.
 - **Trello:** wired back up 2026-07-02, creds in `/home/jarvis/.config/jarvis/trello.env` on the jarvis LXC. Live board is **"Jarvis"** — https://trello.com/b/IMUJxUvx/jarvis (board id `6981c75edb5758a1a2d689e7`, lists: Ideas, Backlog, To Do, In Progress, Review, Done). CLI is `Jarvis/bin/trello.sh` (curl+jq, no node on this box — `lists`/`cards <list>`/`move <id> <list>`/`comment <id> <text>`). Heartbeat checks the **To Do** list every run and treats cards like `Ops/Tasks.md` items. Note: the old "Jarvis-v2" board (https://trello.com/b/YkZEamyj/jarvis-v2) is now **closed/archived**, not in use. Other boards visible: PRISM (open), Order Injector, Framework v2.5 (both closed).
 - **Todoist:** "Build Queue" project id `6gwgGfCq7J6hr6P6` (violet) — Rob's creative/make-projects list he picks from on demand.
 - **Tethered** is AWS Amplify-deployed (cloud), live at https://tethered.me.uk — unaffected by the home rebuild.
