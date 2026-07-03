@@ -6,6 +6,18 @@
 
 ## System Infrastructure
 
+### LVM Thin Pools Fill Silently and Pause VMs
+**Problem:** `pve/data` thin pool hit 100% (2026-07-03): HAOS VM paused in io-error state, LXCs (Plex, Sonarr) took ext4 write errors. Root cause: LXC disks on lvmthin never TRIM, so deleted blocks stay allocated and the pool only ever grows. The 32G jarvis CT alone held 29G of reclaimable blocks.  
+**Solution:** `pct fstrim <id>` on every CT reclaimed 100% → 64% in one pass. `qm resume` un-paused the VM cleanly. Prevention: weekly `/etc/cron.weekly/pct-fstrim` on the host + heartbeat checks Data% and alerts over 85%.  
+**Result:** Full outage recovered in minutes with no data loss; pool now self-maintains  
+**Date:** 2026-07-03
+
+### Auth "Disabled for Local Addresses" Is Meaningless Behind a Same-LAN Reverse Proxy
+**Problem:** Sonarr/Radarr/Prowlarr with auth "disabled for local addresses" were login-free from the INTERNET once proxied, because the proxy's LAN IP is the client and X-Forwarded-For is not trusted  
+**Solution:** Flip to auth-required-everywhere before exposing; always spoof-test with `curl -H "X-Forwarded-For: 8.8.8.8" https://host/` and expect a login wall  
+**Result:** Caught before anyone found it; SABnzbd (no auth at all) got credentials the same way  
+**Date:** 2026-07-03
+
 ### System Cron Over Agent-Managed Scheduling
 **Problem:** Agent-/daemon-managed scheduling was unreliable for critical tasks (they die with the session/container)  
 **Solution:** Use the host's own crontab/systemd timers for anything that must run regardless of whether an agent is up  
