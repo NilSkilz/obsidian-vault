@@ -31,6 +31,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 | Tdarr | http://192.168.1.13 | Transcoding (CT 109, was missing from this map) |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
+| Mission Control | http://192.168.1.16:3001 | Dashboard, CT 112, static IP, redeployed 2026-07-03. Public: https://mc.cracky.co.uk (LAN open, external basic-auth **rob / NY1zDiLHmTpyTIrzoXzt** — NPM access list "mc-lan-or-auth", needed because the Express API has no auth of its own and proxies HA control). Runs `feature/proxmox-redeploy` branch at `/opt/mission-control`, systemd `mission-control.service`, single port (API + built frontend). Amplify stubbed (`amplify_outputs.json` = `{}`), so family features (chores/meals) are mock-only until AWS creds are wired. |
 
 Anything else on the LAN gets its address from the UDM's DHCP pool (which starts above these; NPM originally leased .177 before I pinned it static). Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
 

@@ -3,11 +3,11 @@
 **Jarvis/system monitoring dashboard with terminal/sci-fi aesthetic**
 
 ## Overview
-- **Path:** not migrated to the new Proxmox box yet (was `/home/rob/Projects/mission-control` on the old NUC) — TBD
+- **Repo:** `github-personal:NilSkilz/mission-control` (branch `master`; dev clone at `~/projects/mission-control` on the jarvis LXC)
 - **Stack:** Vite + React + Tailwind + Express API
-- **Status:** COMPLETED Feb 2026; not currently running post-rebuild
+- **Status:** REDEPLOYED 2026-07-03 on Proxmox — CT 112 at `192.168.1.16:3001`, `https://mc.cracky.co.uk` (LAN open, external basic-auth; creds in `Context/Infrastructure.md`)
 
-> **Post-rebuild note (2026-07-02):** deployment details below (Docker ports, IPs like `192.168.1.2`, compose/env paths) are pre-rebuild and no longer live. See `Context/Infrastructure.md`.
+> **Redeploy notes (2026-07-03):** runs the `feature/proxmox-redeploy` branch (PR open) — service health checks moved to per-LXC IPs (env-overridable), Express serves the built frontend on one port, Amplify made optional. The AWS Amplify backend (DynamoDB, family chores/meals data) is STUBBED — those pages fall back to mocks. The repo README/CLAUDE.md still describe the pre-pivot family-dashboard era; trust the code, not the docs. Old-NUC deployment details below are historical.
 
 ## Features
 - **Environment cards** with sparkline graphs (temp/power/solar)
