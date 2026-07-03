@@ -4,8 +4,8 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 
 ## The setup
 
-- Rob is married to **Aimee** (~15 years together); they have a son (**Logan**, ~11–12).
-- They **opened their marriage in early 2024** after a rupture: Aimee suspected Rob of an affair (he wasn't), and in the fallout Rob met a sadist for BDSM + sex. They talked it through, decided they both wanted to explore the "darker side" of their desires (BDSM/ENM) while staying married and in love.
+- Rob is married to **Aimee** (~15 years together); they have two sons (**Dexter**, ~15, and **Logan**, ~11–12).
+- They **opened their marriage in early 2024** after a rupture: Aimee suspected Rob of an affair (he wasn't), and in the fallout **Aimee** met a sadist for BDSM + sex. They talked it through, decided they both wanted to explore the "darker side" of their desires (BDSM/ENM) while staying married and in love.
 - **Aimee has her own Dom / play partner** she sees. Rob is the partner who has pushed ENM further and faster, which is the source of most of the friction.
 
 ## Rob's identity & what he wants
@@ -17,8 +17,7 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 
 ## Play partners over time
 
-- **Storm** — submissive, D/s dynamic, poly, ~fortnightly (spring 2025). Rob's jealousy over her other partners; her struggle with not being a priority and with Aimee's "control" over their dynamic.
-- **Natalie** — spring 2025 (sexual play partner around the same period).
+- **Storm / Natalie (same person)** — submissive, D/s dynamic, poly, ~fortnightly (spring 2025). Rob's jealousy over her other partners; her struggle with not being a priority and with Aimee's "control" over their dynamic.
 - **Tash** — recurring play partner from ~May 2025 onward.
 - **Emily** — scene April 2026; Rob later regretted not sleeping with her but also stepped back because it was drifting more sexual than agreed.
 - **Gemma / MM** — mid-2026. MM is the current open question: a planned scene where sex is on the table and Rob is torn.

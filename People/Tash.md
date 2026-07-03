@@ -6,6 +6,7 @@
 - **Location:** Cinderford (near Rob's Cheltenham office)
 - **Relationship:** [[Rob]]'s partner in ethically non-monogamous arrangement
 - **Context:** ENM relationship with full awareness and support from [[Aimee]]
+- **History:** Recurring play partner since ~May 2025. Wider ENM background in [[Rob - Personal context]].
 
 ## Geographic Coordination
 - **Office visits:** Rob's Superdry office in Cheltenham

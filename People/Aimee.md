@@ -32,6 +32,7 @@
 - **Partner:** [[Sean]] (Dom in Andover, visits ~every 3 weeks)
 - **Relationship style:** Ethically non-monogamous
 - **Support role:** Rob's ENM understanding and accommodation
+- **The full story:** [[Rob - Personal context]] — the 15-month arc of the open marriage from Rob's side (Mar 2025 – Jul 2026): how it opened, the recurring insecurity/communication tension, aftercare needs, and where things stand. Read that before reasoning about anything ENM-related.
 
 ## Smart Home Notes
 - **Alexa credit:** The Alexa voice integration was AIMEE'S IDEA. She gets full credit. 🏆
