@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Jarvis Telegram bridge — agentic, ack-then-work-in-background.
+"""Jarvis Telegram bridge — agentic, streamed ack-then-work-in-background.
 
 Long-polls Telegram. The poll loop NEVER blocks: each of Rob's messages is
 queued and handled by a single background worker, so Telegram stays responsive
-while a job runs. Every message is acknowledged fast (typing indicator kept
-alive + a text ack for anything non-trivial), then handed to an agentic
-`claude -p` run inside the vault. That run has full tools and skip-permissions,
-so it actually DOES the work (edits code, runs commands, pushes, updates the
-vault) end to end, and only then replies with a short summary. When it says it
-did something, it did.
+while a job runs. Each message is handed to an agentic `claude -p` run inside
+the vault, streamed as `stream-json`. That run has full tools and
+skip-permissions, so it actually DOES the work (edits code, runs commands,
+pushes, updates the vault) end to end. Its FIRST streamed line — Opus's own
+opening, which reflects the ask back — is sent to Rob as the instant
+acknowledgement; its final summary is sent once the work is done. A canned line
+is only a fallback for when Opus is slow to speak. The typing indicator is kept
+alive throughout. When it says it did something, it did.
 
 Continuity comes from a rolling conversation buffer fed into each prompt, not
 from a persistent Claude process, so the whole thing survives a model swap and
@@ -39,11 +41,9 @@ STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
 PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
-ACK_MODEL = os.environ.get("JARVIS_ACK_MODEL", "claude-haiku-4-5-20251001")  # fast/cheap; only writes a one-line ack
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
-ACK_TIMEOUT = 25           # cap on the quick-ack generation; falls back to a canned line if slow
-ACK_GRACE = 8              # if a job runs past this, send a text ack so Rob has confirmation
+ACK_GRACE = 8              # if Opus hasn't spoken by now, send a canned ack so Rob has confirmation
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
@@ -110,36 +110,103 @@ def append_convo(line):
             f.write(line.rstrip("\n") + "\n")
 
 
-def run_claude(text, buffer):
-    """One agentic run. It does the work AND returns the reply text."""
+def run_claude(text, buffer, on_text):
+    """One streamed agentic run. Does the work AND returns the final reply.
+
+    Calls on_text(block) for each completed top-level assistant text block, in
+    order, as it lands (subagent chatter is filtered out). The caller uses the
+    first such block as Rob's live ack. Returns the run's final result text.
+    """
     prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
 
 This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
 
-Critical: there is no "later." This run is your only chance to act — when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did. If a question, just answer it.
+Critical: there is no "later." This run is your only chance to act — when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did.
+
+How to reply (this streams live, so Rob sees your text as it lands):
+- FIRST, before touching any tool, write ONE short line (max ~25 words) that confirms you're on it AND reflects the key requirements back in your own words, so Rob knows you understood the ask. This line IS his instant acknowledgement, so make it land.
+- THEN do the work with your tools. Don't narrate every step; work quietly.
+- WHEN DONE, write a short, mobile-friendly summary of what you actually did. Concise and chat-shaped, warm and direct, no walls of text, no preamble.
+- If Rob's message needs no tools (a question or chit-chat), skip the separate ack and just answer it in one short line.
 
 Recent conversation:
 {buffer}
 
-Rob's new message: {text}
+Rob's new message: {text}"""
 
-When done, reply as Jarvis with a short, mobile-friendly summary of what you did (or the answer). Concise and chat-shaped, warm and direct, no walls of text, no preamble."""
+    finished = threading.Event()
+    killed = {"v": False}
+
+    def watchdog():
+        if not finished.wait(CLAUDE_TIMEOUT):
+            killed["v"] = True
+            try:
+                proc.kill()
+            except Exception:
+                pass
+
     try:
-        out = subprocess.run(
-            [CLAUDE_BIN, "-p", prompt, "--model", MODEL, "--dangerously-skip-permissions"],
-            cwd=VAULT, capture_output=True, text=True, timeout=CLAUDE_TIMEOUT,
-            stdin=subprocess.DEVNULL,
+        proc = subprocess.Popen(
+            [CLAUDE_BIN, "-p", prompt, "--model", MODEL, "--dangerously-skip-permissions",
+             "--output-format", "stream-json", "--verbose", "--include-partial-messages"],
+            cwd=VAULT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            stdin=subprocess.DEVNULL, bufsize=1,
         )
-        reply = out.stdout.strip()
-        if not reply:
-            log(f"claude empty; stderr: {out.stderr[:300]}")
-            return "(I hit a snag on that one and came back empty. Try me again?)"
-        return reply
-    except subprocess.TimeoutExpired:
-        return "(That job ran past 25 min so I stopped it. Might be too big for one go — tell me how to split it.)"
     except Exception as e:
-        log(f"claude error: {e}")
+        log(f"claude spawn error: {e}")
         return "(Something broke my end on that one. Try again?)"
+
+    # Drain stderr in its own thread so a full pipe can't deadlock the stdout read.
+    err_buf = []
+    threading.Thread(target=lambda: err_buf.append(proc.stderr.read() or ""), daemon=True).start()
+    threading.Thread(target=watchdog, daemon=True).start()
+
+    blocks = {}            # content-block index -> {"type", "text"}, top-level agent only
+    final_result = None
+    try:
+        for line in proc.stdout:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            t = obj.get("type")
+            # Only the top-level agent's own text becomes ack/reply; skip subagents.
+            if t == "stream_event" and obj.get("parent_tool_use_id") in (None, ""):
+                ev = obj.get("event", {})
+                et = ev.get("type")
+                if et == "content_block_start":
+                    cb = ev.get("content_block", {})
+                    blocks[ev.get("index")] = {"type": cb.get("type"), "text": ""}
+                elif et == "content_block_delta":
+                    d = ev.get("delta", {})
+                    if d.get("type") == "text_delta":
+                        b = blocks.get(ev.get("index"))
+                        if b is not None:
+                            b["text"] += d.get("text", "")
+                elif et == "content_block_stop":
+                    b = blocks.pop(ev.get("index"), None)
+                    if b and b["type"] == "text" and b["text"].strip():
+                        try:
+                            on_text(b["text"].strip())
+                        except Exception as e:
+                            log(f"on_text error: {e}")
+            elif t == "result":
+                final_result = obj.get("result")
+    except Exception as e:
+        log(f"claude stream read error: {e}")
+    finally:
+        finished.set()
+
+    proc.wait()
+    if killed["v"]:
+        return "(That job ran past 25 min so I stopped it. Might be too big for one go — tell me how to split it.)"
+    if final_result and final_result.strip():
+        return final_result.strip()
+    log(f"claude no result; stderr: {(err_buf[0] if err_buf else '')[:300]}")
+    return "(I hit a snag on that one and came back empty. Try me again?)"
 
 
 # Varied one-liners for quick/simple asks, so it isn't always "On it."
@@ -156,70 +223,58 @@ ACK_POOL = [
 ]
 
 
-def quick_ack(text):
-    """A short acknowledgement to fire while a slow job runs.
-
-    Simple asks get a varied canned line. For a meatier/complex ask, a fast
-    model writes one line that reflects the key requirements back, so Rob knows
-    I actually understood the ask, not just that I heard it. Always falls back
-    to a canned line if the model is slow or errors, so the ack never hangs.
-    """
-    simple = len(text) < 140 and "\n" not in text
-    if simple:
-        return random.choice(ACK_POOL)
-    try:
-        prompt = (
-            "You are Jarvis, acking Rob on Telegram right before you start the work "
-            "(the real work happens in a separate run, this is just the heads-up). "
-            "Write ONE short line, max ~25 words: confirm you're on it AND reflect the "
-            "key requirements back in your own words so he knows you understood. "
-            "Warm, dry, direct. No em dashes. No preamble or sign-off, just the line.\n\n"
-            f"Rob's message:\n{text}"
-        )
-        out = subprocess.run(
-            [CLAUDE_BIN, "-p", prompt, "--model", ACK_MODEL],
-            cwd=VAULT, capture_output=True, text=True, timeout=ACK_TIMEOUT,
-            stdin=subprocess.DEVNULL,
-        )
-        line = out.stdout.strip()
-        return line if line else random.choice(ACK_POOL)
-    except Exception as e:
-        log(f"quick_ack error: {e}")
-        return random.choice(ACK_POOL)
-
-
 def process(chat, text):
-    """Handle one job: ack fast, keep typing alive, run agentically, report back."""
+    """Handle one job: stream the run, send Opus's opening line as the live ack,
+    keep typing alive, then send the final summary."""
     buffer = recent_buffer()
     append_convo(f"Rob: {text}")
     done = threading.Event()
-    ack_holder = {}
+    ack = {"sent": False, "text": None}
+    ack_lock = threading.Lock()
 
-    def prep_ack():
-        # Compute the ack eagerly (in parallel with the grace window) so a
-        # reflective ack for a complex message is usually ready by ACK_GRACE.
-        ack_holder["text"] = quick_ack(text)
+    def send_ack(t):
+        # Fire exactly one ack, whoever gets there first: Opus's streamed
+        # opening line, or the canned fallback if it's slow to speak.
+        with ack_lock:
+            if ack["sent"]:
+                return
+            ack["sent"] = True
+            ack["text"] = t
+        send(chat, t)
+
+    def on_text(block):
+        # Opus's first top-level line is the ack; later interstitial lines are
+        # suppressed (the final summary is sent from the run's result).
+        send_ack(block)
 
     def keep_typing():
         typing(chat)
         while not done.wait(TYPING_EVERY):
             typing(chat)
 
-    def delayed_ack():
-        # Only fires for jobs slower than a quick reply, so trivial chat isn't spammed.
+    def grace_fallback():
+        # Safety net: if Opus hasn't produced its opening line within the grace
+        # window, drop a canned ack so Rob always gets fast confirmation.
         if not done.wait(ACK_GRACE):
-            send(chat, ack_holder.get("text") or random.choice(ACK_POOL))
+            send_ack(random.choice(ACK_POOL))
 
-    threading.Thread(target=prep_ack, daemon=True).start()
     threading.Thread(target=keep_typing, daemon=True).start()
-    threading.Thread(target=delayed_ack, daemon=True).start()
+    threading.Thread(target=grace_fallback, daemon=True).start()
 
-    reply = run_claude(text, buffer)
+    reply = run_claude(text, buffer, on_text)
     done.set()
 
-    append_convo(f"Jarvis: {reply}")
-    send(chat, reply)
-    log(f">> {chat}: {reply[:80]}")
+    ack_text = (ack["text"] or "").strip()
+    if reply and reply.strip() and reply.strip() != ack_text:
+        # Distinct final summary (the normal work case): send it.
+        append_convo(f"Jarvis: {reply}")
+        send(chat, reply)
+        log(f">> {chat}: {reply[:80]}")
+    else:
+        # Pure answer / chit-chat: the streamed opening line was the whole reply.
+        logged = ack_text or (reply or "").strip()
+        append_convo(f"Jarvis: {logged}")
+        log(f">> {chat}: (ack was reply) {logged[:80]}")
 
 
 def worker_loop():
