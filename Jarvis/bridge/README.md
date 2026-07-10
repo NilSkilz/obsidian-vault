@@ -4,11 +4,26 @@ The phone loop. Stateless engine, stateful memory (see `Jarvis/founding-brief.md
 
 ## How it works
 
-`bridge.py` long-polls Telegram. Each of Rob's messages is run through
-`claude -p` **inside `/data/memory`** (so `CLAUDE.md` persona + vault context
-load for free), and the reply goes back. Continuity is faked cheaply by feeding
-the last ~16 lines of `conversation.log` into each prompt — no persistent Claude
-process, so it's model-agnostic and doesn't rack up context cost.
+`bridge.py` long-polls Telegram. The poll loop never blocks: each message is
+queued and run by a single background worker, so Telegram stays responsive while
+a job runs. Every message is acked fast (typing indicator kept alive, plus a
+text ack for anything that takes more than a few seconds), then handed to an
+**agentic** `claude -p` run **inside `/data/memory`** (so `CLAUDE.md` persona +
+vault context load for free). That run has full tools and skip-permissions, so
+it actually DOES the work (edits code in `/home/jarvis/projects`, runs commands,
+pushes, updates the vault) end to end, then replies with a short summary. When
+it says it did something, it did.
+
+Jobs run **one at a time** — rapid-fire messages queue behind the current job
+(Rob is told), so two agentic runs never fight over the same git repo. Timeout
+is 25 min per job. Continuity is faked cheaply by feeding the last ~16 lines of
+`conversation.log` into each prompt — no persistent Claude process, so it's
+model-agnostic and doesn't rack up context cost ("stateless engine, stateful
+memory").
+
+The old design was one-shot chat-only: it could talk but not act, so every "on
+it, give me a few" was a dead end (the process died the instant it replied).
+Rebuilt agentic + async on 2026-07-09.
 
 ## Config
 

@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""Jarvis Telegram bridge — stateless engine, stateful memory.
+"""Jarvis Telegram bridge — agentic, ack-then-work-in-background.
 
-Long-polls Telegram. Each of Rob's messages is run through `claude -p` inside
-the vault (so CLAUDE.md persona + full vault context load automatically), and
-the reply is sent back. Continuity comes from a rolling conversation buffer fed
-into each prompt, NOT from a persistent Claude process — so the whole thing
-survives a model swap and stays cheap. This is the "stateless engine, stateful
-memory" design from the founding brief.
+Long-polls Telegram. The poll loop NEVER blocks: each of Rob's messages is
+queued and handled by a single background worker, so Telegram stays responsive
+while a job runs. Every message is acknowledged fast (typing indicator kept
+alive + a text ack for anything non-trivial), then handed to an agentic
+`claude -p` run inside the vault. That run has full tools and skip-permissions,
+so it actually DOES the work (edits code, runs commands, pushes, updates the
+vault) end to end, and only then replies with a short summary. When it says it
+did something, it did.
+
+Continuity comes from a rolling conversation buffer fed into each prompt, not
+from a persistent Claude process, so the whole thing survives a model swap and
+stays cheap ("stateless engine, stateful memory").
+
+Jobs are processed one at a time. Rapid-fire messages queue behind the current
+job (Rob gets told), which keeps two agentic runs from fighting over the same
+git repo.
 
 Config: ~/.config/jarvis/telegram.env  (TELEGRAM_BOT_TOKEN, TELEGRAM_ALLOWED_CHAT)
 State:  ~/.local/state/jarvis-bridge/  (offset, conversation.log, bridge.log)
@@ -14,8 +24,10 @@ State:  ~/.local/state/jarvis-bridge/  (offset, conversation.log, bridge.log)
 import json
 import os
 import pathlib
+import queue
 import shutil
 import subprocess
+import threading
 import time
 import urllib.parse
 import urllib.request
@@ -24,16 +36,23 @@ HOME = pathlib.Path.home()
 CONF = HOME / ".config/jarvis/telegram.env"
 STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
+PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
-CLAUDE_TIMEOUT = 240       # seconds
-# Absolute path so it works under a minimal cron PATH too.
+CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
+ACK_GRACE = 8              # if a job runs past this, send a text ack so Rob has confirmation
+TYPING_EVERY = 4           # refresh the typing indicator this often while working
+# Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
 
 STATE.mkdir(parents=True, exist_ok=True)
 OFFSET_FILE = STATE / "offset"
 CONVO = STATE / "conversation.log"
 LOG = STATE / "bridge.log"
+
+JOBS = queue.Queue()
+BUSY = threading.Event()          # set while a job is actively running
+CONVO_LOCK = threading.Lock()     # serialise conversation.log appends
 
 
 def load_conf():
@@ -82,15 +101,26 @@ def recent_buffer():
     return "\n".join(CONVO.read_text().splitlines()[-BUFFER_TURNS:])
 
 
-def run_claude(text):
-    prompt = f"""You're Jarvis, replying to Rob over Telegram — he's on his phone. Keep it concise and chat-shaped: short, warm, direct, no walls of text. This is an ongoing conversation.
+def append_convo(line):
+    with CONVO_LOCK:
+        with CONVO.open("a") as f:
+            f.write(line.rstrip("\n") + "\n")
+
+
+def run_claude(text, buffer):
+    """One agentic run. It does the work AND returns the reply text."""
+    prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
+
+This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
+
+Critical: there is no "later." This run is your only chance to act — when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did. If a question, just answer it.
 
 Recent conversation:
-{recent_buffer()}
+{buffer}
 
 Rob's new message: {text}
 
-Reply as Jarvis (just the reply, no preamble)."""
+When done, reply as Jarvis with a short, mobile-friendly summary of what you did (or the answer). Concise and chat-shaped, warm and direct, no walls of text, no preamble."""
     try:
         out = subprocess.run(
             [CLAUDE_BIN, "-p", prompt, "--model", MODEL, "--dangerously-skip-permissions"],
@@ -100,18 +130,63 @@ Reply as Jarvis (just the reply, no preamble)."""
         reply = out.stdout.strip()
         if not reply:
             log(f"claude empty; stderr: {out.stderr[:300]}")
-            return "(I hit a snag generating that — try me again?)"
+            return "(I hit a snag on that one and came back empty. Try me again?)"
         return reply
     except subprocess.TimeoutExpired:
-        return "(That one took too long and timed out — try again?)"
+        return "(That job ran past 25 min so I stopped it. Might be too big for one go — tell me how to split it.)"
     except Exception as e:
         log(f"claude error: {e}")
-        return "(Something broke my end — try again?)"
+        return "(Something broke my end on that one. Try again?)"
+
+
+def process(chat, text):
+    """Handle one job: ack fast, keep typing alive, run agentically, report back."""
+    buffer = recent_buffer()
+    append_convo(f"Rob: {text}")
+    done = threading.Event()
+
+    def keep_typing():
+        typing(chat)
+        while not done.wait(TYPING_EVERY):
+            typing(chat)
+
+    def delayed_ack():
+        # Only fires for jobs slower than a quick reply, so trivial chat isn't spammed with "on it".
+        if not done.wait(ACK_GRACE):
+            send(chat, "On it.")
+
+    threading.Thread(target=keep_typing, daemon=True).start()
+    threading.Thread(target=delayed_ack, daemon=True).start()
+
+    reply = run_claude(text, buffer)
+    done.set()
+
+    append_convo(f"Jarvis: {reply}")
+    send(chat, reply)
+    log(f">> {chat}: {reply[:80]}")
+
+
+def worker_loop():
+    while True:
+        chat, text = JOBS.get()
+        BUSY.set()
+        try:
+            process(chat, text)
+        except Exception as e:
+            log(f"worker error: {e}")
+            try:
+                send(chat, "(Something broke my end on that one. Try again?)")
+            except Exception:
+                pass
+        finally:
+            BUSY.clear()
+            JOBS.task_done()
 
 
 def main():
     offset = int(OFFSET_FILE.read_text()) if OFFSET_FILE.exists() else 0
-    log(f"bridge started (model={MODEL}, allowed={ALLOWED or 'ANY'})")
+    log(f"bridge started (agentic; model={MODEL}, allowed={ALLOWED or 'ANY'})")
+    threading.Thread(target=worker_loop, daemon=True).start()
     while True:
         resp = api("getUpdates", {"offset": offset + 1, "timeout": 50}, timeout=65)
         if not resp or not resp.get("ok"):
@@ -129,12 +204,10 @@ def main():
                 log(f"ignored msg from unlisted chat {chat}: {text[:50]}")
                 continue
             log(f"<< {chat}: {text}")
-            typing(chat)
-            reply = run_claude(text)
-            with CONVO.open("a") as f:
-                f.write(f"Rob: {text}\nJarvis: {reply}\n")
-            send(chat, reply)
-            log(f">> {chat}: {reply[:80]}")
+            # If a job is already running (or waiting), tell Rob this one is queued.
+            if BUSY.is_set() or not JOBS.empty():
+                send(chat, "Noted, I'll pick this up right after the current job.")
+            JOBS.put((chat, text))
 
 
 if __name__ == "__main__":
