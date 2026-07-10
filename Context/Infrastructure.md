@@ -27,7 +27,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 | SABnzbd | http://192.168.1.7:7777 | Usenet downloader |
 | Sonarr | http://192.168.1.8:8989 | TV |
 | Radarr | http://192.168.1.9:7878 | Movies |
-| Homepage dashboard | http://192.168.1.10:3000 | Home dashboard (not port 80 — corrected 2026-07-03) |
+| ~~Homepage dashboard~~ | ~~192.168.1.10~~ | **Removed 2026-07-10** (CT 106 destroyed, superseded by Tide/Mission Control). `.10` now free. Final backup on `data1-backups` (`vzdump-lxc-106-2026_07_10`). |
 | **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
 | Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
@@ -52,7 +52,7 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 
 - LXC at **192.168.1.14** (static), built with the community-scripts helper, NPM v2.15.1 running natively (systemd `npm.service`, no Docker). 2 CPU / 2GB / 8GB on `data1-backups`.
 - Admin UI: `http://192.168.1.14:81`. Login **rob@cracky.co.uk / Ylgb3sPlGzEWl4JeD5285Rrx** (set via API on install day; repo is private, Rob is fine with creds here).
-- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts (all on wildcard cert 2, SSL forced, HTTP/2, websockets): plausible→.15:8000, ha→.4:8123, plex→.3:32400, sonarr→.8:8989, radarr→.9:7878, prowlarr→.5:9696, nzb→.7:7777, seerr→.12:5055. **Deliberately NOT exposed:** Tdarr and Homepage (no auth of any kind), Proxmox UI.
+- Replaces the old HA add-on NPM from the pre-rebuild setup. Proxy hosts (all on wildcard cert 2, SSL forced, HTTP/2, websockets): plausible→.15:8000, ha→.4:8123, plex→.3:32400, sonarr→.8:8989, radarr→.9:7878, prowlarr→.5:9696, nzb→.7:7777, seerr→.12:5055. **Deliberately NOT exposed:** Tdarr (no auth of any kind), Proxmox UI.
 - **Exposure hardening (2026-07-03):** the *arrs had auth "disabled for local addresses", and NPM's LAN IP counts as local (X-Forwarded-For is NOT trusted), so externally they were wide open — flipped all three to `authenticationRequired: enabled` via their APIs (login now required on LAN too; API keys unaffected). SABnzbd UI had no auth at all — set rob + password (see API keys section). Lesson: **"disabled for local addresses" is meaningless behind a same-LAN reverse proxy; always spoof-test with `X-Forwarded-For: 8.8.8.8` before exposing.**
 - `ha.cracky.co.uk` verified working after adding NPM to HA's `trusted_proxies` (2026-07-03).
 - **Wildcard cert** `*.cracky.co.uk` + apex (cert id 2, expires 2026-10-01, auto-renews) issued via **Let's Encrypt DNS-01 with the Cloudflare token**, so renewal never depends on port forwards. Future subdomains just need a proxy host attached to cert 2 — no new cert, no DNS work (wildcard A record covers them).
