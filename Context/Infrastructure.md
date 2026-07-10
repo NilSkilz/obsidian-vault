@@ -71,7 +71,7 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - LXC at **192.168.1.17** (static in `/etc/pve/lxc/113.conf`), hostname `vaultwarden`, 2 CPU / 1GB / 8GB on `data1-backups`, unprivileged with `nesting=1,keyctl=1`.
 - Runs the official **`vaultwarden/server:latest`** Docker image (the supported deployment) via Compose at `/opt/vaultwarden` inside the container. Data volume `/opt/vaultwarden/data` (SQLite + attachments + RSA keys — **this is the backup-critical dir**). `restart: always`.
 - Listens `:8080` → container `:80`; TLS terminates at NPM (host 12, wildcard cert 2, `allow_websocket_upgrade` on — Vaultwarden needs WS for live sync). `DOMAIN=https://vault.cracky.co.uk`.
-- Config in `/opt/vaultwarden/vaultwarden.env` (chmod 600): `ADMIN_TOKEN` is an **argon2 PHC hash** (not plaintext) — the `/admin` password is in the daily log 2026-07-10, not stored here. `SIGNUPS_ALLOWED=true` **for now** so Rob can register the first account; **lock it to false once he has** (edit env, `docker compose up -d`), or invite via `/admin`.
+- Config in `/opt/vaultwarden/vaultwarden.env` (chmod 600): `ADMIN_TOKEN` is an **argon2 PHC hash** (not plaintext) — the `/admin` password is in the daily log 2026-07-10, not stored here. `SIGNUPS_ALLOWED=false` (Rob registered 2026-07-10, then locked down). Add users via `/admin` invite. To reopen: flip the env, `docker compose up -d`.
 - Upgrades: `cd /opt/vaultwarden && docker compose pull && docker compose up -d`. Not covered by `updates.sh` (Docker images, same as Plausible).
 
 ## Tooling that did NOT survive the migration (needs rebuilding)
