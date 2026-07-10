@@ -25,6 +25,7 @@ import json
 import os
 import pathlib
 import queue
+import random
 import shutil
 import subprocess
 import threading
@@ -38,8 +39,10 @@ STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
 PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
+ACK_MODEL = os.environ.get("JARVIS_ACK_MODEL", "claude-haiku-4-5-20251001")  # fast/cheap; only writes a one-line ack
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
+ACK_TIMEOUT = 25           # cap on the quick-ack generation; falls back to a canned line if slow
 ACK_GRACE = 8              # if a job runs past this, send a text ack so Rob has confirmation
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
@@ -139,11 +142,63 @@ When done, reply as Jarvis with a short, mobile-friendly summary of what you did
         return "(Something broke my end on that one. Try again?)"
 
 
+# Varied one-liners for quick/simple asks, so it isn't always "On it."
+ACK_POOL = [
+    "On it.",
+    "On it now.",
+    "Got it, on this.",
+    "Right, digging in.",
+    "Onto it. 🌊",
+    "Yep, handling it.",
+    "On it, back shortly.",
+    "Cooking.",
+    "Understood, on it.",
+]
+
+
+def quick_ack(text):
+    """A short acknowledgement to fire while a slow job runs.
+
+    Simple asks get a varied canned line. For a meatier/complex ask, a fast
+    model writes one line that reflects the key requirements back, so Rob knows
+    I actually understood the ask, not just that I heard it. Always falls back
+    to a canned line if the model is slow or errors, so the ack never hangs.
+    """
+    simple = len(text) < 140 and "\n" not in text
+    if simple:
+        return random.choice(ACK_POOL)
+    try:
+        prompt = (
+            "You are Jarvis, acking Rob on Telegram right before you start the work "
+            "(the real work happens in a separate run, this is just the heads-up). "
+            "Write ONE short line, max ~25 words: confirm you're on it AND reflect the "
+            "key requirements back in your own words so he knows you understood. "
+            "Warm, dry, direct. No em dashes. No preamble or sign-off, just the line.\n\n"
+            f"Rob's message:\n{text}"
+        )
+        out = subprocess.run(
+            [CLAUDE_BIN, "-p", prompt, "--model", ACK_MODEL],
+            cwd=VAULT, capture_output=True, text=True, timeout=ACK_TIMEOUT,
+            stdin=subprocess.DEVNULL,
+        )
+        line = out.stdout.strip()
+        return line if line else random.choice(ACK_POOL)
+    except Exception as e:
+        log(f"quick_ack error: {e}")
+        return random.choice(ACK_POOL)
+
+
 def process(chat, text):
     """Handle one job: ack fast, keep typing alive, run agentically, report back."""
     buffer = recent_buffer()
     append_convo(f"Rob: {text}")
     done = threading.Event()
+    ack_holder = {}
+
+    def prep_ack():
+        # Compute the ack eagerly (in parallel with the grace window) so a
+        # reflective ack for a complex message is usually ready by ACK_GRACE.
+        ack_holder["text"] = quick_ack(text)
 
     def keep_typing():
         typing(chat)
@@ -151,10 +206,11 @@ def process(chat, text):
             typing(chat)
 
     def delayed_ack():
-        # Only fires for jobs slower than a quick reply, so trivial chat isn't spammed with "on it".
+        # Only fires for jobs slower than a quick reply, so trivial chat isn't spammed.
         if not done.wait(ACK_GRACE):
-            send(chat, "On it.")
+            send(chat, ack_holder.get("text") or random.choice(ACK_POOL))
 
+    threading.Thread(target=prep_ack, daemon=True).start()
     threading.Thread(target=keep_typing, daemon=True).start()
     threading.Thread(target=delayed_ack, daemon=True).start()
 
