@@ -129,6 +129,13 @@
 **Result:** Host cron DDNS now runs every 5 min independently of any agent session — closes the stale-DNS outage where `*.cracky.co.uk` went dead because coverage relied on an in-container watch that died with the session.  
 **Date:** Jun 19, 2026
 
+### Never Pass a bcrypt Hash on a Shell Command Line
+**Problem:** Resetting the Uptime Kuma admin password by generating a bcrypt hash and passing it into a remote `sqlite3 ... "UPDATE user SET password='$HASH'"` failed silently. The stored value looked plausible (`$2a$10$...`) but login always returned "Incorrect username or password", even though `bcrypt.compareSync` against the stored hash returned `true` in isolation.  
+**Why it hid:** A bcrypt hash contains multiple `$` sequences (`$2a$10$...`). Sent through `ssh host "..."` (and again through `pct exec`/`docker exec`), the *remote* shell performs variable expansion on `$2a`, `$10`, etc. before sqlite ever sees the string, silently corrupting the hash. The confusion: my verification hashed and compared in-container (bare strings, no shell), so it passed; only the through-ssh write path was mangling it.  
+**Solution:** Never put a `$`-laden secret on a command line that crosses a shell boundary. Write the hash to a file *inside* the target, then read it back in SQL: `UPDATE user SET password=trim(readfile('/app/data/_h'))`. Generate the hash in-container too (`docker exec ... node -e '...bcryptjs.hashSync(process.argv[1],10)...'`), passing only the plaintext (alnum, shell-safe) as argv.  
+**Result:** Clean, repeatable password resets. Kept the working approach in `~/Jarvis/kuma/`.  
+**Date:** Jul 10, 2026
+
 ## Tags
 #lessons-learned #technical #development #infrastructure #home-automation #ai-strategy #community-building
 
