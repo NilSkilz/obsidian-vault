@@ -33,6 +33,7 @@ The current, verified picture of where I live and what's around me, after the Ju
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
+| Vaultwarden | http://192.168.1.17:8080 | Password manager (CT 113, static IP, installed 2026-07-10). Public: **https://vault.cracky.co.uk** (NPM host 12, cert 2, websockets on). |
 | Mission Control | http://192.168.1.16:3001 | Family site (Tide), CT 112, static IP. **Running the Tide build (`feature/tide-build`) as of 2026-07-03**, `/opt/mission-control`, systemd `mission-control.service`, single port (API + built dist). Public: **https://mc.cracky.co.uk (no basic-auth)** — the NPM access list was removed once real server-side auth landed (`app.use('/api', authGuard)`: scrypt passwords in the users table, HMAC bearer token; only `/api/auth` + the Plex art proxy are unauthenticated). Login is the app's own (starter passwords family123 / dexter1 / logan1, changeable via `/api/auth/change-password`). Auth token secret persists at `db/.auth_secret`. Local SQLite store at `db/family.sqlite` (better-sqlite3); recipe book seeded (16 meals), `CALENDAR_ICS_URL` in `.env` feeds the calendar. **Served at three domains, all → .16:3001 on cert 2, no access list (app login only):** apex **`cracky.co.uk`** (NPM host 11), **`mc.cracky.co.uk`** (host 9), **`tide.cracky.co.uk`** (host 10, repointed off the old .11:3010 preview 2026-07-03). Apex resolves because the DDNS cron patches every A record in the zone. Dev preview when needed: `http://192.168.1.11:3002` (vite) + `:3010` (built) on the jarvis LXC. |
 
 Anything else on the LAN gets its address from the UDM's DHCP pool (which starts above these; NPM originally leased .177 before I pinned it static). Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
@@ -65,6 +66,14 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - **First user not yet registered** — whoever hits `/register` first owns the instance, so do this soon after external access works (or locally via `http://192.168.1.15:8000`).
 - Upgrades: `cd /opt/plausible-ce && git pull && docker compose pull && docker compose up -d`.
 
+## Vaultwarden (CT 113, installed 2026-07-10)
+
+- LXC at **192.168.1.17** (static in `/etc/pve/lxc/113.conf`), hostname `vaultwarden`, 2 CPU / 1GB / 8GB on `data1-backups`, unprivileged with `nesting=1,keyctl=1`.
+- Runs the official **`vaultwarden/server:latest`** Docker image (the supported deployment) via Compose at `/opt/vaultwarden` inside the container. Data volume `/opt/vaultwarden/data` (SQLite + attachments + RSA keys — **this is the backup-critical dir**). `restart: always`.
+- Listens `:8080` → container `:80`; TLS terminates at NPM (host 12, wildcard cert 2, `allow_websocket_upgrade` on — Vaultwarden needs WS for live sync). `DOMAIN=https://vault.cracky.co.uk`.
+- Config in `/opt/vaultwarden/vaultwarden.env` (chmod 600): `ADMIN_TOKEN` is an **argon2 PHC hash** (not plaintext) — the `/admin` password is in the daily log 2026-07-10, not stored here. `SIGNUPS_ALLOWED=true` **for now** so Rob can register the first account; **lock it to false once he has** (edit env, `docker compose up -d`), or invite via `/admin`.
+- Upgrades: `cd /opt/vaultwarden && docker compose pull && docker compose up -d`. Not covered by `updates.sh` (Docker images, same as Plausible).
+
 ## Tooling that did NOT survive the migration (needs rebuilding)
 
 None of the old operational scripts or secrets are present on this box (`/home/jarvis/.claude.local` does not exist). If Rob wants any of these capabilities back, they're a rebuild job, not a config tweak. What used to exist (from pre-rebuild memory, now archived under `Archive/legacy-jarvis/`):
@@ -84,7 +93,7 @@ None of the old operational scripts or secrets are present on this box (`/home/j
 
 These live outside the box so the rebuild didn't touch them, but confirm before relying on them:
 
-- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP, kept current by the rebuilt DDNS cron (see above). Remote access proxied by the **standalone NPM LXC at 192.168.1.14** (the old `a0d7b954_nginxproxymanager` HA add-on is gone). Live subdomains: plausible. Pre-rebuild ones (ha, plex, sonarr, radarr, nzb, portainer, api) not recreated yet — adding one is a single NPM proxy-host API call attached to wildcard cert 2, nothing else.
+- **Domain:** `cracky.co.uk` — wildcard `*.cracky.co.uk` A record at Rob's dynamic home IP, kept current by the rebuilt DDNS cron (see above). Remote access proxied by the **standalone NPM LXC at 192.168.1.14** (the old `a0d7b954_nginxproxymanager` HA add-on is gone). Live subdomains: plausible, vault, ha, plex, sonarr, radarr, prowlarr, nzb, seerr, mc/tide/apex. Pre-rebuild ones (ha, plex, sonarr, radarr, nzb, portainer, api) not recreated yet — adding one is a single NPM proxy-host API call attached to wildcard cert 2, nothing else.
 - **Trello:** wired back up 2026-07-02, creds in `/home/jarvis/.config/jarvis/trello.env` on the jarvis LXC. Live board is **"Jarvis"** — https://trello.com/b/IMUJxUvx/jarvis (board id `6981c75edb5758a1a2d689e7`, lists: Ideas, Backlog, To Do, In Progress, Review, Done). CLI is `Jarvis/bin/trello.sh` (curl+jq, no node on this box — `lists`/`cards <list>`/`move <id> <list>`/`comment <id> <text>`). Heartbeat checks the **To Do** list every run and treats cards like `Ops/Tasks.md` items. Note: the old "Jarvis-v2" board (https://trello.com/b/YkZEamyj/jarvis-v2) is now **closed/archived**, not in use. Other boards visible: PRISM (open), Order Injector, Framework v2.5 (both closed).
 - **Todoist:** "Build Queue" project id `6gwgGfCq7J6hr6P6` (violet) — Rob's creative/make-projects list he picks from on demand.
 - **Tethered** is AWS Amplify-deployed (cloud), live at https://tethered.me.uk — unaffected by the home rebuild.
