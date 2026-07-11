@@ -130,12 +130,12 @@ The theme: the expiry pipeline fails *quiet*. Fixes below make it fail *loud* so
   Fix: persist the adjustment as a PointsTransaction + balance update.
   **Test:** adjust points, refresh; the change persists.
 
-- [ ] **23. `SyncService` drops data at sign-up**
+- [~] **23. `SyncService` drops data at sign-up** — PR open on branch `fix/data-loss-sync-and-checklist-profile` (2026-07-11), with unit tests, 208/208 green.
   `src/services/data/SyncService.ts:160-200`
   Fix: upload `notes`, `shareNotes`, `context`, and custom activities (+ their answers) during the local→cloud sync.
   **Test:** in demo mode add notes + a custom activity, sign up, confirm both survive in the cloud account.
 
-- [ ] **24. `updateRelationship` silently drops `checklistProfileId` (one-line)**
+- [~] **24. `updateRelationship` silently drops `checklistProfileId` (one-line)** — PR open on branch `fix/data-loss-sync-and-checklist-profile` (2026-07-11), with unit test (set + clear).
   `src/services/data/AmplifyAdapter.ts:911-917` (missing from `validFields`; schema has it at `resource.ts:223`)
   Fix: add `'checklistProfileId'` to the whitelist.
   **Test:** set/clear a partner's checklist profile; the change persists (and deleting a profile actually clears the reference).
