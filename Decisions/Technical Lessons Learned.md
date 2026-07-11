@@ -136,6 +136,13 @@
 **Result:** Clean, repeatable password resets. Kept the working approach in `~/Jarvis/kuma/`.  
 **Date:** Jul 10, 2026
 
+### restic `forget` Groups by Path: a mktemp Staging Dir Defeats Retention
+**Problem:** The offsite crown-jewels backup staged files in a fresh `mktemp -d /var/tmp/offsite.XXXXXX` each run. Snapshots kept accumulating and `restic forget --keep-daily 7 ...` never pruned across runs, even though everything was same-host, same-tag, same-day.  
+**Why it hid:** `restic forget` groups snapshots by `host,paths` **by default**, then applies the keep-policy *within each group*. A random staging path means every run is its own single-snapshot group, so the policy keeps 1-per-group and prunes nothing. The dry-run tell was `keep 1 snapshots` printed once *per group* (twice, thrice...) instead of one combined table.  
+**Solution:** Two fixes, both applied: (1) use a **stable** staging path (`/var/tmp/offsite-stage`, cleaned each run) so snapshots share one path/series; (2) run `forget --group-by host,tags` so retention is computed across all same-tag snapshots regardless of path. Verified: multiple same-day runs then collapse to restic's newest+oldest-of-period (middle runs pruned), bounded correctly.  
+**Aside:** restic keeps both the newest AND oldest snapshot of each retention window (reason shows `oldest daily snapshot`), so a lone extra snapshot at the boundary is normal, not a leak.  
+**Date:** Jul 11, 2026
+
 ## Tags
 #lessons-learned #technical #development #infrastructure #home-automation #ai-strategy #community-building
 
