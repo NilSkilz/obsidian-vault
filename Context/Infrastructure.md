@@ -54,6 +54,15 @@ Repo is private and Rob is fine with these living here. Used for media status/su
 - **Prowlarr:** `24ad1e0e672c422b80f3573cb382b8be` — API v1 (v2.4.0)
 - **SABnzbd:** `2d17dc736dfa47f491e0dc2aa918c00a` — `/api?mode=...&output=json&apikey=` (v5.0.4; note it's `/api`, not `/sabnzbd/api`). Web UI login **rob / Tlwts46t2bApn2plc4** (set 2026-07-03 before exposing nzb.cracky.co.uk; UI had no auth before). **SAB is CT 103 at .7**, config `/root/.sabnzbd/sabnzbd.ini`. **2026-07-03: that ini (and its `.bak`) were found zeroed to null bytes — collateral from the local-lvm disk-full io-error event earlier that day — so SAB crash-looped and nzb.cracky.co.uk 502'd. Restored the ini from the 2026-07-01 vzdump (`data1-backups`), which had the intact provider creds + the same api_key; re-set the web login via `set_config`. Lesson: that fs-corruption event can silently zero a running LXC's files; the weekly vzdump is the recovery path.**
 
+## Tide host-stats SSH path (CT 112 → Proxmox host, 2026-07-11)
+
+The Tide System tab shows live host CPU%/load/RAM/CPU-temp (endpoint `GET /api/system/overview` on CT 112). LXCs can't read the host's temps/true CPU, so CT 112 pulls them from the Proxmox host over a **locked-down forced-command SSH key**:
+- Host script `/usr/local/bin/tide-hoststats.sh` prints one JSON line (cpu_pct, load, mem, temp_c/temp_max_c from coretemp hwmon, uptime). Read-only, no args.
+- Dedicated ed25519 key on CT 112 at `/root/.config/tide/hoststats` (NOT inside `/opt/mission-control` — that would trip the deploy script's clean-tree guard). Known-hosts pinned alongside.
+- Host `/root/.ssh/authorized_keys` entry is `command="/usr/local/bin/tide-hoststats.sh",restrict,no-pty…` so this key can ONLY run the stats script — any command it's given is ignored. Verified: `ssh … whoami` returns the JSON, not a shell.
+- Config in CT 112 `.env`: `HOST_STATS_SSH=root@192.168.1.2`, `HOST_STATS_KEY`, `HOST_STATS_KNOWN_HOSTS`. Media-drive free space on the same tab comes from Radarr's `/api/v3/diskspace` (`/media` mount, ~12TB), no SSH needed.
+- **If the host is rebuilt:** re-add the pubkey (`/root/.config/tide/hoststats.pub` on CT 112) to the host authorized_keys with the same forced command, and recreate the host script. Endpoint degrades gracefully (host:null) until then.
+
 ## Nginx Proxy Manager (CT 108, installed 2026-07-03)
 
 - LXC at **192.168.1.14** (static), built with the community-scripts helper, NPM v2.15.1 running natively (systemd `npm.service`, no Docker). 2 CPU / 2GB / 8GB on `data1-backups`.
