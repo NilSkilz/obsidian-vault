@@ -50,6 +50,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Tethered (BDSM safety SaaS) | `Projects/Tethered/overview.md` |
 | Mission Control (dashboard) | `Projects/Mission Control.md` |
 | Haven (family app) | `Projects/Haven.md` |
+| Craft ERP (Aimee's business app) | `Projects/Craft ERP.md` |
 | Technical lessons | `Decisions/Technical Lessons Learned.md` |
 | Daily logs | `Daily/YYYY-MM-DD.md` (format below) |
 
