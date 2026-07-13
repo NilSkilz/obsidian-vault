@@ -16,6 +16,13 @@ Aimee's craft business (leatherwork, candles) inventory and sales app. Single us
 - The Electron desktop app still works unchanged; the two entries share everything below `src/main/`.
 - On the Tide System page as a parents-only card ("Craft business stock & sales") linking to erp.cracky.co.uk. Kids' accounts don't see it.
 
+## Look & feel (2026-07-13)
+
+- Re-skinned into the **Tide aesthetic** (matches `tide.cracky.co.uk`): warm near-black ground, coral→rose gradient wordmark + primary buttons, glassy blurred sidebar, coral-soft active nav, breathing ambient glow, PrimeNG Aura remapped to a warm/coral palette. Design system lives in `src/renderer/styles/global.css` (Tide tokens + `--p-*` overrides + semantic vars `--ground/--surface/--accent/--grad/...`); shell in `app.component.ts`. Was the cold "Studio" theme (true black + neon lime).
+- **Tide *night* (dark) only** for now — Tide's own default. Deliberately did NOT port the sun-driven day/night crossfade (light mode is risky on Aimee's dense data tables). Fast-follow if wanted: light theme = a second PrimeNG var set + the Crackington sun logic from `~/projects/mission-control/src/tide/sun.js`, toggled via the `.dark` class + a `data-theme` attribute.
+- Semantic "in stock / ok" indicators stay **green**, not coral (coral is brand, not status). Status reds/ambers kept.
+- Committed on `feat/headless-web-server` (27f9646). Redeploy is the standard build+ship below; the CSS/markup change needs no data or schema work.
+
 ## Watch-outs
 
 - Anyone with the basic-auth creds (or on the LAN) has full read-write; there is no per-user model. If this ever grows beyond Aimee+Rob, the app needs real auth.
