@@ -130,17 +130,17 @@ The theme: the expiry pipeline fails *quiet*. Fixes below make it fail *loud* so
   Fix: persist the adjustment as a PointsTransaction + balance update.
   **Test:** adjust points, refresh; the change persists.
 
-- [~] **23. `SyncService` drops data at sign-up** — PR open on branch `fix/data-loss-sync-and-checklist-profile` (2026-07-11), with unit tests, 208/208 green.
+- [x] **23. `SyncService` drops data at sign-up** — merged to `develop` (PR #24 merge commit `c6f02fb`, 2026-07-13).
   `src/services/data/SyncService.ts:160-200`
   Fix: upload `notes`, `shareNotes`, `context`, and custom activities (+ their answers) during the local→cloud sync.
   **Test:** in demo mode add notes + a custom activity, sign up, confirm both survive in the cloud account.
 
-- [~] **24. `updateRelationship` silently drops `checklistProfileId` (one-line)** — PR open on branch `fix/data-loss-sync-and-checklist-profile` (2026-07-11), with unit test (set + clear).
+- [x] **24. `updateRelationship` silently drops `checklistProfileId` (one-line)** — merged to `develop` (same PR as #23).
   `src/services/data/AmplifyAdapter.ts:911-917` (missing from `validFields`; schema has it at `resource.ts:223`)
   Fix: add `'checklistProfileId'` to the whitelist.
   **Test:** set/clear a partner's checklist profile; the change persists (and deleting a profile actually clears the reference).
 
-- [ ] **25. `deleteCustomActivity` cascade delete is unpaginated**
+- [~] **25. `deleteCustomActivity` cascade delete is unpaginated** — fixed on `release/2026-07-review-fixes` (2026-07-13).
   `AmplifyAdapter.ts:606-617`
   Fix: loop on `nextToken` like the other list calls before deleting matched answers.
   **Test:** with many answers, delete a custom activity used across a big table; confirm no orphaned answers remain.
@@ -164,27 +164,33 @@ The theme: the expiry pipeline fails *quiet*. Fixes below make it fail *loud* so
   Fix: check affordability against the specific relationship's balance; enforce `cooldownDays` and `maxClaims` server-side/atomically.
   **Test:** with 50pts in A and 100 in B, you cannot claim a 120pt reward in A; a reward on cooldown is blocked.
 
-- [ ] **29. Streaks hardcoded to 0 while marketing promises streaks**
+- [~] **29. Streaks hardcoded to 0 while marketing promises streaks** — fixed on `release/2026-07-review-fixes` (2026-07-13, `src/utils/taskStreak.ts` + 13 unit tests).
   `TasksPage.tsx:526-530`, `SubDashboardPage.tsx:797-801`
   Fix: compute a real streak, or remove the claim until it exists.
   **Test:** complete tasks on consecutive days; streak increments.
 
-- [ ] **30. Task date grouping uses UTC while labels use local time**
+- [~] **30. Task date grouping uses UTC while labels use local time** — fixed on `release/2026-07-review-fixes` (2026-07-13, shared `src/utils/taskDates.ts`).
   `TasksPage.tsx:85-99` vs `:49-63` (helpers copy-pasted into 3 pages, already drifting)
   Fix: one shared date helper, consistent timezone handling.
   **Test:** as a non-UTC user, a task due tonight groups under "Today" and is labelled "Today" consistently.
 
-- [ ] **31. ManagePage infinite spinner when no active relationships + cross-partner points bleed**
+- [~] **31. ManagePage infinite spinner when no active relationships + cross-partner points bleed** — fixed on `release/2026-07-review-fixes` (2026-07-13, empty state + stale-load sequence guard).
   `ManagePage.tsx:517-522, 497-508`
   Fix: handle the zero-relationship case (show "not found" not a spinner); cancel/sequence in-flight `loadData`; reset `subPoints` between partners.
   **Test:** open Manage with no relationships → get a clear empty state; switch partners quickly → no stale points shown.
 
-- [ ] **32. Swallowed errors → empty UI can mislead sync conflict choice**
+- [~] **32. Swallowed errors → empty UI can mislead sync conflict choice** — fixed on `release/2026-07-review-fixes` (2026-07-13, sync modal blocks upload until the cloud check succeeds; answer caches invalidate on write).
   `DataService.getCloudDataSummary`, `SyncService.getCloudSummary`, `ChecklistContextProvider` caches
   Fix: distinguish "no data" from "fetch failed"; invalidate answer caches on write.
   **Test:** simulate a transient network failure during the sync modal; it must not report "no cloud data."
 
 ---
+
+## Found along the way
+
+- [~] **33. `sendPushNotification` queried nonexistent indexes; every push silently sent to zero devices** — found during the batch-2 auth work, fixed on `release/2026-07-review-fixes` (2026-07-13).
+  `amplify/functions/sendPushNotification/handler.ts` (subscriptions used a `byUserIdAndActive` GSI the schema never defined; preferences queried the base table by `userId` when the PK is `id`; both errors were swallowed).
+  **Test:** with an active push subscription, trigger any notification (e.g. task assigned); it must actually arrive. Set quiet hours to now; a non-safety push must be suppressed.
 
 ## Done (this review)
 
