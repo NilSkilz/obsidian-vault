@@ -38,7 +38,7 @@ rm -f /tmp/jarvis-briefing-err.$$
 echo "$BRIEF"
 
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-  --data-urlencode "chat_id=${TELEGRAM_ALLOWED_CHAT}" \
+  --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
   --data-urlencode "text=${BRIEF:0:4000}" >/dev/null
 
 echo "----- $(date -Iseconds) briefing ($MODE) end -----"

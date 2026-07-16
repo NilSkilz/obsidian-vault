@@ -29,6 +29,14 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 - **The loop:** when things are good he loves Aimee and loves this life; when he's exhausted or tempted he questions whether he'd be better off alone or with "someone less insecure" — then feels awful for thinking it. This cycle repeats across the whole period.
 - Boundaries negotiated with Aimee: no dates, nothing "couply"/romantic that could grow into leaving her; be respected and considered; communicate about encounters.
 
+### The post-play-date re-entry panic (surfaced 2026-07-15)
+
+- Coming home after a play date (esp. with [[Tash]]) reliably triggers a wave of anticipatory anxiety in the window **before Aimee gets home**. Body goes into "brace for it" mode; he's described it as panic that shows up "about now" like clockwork.
+- **This is NOT baseless catastrophising.** Aimee being off / cold / passive-aggressive after his play dates has happened often enough that his nervous system is *trained* to expect it. It's learned pattern-recognition, not irrational fear. Do **not** try to reassure him it's "all in his head" or "no evidence" — that's wrong and he'll know it. Name it as a trained response instead.
+- **The bind:** the one thing that might fix it — actually talking to Aimee about the after-date coldness — reliably becomes its own fight. So the fear has no release valve and comes out somatically, every time.
+- **What helped in the moment (2026-07-15):** naming it as a trained response, not a malfunction; long-exhale breathing (reaches the body where words don't); sensory grounding; and pointing out he'd already done the one controllable thing right (texted Aimee "safe and missed you" the moment he got home). Taking the self-blame off him — "if she's off despite that text, it genuinely isn't about what you did" — landed well.
+- **The longer thread:** if coming home happy reliably costs him a toll, that's a shared/structural issue in the arrangement, not his failure to "keep in touch." Worth a calm, *cold-moment* conversation (never in the aftermath), framed from his body ("here's what happens to me") not her behaviour ("you do X"). If even that detonates, it's a real case for **ENM-aware couples counselling** — ties into the "therapist near Bude" thread in Wellbeing below.
+
 ## Self-insight Rob reached along the way
 
 - His compulsive **phone-checking** and habit of **making things to "show off"** trace back to a long-standing pattern of **outsourcing stability/validation to others**. He did real work on this (e.g. a phone-airplane-mode exercise, deliberately doing a project just for himself, not to post).
