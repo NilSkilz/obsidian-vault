@@ -12,6 +12,12 @@
 **Result:** Full outage recovered in minutes with no data loss; pool now self-maintains  
 **Date:** 2026-07-03
 
+### UniFi Won't Reserve a Fixed IP a Container Only Ever Held via Proxmox Static
+**Problem:** New CT (GlitchTip, CT 106) was given a Proxmox static IP (`.20`) from birth and never did DHCP. Trying to add the belt-and-braces DM reservation (`PUT/POST rest/user … use_fixedip,fixed_ip,network_id`) kept failing with `api.err.InvalidFixedIP` — even with the CT stopped and after `forget-sta`. UniFi keeps a sticky `IP ↔ MAC` client mapping for a wired host it has seen, and refuses to convert an address the client is "already at" (outside DHCP) into a fixed reservation. Distinct error from `api.err.FixedIpAlreadyUsedByClient` (that one = a *different* live client holds the IP).  
+**Solution:** Break the catch-22 by giving the MAC a real DHCP lease first: `pct set <id> -net0 …,ip=dhcp`, start, let it lease a pool IP, then reserve **that** IP (reserving a client's current lease is the textbook flow → `rc:ok`). Then set the Proxmox static back to the reserved IP. Net result: the CT lands on whatever DHCP handed out (here `.62`, not the tidy `.20` I wanted), static + reservation both pinned. Diagnostic that localises it fast: try reserving a few IPs — `InvalidFixedIP` = the target is stuck to your own MAC; `FixedIpAlreadyUsedByClient` = someone else is live on it; `rc:ok` = free and reservable.  
+**Result:** Reservation created cleanly on `.62`; don't burn an hour fighting the original number — reserve the lease and move on.  
+**Date:** 2026-07-17
+
 ### Auth "Disabled for Local Addresses" Is Meaningless Behind a Same-LAN Reverse Proxy
 **Problem:** Sonarr/Radarr/Prowlarr with auth "disabled for local addresses" were login-free from the INTERNET once proxied, because the proxy's LAN IP is the client and X-Forwarded-For is not trusted  
 **Solution:** Flip to auth-required-everywhere before exposing; always spoof-test with `curl -H "X-Forwarded-For: 8.8.8.8" https://host/` and expect a login wall  
