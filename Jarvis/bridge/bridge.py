@@ -30,6 +30,7 @@ import queue
 import random
 import shutil
 import subprocess
+import tempfile
 import threading
 import time
 import urllib.parse
@@ -47,6 +48,12 @@ ACK_GRACE = 8              # if Opus hasn't spoken by now, send a canned ack so 
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
+# Voice-note transcription: a standalone faster-whisper helper in its own venv,
+# so bridge.py stays stdlib-only and the heavy ML dep is isolated. Local + CPU,
+# no cloud key. See transcribe.py.
+WHISPER_PY = HOME / ".local/share/jarvis-whisper/venv/bin/python"
+TRANSCRIBE_PY = pathlib.Path(__file__).resolve().parent / "transcribe.py"
+TRANSCRIBE_TIMEOUT = 300   # 5 min; a long note on 4 CPU cores still finishes well inside this
 
 STATE.mkdir(parents=True, exist_ok=True)
 OFFSET_FILE = STATE / "offset"
@@ -96,6 +103,61 @@ def send(chat, text):
 
 def typing(chat):
     api("sendChatAction", {"chat_id": chat, "action": "typing"}, timeout=15)
+
+
+def tg_download(file_id):
+    """Resolve a Telegram file_id to a download URL and pull it to a temp file.
+    Returns the local path, or None on any failure."""
+    r = api("getFile", {"file_id": file_id}, timeout=30)
+    if not r or not r.get("ok"):
+        return None
+    fp = (r.get("result") or {}).get("file_path")
+    if not fp:
+        return None
+    url = f"https://api.telegram.org/file/bot{TOKEN}/{fp}"
+    suffix = os.path.splitext(fp)[1] or ".oga"
+    dst = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, prefix="jarvis-voice-")
+    try:
+        with urllib.request.urlopen(url, timeout=90) as resp:
+            shutil.copyfileobj(resp, dst)
+        dst.close()
+        return dst.name
+    except Exception as e:
+        log(f"tg_download error: {e}")
+        try:
+            dst.close()
+            os.unlink(dst.name)
+        except Exception:
+            pass
+        return None
+
+
+def transcribe_voice(voice):
+    """Download a voice/audio/video note and transcribe it locally. Returns the
+    transcript text, or "" if anything fails or it's inaudible."""
+    path = tg_download(voice["file_id"])
+    if not path:
+        return ""
+    try:
+        proc = subprocess.run(
+            [str(WHISPER_PY), str(TRANSCRIBE_PY), path],
+            capture_output=True, text=True, timeout=TRANSCRIBE_TIMEOUT,
+        )
+        if proc.returncode != 0:
+            log(f"transcribe rc={proc.returncode} err={(proc.stderr or '')[-300:]}")
+            return ""
+        return proc.stdout.strip()
+    except subprocess.TimeoutExpired:
+        log("transcribe timeout")
+        return ""
+    except Exception as e:
+        log(f"transcribe error: {e}")
+        return ""
+    finally:
+        try:
+            os.unlink(path)
+        except Exception:
+            pass
 
 
 def recent_buffer():
@@ -279,9 +341,17 @@ def process(chat, text):
 
 def worker_loop():
     while True:
-        chat, text = JOBS.get()
+        chat, text, voice = JOBS.get()
         BUSY.set()
         try:
+            if voice:
+                typing(chat)
+                text = transcribe_voice(voice)
+                if not text:
+                    send(chat, "Got your voice note but couldn't make out any words. Mind typing it, or trying again?")
+                    continue
+                # Echo back what I heard so Rob can catch a mishear at a glance.
+                send(chat, f"\N{STUDIO MICROPHONE} Heard: “{text}”")
             process(chat, text)
         except Exception as e:
             log(f"worker error: {e}")
@@ -309,16 +379,22 @@ def main():
             msg = upd.get("message") or {}
             chat = msg.get("chat", {}).get("id")
             text = msg.get("text")
-            if chat is None or not text:
+            # Voice note, audio file, or round video note -> transcribe in the
+            # worker (keeps this poll loop from ever blocking on it).
+            voice = msg.get("voice") or msg.get("audio") or msg.get("video_note")
+            if chat is None or (not text and not voice):
                 continue
             if ALLOWED and str(chat) != ALLOWED:
-                log(f"ignored msg from unlisted chat {chat}: {text[:50]}")
+                log(f"ignored msg from unlisted chat {chat}: {(text or '[voice]')[:50]}")
                 continue
-            log(f"<< {chat}: {text}")
+            if voice:
+                log(f"<< {chat}: [voice {str(voice.get('file_id',''))[:12]}… {voice.get('duration','?')}s]")
+            else:
+                log(f"<< {chat}: {text}")
             # If a job is already running (or waiting), tell Rob this one is queued.
             if BUSY.is_set() or not JOBS.empty():
                 send(chat, "Noted, I'll pick this up right after the current job.")
-            JOBS.put((chat, text))
+            JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None))
 
 
 if __name__ == "__main__":
