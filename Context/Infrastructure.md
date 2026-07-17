@@ -155,7 +155,7 @@ None of the old operational scripts or secrets are present on this box (`/home/j
 - ~~**Telegram bridge**~~ — **rebuilt** (agentic Python bridge, now live — see its own section below). **Durable lesson still stands:** Telegram allows only ONE `getUpdates` consumer, so the `telegram@claude-plugins-official` plugin and this poller would fight over the bot token (409 Conflict) and inbound silently dies. Keep the plugin disabled.
 - ~~**Cloudflare DDNS**~~ — **rebuilt 2026-07-03**: `Jarvis/bin/cloudflare-ddns.sh`, cron every 10 min as `jarvis`, token in `~/.config/jarvis/cloudflare.env`, logs to `~/.local/state/cloudflare-ddns.log`. Keeps apex + wildcard A records on the dynamic BT IP (not Cloudflare-proxied).
 - **Todoist nudges** — `todoist-nudge.sh` (morning/afternoon executive-function nudges) + `build-queue-nudge.sh`. Creds in `todoist.env`.
-- **DAKboard alerts** — `dakboard-notify.sh` posted notable alerts to the wall display (was `localhost:3006`, will differ on the new setup).
+- ~~**DAKboard alerts**~~ — **rebuilt 2026-07-17** as the Jarvis wall panel (see its own section below). `dakboard-notify.sh` is back.
 
 ## External / cloud resources (inherited, likely still valid)
 
@@ -185,6 +185,17 @@ This is the channel Rob actually talks to me through, distinct from the family c
 - **Supervised by cron, not systemd:** `Jarvis/bridge/run.sh` (idempotent) runs `@reboot` and every 5 min as a watchdog, keeping it alive in tmux session `jarvis-bridge`. To reload code changes: `tmux kill-session -t jarvis-bridge` and the next cron tick (or `run.sh`) restarts it. **Gotcha:** the bridge is the parent of the live `claude -p` run, so a session started *by a message* must not restart the bridge synchronously (it would kill itself mid-reply) — restart detached, after the run finishes.
 - Bot `@haven_ai_chatbot`, token + allowed chat id `7331133695` in `~/.config/jarvis/telegram.env`. Model via `JARVIS_MODEL` in `run.sh` (Opus 4.8).
 - **Voice notes (added 2026-07-17):** voice / audio / round-video-note messages are transcribed locally with **faster-whisper** (CPU, no cloud key). Standalone helper `Jarvis/bridge/transcribe.py` in its own venv at `~/.local/share/jarvis-whisper/venv`, model cache `~/.local/share/jarvis-whisper/models` (both outside the git repo). Default model `base.en`/int8 (~141M, warm run ~1s for a short note); PyAV wheels bundle ffmpeg so no system ffmpeg needed. Bump `JARVIS_WHISPER_MODEL=small.en` if proper nouns get mangled. The worker (not the poll loop) does the transcribe, echoes “🎙️ Heard: …” back so Rob can catch a mishear, then runs the transcript as a normal job.
+
+## Jarvis wall panel / DAKboard (rebuilt 2026-07-17)
+
+The successor to the old NUC's DAKboard alert iframe. A transparent-background HTML panel I host and push alerts to, that Rob iframes into DAKboard.
+
+- **Live at `https://wall.cracky.co.uk/?k=<token>`** (token in `~/.config/jarvis/wall-token.txt`, chmod 600). Served from CT 110 (this box) on `:3060` by a stdlib-Python static server, TLS terminated at NPM (proxy host id 14 → `192.168.1.11:3060`, wildcard cert 2, SSL forced, no access list — the URL token gates it instead, so a wall display never sees a login prompt and it works whether DAKboard renders on-LAN or in its cloud). Wildcard A record already resolves `wall.` — no DNS work.
+- **Why a token not an access list / basic auth:** a DAKboard iframe can't answer a basic-auth box, and I couldn't assume the display renders on the LAN. An unguessable `?k=` query is passed through by the page to its own `alerts.json` fetch; `serve.py` 403s any request without it. Low-sensitivity content, so "public but unguessable" is the right trade.
+- **Code lives in the vault** (git-backed, survives a rebuild): `Jarvis/dakboard/serve.py` + `Jarvis/dakboard/index.html`. Runtime state (`alerts.json`) is kept OUT of git at `/home/jarvis/dakboard/alerts.json` (env `WALL_STATE`) to avoid commit churn; the server serves an empty feed if it's missing.
+- **Service:** systemd `jarvis-wall.service` on CT 110 (User=jarvis, enabled, `Restart=always`), `ExecStart=/usr/bin/python3 /data/memory/Jarvis/dakboard/serve.py`, envs `WALL_PORT=3060 WALL_STATE=/home/jarvis/dakboard WALL_TOKEN=…`. Restart: `ssh proxmox "pct exec 110 -- systemctl restart jarvis-wall"`. Runs from the vault path, same as the chat bridge, so it needs the vault mount.
+- **Posting alerts:** `Jarvis/bin/dakboard-notify.sh add <ok|info|warn|alert> "<title>" ["<detail>"]` (prepends, keeps newest 8, timestamps), `… clear`, `… list`. The page polls every 20s. Level sets the accent colour. Good candidate to wire into `heartbeat.sh` for thin-pool / update / service-down nudges on the wall.
+- **Rebuild checklist if CT 110 is wiped:** code restores from the vault; re-create the systemd unit (above) with a fresh token, and re-add the NPM proxy host (one API call on cert 2). Give Rob the new `?k=` URL for DAKboard.
 
 ## History
 

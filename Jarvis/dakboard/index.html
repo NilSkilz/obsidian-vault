@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis Wall</title>
+<style>
+  :root {
+    --ok:   #34d399;
+    --info: #60a5fa;
+    --warn: #fbbf24;
+    --alert:#f87171;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    height: 100%;
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+  }
+  #wrap {
+    padding: 14px 16px;
+    box-sizing: border-box;
+  }
+  #head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 2px 12px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  }
+  #dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 8px var(--ok);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% {opacity:1;} 50% {opacity:0.35;} }
+  #stamp { margin-left: auto; letter-spacing: 1px; font-weight: 400; opacity: 0.6; font-size: 11px; }
+
+  .card {
+    position: relative;
+    background: rgba(10,12,18,0.42);
+    border-radius: 12px;
+    padding: 11px 14px 11px 16px;
+    margin-bottom: 9px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: rise 0.4s ease both;
+  }
+  @keyframes rise { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--info);
+  }
+  .card.ok::before    { background: var(--ok); }
+  .card.info::before  { background: var(--info); }
+  .card.warn::before  { background: var(--warn); }
+  .card.alert::before { background: var(--alert); }
+
+  .row { display: flex; align-items: baseline; gap: 10px; }
+  .title {
+    font-size: 16px; font-weight: 600; line-height: 1.3;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  }
+  .time {
+    margin-left: auto; font-size: 12px; opacity: 0.6;
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .detail {
+    margin-top: 3px; font-size: 13px; line-height: 1.4;
+    color: rgba(255,255,255,0.82);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  }
+  #empty {
+    text-align: center; padding: 30px 0; opacity: 0.55;
+    font-size: 15px; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  }
+  #empty .big { font-size: 26px; display: block; margin-bottom: 6px; color: var(--ok); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="head">
+    <span id="dot"></span>
+    <span>Jarvis</span>
+    <span id="stamp"></span>
+  </div>
+  <div id="list"></div>
+</div>
+<script>
+  const LEVELS = ["ok","info","warn","alert"];
+  const listEl  = document.getElementById("list");
+  const stampEl = document.getElementById("stamp");
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => (
+    {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function render(data){
+    const alerts = (data && Array.isArray(data.alerts)) ? data.alerts : [];
+    stampEl.textContent = data && data.updated
+      ? new Date(data.updated).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
+      : "";
+    if (!alerts.length){
+      listEl.innerHTML = '<div id="empty"><span class="big">&#10003;</span>All clear</div>';
+      return;
+    }
+    listEl.innerHTML = alerts.map(a => {
+      const lvl = LEVELS.includes(a.level) ? a.level : "info";
+      const time = a.time ? '<span class="time">'+esc(a.time)+'</span>' : "";
+      const detail = a.detail ? '<div class="detail">'+esc(a.detail)+'</div>' : "";
+      return '<div class="card '+lvl+'"><div class="row"><span class="title">'
+        + esc(a.title)+'</span>'+time+'</div>'+detail+'</div>';
+    }).join("");
+  }
+
+  const KEY = new URLSearchParams(location.search).get("k");
+  async function poll(){
+    try {
+      let url = "alerts.json?_=" + Date.now();
+      if (KEY) url += "&k=" + encodeURIComponent(KEY);
+      const r = await fetch(url, {cache:"no-store"});
+      if (r.ok) render(await r.json());
+    } catch(e){ /* keep last good render */ }
+  }
+  poll();
+  setInterval(poll, 20000);
+</script>
+</body>
+</html>
