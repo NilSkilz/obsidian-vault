@@ -6,11 +6,12 @@ queued and handled by a single background worker, so Telegram stays responsive
 while a job runs. Each message is handed to an agentic `claude -p` run inside
 the vault, streamed as `stream-json`. That run has full tools and
 skip-permissions, so it actually DOES the work (edits code, runs commands,
-pushes, updates the vault) end to end. Its FIRST streamed line — Opus's own
-opening, which reflects the ask back — is sent to Rob as the instant
-acknowledgement; its final summary is sent once the work is done. A canned line
-is only a fallback for when Opus is slow to speak. The typing indicator is kept
-alive throughout. When it says it did something, it did.
+pushes, updates the vault) end to end. The typing indicator carries the
+"working" signal while the job runs; the final summary is sent once the work is
+done. A separate up-front ack is off by default (set JARVIS_ACK=1 to re-enable
+the "on it" line — Opus's own streamed opening, with a canned fallback if it's
+slow to speak). The typing indicator is kept alive throughout. When it says it
+did something, it did.
 
 Continuity comes from a rolling conversation buffer fed into each prompt, not
 from a persistent Claude process, so the whole thing survives a model swap and
@@ -44,6 +45,7 @@ PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
+ACK_ENABLED = os.environ.get("JARVIS_ACK", "0") == "1"  # send a separate "on it" ack? Off by default (Rob found it noise); typing indicator carries the "working" signal instead
 ACK_GRACE = 8              # if Opus hasn't spoken by now, send a canned ack so Rob has confirmation
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
@@ -297,6 +299,10 @@ def process(chat, text):
     def send_ack(t):
         # Fire exactly one ack, whoever gets there first: Opus's streamed
         # opening line, or the canned fallback if it's slow to speak.
+        # Acks are opt-in (JARVIS_ACK=1); when off, we stay silent until the
+        # final reply and let the typing indicator carry the "working" signal.
+        if not ACK_ENABLED:
+            return
         with ack_lock:
             if ack["sent"]:
                 return
