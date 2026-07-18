@@ -9,7 +9,7 @@ skip-permissions, so it actually DOES the work (edits code, runs commands,
 pushes, updates the vault) end to end. The typing indicator carries the
 "working" signal while the job runs; the final summary is sent once the work is
 done. A separate up-front ack is off by default (set JARVIS_ACK=1 to re-enable
-the "on it" line — Opus's own streamed opening, with a canned fallback if it's
+the "on it" line: Opus's own streamed opening, with a canned fallback if it's
 slow to speak). The typing indicator is kept alive throughout. When it says it
 did something, it did.
 
@@ -47,6 +47,7 @@ BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "0") == "1"  # send a separate "on it" ack? Off by default (Rob found it noise); typing indicator carries the "working" signal instead
 ACK_GRACE = 8              # if Opus hasn't spoken by now, send a canned ack so Rob has confirmation
+LONG_JOB_NOTICE = 30       # ack-off middle ground: if still working after this long and we've said nothing, drop ONE light "still on it" line
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
@@ -286,6 +287,13 @@ ACK_POOL = [
     "Understood, on it.",
 ]
 
+NOTICE_POOL = [
+    "Still on this, few more minutes.",
+    "Bigger job than a one-liner, still going.",
+    "Working through it, won't be long.",
+    "Still cooking, hang tight. 🌊",
+]
+
 
 def process(chat, text):
     """Handle one job: stream the run, send Opus's opening line as the live ack,
@@ -326,8 +334,23 @@ def process(chat, text):
         if not done.wait(ACK_GRACE):
             send_ack(random.choice(ACK_POOL))
 
+    def long_job_notice():
+        # Middle ground for the ack-off default: if a job is still running after
+        # LONG_JOB_NOTICE and we've said nothing yet, send exactly ONE light
+        # "still going" line so Rob isn't left staring at a bare typing dot on a
+        # long job. Claims the ack slot so it can't double up; leaves ack["text"]
+        # unset so the final reply still lands normally.
+        if done.wait(LONG_JOB_NOTICE):
+            return
+        with ack_lock:
+            if ack["sent"]:
+                return
+            ack["sent"] = True
+        send(chat, random.choice(NOTICE_POOL))
+
     threading.Thread(target=keep_typing, daemon=True).start()
     threading.Thread(target=grace_fallback, daemon=True).start()
+    threading.Thread(target=long_job_notice, daemon=True).start()
 
     reply = run_claude(text, buffer, on_text)
     done.set()
