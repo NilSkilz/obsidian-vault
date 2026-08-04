@@ -11,6 +11,7 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 ## Rob's identity & what he wants
 
 - Identifies strongly as a **Dom**; kink/BDSM has become a core part of his sense of self ("a part of myself I don't want to let go"). Enjoys impact, fire, wax play; being the one in control.
+- **Sexuality (surfaced late July 2026):** described himself as **"not NOT bi… kinda curious 😂"** — a light, genuine disclosure, nothing decided, no plan. Treat it as real and unremarkable; no label owed. He raised it alongside the HPV-vaccine chat (the free NHS route runs through the MSM/self-declared path).
 - Motivated by **novelty, being desired, and the ego boost** of new people wanting to play with him.
 - Does **not** want another romantic or primary partner — Aimee is "home." He wants freedom for play and casual/sexual connection alongside the marriage.
 - Recognises his self-worth leans too much on being wanted by others, and is uneasy about that.
@@ -58,4 +59,8 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 
 ## Wellbeing thread (worth holding gently)
 
-Across the 15 months there's a steady undercurrent of **low mood, loneliness (especially when Aimee's away, when working from home, or at events alone), guilt, and burnout**, with some notably dark moments (autumn 2025). He looked into finding a **therapist near Bude**. This is a heavy, ongoing emotional load, not just logistics.
+Across the 15 months there's a steady undercurrent of **low mood, loneliness (especially when Aimee's away, when working from home, or at events alone), guilt, and burnout**, with some notably dark moments (autumn 2025, and again **2026-07-08** — a very low patch mid-row with Aimee where he said "I don't wanna be here anymore," clarified as *wanting to disappear, not to die*; it lifted within the conversation, see [[Rob Mood Log]]). He looked into finding a **therapist near Bude**. This is a heavy, ongoing emotional load, not just logistics.
+
+## Sexual-health / ENM harm-reduction (surfaced late July 2026)
+
+Rob started thinking about the health side of the multi-partner network (Aimee↔Sean, Rob↔Tash, plus outer circles). Weighing **PrEP** (sensible for his risk profile; free on the NHS via GUM clinics) and the **HPV vaccine** (Gardasil 9; free only via the MSM/self-declared route, else ~£150-200/dose private). Nearest clinic is **Holsworthy** (Devon Sexual Health, Thursdays, appointment-only, 0300 303 3989); no clinic in Bude itself. His instinct is partly "make Aimee feel safer" — the real lever there is a shared quarterly testing rhythm and being the one who owns the admin. Nothing booked yet; this is an intention, not a done thing.

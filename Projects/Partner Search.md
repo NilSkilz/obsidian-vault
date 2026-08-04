@@ -23,3 +23,11 @@ The human stays in the discovery seat. When Rob surfaces someone himself (browsi
 - Sharp, *personalised* opener help
 
 I do NOT write or send messages for him (his explicit preference) and do NOT mass-message.
+
+## Candidates
+
+### Grace (late July 2026) — cooling / likely off
+
+A prospective new partner Rob was talking to; a Tuesday meet was planned. She pulled back citing a **"bad gut feeling"** because his negotiation style differed from hers (**opt-out vs opt-in**), framed around **consent** (her highest-priority thing). She slept on it; the meet went wobbly. **Second time she's reacted OTT to something innocuous.** Rob was sad + annoyed + went into "I don't know what I'm doing anymore" spiral (that last part is his own wobble, not really about her — see [[Rob Mood Log]]).
+
+My steer to him (for continuity if this comes up again): not a hard no, but don't decide while tired/stung. The self-respecting move isn't "call her out" (that would trample the consent framework she holds sacred) — it's to get *curious* ("help me understand the concern") and then honestly notice whether understanding her costs him this much this early. If it does, that's his data; he's allowed to walk without proving she was wrong.
