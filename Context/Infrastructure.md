@@ -227,6 +227,16 @@ The successor to the old NUC's DAKboard alert iframe. A transparent-background H
 - **Posting alerts:** `Jarvis/bin/dakboard-notify.sh add <ok|info|warn|alert> "<title>" ["<detail>"]` (prepends, keeps newest 8, timestamps), `… clear`, `… list`. The page polls every 20s. Level sets the accent colour. Good candidate to wire into `heartbeat.sh` for thin-pool / update / service-down nudges on the wall.
 - **Rebuild checklist if CT 110 is wiped:** code restores from the vault; re-create the systemd unit (above) with a fresh token, and re-add the NPM proxy host (one API call on cert 2). Give Rob the new `?k=` URL for DAKboard.
 
+## Weekly self-learn (built 2026-08-04)
+
+The standing "go back through the week's chats and self-learn" loop Rob asked about. It finally exists as a scheduled job (the idea predated the rebuild but was never a running cron).
+
+- **The chat archive already existed:** the Telegram bridge logs the **full** conversation to `~/.local/state/jarvis-bridge/conversation.log` (not just the rolling 16-turn buffer it feeds back per prompt — that's only what `recent_buffer()` slices for continuity). So no new logging was needed; that file IS the history.
+- **`Jarvis/bin/self-learn.sh`** (cron **`0 4 * * 0`**, Sundays 04:00 — after the 02:30 git-sync, before the 07:00 briefing). Mirrors `briefing.sh`: slices the new conversation since it last ran, hands it to an agentic `claude -p` in the vault (full tools, skip-perms), and lets that run distil durable lessons into memory following the CLAUDE.md + auto-memory rules. Ends by sending Rob a short Telegram summary (`🧠 Weekly self-learn …`) of what it learned + where it filed it.
+- **How "the week" is sliced:** a **byte-offset marker** at `~/.local/state/jarvis-self-learn.offset`, not timestamps. Each run reads `[offset, EOF)` of the log = exactly the new material since last time, then advances the marker to EOF on success (anything appended mid-run rolls into next week). Robust to multi-line entries and log rotation (offset > size ⇒ reset to 0). On a `claude` failure it does NOT advance the marker, so the same slice retries next run. Under `MIN_NEW_LINES=15` of new chat it skips quietly (no ping, no advance). Log: `~/.local/state/jarvis-self-learn.log`.
+- **First run was a full backlog bootstrap** (no offset file ⇒ START=0 ⇒ distilled everything logged since the bridge went live). The dedup guard in the prompt ("check for an existing file/section before writing") keeps that from duplicating what's already recorded.
+- Writes land in whichever memory fits: the vault (git-backed, picked up by the nightly git-sync) or the auto-memory dir `/home/jarvis/.claude/projects/-data-memory/memory/`.
+
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.
