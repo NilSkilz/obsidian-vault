@@ -175,7 +175,7 @@ def append_convo(line):
             f.write(line.rstrip("\n") + "\n")
 
 
-def run_claude(text, buffer, on_text):
+def run_claude(text, buffer, on_text, image_path=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
     Calls on_text(block) for each completed top-level assistant text block, in
@@ -198,6 +198,13 @@ Recent conversation:
 {buffer}
 
 Rob's new message: {text}"""
+
+    if image_path:
+        prompt += (
+            f"\n\nRob attached an image with this message. It's saved locally at "
+            f"{image_path} — use your Read tool to open and view it before you reply "
+            f"(it may be a nutrition label, a screenshot, or a photo he wants you to act on)."
+        )
 
     finished = threading.Event()
     killed = {"v": False}
@@ -295,7 +302,7 @@ NOTICE_POOL = [
 ]
 
 
-def process(chat, text):
+def process(chat, text, image_path=None):
     """Handle one job: stream the run, send Opus's opening line as the live ack,
     keep typing alive, then send the final summary."""
     buffer = recent_buffer()
@@ -352,7 +359,7 @@ def process(chat, text):
     threading.Thread(target=grace_fallback, daemon=True).start()
     threading.Thread(target=long_job_notice, daemon=True).start()
 
-    reply = run_claude(text, buffer, on_text)
+    reply = run_claude(text, buffer, on_text, image_path)
     done.set()
 
     ack_text = (ack["text"] or "").strip()
@@ -370,8 +377,9 @@ def process(chat, text):
 
 def worker_loop():
     while True:
-        chat, text, voice = JOBS.get()
+        chat, text, voice, photo = JOBS.get()
         BUSY.set()
+        image_path = None
         try:
             if voice:
                 typing(chat)
@@ -381,7 +389,15 @@ def worker_loop():
                     continue
                 # Echo back what I heard so Rob can catch a mishear at a glance.
                 send(chat, f"\N{STUDIO MICROPHONE} Heard: “{text}”")
-            process(chat, text)
+            if photo:
+                typing(chat)
+                image_path = tg_download(photo["file_id"])
+                if not image_path:
+                    send(chat, "Got your photo but couldn't pull it down off Telegram. Mind sending it again?")
+                    continue
+                if not text:
+                    text = "(sent a photo, no caption)"
+            process(chat, text, image_path)
         except Exception as e:
             log(f"worker error: {e}")
             try:
@@ -389,6 +405,11 @@ def worker_loop():
             except Exception:
                 pass
         finally:
+            if image_path:
+                try:
+                    os.unlink(image_path)
+                except Exception:
+                    pass
             BUSY.clear()
             JOBS.task_done()
 
@@ -411,19 +432,33 @@ def main():
             # Voice note, audio file, or round video note -> transcribe in the
             # worker (keeps this poll loop from ever blocking on it).
             voice = msg.get("voice") or msg.get("audio") or msg.get("video_note")
-            if chat is None or (not text and not voice):
+            # Photo (Telegram sends several sizes; last is the largest), or an
+            # image sent as a document/file attachment.
+            photo = None
+            if msg.get("photo"):
+                photo = {"file_id": msg["photo"][-1]["file_id"]}
+            else:
+                doc = msg.get("document") or {}
+                if str(doc.get("mime_type", "")).startswith("image/"):
+                    photo = {"file_id": doc["file_id"]}
+            # A photo's caption (if any) rides in as the message text.
+            if photo and not text:
+                text = msg.get("caption")
+            if chat is None or (not text and not voice and not photo):
                 continue
             if ALLOWED and str(chat) != ALLOWED:
-                log(f"ignored msg from unlisted chat {chat}: {(text or '[voice]')[:50]}")
+                log(f"ignored msg from unlisted chat {chat}: {(text or '[media]')[:50]}")
                 continue
             if voice:
                 log(f"<< {chat}: [voice {str(voice.get('file_id',''))[:12]}… {voice.get('duration','?')}s]")
+            elif photo:
+                log(f"<< {chat}: [photo {str(photo.get('file_id',''))[:12]}…] {(text or '')[:50]}")
             else:
                 log(f"<< {chat}: {text}")
             # If a job is already running (or waiting), tell Rob this one is queued.
             if BUSY.is_set() or not JOBS.empty():
                 send(chat, "Noted, I'll pick this up right after the current job.")
-            JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None))
+            JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None, photo))
 
 
 if __name__ == "__main__":
