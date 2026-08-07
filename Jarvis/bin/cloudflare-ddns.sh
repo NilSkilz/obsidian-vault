@@ -6,7 +6,10 @@
 set -euo pipefail
 
 source "$HOME/.config/jarvis/cloudflare.env"
-ZONE_ID="abf35cddd4423cfe8bb4f34c993e0b85"
+ZONE_ID="da56dd2f412d61d964009ef8ec7368d6"
+# Only these names track the house IP. Everything else (autodiscover -> Cloudflare
+# email IPs, MX, TXT) is left alone.
+MANAGED="cracky.co.uk www.cracky.co.uk *.cracky.co.uk"
 LOG="$HOME/.local/state/cloudflare-ddns.log"
 mkdir -p "$(dirname "$LOG")"
 
@@ -24,6 +27,7 @@ echo "$records" | python3 -c '
 import json, sys
 for r in json.load(sys.stdin)["result"]:
     print(r["id"], r["name"], r["content"])' | while read -r id name content; do
+  [[ " $MANAGED " == *" $name "* ]] || continue
   if [[ "$content" != "$WAN" ]]; then
     resp=$(cf -X PATCH "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$id" --data "{\"content\":\"$WAN\"}")
     if echo "$resp" | grep -q '"success":true'; then
