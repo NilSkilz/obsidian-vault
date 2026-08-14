@@ -185,10 +185,13 @@ Rob flagged £48 for two Kamoer NKPs as steep, and raised two cheaper routes. Bo
 |---|---|---|
 | 2× 3.5mm TRRS panel jack + plug (reservoir base connectors), or GX12 keyed | 2 | 4.00 |
 | E-stop NC button (in 12V pump rail) | 1 | 3.00 |
-| Protoboard / perfboard, JST + Dupont wire, screw terminals | — | 5.00 |
+| Protoboard / perfboard, JST + Dupont wire, screw terminals (for the bench proto) | — | 5.00 |
 | Inline barb tees / connectors if needed (tube itself now covered by electronics #10) | — | 3.00 |
+| **Custom 2-layer PCB** — JLCPCB/PCBWay, 5 boards (~£2 board + ~£3 shipping). Decided 2026-08-14 | 5 | 5.00 |
 
-**Misc subtotal: ~£15.00** (enclosure is 3D printed = filament you have; reservoirs = the saline bottles themselves.)
+**Misc subtotal: ~£20.00** (enclosure is 3D printed = filament you have; reservoirs = the saline bottles themselves.)
+
+*Note: perfboard line stays — the plan is still perfboard proto first to lock the pinout, then fab the PCB. Both are in the budget; the £5 PCB is the marginal add for the keeper build.*
 
 ### C. Sterile path — UK medical suppliers (NOT AliExpress)
 
@@ -215,10 +218,10 @@ Sourcing flags:
 | Bucket | £ |
 |---|---|
 | A. Electronics (AliExpress + Amazon tube) | 62.50 |
-| B. Misc bits (AliExpress) | 15.00 |
+| B. Misc bits (AliExpress, incl. £5 custom PCB) | 20.00 |
 | C. Sterile path first buy (with chlorhex) | 77.00 |
-| **Full build, everything** | **~£154.50** |
-| (…with plain alcohol wipes instead) | ~£140.50 |
+| **Full build, everything** | **~£159.50** |
+| (…with plain alcohol wipes instead) | ~£145.50 |
 
 *Down ~£30 from the earlier £184.50: pump line dropped £48 (2× Kamoer) → £9 (one matching 500-series unit, Rob owns the other), plus £9 for the food-grade re-tube silicone.*
 
@@ -238,7 +241,18 @@ Per-session disposables *after* the first buy: **~£15–25**, dominated by sali
 2. **ESP32 terminal-block / screw-shield carrier (£3–5, AliExpress).** Middle ground: ESP32 drops into a breakout that brings every GPIO to a screw terminal. Removes the Dupont-comes-loose failure mode with zero PCB design. Good if we don't want to draw a board but do want robustness.
 3. **Custom 2-layer PCB (~£5 fab + design time).** The proper answer for the *keeper* build: ESP32 header, 2× MOSFET+flyback+gate-R, 12V/5V rails, e-stop in the pump rail, 2× TRRS for the HX711 bases, SPI header for the two displays, encoder headers. Silkscreen-labelled. Draw it in KiCad once the perfboard proto has proven the pinout.
 
-**Recommendation: prototype on perfboard (route 1) to lock the pinout and firmware, then spin a cheap KiCad board (route 3) for the real device that goes near Aimee.** Don't design the PCB first — breadboard/perfboard until the design stops changing, *then* fab. The £5 board is the last step, not the first.
+**DECIDED (2026-08-14): custom PCB (route 3).** Rob's making the board — cheap, and it doubles as a wiring aid. Now in the BOM (misc bucket, £5). The sequence still holds: **prototype on perfboard (route 1) to lock the pinout and firmware first, then spin the KiCad board.** Don't fab before the pinout stops changing, or you pay to re-spin. The £5 board is the last step before the keeper build, not the first.
+
+**PCB design checklist (for the KiCad layout, once pinout is locked):**
+- ESP32 DevKitC on female headers (socketed, not soldered down — so it's swappable).
+- 2× {IRLZ44N low-side MOSFET + gate resistor (~150Ω) + gate pulldown (~10k) + 1N5822 flyback} clusters, L/R identical.
+- 12V input (barrel/screw terminal) → MP1584 buck footprint → 5V rail. Common ground plane.
+- **E-stop wired in the 12V pump rail on the board**, screw terminals in/out so the physical button lives on the enclosure.
+- Screw terminals for every off-board wire: 2× pump motors, PSU in, e-stop, encoders (or 0.1" headers).
+- 2× TRRS panel-jack footprints (or pads to flying leads) for the HX711 reservoir bases; SCK shared, separate DT.
+- SPI header for the two GC9A01s: MOSI/SCK/DC/RST/BL common + 2× CS.
+- Silkscreen-label everything L/R. Add a couple of mounting holes matched to the printed enclosure.
+- Decoupling: 100nF across each MOSFET gate area + a bulk 470µF+ on the 12V rail near the pumps (motor inrush).
 
 ## Open questions to resolve with Rob
 
