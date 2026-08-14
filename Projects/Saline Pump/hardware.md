@@ -135,17 +135,17 @@ Split into three buckets: **electronics (AliExpress)**, **misc bits (AliExpress)
 
 ### A. Electronics — AliExpress
 
-| # | Item | Qty | £ each | Line £ | Source |
-|---|---|---|---|---|---|
-| 1 | Kamoer NKP 12V peristaltic pump, BPT or silicone medical tube (~2mm ID BPT / 3×5mm silicone; 17 ml/min mid-range) | 2 | 24.00 | 48.00 | aliexpress.us/item/3256811959162580.html (BPT variant: aliexpress.com/item/32779758573.html) |
-| 2 | 12V 5A power brick, 5.5×2.1mm barrel | 1 | 7.50 | 7.50 | aliexpress.com/w/wholesale-12v-5a-power-supply-5.5x2.1.html |
-| 3 | MP1584 buck 12→5V (10-pack) | 1 | 3.50 | 3.50 | aliexpress.us/item/3256809640590733.html |
-| 4 | ESP32 DevKitC (WROOM-32) | 1 | 4.50 | 4.50 | aliexpress.com/item/1005003145871431.html |
-| 5 | IRLZ44N logic-level MOSFET (10-pack) | 1 | 4.50 | 4.50 | aliexpress.com/i/32714396199.html |
-| 6 | 1N5822 Schottky flyback (20-pack) | 1 | 2.50 | 2.50 | aliexpress.us/item/3256802324805100.html |
-| 7 | EC11 detented encoder + push (5-pack) | 1 | 5.00 | 5.00 | aliexpress.us/item/3256810266466161.html |
-| 8 | HX711 amp + 5kg load cell combo | 2 | 3.50 | 7.00 | aliexpress.com/item/4001242085837.html |
-| 9 | GC9A01 1.28" round SPI TFT, **8-pin CS broken out** | 2 | 5.00 | 10.00 | aliexpress.com/item/4001047718004.html |
+| #   | Item                                                                                                              | Qty | £ each | Line £ | Source                                                                                |
+| --- | ----------------------------------------------------------------------------------------------------------------- | --- | ------ | ------ | ------------------------------------------------------------------------------------- |
+| 1   | Kamoer NKP 12V peristaltic pump, BPT or silicone medical tube (~2mm ID BPT / 3×5mm silicone; 17 ml/min mid-range) | 2   | 9.80   | 19.60  | https://www.amazon.co.uk/peristaltic-Kamoer-liquid-Aquarium-Analytical/dp/B07GWJ78FN/ |
+| 2   | 12V 5A power brick, 5.5×2.1mm barrel                                                                              | 1   | 0      | 0      | May have one...                                                                       |
+| 3   | MP1584 buck 12→5V (10-pack)                                                                                       | 1   | 2.33   | 2.33   | https://www.aliexpress.com/item/1005007653423578.html                                 |
+| 4   | ESP32 DevKitC (WROOM-32)                                                                                          | 1   | 0      | 0      | May have one...                                                                       |
+| 5   | IRLZ44N logic-level MOSFET (10-pack)                                                                              | 1   | 2.02   | 2.02   | https://www.aliexpress.com/item/1005004533156263.html                                 |
+| 6   | 1N5822 Schottky flyback (20-pack)                                                                                 | 1   | 1.02   | 1.02   | https://www.aliexpress.com/item/1005002511119852.html                                 |
+| 7   | EC11 detented encoder + push (5-pack)                                                                             | 1   | 4.19   | 4.19   | https://www.aliexpress.com/item/1005010359754603.html                                 |
+| 8   | HX711 amp + 5kg load cell combo                                                                                   | 2   | 5.09   | 10.18  | https://www.aliexpress.com/item/1005006824220368.html                                 |
+| 9   | GC9A01 1.28" round SPI TFT, **8-pin CS broken out**                                                               | 2   | 2.24   | 4.48   | https://www.aliexpress.com/item/1005009034169470.html                                 |
 
 **Electronics subtotal: £92.50**
 - Alt to #5/#6: 2× DRV8871 H-bridge modules (~£7.00 the pair) if we want current-limiting / braking instead of a bare MOSFET. Pick one path, not both.
