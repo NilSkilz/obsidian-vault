@@ -162,10 +162,14 @@ Rob flagged £48 for two Kamoer NKPs as steep, and raised two cheaper routes. Bo
 **My read:** Option A is the sweet spot. Buy the £10 pumps, spend the saved money on a metre of proper BPT/silicone tube (~£5–8) and re-tube the heads. Keeps the full custom build, halves the pump cost, sterile path stays sound. Option B only makes sense if you want something usable *now* and don't care about symmetry/volume tracking. **Rob to pick and edit the BOM accordingly.**
 
 **Specific pump vetted — Ejoyous 12V dosing pump (Amazon B09S6QGP19), 2026-08-14.** Good Option-A candidate. Confirmed specs: peristaltic dosing head (✓ correct type), 12V @ 250–300mA (trivial for our MOSFET/DRV8871 driver and the 12V brick), 0.1–60 rpm, bare 2-wire motor (direction by supply polarity, so no integrated controller to fight — exactly what we want for ESP32 PWM). Ships with 3×5mm silicone tube (3mm ID, our standard bore — re-tube with medical silicone/BPT regardless).
-- **THE ONE CATCH:** it's sold in **three flow variants** ("3 Models" in the title): **0–23, 0–65, and 0–150 ml/min.** Our need is 16.7 ml/min average, up to ~50 ml/min top-of-dial.
-  - **Buy the 0–65 ml/min variant.** 16.7 sits at ~26% (relaxed), 50 at ~77% (still smooth, has headroom). Bang on the "top speed well above 17" rule.
-  - **0–23** is too weak — can't reach 50, and 16.7 pins it near max. **0–150** works but our 16.7 average sits near its floor = pulsatile/stall risk. Neither is the pick.
-- Two of them = the two symmetric channels, unchanged. So: **yes, two — but both the 0–65 ml/min model specifically.**
+- **CORRECTION (2026-08-14, supersedes the earlier "buy the 0–65 variant" note):** the "3 Models / three flow rates" (0–23, 0–65, 0–150 ml/min) are **not three motors, they're three tube bores.** Same motor, same head, same 0.1–60 rpm, same 250–300mA. Flow just scales with the tube the kit ships with:
+  - Type A = 1×3mm tube → 0–23 ml/min
+  - Type B = 2×4mm tube → 0–65 ml/min
+  - Type C = 3×5mm tube → 0–150 ml/min
+- That's why the current is identical across all three, and why the "speeds" looked arbitrary (Rob flagged this). It's a tube spec, not a speed spec.
+- **ASIN B09S6QGP19 is the fixed 3×5mm (Type C / "0–150") version.** No variant picker on the listing, so "only one model for sale" is correct. **This is the right one to buy** because our build re-tubes with **3×5mm medical silicone**, and the head's roller occlusion is cut for 5mm OD tube. A 4mm-OD (Type B) head would not seat our silicone properly. The earlier steer toward 0–65 was wrong on this point.
+- **Flow for us is set by our tube bore × rpm (PWM), not the printed number.** With 3mm-ID silicone: 16.7 ml/min ≈ 7 rpm, 50 ml/min ≈ 20 rpm, both mid-range on a 0.1–60 rpm head. No floor/stall problem. Calibrate on arrival anyway (time a measured volume at a set duty); don't trust the marketing figure.
+- **So: two of them, the only version sold (3×5mm / B09S6QGP19).** No variant to choose.
 
 ### B. Misc bits — AliExpress (allowance, not itemised to the penny)
 
