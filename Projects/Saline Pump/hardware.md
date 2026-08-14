@@ -67,6 +67,11 @@ Two reservoirs, each sitting on its own 3D-printed base with a load cell + HX711
 - Each side is one plug: unplug a base, swap it, done. Two jacks on the main unit, one per reservoir.
 - Firmware reads two HX711 channels. They can **share the SCK (clock) line** and use separate DT (data) pins, saving a GPIO.
 
+**HX711 breakout pinout (the actual module Rob has, 2026-08-14).** Two sides:
+- **Load-cell side (E+, E-, A-, A+, B-, B+):** the 4-wire cell lands here, *inside the base*, channel A only. Red→E+, Black→E-, White→A-, Green→A+ (colours vary by maker; if weight reads backwards, swap A+/A-). **B+/B- unused** (channel B = a 2nd cell we don't fit).
+- **Digital side (GND, DT, SCK, VCC):** the 4 wires that run down the TRRS to the main unit → ESP32. **VCC→3V3** (not 5V, so DT stays 3.3V-safe into the input-only GPIO34/35), GND→GND, DT→34 (L) / 35 (R), SCK→21 (shared).
+- So the TRRS's four conductors are exactly VCC / GND / DT / SCK. The load cell's millivolt wires never leave the base.
+
 ## Display: two round gauges, one per pump
 
 Rob likes the round GC9A01 "gauge" look, and it suits the round knobs. A round face naturally shows *one* value, so the clean version is **one round display per pump** — left gauge for the left pump, right for the right. Rob flagged this himself; it's the nicer design, not a dealbreaker if we drop to one.
@@ -289,6 +294,7 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 - HX711: SCK shared=**21**, DT_L=**34**, DT_R=**35** (input-only pins, HX711 driven; power bases at **3V3** not 5V so DT is ESP32-safe)
 - Optional ESTOP_SENSE=**16** (100k/33k divider off +12V_SW; moved off 19 now that DC took it)
 - E-stop sits in the +12V **pump** rail only; buck runs off raw +12V so ESP32 stays alive to show STOPPED when pumps are killed.
+- **E-stop = a 2-pin header on the board for a panel switch (Rob, 2026-08-14).** Header wired in series in the +12V pump branch (after the buck tap), so the physical switch lives on the enclosure. Must carry full pump current (both pumps ~0.5-0.6A peak, trivial for any switch) and sit in the *pump* branch, not the shared input. A simple SPST on/off toggle works electrically; a latching red mushroom is the nicer slam-in-a-panic ergonomics, but the header takes either.
 
 ## Open questions to resolve with Rob
 
