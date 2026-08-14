@@ -161,6 +161,12 @@ Rob flagged £48 for two Kamoer NKPs as steep, and raised two cheaper routes. Bo
 
 **My read:** Option A is the sweet spot. Buy the £10 pumps, spend the saved money on a metre of proper BPT/silicone tube (~£5–8) and re-tube the heads. Keeps the full custom build, halves the pump cost, sterile path stays sound. Option B only makes sense if you want something usable *now* and don't care about symmetry/volume tracking. **Rob to pick and edit the BOM accordingly.**
 
+**Specific pump vetted — Ejoyous 12V dosing pump (Amazon B09S6QGP19), 2026-08-14.** Good Option-A candidate. Confirmed specs: peristaltic dosing head (✓ correct type), 12V @ 250–300mA (trivial for our MOSFET/DRV8871 driver and the 12V brick), 0.1–60 rpm, bare 2-wire motor (direction by supply polarity, so no integrated controller to fight — exactly what we want for ESP32 PWM). Ships with 3×5mm silicone tube (3mm ID, our standard bore — re-tube with medical silicone/BPT regardless).
+- **THE ONE CATCH:** it's sold in **three flow variants** ("3 Models" in the title): **0–23, 0–65, and 0–150 ml/min.** Our need is 16.7 ml/min average, up to ~50 ml/min top-of-dial.
+  - **Buy the 0–65 ml/min variant.** 16.7 sits at ~26% (relaxed), 50 at ~77% (still smooth, has headroom). Bang on the "top speed well above 17" rule.
+  - **0–23** is too weak — can't reach 50, and 16.7 pins it near max. **0–150** works but our 16.7 average sits near its floor = pulsatile/stall risk. Neither is the pick.
+- Two of them = the two symmetric channels, unchanged. So: **yes, two — but both the 0–65 ml/min model specifically.**
+
 ### B. Misc bits — AliExpress (allowance, not itemised to the penny)
 
 | Item | Qty | Line £ |
