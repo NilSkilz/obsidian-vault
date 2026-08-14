@@ -333,18 +333,18 @@ Split into three buckets: **electronics (AliExpress)**, **misc bits (AliExpress)
 
 ### A. Electronics — AliExpress
 
-| # | Item | Qty | £ each | Line £ | Source |
-|---|---|---|---|---|---|
-| 1 | 500-series 12V peristaltic pump — **2nd unit to match the one Rob already owns**; bare 2-wire DC, re-tubed with #10 below | 1 | 9.00 | 9.00 | aliexpress.com/item/1005007771448881.html |
-| 2 | 12V 5A power brick, 5.5×2.1mm barrel | 1 | 0 | 0 | Rob may already have one |
-| 3 | MP1584 buck 12→5V | 1 | 2.33 | 2.33 | aliexpress.com/item/1005007653423578.html (pack of 5) |
-| 4 | ESP32 DevKitC (WROOM-32) | 1 | 0 | 0 | Rob may already have one |
-| 5 | IRLZ44N logic-level MOSFET | 1 | 2.02 | 2.02 | aliexpress.com/item/1005004533156263.html (pack of 10) |
-| 6 | 1N5822 Schottky flyback | 1 | 0.55 | 0.55 | aliexpress.com/item/1005002511119852.html (pack of 5) |
-| 7 | EC11 detented encoder + push | 2 | 4.19 | 4.19 | aliexpress.com/item/1005010359754603.html (pack of 3) |
-| 8 | HX711 amp + 5kg load cell combo | 2 | 5.09 | 5.09 | aliexpress.com/item/1005006824220368.html (pack of 3) |
-| 9 | GC9A01 1.28" round SPI TFT, **8-pin CS broken out** | 2 | 3.27 | 6.54 | aliexpress.com/item/1005009034169470.html |
-| 10 | **iMeistek 3×5mm food-grade silicone tube, 6m** (re-tube both pump heads + fluid path; Amazon, NOT AliExpress) | 1 | 9.00 | 9.00 | amazon.co.uk/dp/B0CYPKY54S |
+| #   | Item                                                                                                                      | Qty | £ each | Line £ | Source                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | --- | ------ | ------ | ------------------------------------------------------ |
+| 1   | 500-series 12V peristaltic pump — **2nd unit to match the one Rob already owns**; bare 2-wire DC, re-tubed with #10 below | 1   | 9.00   | 9.00   | aliexpress.com/item/1005007771448881.html              |
+| 2   | 12V 5A power brick, 5.5×2.1mm barrel                                                                                      | 1   | 0      | 0      | Rob may already have one                               |
+| 3   | MP1584 buck 12→5V                                                                                                         | 1   | 2.33   | 2.33   | aliexpress.com/item/1005007653423578.html (pack of 5)  |
+| 4   | ESP32 DevKitC (WROOM-32)                                                                                                  | 1   | 0      | 0      | Rob may already have one                               |
+| 5   | IRLZ44N logic-level MOSFET                                                                                                | 1   | 2.02   | 2.02   | aliexpress.com/item/1005004533156263.html (pack of 10) |
+| 6   | 1N5822 Schottky flyback                                                                                                   | 1   | 0.55   | 0.55   | aliexpress.com/item/1005002511119852.html (pack of 5)  |
+| 7   | EC11 detented encoder + push                                                                                              | 2   | 4.19   | 4.19   | aliexpress.com/item/1005010359754603.html (pack of 3)  |
+| 8   | HX711 amp + 5kg load cell combo                                                                                           | 2   | 5.09   | 5.09   | aliexpress.com/item/1005006824220368.html (pack of 3)  |
+| 9   | GC9A01 1.28" round SPI TFT, **8-pin CS broken out**                                                                       | 2   | 3.27   | 6.54   | aliexpress.com/item/1005009034169470.html              |
+| 10  | **iMeistek 3×5mm food-grade silicone tube, 6m** (re-tube both pump heads + fluid path; Amazon, NOT AliExpress)            | 1   | 9.00   | 9.00   | amazon.co.uk/dp/B0CYPKY54S                             |
 
 **Electronics subtotal: £38.72** (brick #2 + ESP32 #4 already owned = £0; pump #1 owned = £0, matching 2nd unit = £9; rest are real AliExpress pack prices Rob sourced 2026-08-14)
 - Alt to #5/#6: 2× DRV8871 H-bridge modules (~£7.00 the pair) if we want current-limiting / braking instead of a bare MOSFET. Pick one path, not both.
