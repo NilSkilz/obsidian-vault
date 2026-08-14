@@ -108,9 +108,11 @@ def typing(chat):
     api("sendChatAction", {"chat_id": chat, "action": "typing"}, timeout=15)
 
 
-def tg_download(file_id):
+def tg_download(file_id, suffix=None):
     """Resolve a Telegram file_id to a download URL and pull it to a temp file.
-    Returns the local path, or None on any failure."""
+    Returns the local path, or None on any failure. Pass `suffix` to force the
+    saved file's extension (e.g. from a document's original file_name), since
+    Telegram's own file_path often has no meaningful extension for documents."""
     r = api("getFile", {"file_id": file_id}, timeout=30)
     if not r or not r.get("ok"):
         return None
@@ -118,8 +120,9 @@ def tg_download(file_id):
     if not fp:
         return None
     url = f"https://api.telegram.org/file/bot{TOKEN}/{fp}"
-    suffix = os.path.splitext(fp)[1] or ".oga"
-    dst = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, prefix="jarvis-voice-")
+    if suffix is None:
+        suffix = os.path.splitext(fp)[1] or ".oga"
+    dst = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, prefix="jarvis-file-")
     try:
         with urllib.request.urlopen(url, timeout=90) as resp:
             shutil.copyfileobj(resp, dst)
@@ -175,7 +178,7 @@ def append_convo(line):
             f.write(line.rstrip("\n") + "\n")
 
 
-def run_claude(text, buffer, on_text, image_path=None):
+def run_claude(text, buffer, on_text, image_path=None, file_path=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
     Calls on_text(block) for each completed top-level assistant text block, in
@@ -204,6 +207,14 @@ Rob's new message: {text}"""
             f"\n\nRob attached an image with this message. It's saved locally at "
             f"{image_path} — use your Read tool to open and view it before you reply "
             f"(it may be a nutrition label, a screenshot, or a photo he wants you to act on)."
+        )
+    if file_path:
+        prompt += (
+            f"\n\nRob attached a file with this message, saved locally at {file_path}. "
+            f"Open and inspect it before you reply: use your Read tool for text, or Bash "
+            f"(file/unzip/head/strings/xxd) to work out the format first if it's binary or "
+            f"unknown. It may be a schematic/netlist/project export, a document, or data he "
+            f"wants you to act on. Don't guess at the contents, actually look."
         )
 
     finished = threading.Event()
@@ -302,7 +313,7 @@ NOTICE_POOL = [
 ]
 
 
-def process(chat, text, image_path=None):
+def process(chat, text, image_path=None, file_path=None):
     """Handle one job: stream the run, send Opus's opening line as the live ack,
     keep typing alive, then send the final summary."""
     buffer = recent_buffer()
@@ -359,7 +370,7 @@ def process(chat, text, image_path=None):
     threading.Thread(target=grace_fallback, daemon=True).start()
     threading.Thread(target=long_job_notice, daemon=True).start()
 
-    reply = run_claude(text, buffer, on_text, image_path)
+    reply = run_claude(text, buffer, on_text, image_path, file_path)
     done.set()
 
     ack_text = (ack["text"] or "").strip()
@@ -377,9 +388,10 @@ def process(chat, text, image_path=None):
 
 def worker_loop():
     while True:
-        chat, text, voice, photo = JOBS.get()
+        chat, text, voice, photo, doc = JOBS.get()
         BUSY.set()
         image_path = None
+        file_path = None
         try:
             if voice:
                 typing(chat)
@@ -397,7 +409,17 @@ def worker_loop():
                     continue
                 if not text:
                     text = "(sent a photo, no caption)"
-            process(chat, text, image_path)
+            if doc:
+                typing(chat)
+                name = doc.get("file_name") or "attachment"
+                suffix = os.path.splitext(name)[1] or None
+                file_path = tg_download(doc["file_id"], suffix=suffix)
+                if not file_path:
+                    send(chat, "Got your file but couldn't pull it down off Telegram. Mind sending it again?")
+                    continue
+                if not text:
+                    text = f"(sent a file: {name}, no caption)"
+            process(chat, text, image_path, file_path)
         except Exception as e:
             log(f"worker error: {e}")
             try:
@@ -405,11 +427,12 @@ def worker_loop():
             except Exception:
                 pass
         finally:
-            if image_path:
-                try:
-                    os.unlink(image_path)
-                except Exception:
-                    pass
+            for p in (image_path, file_path):
+                if p:
+                    try:
+                        os.unlink(p)
+                    except Exception:
+                        pass
             BUSY.clear()
             JOBS.task_done()
 
@@ -435,16 +458,22 @@ def main():
             # Photo (Telegram sends several sizes; last is the largest), or an
             # image sent as a document/file attachment.
             photo = None
+            doc = None
             if msg.get("photo"):
                 photo = {"file_id": msg["photo"][-1]["file_id"]}
             else:
-                doc = msg.get("document") or {}
-                if str(doc.get("mime_type", "")).startswith("image/"):
-                    photo = {"file_id": doc["file_id"]}
-            # A photo's caption (if any) rides in as the message text.
-            if photo and not text:
+                d = msg.get("document") or {}
+                if str(d.get("mime_type", "")).startswith("image/"):
+                    photo = {"file_id": d["file_id"]}
+                elif d.get("file_id"):
+                    # Any other document/file attachment (netlist, PDF, .tel,
+                    # zip, data export…). Downloaded and read in the worker.
+                    doc = {"file_id": d["file_id"],
+                           "file_name": d.get("file_name") or "attachment"}
+            # A photo/file caption (if any) rides in as the message text.
+            if (photo or doc) and not text:
                 text = msg.get("caption")
-            if chat is None or (not text and not voice and not photo):
+            if chat is None or (not text and not voice and not photo and not doc):
                 continue
             if ALLOWED and str(chat) != ALLOWED:
                 log(f"ignored msg from unlisted chat {chat}: {(text or '[media]')[:50]}")
@@ -453,12 +482,14 @@ def main():
                 log(f"<< {chat}: [voice {str(voice.get('file_id',''))[:12]}… {voice.get('duration','?')}s]")
             elif photo:
                 log(f"<< {chat}: [photo {str(photo.get('file_id',''))[:12]}…] {(text or '')[:50]}")
+            elif doc:
+                log(f"<< {chat}: [file {doc.get('file_name','?')}] {(text or '')[:50]}")
             else:
                 log(f"<< {chat}: {text}")
             # If a job is already running (or waiting), tell Rob this one is queued.
             if BUSY.is_set() or not JOBS.empty():
                 send(chat, "Noted, I'll pick this up right after the current job.")
-            JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None, photo))
+            JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None, photo, doc))
 
 
 if __name__ == "__main__":
