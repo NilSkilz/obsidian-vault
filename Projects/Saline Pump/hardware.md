@@ -137,18 +137,18 @@ Split into three buckets: **electronics (AliExpress)**, **misc bits (AliExpress)
 
 | # | Item | Qty | £ each | Line £ | Source |
 |---|---|---|---|---|---|
-| 1 | 500-series 12V peristaltic pump — **2nd unit to match the one Rob already owns** (£0). Bare 2-wire DC, re-tubed with #10 below | 1 | 9.00 | 9.00 | aliexpress.com/item/1005007771448881.html |
-| 2 | 12V 5A power brick, 5.5×2.1mm barrel | 1 | 7.50 | 7.50 | aliexpress.com/w/wholesale-12v-5a-power-supply-5.5x2.1.html |
-| 3 | MP1584 buck 12→5V (10-pack) | 1 | 3.50 | 3.50 | aliexpress.us/item/3256809640590733.html |
-| 4 | ESP32 DevKitC (WROOM-32) | 1 | 4.50 | 4.50 | aliexpress.com/item/1005003145871431.html |
-| 5 | IRLZ44N logic-level MOSFET (10-pack) | 1 | 4.50 | 4.50 | aliexpress.com/i/32714396199.html |
-| 6 | 1N5822 Schottky flyback (20-pack) | 1 | 2.50 | 2.50 | aliexpress.us/item/3256802324805100.html |
-| 7 | EC11 detented encoder + push (5-pack) | 1 | 5.00 | 5.00 | aliexpress.us/item/3256810266466161.html |
-| 8 | HX711 amp + 5kg load cell combo | 2 | 3.50 | 7.00 | aliexpress.com/item/4001242085837.html |
-| 9 | GC9A01 1.28" round SPI TFT, **8-pin CS broken out** | 2 | 5.00 | 10.00 | aliexpress.com/item/4001047718004.html |
+| 1 | 500-series 12V peristaltic pump — **2nd unit to match the one Rob already owns**; bare 2-wire DC, re-tubed with #10 below | 1 | 9.00 | 9.00 | aliexpress.com/item/1005007771448881.html |
+| 2 | 12V 5A power brick, 5.5×2.1mm barrel | 1 | 0 | 0 | Rob may already have one |
+| 3 | MP1584 buck 12→5V | 1 | 2.33 | 2.33 | aliexpress.com/item/1005007653423578.html (pack of 5) |
+| 4 | ESP32 DevKitC (WROOM-32) | 1 | 0 | 0 | Rob may already have one |
+| 5 | IRLZ44N logic-level MOSFET | 1 | 2.02 | 2.02 | aliexpress.com/item/1005004533156263.html (pack of 10) |
+| 6 | 1N5822 Schottky flyback | 1 | 0.55 | 0.55 | aliexpress.com/item/1005002511119852.html (pack of 5) |
+| 7 | EC11 detented encoder + push | 2 | 4.19 | 4.19 | aliexpress.com/item/1005010359754603.html (pack of 3) |
+| 8 | HX711 amp + 5kg load cell combo | 2 | 5.09 | 5.09 | aliexpress.com/item/1005006824220368.html (pack of 3) |
+| 9 | GC9A01 1.28" round SPI TFT, **8-pin CS broken out** | 2 | 3.27 | 6.54 | aliexpress.com/item/1005009034169470.html |
 | 10 | **iMeistek 3×5mm food-grade silicone tube, 6m** (re-tube both pump heads + fluid path; Amazon, NOT AliExpress) | 1 | 9.00 | 9.00 | amazon.co.uk/dp/B0CYPKY54S |
 
-**Electronics subtotal: £62.50** (pump #1 owned = £0; pump #2 = £9)
+**Electronics subtotal: £38.72** (brick #2 + ESP32 #4 already owned = £0; pump #1 owned = £0, matching 2nd unit = £9; rest are real AliExpress pack prices Rob sourced 2026-08-14)
 - Alt to #5/#6: 2× DRV8871 H-bridge modules (~£7.00 the pair) if we want current-limiting / braking instead of a bare MOSFET. Pick one path, not both.
 - #1: the pump is **decided** (see the PUMP DECIDED note above) — Rob owns one 500-series 12V peristaltic, this line is just the matching second unit. Both get re-tubed with #10 before touching saline.
 - #10 is the fluid-contact re-tube — the one sterile-critical part in this bucket. It's **food-grade** (platinum/peroxide-cure silicone), which is the accepted grade for this; it is **not sold sterile**, so flush + sterilise (boil or IPA flush) before first use and replace periodically. 3×5mm matches the head's roller occlusion and our 3mm working bore exactly. 6m is plenty for both heads + the run to the barb adapters, with spare.
@@ -217,13 +217,13 @@ Sourcing flags:
 
 | Bucket | £ |
 |---|---|
-| A. Electronics (AliExpress + Amazon tube) | 62.50 |
+| A. Electronics (AliExpress + Amazon tube) | 38.72 |
 | B. Misc bits (AliExpress, incl. £5 custom PCB) | 20.00 |
 | C. Sterile path first buy (with chlorhex) | 77.00 |
-| **Full build, everything** | **~£159.50** |
-| (…with plain alcohol wipes instead) | ~£145.50 |
+| **Full build, everything** | **~£135.72** |
+| (…with plain alcohol wipes instead) | ~£121.72 |
 
-*Down ~£30 from the earlier £184.50: pump line dropped £48 (2× Kamoer) → £9 (one matching 500-series unit, Rob owns the other), plus £9 for the food-grade re-tube silicone.*
+*Down ~£49 from the earlier £184.50. Drivers: pump line £48 (2× Kamoer) → £9 (one matching 500-series unit, Rob owns the other); power brick + ESP32 already in the drawer (£0 each); rest re-sourced to real AliExpress pack prices (2026-08-14). Food-grade re-tube silicone (+£9) is the one add.*
 
 Per-session disposables *after* the first buy: **~£15–25**, dominated by saline (~£4.79/L, 2–4L a session). Everything else is bought in packs that last many runs.
 
