@@ -137,7 +137,7 @@ Split into three buckets: **electronics (AliExpress)**, **misc bits (AliExpress)
 
 | # | Item | Qty | £ each | Line £ | Source |
 |---|---|---|---|---|---|
-| 1 | Kamoer NKP 12V peristaltic pump, BPT or silicone medical tube (~2mm ID BPT / 3×5mm silicone; 17 ml/min mid-range) | 2 | 24.00 | 48.00 | aliexpress.us/item/3256811959162580.html (BPT variant: aliexpress.com/item/32779758573.html) |
+| 1 | 500-series 12V peristaltic pump — **2nd unit to match the one Rob already owns** (£0). Bare 2-wire DC, re-tubed with #10 below | 1 | 9.00 | 9.00 | aliexpress.com/item/1005007771448881.html |
 | 2 | 12V 5A power brick, 5.5×2.1mm barrel | 1 | 7.50 | 7.50 | aliexpress.com/w/wholesale-12v-5a-power-supply-5.5x2.1.html |
 | 3 | MP1584 buck 12→5V (10-pack) | 1 | 3.50 | 3.50 | aliexpress.us/item/3256809640590733.html |
 | 4 | ESP32 DevKitC (WROOM-32) | 1 | 4.50 | 4.50 | aliexpress.com/item/1005003145871431.html |
@@ -146,10 +146,12 @@ Split into three buckets: **electronics (AliExpress)**, **misc bits (AliExpress)
 | 7 | EC11 detented encoder + push (5-pack) | 1 | 5.00 | 5.00 | aliexpress.us/item/3256810266466161.html |
 | 8 | HX711 amp + 5kg load cell combo | 2 | 3.50 | 7.00 | aliexpress.com/item/4001242085837.html |
 | 9 | GC9A01 1.28" round SPI TFT, **8-pin CS broken out** | 2 | 5.00 | 10.00 | aliexpress.com/item/4001047718004.html |
+| 10 | **iMeistek 3×5mm food-grade silicone tube, 6m** (re-tube both pump heads + fluid path; Amazon, NOT AliExpress) | 1 | 9.00 | 9.00 | amazon.co.uk/dp/B0CYPKY54S |
 
-**Electronics subtotal: £92.50**
+**Electronics subtotal: £62.50** (pump #1 owned = £0; pump #2 = £9)
 - Alt to #5/#6: 2× DRV8871 H-bridge modules (~£7.00 the pair) if we want current-limiting / braking instead of a bare MOSFET. Pick one path, not both.
-- #1 is the sterile-path part — buy the **genuine Kamoer NKP 12V**, not the £8 unbranded lookalikes (those are tube-only or 3V toys). Confirm tube material (BPT/silicone) + bore on the listing.
+- #1: the pump is **decided** (see the PUMP DECIDED note above) — Rob owns one 500-series 12V peristaltic, this line is just the matching second unit. Both get re-tubed with #10 before touching saline.
+- #10 is the fluid-contact re-tube — the one sterile-critical part in this bucket. It's **food-grade** (platinum/peroxide-cure silicone), which is the accepted grade for this; it is **not sold sterile**, so flush + sterilise (boil or IPA flush) before first use and replace periodically. 3×5mm matches the head's roller occlusion and our 3mm working bore exactly. 6m is plenty for both heads + the run to the barb adapters, with spare.
 - #9 must be the **8-pin** board that breaks CS out; the 7-pin ones tie CS low and can't share the SPI bus for two displays.
 
 ### Pump cost — Rob's challenge (2026-08-14, for Rob to decide)
@@ -160,6 +162,12 @@ Rob flagged £48 for two Kamoer NKPs as steep, and raised two cheaper routes. Bo
 - **Option B — £35 ready-made pump unit (adjustable flow, built-in driver/knob).** Less cool, no ESP32/phone control, no per-side volume tracking, but a working pump for a third of a full custom build. Loses the whole point of the project (two symmetric channels, volume-target auto-stop, hard caps, phone UI) — you'd have two of these for two sides (~£70) and still be eyeballing volume by hand like the gravity method. Reasonable as a "just get it working this month" stopgap, not the endgame.
 
 **My read:** Option A is the sweet spot. Buy the £10 pumps, spend the saved money on a metre of proper BPT/silicone tube (~£5–8) and re-tube the heads. Keeps the full custom build, halves the pump cost, sterile path stays sound. Option B only makes sense if you want something usable *now* and don't care about symmetry/volume tracking. **Rob to pick and edit the BOM accordingly.**
+
+**PUMP DECIDED — Rob already owns a cheap "500-series" 12V peristaltic (AliExpress 1005007771448881), 2026-08-14.** This becomes the pump, superseding the Kamoer/Ejoyous shopping above. It's the ubiquitous 6–12V geared "500-motor" peristaltic dosing pump: **bare 2-wire DC motor** (no integrated controller, so it drives straight off our MOSFET + ESP32 PWM — exactly what we want), geared head good for roughly up to ~100 ml/min at 12V, so our 17 ml/min working / 50 ml/min ceiling sits at a relaxed mid-throttle (no stall). Cost £0 (already owned) beats both the £48 Kamoer pair and the £20 re-tubed Amazon route.
+- **Need TWO, matched.** Design is two symmetric L/R channels. Rob has one → **buy a second identical unit** so both sides behave the same. Do NOT mix this pump with a Kamoer on the other channel — different flow-per-rev wrecks calibration.
+- **Re-tube the head before it touches saline.** These cheap pumps ship with unmarked/generic silicone. Swap the head tube for known food/medical-grade silicone or PharMed BPT (~£5–8, in misc BOM). Tube is the only fluid-contact part into Aimee; it's the one thing we don't cheap out on. Motor is fine as-is.
+- **Calibrate on arrival** (time a measured volume at a set PWM duty); don't trust any printed ml/min figure.
+- This drops BOM line #1 (Kamoer, £48) to just the cost of a second matching pump (~£8–10) + medical tube. Kamoer/Ejoyous notes below kept for reference only.
 
 **Specific pump vetted — Ejoyous 12V dosing pump (Amazon B09S6QGP19), 2026-08-14.** Good Option-A candidate. Confirmed specs: peristaltic dosing head (✓ correct type), 12V @ 250–300mA (trivial for our MOSFET/DRV8871 driver and the 12V brick), 0.1–60 rpm, bare 2-wire motor (direction by supply polarity, so no integrated controller to fight — exactly what we want for ESP32 PWM). Ships with 3×5mm silicone tube (3mm ID, our standard bore — re-tube with medical silicone/BPT regardless).
 - **CORRECTION (2026-08-14, supersedes the earlier "buy the 0–65 variant" note):** the "3 Models / three flow rates" (0–23, 0–65, 0–150 ml/min) are **not three motors, they're three tube bores.** Same motor, same head, same 0.1–60 rpm, same 250–300mA. Flow just scales with the tube the kit ships with:
@@ -178,7 +186,7 @@ Rob flagged £48 for two Kamoer NKPs as steep, and raised two cheaper routes. Bo
 | 2× 3.5mm TRRS panel jack + plug (reservoir base connectors), or GX12 keyed | 2 | 4.00 |
 | E-stop NC button (in 12V pump rail) | 1 | 3.00 |
 | Protoboard / perfboard, JST + Dupont wire, screw terminals | — | 5.00 |
-| Silicone tubing extra + inline barb tees if needed | — | 3.00 |
+| Inline barb tees / connectors if needed (tube itself now covered by electronics #10) | — | 3.00 |
 
 **Misc subtotal: ~£15.00** (enclosure is 3D printed = filament you have; reservoirs = the saline bottles themselves.)
 
@@ -206,11 +214,13 @@ Sourcing flags:
 
 | Bucket | £ |
 |---|---|
-| A. Electronics (AliExpress) | 92.50 |
+| A. Electronics (AliExpress + Amazon tube) | 62.50 |
 | B. Misc bits (AliExpress) | 15.00 |
 | C. Sterile path first buy (with chlorhex) | 77.00 |
-| **Full build, everything** | **~£184.50** |
-| (…with plain alcohol wipes instead) | ~£170.50 |
+| **Full build, everything** | **~£154.50** |
+| (…with plain alcohol wipes instead) | ~£140.50 |
+
+*Down ~£30 from the earlier £184.50: pump line dropped £48 (2× Kamoer) → £9 (one matching 500-series unit, Rob owns the other), plus £9 for the food-grade re-tube silicone.*
 
 Per-session disposables *after* the first buy: **~£15–25**, dominated by saline (~£4.79/L, 2–4L a session). Everything else is bought in packs that last many runs.
 
