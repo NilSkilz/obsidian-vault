@@ -214,6 +214,22 @@ Sourcing flags:
 
 Per-session disposables *after* the first buy: **~£15–25**, dominated by saline (~£4.79/L, 2–4L a session). Everything else is bought in packs that last many runs.
 
+## Custom PCB — do we need one? (2026-08-14)
+
+**No, not to make it work.** The part count is low and everything runs slow (12V DC PWM, SPI, I2C-ish HX711 clocking, quadrature encoders). Nothing here is RF, high-current, or timing-critical enough to *need* a fabbed board. Perfboard + screw terminals is electrically fine, and that's already in the BOM (misc bucket).
+
+**But a simple 2-layer PCB is cheap and genuinely worth it here — for mechanical reasons, not electrical ones:**
+- This thing gets **handled, moved, and used on a person mid-scene.** Perfboard solder blobs and Dupont jumpers work loose with vibration and repeated plugging/unplugging. A device with needles in Aimee is the wrong place for an intermittent power connection to a pump or, worse, the e-stop.
+- JLCPCB/PCBWay: **~£5 for 5 boards**, ~1 week shipping. Trivial cost against a £180 build.
+- A board makes the repeated bits (2× MOSFET + gate resistor + flyback, 2× display CS, 2× TRRS jacks, e-stop in the rail) **clean, labelled, and identical L/R** instead of a hand-wired rat's nest we can't debug in six months.
+
+**Three routes, cheapest effort first:**
+1. **Perfboard (£0 extra, in BOM).** Fine for a v1 bench prototype. Solder the MOSFET/diode/gate-resistor clusters solidly; use screw terminals for every off-board wire (pumps, PSU, e-stop, jacks) so nothing relies on a Dupont friction fit. Acceptable to *start*.
+2. **ESP32 terminal-block / screw-shield carrier (£3–5, AliExpress).** Middle ground: ESP32 drops into a breakout that brings every GPIO to a screw terminal. Removes the Dupont-comes-loose failure mode with zero PCB design. Good if we don't want to draw a board but do want robustness.
+3. **Custom 2-layer PCB (~£5 fab + design time).** The proper answer for the *keeper* build: ESP32 header, 2× MOSFET+flyback+gate-R, 12V/5V rails, e-stop in the pump rail, 2× TRRS for the HX711 bases, SPI header for the two displays, encoder headers. Silkscreen-labelled. Draw it in KiCad once the perfboard proto has proven the pinout.
+
+**Recommendation: prototype on perfboard (route 1) to lock the pinout and firmware, then spin a cheap KiCad board (route 3) for the real device that goes near Aimee.** Don't design the PCB first — breadboard/perfboard until the design stops changing, *then* fab. The £5 board is the last step, not the first.
+
 ## Open questions to resolve with Rob
 
 1. ~~One reservoir or two?~~ **Decided: two**, each a printed base with load cell + HX711 built in, connected by cable + 3.5mm TRRS (or keyed) jack.
