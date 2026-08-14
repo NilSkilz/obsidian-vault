@@ -276,11 +276,16 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 - Enc L (KY-040 #1): GND→GND, +→3V3, CLK→**32**, DT→**33**, SW→**27**
 - Enc R (KY-040 #2): GND→GND, +→3V3, CLK→**14**, DT→**13**, SW→**22**
 
-**Pinout locked as v1 (ESP32 DevKitC 30-pin) — confirm on perfboard proto before fab.** Strapping (0/2/12/15) and serial (1/3) left clear; no ADC used so no ADC2/WiFi conflict.
+**Displays are the 8-pin GC9A01 boards (GND / VCC / SCL / SDA / RES / DC / CS / BLK).** Despite the I2C-looking labels this is **SPI**: SCL = clock (SCK), SDA = data (MOSI). Both screens share everything except CS. Power VCC at **3V3** (boards tolerate 5V via onboard reg but logic is 3.3V, no level shift), BLK tied to 3V3. No MISO pin — write-only, correct.
+
+- SCL→**16** (SCK, shared), SDA→**23** (MOSI, shared), RES→**15** (shared), DC→**18** (shared), BLK→3V3
+- CS: Left→**5**, Right→**4** (the only per-screen pin; needs the CS-broken-out 8-pin board)
+
+**Pinout locked as v1 (ESP32 DevKitC 30-pin) — confirm on perfboard proto before fab.** Strapping 0/2/12 and serial (1/3) left clear; **15 is now used for display RES** (2026-08-14 change). 15 is the *safe* strapping pin: high at boot via internal pull-up = normal boot, and RES idles high in operation, so no boot conflict (unlike 12, which must stay clear). No ADC used so no ADC2/WiFi conflict.
 
 - Pumps: gate L=**25**, R=**26** (150Ω series + 10k pulldown each)
 - Enc L A/B/SW = **32/33/27**; Enc R A/B/SW = **14/13/22**
-- Display SPI shared: MOSI=**23**, SCK=**18**, DC=**16**, RST=**17**; CS_L=**5**, CS_R=**4**; BLK tied to 3V3
+- Display SPI shared: MOSI=**23**, SCK=**16**, DC=**18**, RST=**15**; CS_L=**5**, CS_R=**4**; BLK tied to 3V3 (SCK moved 18→16 so DC could take 18; GPIO17 now free, back in reserve)
 - HX711: SCK shared=**21**, DT_L=**34**, DT_R=**35** (input-only pins, HX711 driven; power bases at **3V3** not 5V so DT is ESP32-safe)
 - Optional ESTOP_SENSE=**19** (100k/33k divider off +12V_SW)
 - E-stop sits in the +12V **pump** rail only; buck runs off raw +12V so ESP32 stays alive to show STOPPED when pumps are killed.
