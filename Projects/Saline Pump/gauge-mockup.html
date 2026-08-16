@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saline Pump — Gauge Mockup</title>
+<style>
+  :root{
+    --bg:#0c0f14;
+    --panel:#141a22;
+    --ink:#e7edf3;
+    --muted:#8aa0b3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+  h1{font-size:20px;font-weight:650;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.5}
+  .gauges{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+  .unit{display:flex;flex-direction:column;align-items:center;gap:10px}
+  /* the round glass: GC9A01 is 240x240, shown 2x = 480 for a crisp phone view */
+  .glass{
+    width:240px;height:240px;border-radius:50%;
+    box-shadow:0 0 0 6px #05070a, 0 0 0 8px #262f3a, 0 14px 34px rgba(0,0,0,.55);
+    overflow:hidden;position:relative;background:#12181f;
+  }
+  canvas{display:block;width:240px;height:240px}
+  .cap{color:var(--muted);font-size:12px}
+  .controls{margin-top:26px;background:var(--panel);border:1px solid #202a35;border-radius:14px;padding:16px 18px}
+  .controls h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  .row{display:grid;grid-template-columns:70px 1fr 64px;gap:12px;align-items:center;margin:10px 0}
+  .row label{font-size:13px;color:var(--ink)}
+  .row output{font-size:13px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%}
+  .side-tag{font-size:11px;color:var(--muted)}
+  .split{border-top:1px solid #202a35;margin:14px 0}
+  .btns{display:flex;gap:10px;flex-wrap:wrap}
+  button{background:#1d2732;color:var(--ink);border:1px solid #2c3948;border-radius:9px;
+    padding:8px 14px;font-size:13px;cursor:pointer}
+  button:hover{background:#243040}
+  .note{color:var(--muted);font-size:12px;line-height:1.6;margin-top:18px}
+  .note code{background:#1a2029;padding:1px 5px;border-radius:4px;color:#bcd}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Saline Pump — twin round gauges</h1>
+  <p class="sub">Reservoir level is the background: full = blue, empty = dark slate, filled bottom-up like a real gauge, with a moving liquid surface (two overlapping sine waves). Live rate, dose and time sit in text over the top. Outer ring = dose progress to target. Sized for the real <b>GC9A01 240×240</b> displays, one per pump.</p>
+
+  <div class="gauges">
+    <div class="unit">
+      <div class="glass"><canvas id="L" width="240" height="240"></canvas></div>
+      <div class="cap">LEFT pump</div>
+    </div>
+    <div class="unit">
+      <div class="glass"><canvas id="R" width="240" height="240"></canvas></div>
+      <div class="cap">RIGHT pump</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <h2>Play with it</h2>
+    <div class="side-tag">LEFT</div>
+    <div class="row"><label>Level</label><input id="Llevel" type="range" min="0" max="100" value="62"><output id="LlevelO">62%</output></div>
+    <div class="row"><label>Rate</label><input id="Lrate" type="range" min="0" max="50" value="17"><output id="LrateO">17 ml/min</output></div>
+    <div class="row"><label>Dose</label><input id="Ldose" type="range" min="0" max="100" value="40"><output id="LdoseO">40%</output></div>
+    <div class="split"></div>
+    <div class="side-tag">RIGHT</div>
+    <div class="row"><label>Level</label><input id="Rlevel" type="range" min="0" max="100" value="88"><output id="RlevelO">88%</output></div>
+    <div class="row"><label>Rate</label><input id="Rrate" type="range" min="0" max="50" value="17"><output id="RrateO">17 ml/min</output></div>
+    <div class="row"><label>Dose</label><input id="Rdose" type="range" min="0" max="100" value="55"><output id="RdoseO">55%</output></div>
+    <div class="split"></div>
+    <div class="btns">
+      <button id="stopL">STOP left</button>
+      <button id="stopR">STOP right</button>
+      <button id="runBoth">Run both</button>
+    </div>
+  </div>
+
+  <p class="note">
+    <b>TFT reality check.</b> Everything here maps to what a GC9A01 can draw with <code>TFT_eSPI</code>:
+    the liquid is a full-screen 240×240 sprite, filled column-by-column (blue below the waterline, dark slate above),
+    the waterline is two summed sine terms for the overlapping-wave look, phase advanced each frame.
+    Dose ring = <code>fillArc</code>. Text = large GFX font pushed onto the same sprite, then one <code>pushSprite</code> per frame (no flicker).
+    Colours drop to RGB565. The round glass clips the corners for free.
+  </p>
+</div>
+
+<script>
+const TAU = Math.PI*2;
+// deep -> surface blue, and the empty slate. RGB565-friendly picks.
+const C = {
+  slateTop:'#141b23', slateBot:'#0e141b',
+  deep:'#0a3f74', mid:'#116bb0', surf:'#33a6f0', foam:'#a9e2ff',
+  ring:'#26323f', doseRun:'#38d39f', doseStop:'#ff5a5a',
+  ink:'#ffffff', dim:'rgba(255,255,255,.72)'
+};
+
+function makeGauge(canvas, cfg){
+  const ctx = canvas.getContext('2d');
+  const W=240,H=240, cx=120, cy=120, R=120;
+  const state = Object.assign({level:0.6, rate:17, dose:0.4, running:true, side:'L', elapsed:0}, cfg);
+  let t=0;
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // ---- clip to the round face ----
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.clip();
+
+    // ---- empty (dark slate) background ----
+    let g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,C.slateTop); g.addColorStop(1,C.slateBot);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+    // ---- liquid fill, bottom-up, with wavy surface ----
+    const baseY = H - state.level*H;               // resting waterline
+    const a1=5.5, a2=3.0;                           // wave amplitudes (px)
+    const active = state.running ? 1 : 0.35;        // waves calm when stopped
+    // liquid gradient (deep at bottom, bright near surface)
+    let lg = ctx.createLinearGradient(0, baseY-14, 0, H);
+    lg.addColorStop(0, C.surf); lg.addColorStop(0.28, C.mid); lg.addColorStop(1, C.deep);
+
+    ctx.beginPath();
+    ctx.moveTo(0,H);
+    for(let x=0;x<=W;x+=2){
+      const w = a1*active*Math.sin((x/W*TAU)*1.6 + t*1.8)
+              + a2*active*Math.sin((x/W*TAU)*2.7 - t*2.6 + 1.3);
+      const y = baseY + w;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(W,H); ctx.closePath();
+    ctx.fillStyle=lg; ctx.fill();
+
+    // ---- foam highlight on the surface line ----
+    if(state.level>0.02 && state.level<0.99){
+      ctx.beginPath();
+      for(let x=0;x<=W;x+=2){
+        const w = a1*active*Math.sin((x/W*TAU)*1.6 + t*1.8)
+                + a2*active*Math.sin((x/W*TAU)*2.7 - t*2.6 + 1.3);
+        const y = baseY + w;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=C.foam; ctx.globalAlpha=.55; ctx.lineWidth=2; ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+    ctx.restore(); // remove clip for rings/text (they sit on the glass)
+
+    // ---- outer dose-progress ring ----
+    const rr = R-9;
+    ctx.lineWidth=7; ctx.lineCap='round';
+    ctx.strokeStyle=C.ring;
+    ctx.beginPath(); ctx.arc(cx,cy,rr,0,TAU); ctx.stroke();
+    const start=-Math.PI/2;
+    ctx.strokeStyle = state.running ? C.doseRun : C.doseStop;
+    ctx.beginPath(); ctx.arc(cx,cy,rr,start,start+state.dose*TAU); ctx.stroke();
+
+    // ---- text overlay ----
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.shadowColor='rgba(0,0,0,.55)'; ctx.shadowBlur=6;
+
+    // side + state pill (top)
+    ctx.font='700 14px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillStyle=C.dim; ctx.fillText(state.side==='L'?'LEFT':'RIGHT', cx, 40);
+
+    const pill = state.running?'RUN':'STOP';
+    ctx.font='700 12px -apple-system,Segoe UI,Roboto,sans-serif';
+    const pw = ctx.measureText(pill).width+18;
+    ctx.shadowBlur=0;
+    ctx.fillStyle = state.running?C.doseRun:C.doseStop;
+    roundRect(ctx, cx-pw/2, 52, pw, 20, 10); ctx.fill();
+    ctx.fillStyle='#08110d'; ctx.fillText(pill, cx, 62.5);
+    ctx.shadowColor='rgba(0,0,0,.55)'; ctx.shadowBlur=6;
+
+    // big rate number (centre)
+    ctx.fillStyle=C.ink;
+    ctx.font='800 52px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText(state.rate.toFixed(0), cx, cy+2);
+    ctx.font='600 15px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillStyle=C.dim; ctx.fillText('ml / min', cx, cy+34);
+
+    // dose + time (bottom)
+    const target=120, delivered=Math.round(state.dose*target);
+    ctx.font='700 16px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillStyle=C.ink;
+    ctx.fillText(delivered+' / '+target+' ml', cx, cy+64);
+    ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillStyle=C.dim;
+    ctx.fillText(fmtTime(state.elapsed), cx, cy+84);
+
+    ctx.shadowBlur=0;
+  }
+
+  function tick(dt){
+    t += dt;
+    if(state.running) state.elapsed += dt;
+    draw();
+  }
+  return {state, tick, draw};
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function fmtTime(s){const m=Math.floor(s/60),ss=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+
+const gL = makeGauge(document.getElementById('L'), {side:'L', level:.62, rate:17, dose:.40, elapsed:154});
+const gR = makeGauge(document.getElementById('R'), {side:'R', level:.88, rate:17, dose:.55, elapsed:154});
+
+// wire controls
+function bind(prefix,g){
+  const lv=document.getElementById(prefix+'level'),
+        rt=document.getElementById(prefix+'rate'),
+        ds=document.getElementById(prefix+'dose');
+  lv.oninput=()=>{g.state.level=lv.value/100; document.getElementById(prefix+'levelO').textContent=lv.value+'%';};
+  rt.oninput=()=>{g.state.rate=+rt.value; document.getElementById(prefix+'rateO').textContent=rt.value+' ml/min';};
+  ds.oninput=()=>{g.state.dose=ds.value/100; document.getElementById(prefix+'doseO').textContent=ds.value+'%';};
+}
+bind('L',gL); bind('R',gR);
+document.getElementById('stopL').onclick=()=>gL.state.running=!gL.state.running;
+document.getElementById('stopR').onclick=()=>gR.state.running=!gR.state.running;
+document.getElementById('runBoth').onclick=()=>{gL.state.running=gR.state.running=true;};
+
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+  gL.tick(dt); gR.tick(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
