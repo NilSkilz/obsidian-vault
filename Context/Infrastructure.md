@@ -68,6 +68,13 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 
 Anything else on the LAN gets its address from the UDM's DHCP pool, which is **`.6`–`.254`** (it does NOT start above the statics — that overlap is what caused the vaultwarden .17 conflict on 2026-07-11; see the belt-and-braces note above). NPM originally leased .177 before I pinned it static. Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
 
+### Networking gotchas (confirmed 2026-08-09)
+
+- **The UDM is double-NAT'd.** Its WAN IP is a private `192.168.0.169`, i.e. the Dream Machine sits *behind* another router (the BT kit) rather than being the edge device. Longstanding, not a fault; the DDNS-published house IP is the upstream router's public address. Worth a tidy-up someday (bridge the BT box), but it's not causing any live problem.
+- **BT residential upload is the narrow pipe.** Total house upstream is ~60–90 Mbps. A single device pinning upload (game clip broadcast, cloud sync, seeding) makes *everything* feel slow even though download capacity is untouched. First thing to check when Rob reports "internet's slow": per-client upload in UniFi, not the line/router.
+- **UniFi tx/rx are measured from the ROUTER's perspective, not the device's.** For a client: `tx` = bytes the router *transmits to* the client = the client's **download**; `rx` = bytes the router *receives from* the client = the client's **upload**. Easy to map backwards. The old Mission Control / dashboard bandwidth sensor pulls the same API fields and has them **reversed** (shows "uploads high, downloads low" during a big download) — needs the tx/rx mapping swapped in its template (open follow-up).
+- **QoS caps are set via UniFi bandwidth profiles.** There's a **"Gentle Cap (Xbox)"** profile assigned to `192.168.1.88` (Logan's Xbox), currently **25/25 Mbps up/down**, plus an untouched "Slow Speed" (5/5) profile kept as a nuclear option. The QoS rule's own "download limit / upload limit" fields ARE device-perspective (correct), so the cap is right regardless of the tx/rx reporting confusion.
+
 ## Media stack API keys
 
 Repo is private and Rob is fine with these living here. Used for media status/suggestions (north-star feature). All verified reachable from this container 2026-07-02.
