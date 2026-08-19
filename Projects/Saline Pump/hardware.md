@@ -271,6 +271,7 @@ Per-session disposables *after* the first buy: **~£15–25**, dominated by sali
 - SPI header for the two GC9A01s: MOSI/SCK/DC/RST/BL common + 2× CS.
 - Silkscreen-label everything L/R. Add a couple of mounting holes matched to the printed enclosure.
 - Decoupling: 100nF across each MOSFET gate area + a bulk 470µF+ on the 12V rail near the pumps (motor inrush).
+- ESTOP_SENSE divider: 100k + 33k + 100nF off +12V_SW ($1N41) to GPIO16 (see pinout section for values/behaviour).
 
 ### Schematic (2026-08-14) — Rob draws his own
 
@@ -292,7 +293,7 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 - Enc L A/B/SW = **32/33/27**; Enc R A/B/SW = **14/13/22**
 - Display SPI shared: MOSI=**23**, SCK=**18**, DC=**19**, RST=**15**; CS_L=**5**, CS_R=**4**; BLK tied to 3V3 (SCK back on its native VSPI pin 18; DC now 19; GPIO16 and 17 both free, back in reserve)
 - HX711: SCK shared=**21**, DT_L=**34**, DT_R=**35** (input-only pins, HX711 driven; power bases at **3V3** not 5V so DT is ESP32-safe)
-- Optional ESTOP_SENSE=**16** (100k/33k divider off +12V_SW; moved off 19 now that DC took it)
+- **ESTOP_SENSE=16 (WIRED, v1 — no longer optional; Rob 2026-08-20).** Divider off the switched pump rail +12V_SW ($1N41): **100k from $1N41 to the GPIO16 node, 33k from that node to GND**, node → GPIO16. Add **100nF from node to GND** for noise immunity. Rail live = 12 × 33/133 = **2.98V** (clean logic HIGH); e-stop open = rail dead, node pulled to **0V** via the 33k (LOW). Firmware reads it as a plain digital input: HIGH = pumps powered, LOW = e-stop engaged → show "STOPPED". No ADC needed (GPIO16 isn't an ADC pin, doesn't matter — this is a rail-presence sense, not a level read). Low-side PWM keeps the +rail steady at 12V whenever the e-stop is closed, so the sense reads rail *presence*, not the PWM.
 - E-stop sits in the +12V **pump** rail only; buck runs off raw +12V so ESP32 stays alive to show STOPPED when pumps are killed.
 - **E-stop = a 2-pin header on the board for a panel switch (Rob, 2026-08-14).** Header wired in series in the +12V pump branch (after the buck tap), so the physical switch lives on the enclosure. Must carry full pump current (both pumps ~0.5-0.6A peak, trivial for any switch) and sit in the *pump* branch, not the shared input. A simple SPST on/off toggle works electrically; a latching red mushroom is the nicer slam-in-a-panic ergonomics, but the header takes either.
 
