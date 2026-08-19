@@ -118,7 +118,7 @@ The Tide System tab shows live host CPU%/load/RAM/CPU-temp (endpoint `GET /api/s
 - Runs the official **`vaultwarden/server:latest`** Docker image (the supported deployment) via Compose at `/opt/vaultwarden` inside the container. Data volume `/opt/vaultwarden/data` (SQLite + attachments + RSA keys — **this is the backup-critical dir**). `restart: always`.
 - Listens `:8080` → container `:80`; TLS terminates at NPM (host 12, wildcard cert 2, `allow_websocket_upgrade` on — Vaultwarden needs WS for live sync). `DOMAIN=https://vault.cracky.co.uk`.
 - Config in `/opt/vaultwarden/vaultwarden.env` (chmod 600): `ADMIN_TOKEN` is an **argon2 PHC hash** (not plaintext) — the `/admin` password is in the daily log 2026-07-10, not stored here. `SIGNUPS_ALLOWED=false` (Rob registered 2026-07-10, then locked down). Add users via `/admin` invite. To reopen: flip the env, `docker compose up -d`.
-- Upgrades: `cd /opt/vaultwarden && docker compose pull && docker compose up -d`. Not covered by `updates.sh` (Docker images, same as Plausible).
+- Upgrades: `cd /opt/vaultwarden && docker compose pull && docker compose up -d`. Not covered by `updates.sh` (Docker images, same as Plausible). **Keep it current:** the Bitwarden mobile app auto-updates and hangs on the "skeleton" loading screen against a stale server (web login + sync API still return 200, so it looks healthy — the tell is the reported version in `/api/config`). Bumped **1.36.0 → 1.37.1 on 2026-08-19** to fix exactly this (server version the app saw went `2025.12.0` → `2026.6.0`). If the app ever stalls on skeleton again, pull the image first.
 
 ## Paperless-ngx (CT 114, installed 2026-07-10)
 
