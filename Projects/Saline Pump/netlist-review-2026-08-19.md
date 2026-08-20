@@ -71,3 +71,12 @@ Rob re-exported the netlist after moving pins around for easier PCB routing. Re-
 5. **Cosmetic:** set the Value text on C1/C2/U4 so the BOM and silk read 470µF / 100nF instead of `={Value}`.
 
 **Still open from 08-19:** item 4 (Reservoir device is "HDR2.54-LI-2x4P" 8-pin name on a 4-pin footprint — verify the ordered part is physically 4-pin). Unchanged in this redraw.
+
+## ORDERED AS PCB v1 (2026-08-20)
+
+Rob ordered the board on this exact netlist. Final trace before order: topology sound, all electrical fixes present (R2/R3 = 150Ω, C1 = 470µF/25V bulk, C2/C3 = 100nF pump snubbers, R1/R4 = 10k pulldowns, U1/U2 flyback), D22 stub gone, all part values populated. The two remaining advisories were reviewed and **accepted for v1, not blockers:**
+- **Pump L gate on GPIO14 (boot-twitch):** kept on 14. Mitigated in firmware — pin GPIO14 LOW first thing in `setup()`, before the boot window matters. 10k pulldown backs it up.
+- **ESTOP_SENSE divider not drawn:** deferred to v2. GPIO16 left free; firmware just won't read rail-presence on v1.
+- **Enc R SW:** wire to the pin routed to GPIO32 (pull-up-capable). If any SW line reads flaky, add a 10k pull-up to 3V3 by hand later — no board change needed.
+
+`hardware.md` now carries a firmware pin map to code the ESP32 against this board.

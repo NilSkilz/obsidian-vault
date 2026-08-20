@@ -284,6 +284,33 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 
 **(Pin move 2026-08-20:** Rob redrew the netlist to route more easily on the PCB. Encoders, pumps and HX711 all moved; displays unchanged. Full new map in the locked-pinout list below.)
 
+**⚑ ORDERED AS PCB v1 (2026-08-20).** Rob ordered the board on exactly the netlist below — pins are now fixed in copper, no more moving them. The two open advisories (GPIO14 boot-twitch, e-stop sense not drawn) were reviewed and **accepted as-is for v1**: the boot-twitch is handled in firmware, and the e-stop sense is deferred. **This means the firmware pinout must match this table exactly** — code to these GPIOs, not to any earlier proposal. Netlist traced end-to-end against the board spec 2026-08-20: topology sound, all the earlier fixes present (R2/R3 = 150Ω, C1 = 470µF/25V bulk on the pump rail, C2/C3 = 100nF pump snubbers, R1/R4 = 10k gate pulldowns, U1/U2 = 1N5822 flyback), the old D22 stub is gone, and every part now carries its value.
+
+### Firmware pin map (program the ESP32 to THIS)
+
+| GPIO (silk) | Function | Notes |
+|---|---|---|
+| **14** (D14) | Pump L gate (Q1) | 150Ω series + 10k pulldown. ⚠ boot-glitch pin — see note |
+| **13** (D13) | Pump R gate (Q2) | 150Ω series + 10k pulldown. Boot-clean |
+| **27** (D27) | Enc L CLK | pull-up-capable |
+| **26** (D26) | Enc L DT | pull-up-capable |
+| **25** (D25) | Enc L SW | internal pull-up in firmware |
+| **34** (D34) | Enc R CLK | input-only, no internal PU (KY-040 onboard PU covers it) |
+| **35** (D35) | Enc R DT | input-only, no internal PU (KY-040 onboard PU covers it) |
+| **32** (D32) | Enc R SW | pull-up-capable — internal PU in firmware |
+| **23** (D23) | Display MOSI (SDA) | SPI, shared both screens |
+| **18** (D18) | Display SCK (SCL) | SPI, shared |
+| **19** (D19) | Display DC | shared |
+| **15** (D15) | Display RES | shared; safe strapping pin (idles high) |
+| **5** (D5) | Display CS — Left | per-screen |
+| **4** (D4) | Display CS — Right | per-screen |
+| **33** (D33) | HX711 SCK | shared clock, both bases |
+| **36** (VP) | HX711 DT — Left base | input-only, HX711-driven, no PU needed |
+| **39** (VN) | HX711 DT — Right base | input-only, HX711-driven, no PU needed |
+| **16** (RX2) | ESTOP_SENSE | **reserved, divider not on this board** — pin free, firmware can leave it unread until v2 |
+
+Display BLK + VCC, encoder +, and HX711 VCC all to **3V3** (not 5V). ESP32 powered from the MP1584 buck 5V into VIN. Unused/free: GPIO2, 12, 17(TX2), 21, 22, RX0/TX0.
+
 **Displays are the 8-pin GC9A01 boards (GND / VCC / SCL / SDA / RES / DC / CS / BLK).** Despite the I2C-looking labels this is **SPI**: SCL = clock (SCK), SDA = data (MOSI). Both screens share everything except CS. Power VCC at **3V3** (boards tolerate 5V via onboard reg but logic is 3.3V, no level shift), BLK tied to 3V3. No MISO pin — write-only, correct.
 
 - SCL→**18** (SCK, shared), SDA→**23** (MOSI, shared), RES→**15** (shared), DC→**19** (shared), BLK→3V3
@@ -291,8 +318,8 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 
 **Pinout locked as v1 (ESP32 DevKitC 30-pin) — confirm on perfboard proto before fab.** Strapping 0/2/12 and serial (1/3) left clear; **15 is now used for display RES** (2026-08-14 change). 15 is the *safe* strapping pin: high at boot via internal pull-up = normal boot, and RES idles high in operation, so no boot conflict (unlike 12, which must stay clear). No ADC used so no ADC2/WiFi conflict.
 
-- Pumps: gate L=**14**, R=**13** (150Ω series + 10k pulldown each). ⚠ **GPIO14 emits a PWM burst at boot** — with a MOSFET gate on it, Pump L can twitch briefly at every power-on/reset. **Recommend swapping Pump L gate to 27** (boot-clean, and physically adjacent to 14 on the right header, so routing barely changes) and moving that encoder line onto 14 (a boot glitch on an encoder *input* is harmless). D13 (Pump R) is boot-clean, leave it.
-- Enc L A/B/SW = **27/26/25** (all pull-up-capable); Enc R A/B/SW = **34/35/32** (A/B on input-only 34/35 via the KY-040's onboard pull-ups; SW on 32, which has an internal pull-up)
+- Pumps: gate L=**14**, R=**13** (150Ω series + 10k pulldown each). ⚠ **GPIO14 emits a PWM burst at boot** — with a MOSFET gate on it, Pump L can twitch briefly at every power-on/reset. **Ordered on 14 anyway (Rob, 2026-08-20)** — accepted as v1. The 10k gate pulldown limits it, and the fix lives in **firmware**: force the LEDC channel / GPIO14 LOW as the very first thing in `setup()`, before anything else, so the gate is pinned off through the boot window. D13 (Pump R) is boot-clean.
+- Enc L CLK/DT/SW = **27/26/25** (all pull-up-capable, internal PU in firmware for SW); Enc R CLK/DT/SW = **34/35/32** (CLK/DT on input-only 34/35 via the KY-040's onboard pull-ups; SW on 32, which has an internal pull-up). **Wire the KY-040 SW to the header pin routed to 32, not 34/35** — those input-only pins can't pull the switch up. If a SW line ever reads flaky, tack a **10k pull-up to 3V3 on that switch manually** (Rob's "add a resistor later" plan); nothing on the board blocks it.
 - Display SPI shared: MOSI=**23**, SCK=**18**, DC=**19**, RST=**15**; CS_L=**5**, CS_R=**4**; BLK tied to 3V3 (unchanged from the previous rev). GPIO17/TX2 free; **GPIO16/RX2 reserved for ESTOP_SENSE**.
 - HX711: SCK shared=**33**, DT_L=**36 (VP)**, DT_R=**39 (VN)** (DT on input-only pins, HX711-driven so no pull-up needed; SCK on normal GPIO33; power bases at **3V3** not 5V so DT is ESP32-safe)
 - **ESTOP_SENSE=16 (DESIGN LOCKED, v1 — but NOT yet drawn in the 2026-08-20 netlist; Rob 2026-08-20).** GPIO16 is the pin silk-labelled **RX2** on the DevKit V1 (present and free — the 30-pin board exposes 16/17 as RX2/TX2). The divider (R5/R6/100nF) is absent from the current netlist and must be added in EasyEDA before fab. Spec: divider off the switched pump rail +12V_SW ($1N49 in the current netlist, was $1N41): **100k from $1N41 to the GPIO16 node, 33k from that node to GND**, node → GPIO16. Add **100nF from node to GND** for noise immunity. Rail live = 12 × 33/133 = **2.98V** (clean logic HIGH); e-stop open = rail dead, node pulled to **0V** via the 33k (LOW). Firmware reads it as a plain digital input: HIGH = pumps powered, LOW = e-stop engaged → show "STOPPED". No ADC needed (GPIO16 isn't an ADC pin, doesn't matter — this is a rail-presence sense, not a level read). Low-side PWM keeps the +rail steady at 12V whenever the e-stop is closed, so the sense reads rail *presence*, not the PWM.
