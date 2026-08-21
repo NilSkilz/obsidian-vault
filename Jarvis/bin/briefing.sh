@@ -32,6 +32,28 @@ else
     ASK="${ASK} Then, to close, add a short natural line asking Rob what he told Aimee today (plans, decisions, feelings, logistics) so I can log it for the record, and to just say if it was a quiet day. Keep it as one flowing message, not a separate section."
     COMMS_FALLBACK="🗒 And for the comms log: what did you tell Aimee today? Anything worth having on record (plans, decisions, feelings, logistics) and I'll log it. If nothing notable, just say so and I'll note a quiet day."
   fi
+
+  # Fold the Tide mood check-in into this same message too, but only if Rob has
+  # logged no mood in Tide's journal today. Silently skips if the API is down.
+  MOOD_FALLBACK=""
+  HCONF="$HOME/.config/jarvis/health.env"
+  if [ -f "$HCONF" ]; then
+    set -a; source "$HCONF"; set +a
+    MBASE="${TIDE_API_BASE:-http://192.168.1.16:3001}/api/family"
+    MTREND="$(curl -sS --max-time 10 "${MBASE}/journal?range=2" \
+      -H "X-Jarvis-Key: ${JARVIS_API_KEY:-}" -H "X-Jarvis-User: rob" 2>/dev/null)" || MTREND=""
+    if [ -n "$MTREND" ]; then
+      MDAY="$(echo "$MTREND" | jq -r '.today // empty' 2>/dev/null)"
+      if [ -n "$MDAY" ]; then
+        MLOGGED="$(echo "$MTREND" | jq --arg d "$MDAY" \
+          '[.entries[] | select(.date==$d and .mood!=null)] | length' 2>/dev/null)"
+        if [ "${MLOGGED:-0}" = "0" ]; then
+          ASK="${ASK} Also, still within the same single flowing message, gently invite Rob to a mood check-in: how today'\''s been on the whole, a 1-5 (1 rough, 5 great) or just how he'\''s doing, and note you'\''ll log it. Weave it in naturally, do not make it a separate section or a second message."
+          MOOD_FALLBACK="🌤 And how's today been on the whole? Give me a 1-5 (1 rough, 5 great) or just tell me how you're doing, and I'll log it. Skip if you'd rather not."
+        fi
+      fi
+    fi
+  fi
 fi
 
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
@@ -41,13 +63,16 @@ BRIEF="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-4-8 --dangerously-skip-p
   echo "$(date -Iseconds) ERROR: claude invocation failed"
   cat /tmp/jarvis-briefing-err.$$
   rm -f /tmp/jarvis-briefing-err.$$
-  # If the briefing failed but a comms ask was due, at least send that so the
-  # daily comms record doesn't silently go missing.
-  if [ "$MODE" = "evening" ] && [ -n "${COMMS_FALLBACK:-}" ]; then
+  # If the briefing failed but a comms and/or mood ask was due, at least send
+  # those so the daily records don't silently go missing.
+  if [ "$MODE" = "evening" ] && { [ -n "${COMMS_FALLBACK:-}" ] || [ -n "${MOOD_FALLBACK:-}" ]; }; then
+    FB="$(printf '%s' "${COMMS_FALLBACK:-}")"
+    [ -n "${COMMS_FALLBACK:-}" ] && [ -n "${MOOD_FALLBACK:-}" ] && FB="${FB}"$'\n\n'
+    FB="${FB}${MOOD_FALLBACK:-}"
     curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
       --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-      --data-urlencode "text=${COMMS_FALLBACK}" >/dev/null || true
-    echo "$(date -Iseconds) sent comms-only fallback"
+      --data-urlencode "text=${FB}" >/dev/null || true
+    echo "$(date -Iseconds) sent comms/mood-only fallback"
   fi
   exit 0
 }
