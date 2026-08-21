@@ -22,6 +22,16 @@ if [ "$MODE" = "morning" ]; then
   ASK='Compose Rob'\''s MORNING briefing. Check: today'\''s weather (`Jarvis/bin/weather.sh today`, worth a quick line), today'\''s calendar (`Jarvis/bin/calendar.sh today`, family/personal events), today'\''s Trello "To Do"/"In Progress" cards (`Jarvis/bin/trello.sh cards "To Do"` and `... "In Progress"`), today'\''s Todoist tasks (`Jarvis/bin/todoist.sh today` for due-today items, plus `Jarvis/bin/todoist.sh list "Shared Todo"` for the open household list, no due dates but worth a mention if something stands out), Ops/Tasks.md "Now" items, anything blocked in Ops/Proposals.md that needs his call, and yesterday'\''s daily log for open follow-ups. Write it warm, friendly and upbeat, like a good morning message from someone who has his back. Open with a genuine greeting. Emojis are welcome (tasteful, not spammy). Length is up to you: say what is worth saying, no artificial line limit, but stay chat-shaped for Telegram, no headers/markdown tables. Lead with anything that actually needs him today (calendar events included); skip sections with nothing to say.'
 else
   ASK='Compose Rob'\''s EVENING briefing. Check today'\''s daily log (Daily/YYYY-MM-DD.md) for what actually happened, any Trello cards moved/blocked today, any Todoist household tasks still open (`Jarvis/bin/todoist.sh today` and `Jarvis/bin/todoist.sh list "Shared Todo"`), tomorrow'\''s weather (`Jarvis/bin/weather.sh tomorrow`, so he can plan), tomorrow'\''s calendar (`Jarvis/bin/calendar.sh tomorrow`, so he knows what'\''s coming), and anything left open in Ops/Proposals.md. Write it warm, friendly and relaxed, like a wind-down note at the end of the day. Emojis are welcome (tasteful, not spammy). Length is up to you: say what is worth saying, no artificial line limit, but stay chat-shaped for Telegram, no headers/markdown tables. Focus on what moved, what'\''s still waiting on him, and anything on tomorrow'\''s calendar worth flagging tonight.'
+
+  # Fold the Aimee comms-log nudge into this same message, but only if today has
+  # no comms entry yet (if Rob already told me and I logged it, skip the ask).
+  COMMSLOG="$VAULT/Context/Aimee Comms Log.md"
+  TODAY="$(date +%Y-%m-%d)"
+  COMMS_FALLBACK=""
+  if ! { [ -f "$COMMSLOG" ] && grep -q "^## ${TODAY}" "$COMMSLOG"; }; then
+    ASK="${ASK} Then, to close, add a short natural line asking Rob what he told Aimee today (plans, decisions, feelings, logistics) so I can log it for the record, and to just say if it was a quiet day. Keep it as one flowing message, not a separate section."
+    COMMS_FALLBACK="🗒 And for the comms log: what did you tell Aimee today? Anything worth having on record (plans, decisions, feelings, logistics) and I'll log it. If nothing notable, just say so and I'll note a quiet day."
+  fi
 fi
 
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
@@ -31,6 +41,14 @@ BRIEF="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-4-8 --dangerously-skip-p
   echo "$(date -Iseconds) ERROR: claude invocation failed"
   cat /tmp/jarvis-briefing-err.$$
   rm -f /tmp/jarvis-briefing-err.$$
+  # If the briefing failed but a comms ask was due, at least send that so the
+  # daily comms record doesn't silently go missing.
+  if [ "$MODE" = "evening" ] && [ -n "${COMMS_FALLBACK:-}" ]; then
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+      --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+      --data-urlencode "text=${COMMS_FALLBACK}" >/dev/null || true
+    echo "$(date -Iseconds) sent comms-only fallback"
+  fi
   exit 0
 }
 rm -f /tmp/jarvis-briefing-err.$$
