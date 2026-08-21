@@ -25,6 +25,11 @@ Format per entry:
 **Option:** Rob deletes the old `cracky.co.uk` zone from the OLD Cloudflare account (the one before the account migration). My DDNS token only has access to the new account (zones: cracky `da56…` + kernowlabs), so I can't reach the old zone to remove it myself.
 **Risk:** Account-level deletion I have no credentials for anyway — genuinely needs Rob, not just a caution. Low urgency now that the symptom has cleared, but worth closing out so it can't recur.
 
+## HA core_ssh add-on stuck failing to update (2026-08-21)
+**Problem:** `ha addons update --backup core_ssh` has now failed two heartbeat runs in a row (2026-08-20 and 2026-08-21), stuck at 10.3.0 while 10.4.0 is available. HA core/OS and everything else update clean; HA itself is fully up (checked via direct HTTP, 200 + normal frontend). Already flagged to Rob via Telegram on 2026-08-20, so not re-pinging today for the same unresolved issue, but noting it here since it's now a repeat, not a one-off blip.
+**Option:** Rob checks the add-on update manually from the HA UI (Settings > Add-ons > Terminal & SSH > Update) to see the actual error, since the CLI update call doesn't surface one.
+**Risk:** None from waiting, core_ssh at the old version still works. Just don't want this to become a silent recurring failure nobody looks at.
+
 ## Plausible Docker image updates (2026-07-09)
 **Problem:** `updates.sh` patches apt packages on the host + all 12 LXCs and HA, but Plausible runs as a Docker Compose stack, so its images (`plausible/community-edition`, the DB images) are never pulled by the update routine. They'll silently drift out of date, including security fixes.
 **Option:** Add a small step to `updates.sh` (or a separate weekly job) that does `docker compose pull && up -d` in `/opt/plausible-ce` on CT 111, with a health check after.
