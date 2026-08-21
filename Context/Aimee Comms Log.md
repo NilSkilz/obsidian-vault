@@ -13,3 +13,8 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 - Multiple bullets if several things came up.
 
 -->
+
+## 2026-08-20 (Thursday)
+- Told Aimee about the munch he went to. Met a girl called **Minty** for the first time, had a chat with her.
+- Told her he spoke to **Robin**, a trans girl he's met a couple of times. Aimee asked if he wanted to play with her; Rob said he wasn't sure about playing with a trans person over a long period. Aimee agreed, thought he probably wouldn't enjoy it and the novelty would wear off.
+- Gave Aimee a heads-up that he's been messaging someone on FetLife a few times, handle **Baby199**. Currently in Ireland, moving to Truro in September. Rob said he might ask her what she's looking for and potentially progress it to see if they align.
