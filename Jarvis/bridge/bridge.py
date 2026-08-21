@@ -8,9 +8,10 @@ the vault, streamed as `stream-json`. That run has full tools and
 skip-permissions, so it actually DOES the work (edits code, runs commands,
 pushes, updates the vault) end to end. The typing indicator carries the
 "working" signal while the job runs; the final summary is sent once the work is
-done. A separate up-front ack is off by default (set JARVIS_ACK=1 to re-enable
-the "on it" line: Opus's own streamed opening, with a canned fallback if it's
-slow to speak). The typing indicator is kept alive throughout. When it says it
+done. The up-front ack is the model's own streamed opening line, sent live as
+it lands (Rob asked for natural voice over canned lines, 2026-08-21); a canned
+fallback fires only if the model is slow to speak. Set JARVIS_ACK=0 to silence
+acks entirely. The typing indicator is kept alive throughout. When it says it
 did something, it did.
 
 Continuity comes from a rolling conversation buffer fed into each prompt, not
@@ -45,8 +46,8 @@ PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
-ACK_ENABLED = os.environ.get("JARVIS_ACK", "0") == "1"  # send a separate "on it" ack? Off by default (Rob found it noise); typing indicator carries the "working" signal instead
-ACK_GRACE = 8              # if Opus hasn't spoken by now, send a canned ack so Rob has confirmation
+ACK_ENABLED = os.environ.get("JARVIS_ACK", "1") == "1"  # stream the model's opening line as the ack (on by default since 2026-08-21; Rob wants natural voice, not canned)
+ACK_GRACE = 15             # if the model hasn't spoken by now, send a canned ack so Rob has confirmation (generous so the canned pool rarely fires)
 LONG_JOB_NOTICE = 30       # ack-off middle ground: if still working after this long and we've said nothing, drop ONE light "still on it" line
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Absolute path so it works under a minimal PATH too.
@@ -192,7 +193,7 @@ This is NOT chat-only. If Rob's message asks for work of any kind — code chang
 Critical: there is no "later." This run is your only chance to act — when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did.
 
 How to reply (this streams live, so Rob sees your text as it lands):
-- FIRST, before touching any tool, write ONE short line (max ~25 words) that confirms you're on it AND reflects the key requirements back in your own words, so Rob knows you understood the ask. This line IS his instant acknowledgement, so make it land.
+- FIRST, before touching any tool, react to his message the way you'd naturally reply if a mate texted you: short, in your own voice, specific to what he said. This streams to him instantly and IS his acknowledgement. No stock phrases ("on it", "got it, doing X"), no restating his request back at him as a formula; if there's a genuine ambiguity worth naming or a quick opinion worth giving, that beats a confirmation. One or two sentences, then get to work.
 - THEN do the work with your tools. Don't narrate every step; work quietly.
 - WHEN DONE, write a short, mobile-friendly summary of what you actually did. Concise and chat-shaped, warm and direct, no walls of text, no preamble.
 - If Rob's message needs no tools (a question or chit-chat), skip the separate ack and just answer it in one short line.
@@ -314,7 +315,7 @@ NOTICE_POOL = [
 
 
 def process(chat, text, image_path=None, file_path=None):
-    """Handle one job: stream the run, send Opus's opening line as the live ack,
+    """Handle one job: stream the run, send the model's opening line as the live ack,
     keep typing alive, then send the final summary."""
     buffer = recent_buffer()
     append_convo(f"Rob: {text}")
@@ -323,7 +324,7 @@ def process(chat, text, image_path=None, file_path=None):
     ack_lock = threading.Lock()
 
     def send_ack(t):
-        # Fire exactly one ack, whoever gets there first: Opus's streamed
+        # Fire exactly one ack, whoever gets there first: the model's streamed
         # opening line, or the canned fallback if it's slow to speak.
         # Acks are opt-in (JARVIS_ACK=1); when off, we stay silent until the
         # final reply and let the typing indicator carry the "working" signal.
@@ -337,7 +338,7 @@ def process(chat, text, image_path=None, file_path=None):
         send(chat, t)
 
     def on_text(block):
-        # Opus's first top-level line is the ack; later interstitial lines are
+        # The model's first top-level line is the ack; later interstitial lines are
         # suppressed (the final summary is sent from the run's result).
         send_ack(block)
 
@@ -347,7 +348,7 @@ def process(chat, text, image_path=None, file_path=None):
             typing(chat)
 
     def grace_fallback():
-        # Safety net: if Opus hasn't produced its opening line within the grace
+        # Safety net: if the model hasn't produced its opening line within the grace
         # window, drop a canned ack so Rob always gets fast confirmation.
         if not done.wait(ACK_GRACE):
             send_ack(random.choice(ACK_POOL))
