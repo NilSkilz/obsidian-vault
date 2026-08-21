@@ -255,6 +255,16 @@ The standing "go back through the week's chats and self-learn" loop Rob asked ab
 - **First run was a full backlog bootstrap** (no offset file ⇒ START=0 ⇒ distilled everything logged since the bridge went live). The dedup guard in the prompt ("check for an existing file/section before writing") keeps that from duplicating what's already recorded.
 - Writes land in whichever memory fits: the vault (git-backed, picked up by the nightly git-sync) or the auto-memory dir `/home/jarvis/.claude/projects/-data-memory/memory/`.
 
+## Hourly email check (built 2026-08-21)
+
+Rob asked for an hourly inbox watch ("let me know if there's anything interesting") plus standing junk cleanup.
+
+- **`Jarvis/bin/email-check.sh`** (cron **`5 7-23 * * *`**, waking hours only). Two jobs per run:
+  1. **Junk sweep:** `Jarvis/bin/mail-tool.py sweep` moves INBOX mail from senders listed in `~/.config/jarvis/mail-bin-senders.txt` (one IMAP FROM substring per line; currently `aliexpress`, `thekinkforge`) to Deleted Messages (30-day recovery, never a hard delete). Adding a sender to the auto-bin list = one line in that file.
+  2. **Interesting-mail ping:** `mail-tool.py new` prints INBOX messages since the last run (UID checkpoint at `~/.local/state/jarvis-mail-check.uid`; first run just sets it). If there's new mail, a one-shot `claude -p` (sonnet) judges it; marketing/newsletters/automation never ping, personal mail, family/school, security alerts, money problems and time-sensitive stuff do. Ping goes to Telegram prefixed 📬. Silence is the default.
+- Log: `~/.local/state/jarvis-email-check.log`. `DRYRUN=1` prints the would-be Telegram message instead of sending.
+- Initial sweep on 2026-08-21 binned **521** emails (519 AliExpress back to 2020, 2 the Kink Forge).
+
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.
