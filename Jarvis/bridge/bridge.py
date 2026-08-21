@@ -42,7 +42,7 @@ CONF = HOME / ".config/jarvis/telegram.env"
 STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
 PROJECTS = "/home/jarvis/projects"
-MODEL = os.environ.get("JARVIS_MODEL", "claude-opus-4-8")  # anything that talks to Rob runs Opus 4.8+; override via env
+MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "0") == "1"  # send a separate "on it" ack? Off by default (Rob found it noise); typing indicator carries the "working" signal instead
