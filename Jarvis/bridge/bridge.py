@@ -44,6 +44,14 @@ STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
 PROJECTS = "/home/jarvis/projects"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
+# Usage-aware model choice: usage.sh reads the plan-usage endpoint and returns
+# the model to use (drops to Opus 5 once the Fable weekly limit crosses 80%,
+# Rob's "use the best tool but never hit the limits", 2026-08-21). Cached so we
+# don't hit the endpoint on every message. JARVIS_MODEL_AUTO=0 pins MODEL.
+USAGE_SH = f"{VAULT}/Jarvis/bin/usage.sh"
+MODEL_AUTO = os.environ.get("JARVIS_MODEL_AUTO", "1") == "1"
+MODEL_CACHE_TTL = 300
+_model_cache = {"model": MODEL, "ts": 0.0}
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
 CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "1") == "1"  # stream the model's opening line as the ack (on by default since 2026-08-21; Rob wants natural voice, not canned)
@@ -179,6 +187,38 @@ def append_convo(line):
             f.write(line.rstrip("\n") + "\n")
 
 
+def pick_model():
+    """Current chat model, usage-aware. Falls back to MODEL on any failure so a
+    dead endpoint can never take the bridge down with it."""
+    if not MODEL_AUTO:
+        return MODEL
+    now = time.time()
+    if now - _model_cache["ts"] < MODEL_CACHE_TTL:
+        return _model_cache["model"]
+    _model_cache["ts"] = now  # even on failure, don't re-hit the endpoint for a while
+    try:
+        proc = subprocess.run([USAGE_SH, "model"], capture_output=True, text=True, timeout=25)
+        m = (proc.stdout or "").strip()
+        if m.startswith("claude-"):
+            if m != _model_cache["model"]:
+                log(f"usage-aware model switch: {_model_cache['model']} -> {m}")
+            _model_cache["model"] = m
+    except Exception as e:
+        log(f"pick_model error: {e}")
+    return _model_cache["model"]
+
+
+def usage_stats():
+    """Human usage summary for /stats. Deterministic, no claude run needed."""
+    try:
+        proc = subprocess.run([USAGE_SH, "summary"], capture_output=True, text=True, timeout=25)
+        out = (proc.stdout or "").strip()
+        return out or "(usage endpoint came back empty, try again in a minute)"
+    except Exception as e:
+        log(f"usage_stats error: {e}")
+        return "(couldn't reach the usage endpoint just now, try again in a minute)"
+
+
 def run_claude(text, buffer, on_text, image_path=None, file_path=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
@@ -231,7 +271,7 @@ Rob's new message: {text}"""
 
     try:
         proc = subprocess.Popen(
-            [CLAUDE_BIN, "-p", prompt, "--model", MODEL, "--dangerously-skip-permissions",
+            [CLAUDE_BIN, "-p", prompt, "--model", pick_model(), "--dangerously-skip-permissions",
              "--output-format", "stream-json", "--verbose", "--include-partial-messages"],
             cwd=VAULT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
             stdin=subprocess.DEVNULL, bufsize=1,
@@ -487,6 +527,15 @@ def main():
                 log(f"<< {chat}: [file {doc.get('file_name','?')}] {(text or '')[:50]}")
             else:
                 log(f"<< {chat}: {text}")
+            # /stats is answered instantly from the usage endpoint, no claude run
+            # and no queueing behind a working job.
+            if text and text.strip().lower() in ("/stats", "/usage"):
+                stats = usage_stats()
+                send(chat, stats)
+                append_convo("Rob: /stats")
+                append_convo(f"Jarvis: {stats}")
+                log(f">> {chat}: (stats) {stats[:80]}")
+                continue
             # If a job is already running (or waiting), tell Rob this one is queued.
             if BUSY.is_set() or not JOBS.empty():
                 send(chat, "Noted, I'll pick this up right after the current job.")

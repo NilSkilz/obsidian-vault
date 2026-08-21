@@ -54,6 +54,13 @@ else
       fi
     fi
   fi
+
+  # Claude usage snapshot (Rob asked for this in the evening brief, 2026-08-21).
+  # Fetched here so the model just states it rather than running anything.
+  USAGE_LINE="$("$VAULT/Jarvis/bin/usage.sh" brief 2>/dev/null || true)"
+  if [ -n "$USAGE_LINE" ]; then
+    ASK="${ASK} Also include one short line on Claude usage, from this data (do not run any tool for it, just state it naturally): ${USAGE_LINE}."
+  fi
 fi
 
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
