@@ -71,6 +71,15 @@ Best version stacks several at once, all cueing off each other:
 - **The heartbeat as her anchor.** After the release, kill everything except a slow heartbeat and let it run under the whole reveal and into aftercare. It was the sound of her dying, now it's the sound of her alive. Cheap trick, hits hard.
 - **A last twitch.** Just as everyone relaxes, one final shock and a body jolt, priest slams a hand down, one sharp word, then true calm. Horror-film beat, use only if she'd love it rather than hate it, so ask.
 
+## Prop build: defib paddles (Rob greenlit 2026-08-22)
+
+Rob's making these. Two paddle shells printed in PLA, handles wrapped in mid-weight leather, coiled cable running to a dummy base box for the look. Purely theatrical: the real shock comes from the remote unit on her thigh, but Luke or Rob physically slamming paddles down on "CLEAR" while the e-stim fires turns the defib beat from a button-press into a full performance. Build notes:
+
+- Print in two halves per paddle and glue, so the handles can be hollow and light.
+- A momentary button under one thumb wired to a buzzer or LED in the base box sells the "charging" whine for pennies.
+- Paddle faces land on her upper back or thighs, never over the chest, and they carry no current at all. The only live element stays the thigh unit.
+- Test the choreography dry: paddles down, half-second beat, then the remote fires. The gap is what makes it read as cause and effect.
+
 ## Safety notes (the boring vital bit)
 
 - **Hood + mask + restraints = she can't speak clearly.** Non-verbal safeword is mandatory: a bell or ball in hand to drop, plus scheduled hand-squeeze check-ins from Rob. Raven needs a signal too for the impact.
