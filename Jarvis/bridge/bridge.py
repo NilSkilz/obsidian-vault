@@ -53,11 +53,18 @@ MODEL_AUTO = os.environ.get("JARVIS_MODEL_AUTO", "1") == "1"
 MODEL_CACHE_TTL = 300
 _model_cache = {"model": MODEL, "ts": 0.0}
 BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
-CLAUDE_TIMEOUT = 1500      # 25 min; real work takes far longer than a chat reply
+CLAUDE_TIMEOUT = 900       # 15 min. Measured from bridge.log 2026-08-22: even on the
+                           # heaviest days (57 replies, deep infra digs) p99 lands under
+                           # 10 min, so 25 was just dead air on a genuinely wedged run.
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "1") == "1"  # stream the model's opening line as the ack (on by default since 2026-08-21; Rob wants natural voice, not canned)
 ACK_GRACE = 15             # if the model hasn't spoken by now, send a canned ack so Rob has confirmation (generous so the canned pool rarely fires)
 LONG_JOB_NOTICE = 30       # ack-off middle ground: if still working after this long and we've said nothing, drop ONE light "still on it" line
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
+# Progress heartbeats on genuinely long runs. The ack tells Rob the run STARTED;
+# nothing then tells him it's still alive, so a 10-min infra dig and a hung
+# container look identical from the phone (exactly what happened 2026-08-21/22).
+# These fire regardless of whether the ack went out, unlike LONG_JOB_NOTICE.
+HEARTBEAT_AT = (180, 600)  # seconds into a run: 3 min, then 10 min
 # Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
 # Voice-note transcription: a standalone faster-whisper helper in its own venv,
@@ -326,7 +333,7 @@ Rob's new message: {text}"""
 
     proc.wait()
     if killed["v"]:
-        return "(That job ran past 25 min so I stopped it. Might be too big for one go — tell me how to split it.)"
+        return "(That job ran past 15 min so I stopped it. Might be too big for one go, tell me how to split it.)"
     if final_result and final_result.strip():
         return final_result.strip()
     log(f"claude no result; stderr: {(err_buf[0] if err_buf else '')[:300]}")
@@ -407,9 +414,23 @@ def process(chat, text, image_path=None, file_path=None):
             ack["sent"] = True
         send(chat, random.choice(NOTICE_POOL))
 
+    def heartbeat():
+        # Liveness, not acknowledgement. On a long run the ack has already gone out
+        # and then Rob gets nothing until the summary, so silence reads as "hung"
+        # (it genuinely was, 2026-08-21). Deliberately does NOT touch the ack slot:
+        # these fire on top of the ack, and say the elapsed time so the pause is
+        # legible rather than ambiguous.
+        prev = 0
+        for mark in HEARTBEAT_AT:
+            if done.wait(mark - prev):
+                return
+            prev = mark
+            send(chat, f"Still on it, {mark // 60} min in.")
+
     threading.Thread(target=keep_typing, daemon=True).start()
     threading.Thread(target=grace_fallback, daemon=True).start()
     threading.Thread(target=long_job_notice, daemon=True).start()
+    threading.Thread(target=heartbeat, daemon=True).start()
 
     reply = run_claude(text, buffer, on_text, image_path, file_path)
     done.set()
