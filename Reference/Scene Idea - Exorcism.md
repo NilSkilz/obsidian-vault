@@ -39,6 +39,16 @@ She's blindfolded, so sound, smell, and temperature do all the work:
 - **Pre-build the audio** as one playlist in scene order (monitor beeps, chanting, the climax track) so nobody breaks character fumbling a phone.
 - **Aftercare for four**, not two. Blankets, water, sugar, and a proper debrief a few days later since it's a first scene with this couple.
 
+## Electro: the death and defib beat
+
+Rob's addition (2026-08-22): shocks below the waist for when she "dies". Shock-collar-type units.
+
+- **The defib gag.** Monitor flatlines, panic in the voices, "she's crashing". Rob calls "charging... two hundred... CLEAR", everyone's hands theatrically off her, then the shock fires on her thigh, timed with a monitor blip. Two or three rounds, escalating, before the "she's gone" silence. This is the single best use of electro in the whole scene: the audio, the ritual of "clear!", and the jolt all land together.
+- **Demon fighting back (Act 2).** A remote shock unit means the priest can "strike" the demon from across the room: a chanted word, holy water flicked on (warm water, she can't see it's not), shock fires, demon screams. Gives Luke a physical lever without touching her, which keeps his line clean.
+- **Placement:** upper thighs only. The below-waist rule holds absolutely here, and never place pads so current could path across the torso.
+- **Unit choice:** the shock-collar-style remote units sold for humans (DG-Lab, estim remote receivers) are fine; actual dog collars are unregulated and spiky, avoid. The EM43 with long leads is the known-quantity fallback, just less dramatic than a remote trigger.
+- **Test on Rob first, same pads, same level, same placement.** Blindfolded and restrained is the wrong time to discover a unit runs hot.
+
 ## "The demon is leaving" (Act 3)
 
 Best version stacks several at once, all cueing off each other:
@@ -47,9 +57,19 @@ Best version stacks several at once, all cueing off each other:
 2. **Aimee's performance**: builds to convulsing and screaming, then sudden, complete limpness. Coach this beforehand so she knows the shape.
 3. **All sound cuts at once** except a slow, calm, steady heartbeat. The demon audio (a pitch-dropping growl fading to nothing) dies with it.
 4. **Break the sigil**: the wax star scraped or cracked off her back by the priest. Good sensation, perfect symbolism.
-5. **The cleansing**: cum lube injection as the final rite (needle-free lube launcher), priest declares her clean.
+5. **The expulsion (Rob's refinement, 2026-08-22): the cum lube goes IN earlier, and comes OUT at her orgasm.** Launcher fires during the ritual as the "binding rite", then the climax pushes it out visibly, and THAT is the demon leaving her body. Priest witnesses it and declares her clean. Position her so gravity helps the visual (hips raised, or rolled at the right beat), and have Raven keep her right on the edge until the priest gives the word, so orgasm and expulsion land on cue.
 6. **Cold air** from a fan across her body as "it leaves", plus smoke machine if the dungeon has one.
 7. **The reveal**: hood and blindfold come off only now. First thing she sees is candlelight and three calm faces. Reborn. Straight into aftercare from that beat.
+
+## More ideas (round two, 2026-08-22)
+
+- **Give the demon a voice.** Coach Aimee to answer the priest in a low rasp, or in a language/gibberish. She stops being a passive body and gets a role to play, and Luke gets someone to argue with. A small speaker with a pitched-down growl track can back her up.
+- **Call-and-response chant.** Luke leads a line, Rob and Raven answer in unison, every time. Dead easy to learn, sounds enormous in a dungeon, and it keeps all three of you vocally in the scene even when only one is touching her.
+- **A locked containment collar.** Collar goes on in Act 1 as "restraint for her own safety", and unlocking it is one of the final release beats. Cheap prop, big symbolism, and it bookends the scene.
+- **UV sigil.** Draw the star on her back in UV body paint as well as wax. If the dungeon has a blacklight, the sigil glows through Act 2 and gets wiped clean with a warm cloth at the end. Wiping the mark off is a lovely closing ritual and doubles as the start of aftercare.
+- **Holy water as a temperature game.** Warm water flicked from a bowl reads as nothing; ice water reads as burning. Alternate them so she can't predict, priest narrating the demon "recoiling".
+- **The heartbeat as her anchor.** After the release, kill everything except a slow heartbeat and let it run under the whole reveal and into aftercare. It was the sound of her dying, now it's the sound of her alive. Cheap trick, hits hard.
+- **A last twitch.** Just as everyone relaxes, one final shock and a body jolt, priest slams a hand down, one sharp word, then true calm. Horror-film beat, use only if she'd love it rather than hate it, so ask.
 
 ## Safety notes (the boring vital bit)
 
@@ -58,6 +78,8 @@ Best version stacks several at once, all cueing off each other:
 - **The injection**: a capped or blunt needle pressed to the skin after the alcohol swab sells it completely, since she can't see. If a real needle goes in, it's sterile, single-use, gloved hands, sharps tin. No reuse, ever.
 - **Wax**: low-melt-point play candles or soy, tested on Rob's own arm first, height controls temperature. Back is a good canvas, keep off the spine's bony ridge.
 - **Strapon hygiene**: fresh or barrier-covered toy, and the lube launcher is single-user.
+- **Electro**: below waist only, thighs, never a pad layout that lets current cross the torso. Human-rated units only, tested on Rob at the scene's actual settings beforehand. No electro on broken or waxed skin, and agree a level cap with Aimee in advance since she can't see it coming.
+- **Cum lube**: body-safe, single-use launcher, and remember it's going in a while before it comes out, so pick one that's kind to her (water-based, no glycerin surprises).
 - **First scene with new partners: build in an off-ramp.** Agree beforehand what "we skip to the ending" looks like if anyone's not feeling it, so the scene can land softly instead of crashing.
 
 ## Open questions for negotiation night
@@ -66,3 +88,6 @@ Best version stacks several at once, all cueing off each other:
 - Exactly what Luke may do to Aimee's body (wax yes, what else?).
 - Aimee's take on the needle (real insertion vs faked).
 - Who plays which audio cue, and a shared signal for act transitions.
+- Aimee's e-stim experience and level cap, and which unit to buy or bring.
+- Whether the "last twitch" jump-scare beat is a delight or a hard no for her.
+- Does she want to play the demon vocally, or stay silent under the hood?
