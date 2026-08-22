@@ -57,6 +57,9 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 | **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
 | Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
+| Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**. See "Play room audio" section below. |
+| Play room speakers (ambient) | 192.168.1.108 (`play-room-ambient-speakers`) | Raspberry Pi (b8:27:eb:38:f0:e0) + amp, **snapclient 0.31**. See "Play room audio" section below. |
+| Wall panel Pi (DAKboard) | 192.168.1.85 (`dakboard-4DD0BACD`) | Raspberry Pi, port 80 open. |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
 | Vaultwarden | http://192.168.1.17:8080 | Password manager (CT 113, static IP, installed 2026-07-10). Public: **https://vault.cracky.co.uk** (NPM host 12, cert 2, websockets on). |
@@ -67,6 +70,18 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 | Mission Control | http://192.168.1.16:3001 | Family site (Tide), CT 112, static IP. **Running the Tide build (`feature/tide-build`) as of 2026-07-03**, `/opt/mission-control`, systemd `mission-control.service`, single port (API + built dist). Public: **https://mc.cracky.co.uk (no basic-auth)** — the NPM access list was removed once real server-side auth landed (`app.use('/api', authGuard)`: scrypt passwords in the users table, HMAC bearer token; only `/api/auth` + the Plex art proxy are unauthenticated). Login is the app's own (starter passwords family123 / dexter1 / logan1, changeable via `/api/auth/change-password`). Auth token secret persists at `db/.auth_secret`. Local SQLite store at `db/family.sqlite` (better-sqlite3); recipe book seeded (16 meals), `CALENDAR_ICS_URL` in `.env` feeds the calendar. **Served at three domains, all → .16:3001 on cert 2, no access list (app login only):** apex **`cracky.co.uk`** (NPM host 11), **`mc.cracky.co.uk`** (host 9), **`tide.cracky.co.uk`** (host 10, repointed off the old .11:3010 preview 2026-07-03). Apex resolves because the DDNS cron patches every A record in the zone. Dev preview when needed: `http://192.168.1.11:3002` (vite) + `:3010` (built) on the jarvis LXC. |
 
 Anything else on the LAN gets its address from the UDM's DHCP pool, which is **`.6`–`.254`** (it does NOT start above the statics — that overlap is what caused the vaultwarden .17 conflict on 2026-07-11; see the belt-and-braces note above). NPM originally leased .177 before I pinned it static. Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
+
+### Play room audio (Snapcast, rediscovered 2026-08-22)
+
+Two Raspberry Pis in the play room, each feeding an amp, running **snapclient 0.31** (multi-room Snapcast setup from the NUC era, predates my rebuild, no vault record existed):
+
+- `play-room-main-speakers` @ 192.168.1.219 (MAC b8:27:eb:a5:b3:a8)
+- `play-room-ambient-speakers` @ 192.168.1.108 (MAC b8:27:eb:38:f0:e0)
+
+Both are **hardcoded to snapserver `192.168.1.2:1704`**, the old NUC's IP, which the Proxmox host now owns. The old snapserver died with the NUC. Fix (2026-08-22): Music Assistant on HA (.4) runs a builtin snapserver (Snapcast provider enabled), and the Proxmox host DNATs `.2:1704 → .4:1704` via **`snapcast-forward.service`** (systemd unit on the host, enabled, sets `ip_forward` + iptables DNAT/MASQUERADE). Both Pis reconnected instantly and are registered as Music Assistant players.
+
+- **SSH to the Pis: no access.** Port 22 open, password auth enabled, but `pi/raspberry` fails and no key on this box works. Rob may know the login.
+- **Proper fix (open follow-up):** log into the Pis, point snapclient at `192.168.1.4` (`/etc/default/snapclient` or `/etc/snapclient/…`), then disable `snapcast-forward.service` on the Proxmox host.
 
 ### Networking gotchas (confirmed 2026-08-09)
 
