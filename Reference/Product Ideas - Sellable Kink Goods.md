@@ -26,6 +26,16 @@ Cuff and collar liners that swap: fleece side or acupressure-spike side. "Comfor
 
 Printed one-use numbered seals for chastity and bondage play (log the number, snap to open, any mismatch is caught). Exists as generic plastic in industrial supply; nobody does it as a designed, branded consumable with a matching leather seal-point collar or belt. Consumables = repeat orders.
 
+## 6. Light-up dragon tail whip ("saber tail")
+
+Rob's idea, 2026-08-22. Metal lightsaber hilt with a base-lit RGB LED as the handle, clear 2mm PVC dragon tail as the "blade". The hilt's LED edge-lights the PVC so the whole tail glows, and every flex/scuff scatters more light. Colour-changing via the saber's RGB modes.
+
+- **Why it works optically**: base-lit sabers put a 12W RGB LED in the hilt firing up into a hollow 1-inch (25.4mm) polycarbonate blade held by a grub screw. Pull the blade, print a 25.4mm collar that clamps the rolled/folded PVC tail base into the same socket, and the emitter floods the tail with light. Scuffing or lightly frosting the PVC surface makes it glow along its length instead of just at the tip.
+- **Donor hilts**: generic base-lit RGB metal hilts run £20 to 30 on eBay/AliExpress; [Next Level UK](https://nextleveluk.net/collections/lightsabers) Tyro Eco is £39.99 with UK support. Avoid neopixel (LED strip is in the blade, useless here) and avoid "in-hilt" toy tiers with weak LEDs.
+- **Tail material**: the 2mm clear PVC strip already being sourced (eBay single strip ~£17.50 for 200mm x 2.5m).
+- **Sellable angle**: nobody sells this. Impact-toy crowd meets saber crowd; the 3D-printed blade-socket adapter is the proprietary bit, same print+electronics moat as the rest of the line. Sound-reactive hilts add scene theatre for free (swing hum, clash flash on impact).
+- **Watch-outs**: metal hilt is heavier than a normal dragon tail handle (fine, whips like a weighted handle, but check swing fatigue); make sure the adapter grips the PVC hard enough that the tail can't launch mid-swing.
+
 ## Wildcard: wipe-clean pro kit
 
 Full biothane restraint set (cuffs, collar, connectors) aimed at pro-dommes and event/dungeon loan kits: fully wipeable, bodily-fluid-safe, no leather care. Boring product, very clear buyer, and the hardware bin already covers it.
