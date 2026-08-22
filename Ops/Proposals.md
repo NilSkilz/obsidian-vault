@@ -30,15 +30,6 @@ Format per entry:
 **Option:** Rob checks the add-on update manually from the HA UI (Settings > Add-ons > Terminal & SSH > Update) to see the actual error, since the CLI update call doesn't surface one.
 **Risk:** None from waiting, core_ssh at the old version still works. Just don't want this to become a silent recurring failure nobody looks at.
 
-## AWS runaway-bill kill switch for Tethered (2026-08-22)
-**Problem:** Rob wants protection against a runaway AWS bill (DDoS, sign-up flood, invocation storm, leaked key): a billing alert that automatically "turns the site off", and fast. Two facts shape the design: (1) AWS billing/budget data lags 8-24 hours, so a billing alarm can never be the fast tripwire, only a backstop; (2) killing DNS is a weak kill switch anyway (resolver caching keeps traffic flowing for hours, and those requests still hit AWS and still bill).
-**Option:** Two-tier guardrail living entirely inside AWS, so it reacts in ~1-2 minutes with no dependency on my box being up:
-1. **Fast tripwires:** CloudWatch alarms on the near-real-time *usage* metrics that lead the bill, not the bill itself: Cognito SignUp/SignIn counts on the prod pool, AppSync/Lambda invocation counts, Amplify hosting request count. Thresholds set well above legit peak (e.g. 50x normal in 5 min).
-2. **Kill switch:** alarm → SNS → a small Lambda that (a) flips **basic auth ON for the Amplify prod branch** (`amplify update-branch`): instant 401 wall in front of the whole site, fully reversible in seconds, unlike DNS; (b) optionally blocks Cognito sign-ups on the pool; (c) pings Telegram immediately so Rob and I know it fired.
-3. **Backstop:** AWS Budget (~$20/mo) alerting at 50/80/100% → same SNS/Lambda, catching anything slow-burn the usage alarms miss.
-Guardrail costs pennies (a few alarms + Lambda free tier). Note AWS Shield Standard already absorbs L3/L4 DDoS for free; the realistic bill vectors for Tethered's stack are exactly sign-up floods and invocation storms, which this covers.
-**Risk:** Needs an IAM credential that doesn't exist on this box (the CT 117 e2e key is Cognito+DynamoDB only). Rob mints a scoped IAM user (CloudWatch/SNS/Lambda/budgets create + `amplify:UpdateBranch` + `cognito-idp:UpdateUserPool` on the prod resources), then I build and test the whole thing end to end. Other risk: a false-positive alarm walls off the real site until reverted; mitigated by generous thresholds, the instant Telegram ping, and a one-command revert.
-
 ## Plausible Docker image updates (2026-07-09)
 **Problem:** `updates.sh` patches apt packages on the host + all 12 LXCs and HA, but Plausible runs as a Docker Compose stack, so its images (`plausible/community-edition`, the DB images) are never pulled by the update routine. They'll silently drift out of date, including security fixes.
 **Option:** Add a small step to `updates.sh` (or a separate weekly job) that does `docker compose pull && up -d` in `/opt/plausible-ce` on CT 111, with a health check after.
