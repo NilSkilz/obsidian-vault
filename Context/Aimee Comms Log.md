@@ -14,6 +14,10 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-08-22 (Saturday)
+- Talked to Aimee about the exorcism scene idea with Luke and Raven. She's okay with Rob pursuing it and approaching them to ask if they'd be interested in taking part.
+- Boundaries agreed in that chat: some sexual stuff between Raven and Aimee is on the table, but nothing sexual between the guys and the girls.
+
 ## 2026-08-21 (Friday)
 - Friction with Aimee over Rob going to Tash's next week. Rob had it as **Monday** in his head; it's actually **Tuesday and Wednesday** (25/26 Aug; calendar has him "away" Mon-Wed 24-26). Rob thought he'd already run the visit past Aimee, but hadn't actually confirmed it with her, so it landed as news. Noted here as the reference point for exactly this kind of "did you tell me" gap.
 
