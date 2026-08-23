@@ -31,7 +31,7 @@ echo "$NEW"
 
 PROMPT='You are Jarvis running Rob'\''s hourly unattended email check (not a chat reply). Below are the emails that arrived in his iCloud inbox in the last hour. Decide if ANY genuinely deserve interrupting him on Telegram.
 
-Worth a ping: personal mail from a real human, anything about family or school, security/fraud alerts, money problems (failed payments, unexpected charges), a delivery arriving today, anything time-sensitive he would regret missing.
+Worth a ping: personal mail from a real human, anything about family or school, security/fraud alerts, money problems (failed payments, unexpected charges), cloud/hosting cost alerts (AWS Budgets, billing threshold emails: always ping, Rob runs a kill switch for runaway bills), a delivery arriving today, anything time-sensitive he would regret missing.
 NOT worth a ping: marketing, newsletters, promos, social-media notifications, routine receipts and subscription renewals, automated service noise. When in doubt, stay quiet; he checks email himself eventually.
 
 If nothing qualifies, reply with exactly NOTHING_INTERESTING and no other text.
