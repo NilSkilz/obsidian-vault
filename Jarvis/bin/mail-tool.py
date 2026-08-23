@@ -9,6 +9,9 @@ Subcommands:
           (~/.local/state/jarvis-mail-check.uid) and advance it.
           First run just sets the checkpoint and prints nothing, so a
           fresh install never dumps years of backlog.
+  bin     Move specific INBOX messages to Deleted Messages by UID:
+          `mail-tool.py bin 123,124`. Used by the hourly judge to bin
+          sales/marketing/spam. Recoverable for 30 days via iCloud.
 
 Used by email-check.sh (hourly cron). Safe to run by hand.
 """
@@ -82,6 +85,18 @@ def body_snippet(msg):
     return text[:SNIPPET_LEN]
 
 
+def bin_uids(m, arg):
+    uids = [u for u in arg.replace(",", " ").split() if u.isdigit()]
+    if not uids:
+        return
+    m.select("INBOX")
+    typ, _ = m.uid("MOVE", ",".join(uids), TRASH)
+    if typ == "OK":
+        print(f"binned {len(uids)}")
+    else:
+        print(f"bin failed for uids {','.join(uids)}")
+
+
 def new(m):
     m.select("INBOX")
     typ, data = m.status("INBOX", "(UIDNEXT)")
@@ -116,11 +131,16 @@ def new(m):
 
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
-    if cmd not in ("sweep", "new"):
+    if cmd not in ("sweep", "new", "bin"):
         sys.exit(__doc__)
+    if cmd == "bin" and len(sys.argv) < 3:
+        sys.exit("bin needs a comma-separated UID list")
     m = connect()
     try:
-        {"sweep": sweep, "new": new}[cmd](m)
+        if cmd == "bin":
+            bin_uids(m, sys.argv[2])
+        else:
+            {"sweep": sweep, "new": new}[cmd](m)
     finally:
         try:
             m.logout()

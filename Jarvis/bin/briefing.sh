@@ -61,6 +61,23 @@ else
   if [ -n "$USAGE_LINE" ]; then
     ASK="${ASK} Also include one short line on Claude usage, from this data (do not run any tool for it, just state it naturally): ${USAGE_LINE}."
   fi
+
+  # Email-filter receipt (Rob gave the judge delete powers on 2026-08-23; this
+  # is his daily audit trail of what it actually did).
+  MAILSTATS="$HOME/.local/state/jarvis-mail-stats.log"
+  MAILBINLOG="$HOME/.local/state/jarvis-mail-binned.log"
+  MAILSUM=""
+  if [ -f "$MAILSTATS" ]; then
+    MAILSUM="$(awk -v d="$TODAY" '
+      $1==d { for (i=3; i<=NF; i++) { split($i, kv, "="); t[kv[1]] += kv[2] } }
+      END { if (t["seen"]+t["swept"]+t["binned"]+t["pinged"] > 0)
+              printf "%d new emails, pinged him about %d, binned %d as sales/spam, swept %d from known-junk senders",
+                     t["seen"], t["pinged"], t["binned"], t["swept"] }' "$MAILSTATS" 2>/dev/null)" || MAILSUM=""
+  fi
+  if [ -n "$MAILSUM" ]; then
+    MAILWHO="$(grep "^${TODAY}	" "$MAILBINLOG" 2>/dev/null | cut -f2 | sed 's/ *<[^>]*>//' | sort -u | paste -sd ', ' -)" || MAILWHO=""
+    ASK="${ASK} Also include one short receipt line on the email filter, from this data (no tools, just state it naturally): ${MAILSUM}${MAILWHO:+ (binned: ${MAILWHO})}. If anything was binned, note it sits in Deleted Messages for 30 days if he wants it back."
+  fi
 fi
 
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
