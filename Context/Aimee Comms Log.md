@@ -14,6 +14,10 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-08-23 (Sunday)
+- Talked through Aimee's possible upcoming dates. Nothing involving Rob came out of it, as far as he can tell.
+- Re-confirmed the Tash visit: Aimee is still okay with Rob going to Tash's on Tuesday (25 Aug). Rob is also travelling up Monday and staying at his mother's Monday night, catching up with his mum and Sharon, deliberately so the trip doesn't read to Aimee as purely a Tash visit. This closes off the 21 Aug "did you tell me" friction, the visit is now explicitly confirmed with her.
+
 ## 2026-08-22 (Saturday)
 - Talked to Aimee about the exorcism scene idea with Luke and Raven. She's okay with Rob pursuing it and approaching them to ask if they'd be interested in taking part.
 - Boundaries agreed in that chat: some sexual stuff between Raven and Aimee is on the table, but nothing sexual between the guys and the girls.
