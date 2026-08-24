@@ -281,6 +281,14 @@ Rob asked for an hourly inbox watch ("let me know if there's anything interestin
 - Log: `~/.local/state/jarvis-email-check.log`. `DRYRUN=1` prints the would-be Telegram message instead of sending.
 - Initial sweep on 2026-08-21 binned **521** emails (519 AliExpress back to 2020, 2 the Kink Forge).
 
+## Work-Slack check (built 2026-08-24)
+
+Rob asked for Slack messages to "wake Jarvis up". True push isn't available: the claude.ai Slack connector is pull-only, and a real Events API / Socket Mode listener would need a Slack app installed in the Superdry workspace (corporate admin gate). So it's a cron poll, same judge-then-ping shape as the email check.
+
+- **`Jarvis/bin/slack-check.sh`** (cron **`*/15 8-18 * * 1-5`**, work hours, weekdays). Each run: one agentic `claude -p` (Opus 5, per the cron model split) searches the connector for (a) new DMs/group-DMs to Rob (`to:me`, `channel_types im,mpim`) and (b) new channel @mentions (`<@U02NT2J251S>`), both since the last successful run (unix-ts checkpoint `~/.local/state/jarvis-slack-check.ts`, capped at a 12h lookback). Real humans needing Rob ping Telegram prefixed 💬; bot DMs (Jira etc.), his own messages and bare pleasantries stay silent. One combined message per run, read-only on Slack.
+- The window only advances on a successful judge run, so a failed run's messages are re-covered next tick. Log: `~/.local/state/jarvis-slack-check.log`. `DRYRUN=1` prints instead of sending. Model override: `JARVIS_SLACK_MODEL`.
+- Key fact discovered while building it: **claude.ai connectors (Slack, Atlassian) DO load in headless `claude -p` runs** on this box, verified 2026-08-24. Cron jobs can use MCP.
+
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.
