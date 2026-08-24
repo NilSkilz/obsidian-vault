@@ -50,6 +50,14 @@
 - **Project time:** Evenings after family time, weekends for major work
 - **Communication:** Available during business hours via Telegram
 
+## Jira (added 2026-08-24)
+- Site: supergroupbt.atlassian.net, project **DGF (DigiForce)**, the shared cross-team project
+- Rob's team board: **board 305** (https://supergroupbt.atlassian.net/jira/software/c/projects/DGF/boards/305)
+- Rob's team in Jira is **Digital** (team custom field customfield_10114); DGF also holds Data, Core Technology, DevOps, Commercial Wholesale/PLM, Logistics
+- The Data team's board 668 has a zombie "Data Sprint 8" open since Nov 2025, so `sprint in openSprints()` on DGF returns their stale sprint, not Rob's board. Query board-ish views with `project = DGF AND statusCategory != Done` plus the team field instead
+- Project-wide open ticket count is huge (1,100+); only the recently-updated slice is real activity
+- 2026-08-24: cleaned Rob's assigned tickets down to 8 real DGF items (EP/Straightline closed by Chaz, DIGI relics unassigned)
+
 ## Tags
 #work #superdry #remote #software-development #career #employment
 
