@@ -26,6 +26,7 @@ from pathlib import Path
 CONF = Path.home() / ".config/jarvis/icloud.env"
 SENDERS = Path.home() / ".config/jarvis/mail-bin-senders.txt"
 STATE = Path.home() / ".local/state/jarvis-mail-check.uid"
+SWEPTLOG = Path.home() / ".local/state/jarvis-mail-swept.log"
 TRASH = '"Deleted Messages"'
 SNIPPET_LEN = 600
 
@@ -50,6 +51,27 @@ def dh(s):
     )
 
 
+def log_swept(m, uids):
+    # Binned notification mail still carries signal in its subject line
+    # (who commented, who messaged). Keep a receipt so the evening briefing
+    # can spot patterns even though the mail itself goes straight to the bin.
+    import datetime
+    today = datetime.date.today().isoformat()
+    lines = []
+    for u in uids:
+        typ, md = m.uid("fetch", u, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])")
+        if typ != "OK" or not md or md[0] is None:
+            continue
+        msg = email.message_from_bytes(md[0][1], policy=email.policy.default)
+        frm = dh(msg["From"]).replace("\t", " ").strip()
+        subj = dh(msg["Subject"]).replace("\t", " ").strip()
+        lines.append(f"{today}\t{frm}\t{subj}\n")
+    if lines:
+        SWEPTLOG.parent.mkdir(parents=True, exist_ok=True)
+        with SWEPTLOG.open("a") as f:
+            f.writelines(lines)
+
+
 def sweep(m):
     if not SENDERS.exists():
         return
@@ -63,6 +85,10 @@ def sweep(m):
         if typ != "OK" or not data or not data[0]:
             continue
         uids = data[0].split()
+        try:
+            log_swept(m, uids)
+        except Exception as e:
+            print(f"swept-log failed for '{pat}': {e}")
         for i in range(0, len(uids), 100):
             batch = b",".join(uids[i:i + 100]).decode()
             m.uid("MOVE", batch, TRASH)

@@ -78,6 +78,19 @@ else
     MAILWHO="$(grep "^${TODAY}	" "$MAILBINLOG" 2>/dev/null | cut -f2 | sed 's/ *<[^>]*>//' | sort -u | paste -sd ', ' -)" || MAILWHO=""
     ASK="${ASK} Also include one short receipt line on the email filter, from this data (no tools, just state it naturally): ${MAILSUM}${MAILWHO:+ (binned: ${MAILWHO})}. If anything was binned, note it sits in Deleted Messages for 30 days if he wants it back."
   fi
+
+  # Social signal from binned FetLife mail (Rob's idea, 2026-08-24): the
+  # notifications are junk as email (the app pushes them anyway) but their
+  # subject lines say who commented and who messaged. Hand the model a week
+  # of them so it can chat about traction/patterns like a mate would.
+  SWEPTLOG="$HOME/.local/state/jarvis-mail-swept.log"
+  if [ -f "$SWEPTLOG" ]; then
+    WEEKAGO="$(date -d '6 days ago' +%Y-%m-%d)"
+    FETSIGNAL="$(awk -F'\t' -v w="$WEEKAGO" 'tolower($2) ~ /fetlife/ && $1 >= w {print $1": "$3}' "$SWEPTLOG" 2>/dev/null | tail -80)" || FETSIGNAL=""
+    if [ -n "$FETSIGNAL" ]; then
+      ASK="${ASK} Also: below are subject lines of FetLife notification emails auto-binned this week (he gets the app'\''s push notifications, so never tell him to check the emails themselves). If today shows a real pattern worth a friendly aside (a post picking up comments, noticeably more messages than usual, the same name cropping up again and again), weave ONE short conversational observation into the briefing, like a mate noticing. If nothing stands out today, say nothing about FetLife at all. The subjects, one per line as date: subject: ${FETSIGNAL}"
+    fi
+  fi
 fi
 
 PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
