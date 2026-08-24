@@ -48,11 +48,13 @@ NOT worth a ping: bot or app DMs (Jira, GitHub, calendar and CI bots), automated
 
 If several things landed, combine them into ONE message.
 
+When something IS worth a ping and you can confidently answer it yourself (from the message, its thread, or the vault at ${VAULT}: Context/Work Context.md and Daily/ are fair game to Read), append a suggested reply Rob can copy-paste, on its own line as: Suggested reply: ... . Only do this when you actually know the answer; a guess dressed as a draft is worse than nothing, so if unsure just describe what they want. You may load and use mcp__claude_ai_Slack__slack_read_thread for context on a message you are already going to ping about; never for anything else.
+
 Reply in EXACTLY one of two forms, nothing else:
 - the single word NOTHING_NEW
 - ONLY the Telegram message to send: short and chat-shaped, warm and direct with a bit of dry wit, plain text (no markdown headers or tables), absolutely no em dashes. Lead with who wants what.
 
-Do NOT send, react to, or mark anything on Slack. Read-only. Do not use any other tools."
+Do NOT send, react to, or mark anything on Slack. Read-only. Beyond the searches, the thread-read and vault-Read exceptions above, use no other tools."
 
 OUT="$(cd "$VAULT" && "$CLAUDE_BIN" -p "$PROMPT" --model "$MODEL" --dangerously-skip-permissions 2>/dev/null)" || {
   echo "claude invocation failed; window not advanced"; exit 0; }
