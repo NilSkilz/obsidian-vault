@@ -55,6 +55,8 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 
 - 2026-08-24 (late): sourcing pipeline built and live (see step 2). First dry run: 61 ads scraped, 1 strong hit (Forward Deployed Engineer, TechShack, £400-450 outside IR35, remote, TypeScript/Next.js, Sept to Dec, http://www.jobserve.com/guYtY). JobServe's public site scrapes fine headless, no login or CAPTCHA involved. Apply step (4) still manual: Rob says "draft it" and Jarvis writes the cover note.
 
+- 2026-08-24 (22:30): **first application ready to send.** TechShack FDE (JSBH-11959, contact Louis DaSilva). JobServe apply is a plain ASP.NET form (email, UK status, CV upload, cover text), no CAPTCHA, no login needed. Built `~/contract-hunt/apply-jobserve.js` (fills + submits; `--dry` previews to `out/apply-preview.png`) and a md→PDF renderer (`~/contract-hunt/topdf.js`, 2-page A4 at `out/Rob Stokes CV.pdf`, strips internal notes). Cover note at `out/cover-techshack-JSBH-11959.txt`, pitched £450. Dry run verified, awaiting Rob's "send". Hourly-rate dropdown mapped to £50-65/h (≈£400-520/day).
+
 ## Open questions
 - ~~LinkedIn~~ resolved 24 Aug: profile names Superdry, Rob accepts the connectable dots. URL on CV header. Don't re-raise.
 - ~~GitHub~~ omitted (Rob: half-finished projects, nothing worth showing).
