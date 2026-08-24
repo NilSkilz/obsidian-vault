@@ -87,7 +87,7 @@ else
       END { if (n>0) printf "%d new contract roles scanned, %d strong (8+), %d plausible (5-7), rest rejected", n, hi, mid }' "$CHDIGEST" 2>/dev/null)" || CHSUM=""
     if [ -n "$CHSUM" ]; then
       CHBEST="$(awk -v d="$TODAY" '$1==d && $3+0>=5' "$CHDIGEST" | cut -d' ' -f3- | tail -5 | paste -sd '; ' -)"
-      ASK="${ASK} Also one short receipt line on the contract hunt (JobServe poll), from this data, no tools: ${CHSUM}.${CHBEST:+ Roles worth a mention: ${CHBEST}. Strong ones were already pinged to him earlier so just reference them, don't re-sell them.} If nothing scored 5+, one clause is enough."
+      ASK="${ASK} Also one short receipt line on the contract hunt (JobServe poll), from this data, no tools: ${CHSUM}.${CHBEST:+ Roles worth a mention: ${CHBEST}. Strong ones were already pinged to him earlier so just reference them, do not re-sell them.} If nothing scored 5+, one clause is enough."
     fi
   fi
 
