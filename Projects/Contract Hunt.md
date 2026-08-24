@@ -11,10 +11,10 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 ## Pipeline
 
 ### 1. One-time setup (the only real Rob effort)
-- [ ] Contractor CV: Jarvis drafts from known profile (TS/React, AWS incl. Amplify Gen2, Docker, e-commerce/retail domain from Superdry), Rob reviews once. Keep a master + tailor per application.
-- [ ] Day rate decision: research current outside-IR35 rates for senior TS/React remote (ballpark £450 to £550/day as of mid-2026, verify against live ads before fixing).
-- [ ] Check Superdry employment contract for exclusivity / conflict-of-interest clause **before** anything goes out. This is the one genuine legal gate.
-- [ ] Ltd company: needed for outside IR35. Standard play is to incorporate when the first offer lands (takes 24h, ~£12 Companies House), not before. Park until then.
+- [x] Check Superdry employment contract for exclusivity / conflict-of-interest clause. **Cleared 2026-08-24: no moonlighting clause** (Rob confirmed).
+- [ ] Contractor CV: draft written (`Projects/Contract Hunt CV.md`), needs Rob to fill career-history gaps and review once. Keep a master + tailor per application.
+- [x] Day rate decision, 2026-08-24: pitch at market (£400 to £450, last rate was £425, verify against live ads per application). Rob's private walk-away floor is £200 since this is supplemental income, but we never advertise low; a cheap rate on a senior CV reads as junior, not bargain.
+- [ ] Ltd company: needed for outside IR35. Agreed: incorporate when the first offer lands (takes 24h, ~£12 Companies House), not before. Parked until then.
 - [ ] Set up email alerts: JobServe saved-search alerts, LinkedIn job alerts, CWJobs/Technojobs. All land in iCloud inbox which Jarvis already reads hourly.
 
 ### 2. Sourcing (fully automated)
@@ -36,9 +36,14 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - Interviews.
 - Contract review when an offer lands (IR35 status determination, working practices).
 
+## Positioning (settled 2026-08-24)
+- This is **alongside Superdry**, not a replacement. Rob has spare capacity in the day (Claude-assisted delivery).
+- Rate history: started £375, last contract £425/day. Pitch £400 to £450; private floor £200.
+- Triage preference order: part-time / flexible / deliverable-based gigs first (lowest timesheet friction alongside a day job), then full-time remote outside-IR35 where the working pattern is async enough to juggle. Skip anything onsite-heavy or rigid-hours.
+
 ## Status
-- 2026-08-24: plan agreed with Rob (via Telegram). Next concrete step: draft the contractor CV and confirm the Superdry contract check.
+- 2026-08-24: plan agreed with Rob (via Telegram). Contract gate cleared (no moonlighting clause). Rate + positioning settled (above). CV draft written at `Projects/Contract Hunt CV.md`, awaiting Rob's gap-fill + one review.
 
 ## Open questions
-- Rate floor and minimum contract length Rob will get out of bed for.
-- How many hours/week is realistic alongside Superdry + Tethered? (Affects whether to target part-time/overlap-friendly gigs or full contracts as a Superdry replacement.)
+- Rob's pre-Superdry career history for the CV (employers, dates, roles). See TBC markers in the CV draft.
+- Whether to name Tethered on the CV or describe it neutrally (see note in CV draft).
