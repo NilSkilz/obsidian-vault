@@ -11,7 +11,7 @@ Working draft, 2026-08-24. This is the master contractor CV. Per-application we 
 ## Rob Stokes
 **Senior Full-Stack Developer (TypeScript / React / AWS)**
 Cornwall, UK · Fully remote · Outside IR35 via own Ltd
-rob_stokes@me.com · 07906 888994 · robstokes.co.uk · [LinkedIn URL TBC] · [GitHub URL TBC]
+rob_stokes@me.com · 07906 888994 · robstokes.co.uk · linkedin.com/in/rbstokes · [GitHub URL TBC]
 
 ### Profile
 Senior full-stack developer with 13+ years shipping production software, the last five building e-commerce integrations and retail-operations tooling for a major UK fashion retailer. Previously ran his own software consultancy for four years, delivering enterprise applications end to end for named clients. Ships complete products solo: two live SaaS platforms designed, built, deployed and operated end to end on AWS, including billing, PWA delivery and error monitoring. Strong TypeScript/React core, comfortable owning everything from schema to CI to production incident. Fast, pragmatic, and used to delivering with minimal ceremony.
@@ -69,6 +69,8 @@ Designed, built and operate two production SaaS products solo:
 Swap the middle clause to mirror the ad's top requirement. Never mention the floor, never mention Superdry by name, never hint the contract runs alongside anything else. Availability is simply "immediate, fully remote".
 
 ## Remaining TBCs
-- LinkedIn URL + whether the profile gets the same anonymisation treatment (the big open call)
 - GitHub URL, if any public repos worth showing
 - Education section: include or omit (Rob's call, omit is fine at this seniority)
+
+## LinkedIn (resolved 24 Aug)
+URL is linkedin.com/in/rbstokes, now on the CV header. Caveat Rob accepted implicitly by sending it: if the profile names Superdry, anyone who clicks through un-anonymises the CV in one hop. LinkedIn blocks automated viewing (HTTP 999) so Jarvis can't audit the public view; Rob should eyeball it logged-out (private window) and decide whether to soften the headline/current-role company to "major UK fashion retailer". The CV's anonymisation still has value either way: it keeps Superdry out of recruiter keyword databases and mass-mailed CV copies even if a determined reader can join the dots.
