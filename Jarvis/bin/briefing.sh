@@ -79,17 +79,16 @@ else
     ASK="${ASK} Also include one short receipt line on the email filter, from this data (no tools, just state it naturally): ${MAILSUM}${MAILWHO:+ (binned: ${MAILWHO})}. If anything was binned, note it sits in Deleted Messages for 30 days if he wants it back."
   fi
 
-  # Social signal from binned FetLife mail (Rob's idea, 2026-08-24): the
-  # notifications are junk as email (the app pushes them anyway) but their
-  # subject lines say who commented and who messaged. Hand the model a week
-  # of them so it can chat about traction/patterns like a mate would.
+  # Ambient signal from the junk-mail traffic (Rob, 2026-08-24: be intuitive,
+  # don't make him define per-site rules). No sender filter: hand the model a
+  # week of everything swept/binned and let its own judgment decide what, if
+  # anything, a mate would remark on. FetLife subjects carry who commented or
+  # messaged; other senders can carry their own stories.
   SWEPTLOG="$HOME/.local/state/jarvis-mail-swept.log"
-  if [ -f "$SWEPTLOG" ]; then
-    WEEKAGO="$(date -d '6 days ago' +%Y-%m-%d)"
-    FETSIGNAL="$(awk -F'\t' -v w="$WEEKAGO" 'tolower($2) ~ /fetlife/ && $1 >= w {print $1": "$3}' "$SWEPTLOG" 2>/dev/null | tail -80)" || FETSIGNAL=""
-    if [ -n "$FETSIGNAL" ]; then
-      ASK="${ASK} Also: below are subject lines of FetLife notification emails auto-binned this week (he gets the app'\''s push notifications, so never tell him to check the emails themselves). If today shows a real pattern worth a friendly aside (a post picking up comments, noticeably more messages than usual, the same name cropping up again and again), weave ONE short conversational observation into the briefing, like a mate noticing. If nothing stands out today, say nothing about FetLife at all. The subjects, one per line as date: subject: ${FETSIGNAL}"
-    fi
+  WEEKAGO="$(date -d '6 days ago' +%Y-%m-%d)"
+  MAILWEEK="$(cat "$SWEPTLOG" "$MAILBINLOG" 2>/dev/null | awk -F'\t' -v w="$WEEKAGO" '$1 >= w {print $1" | "$2" | "$3}' | sort | tail -150)" || MAILWEEK=""
+  if [ -n "$MAILWEEK" ]; then
+    ASK="${ASK} Also: below is this week'\''s pile of emails I auto-binned as junk before Rob ever saw them (one per line, date | sender | subject). Apps like FetLife also push-notify his phone, so never tell him to go check these emails. Read the pile the way a mate glancing at it would: if something today adds up to a genuine story worth a short aside (a FetLife post picking up comments, noticeably more messages than usual, one name cropping up again and again, a sudden flurry from some service that hints something happened in his life), weave ONE conversational observation into the briefing. Your judgment on what counts as interesting, it does not have to be FetLife and most days nothing will qualify. If nothing stands out, say nothing about any of this. The pile: ${MAILWEEK}"
   fi
 fi
 

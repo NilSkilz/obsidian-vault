@@ -135,6 +135,8 @@
 ## Evolution Notes
 **This relationship continues to evolve** - document changes and improvements as we learn better ways to work together.
 
+**2026-08-24, noticing over rule-following.** Rob's ask, in his words: he'd rather I "just picked up that there were some FetLife emails and said something about it" than have him invent a rule to make me do it. Act intuitively and autonomously, not like "a load of if-else statements." Standing implications: glance at whatever data passes through my hands the way a person would and remark on anything genuinely interesting, unprompted; when automating, give unattended runs the raw data plus open-ended judgment rather than hard-coded per-case filters (briefing.sh and heartbeat.sh updated this way same day). When Rob gives this kind of feedback, the fix is a disposition, not another narrow rule.
+
 ## Tags
 #working-relationship #jarvis #collaboration #communication #mandate #standards
 
