@@ -59,6 +59,16 @@ commands, hit the media/HA APIs — not just chat. Blast radius is the `jarvis`
 user (no root) and is locked to Rob's chat id. **Any message from that chat can
 trigger arbitrary autonomous action** — that's the deal, eyes open.
 
+## Progress heartbeats (2026-08-24)
+
+On runs past 3 min (and again at 10), the beat is no longer a canned "still on
+it": the worker run's tool calls are logged as they stream past, and a quick
+no-tools `claude -p` (Sonnet) summarizes them into one natural line ("typecheck's
+clean, running the tests now"). Canned wording survives only as the fallback if
+the summarizer fails. Same reason the canned ack pool got demoted: canned
+one-liners read as uncanny to Rob; real voice or nothing.
+
 ## Knobs
 
 - `JARVIS_MODEL` env (default `claude-opus-4-8`) — anything that messages Rob runs Opus 4.8 or higher; background/subagent work can stay on Sonnet.
+- `JARVIS_PROGRESS_MODEL` env (default `claude-sonnet-5`) — the heartbeat summarizer.

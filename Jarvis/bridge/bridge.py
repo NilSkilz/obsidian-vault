@@ -57,14 +57,23 @@ CLAUDE_TIMEOUT = 900       # 15 min. Measured from bridge.log 2026-08-22: even o
                            # heaviest days (57 replies, deep infra digs) p99 lands under
                            # 10 min, so 25 was just dead air on a genuinely wedged run.
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "1") == "1"  # stream the model's opening line as the ack (on by default since 2026-08-21; Rob wants natural voice, not canned)
-ACK_GRACE = 15             # if the model hasn't spoken by now, send a canned ack so Rob has confirmation (generous so the canned pool rarely fires)
+ACK_GRACE = 25             # if the model hasn't spoken by now, send a canned ack so Rob has confirmation.
+                           # Raised 15->25 (2026-08-24): the canned one-liners read as uncanny valley to Rob,
+                           # so give the real streamed opening line every chance to win the race.
 LONG_JOB_NOTICE = 30       # ack-off middle ground: if still working after this long and we've said nothing, drop ONE light "still on it" line
 TYPING_EVERY = 4           # refresh the typing indicator this often while working
 # Progress heartbeats on genuinely long runs. The ack tells Rob the run STARTED;
 # nothing then tells him it's still alive, so a 10-min infra dig and a hung
 # container look identical from the phone (exactly what happened 2026-08-21/22).
 # These fire regardless of whether the ack went out, unlike LONG_JOB_NOTICE.
+# Since 2026-08-24 each beat is a REAL progress summary, not a canned line: the
+# worker run's tool calls are logged as they stream past, and a quick no-tools
+# claude run turns that log into one natural "here's where I actually am" line
+# (Rob: "still on it" is dead air, tell me what's happened so far). The canned
+# line survives only as the fallback if the summarizer fails or comes back empty.
 HEARTBEAT_AT = (180, 600)  # seconds into a run: 3 min, then 10 min
+PROGRESS_MODEL = os.environ.get("JARVIS_PROGRESS_MODEL", "claude-sonnet-5")
+PROGRESS_TIMEOUT = 75      # summarizer is a one-liner from a short log; if it can't do it in this, fall back
 # Absolute path so it works under a minimal PATH too.
 CLAUDE_BIN = shutil.which("claude") or str(HOME / ".local/bin/claude")
 # Voice-note transcription: a standalone faster-whisper helper in its own venv,
@@ -226,12 +235,28 @@ def usage_stats():
         return "(couldn't reach the usage endpoint just now, try again in a minute)"
 
 
-def run_claude(text, buffer, on_text, image_path=None, file_path=None):
+def tool_call_detail(inp):
+    """One human-readable fragment from a tool call's input, for the activity log."""
+    if not isinstance(inp, dict):
+        return ""
+    for key in ("description", "file_path", "path", "pattern", "command", "prompt", "query", "url", "skill"):
+        v = inp.get(key)
+        if isinstance(v, str) and v.strip():
+            return " ".join(v.split())[:110]
+    return ""
+
+
+def run_claude(text, buffer, on_text, image_path=None, file_path=None,
+               activity=None, activity_lock=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
     Calls on_text(block) for each completed top-level assistant text block, in
     order, as it lands (subagent chatter is filtered out). The caller uses the
     first such block as Rob's live ack. Returns the run's final result text.
+
+    If `activity` (a list) is given, top-level tool calls are appended to it as
+    timestamped one-liners while the run streams — the heartbeat summarizer
+    reads this to tell Rob where the work actually is.
     """
     prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
 
@@ -294,6 +319,21 @@ Rob's new message: {text}"""
 
     blocks = {}            # content-block index -> {"type", "text"}, top-level agent only
     final_result = None
+    t0 = time.time()
+
+    def note_activity(entry):
+        if activity is None:
+            return
+        stamp = int(time.time() - t0)
+        line = f"[{stamp // 60}m{stamp % 60:02d}s] {entry}"
+        if activity_lock:
+            with activity_lock:
+                activity.append(line)
+                if len(activity) > 400:
+                    del activity[:200]
+        else:
+            activity.append(line)
+
     try:
         for line in proc.stdout:
             line = line.strip()
@@ -324,6 +364,14 @@ Rob's new message: {text}"""
                             on_text(b["text"].strip())
                         except Exception as e:
                             log(f"on_text error: {e}")
+            elif t == "assistant" and obj.get("parent_tool_use_id") in (None, ""):
+                # Completed top-level assistant turns carry full tool_use blocks
+                # (name + input) — the raw material for progress summaries.
+                for cb in (obj.get("message") or {}).get("content") or []:
+                    if isinstance(cb, dict) and cb.get("type") == "tool_use":
+                        detail = tool_call_detail(cb.get("input"))
+                        name = cb.get("name") or "tool"
+                        note_activity(f"{name}: {detail}" if detail else name)
             elif t == "result":
                 final_result = obj.get("result")
     except Exception as e:
@@ -361,6 +409,41 @@ NOTICE_POOL = [
 ]
 
 
+def progress_line(rob_text, activity, activity_lock, elapsed_s):
+    """Turn the worker run's tool-call log into one natural progress line, via a
+    quick no-tools claude run. Falls back to the old canned wording on any
+    failure so the heartbeat can never go silent because the summarizer broke."""
+    mins = max(1, int(elapsed_s) // 60)
+    fallback = f"Still on it, {mins} min in."
+    with activity_lock:
+        recent = list(activity)[-40:]
+    if not recent:
+        return fallback
+    prompt = (
+        "You are Jarvis, Rob's AI collaborator, partway through a job he sent you over Telegram. "
+        "A progress update is due because the job is taking a while.\n\n"
+        f"Rob asked: {rob_text[:400]}\n\n"
+        f"You've been at it for about {mins} minutes. Your tool activity so far (oldest first, [elapsed] tool: detail):\n"
+        + "\n".join(recent)
+        + "\n\nWrite the update you'd text him right now: ONE short line, first person, specific about where "
+        "the work actually is (what's done, what you're in the middle of). Under 25 words. No greeting, no "
+        '"still working on it" filler, no em dashes, no markdown. If the log genuinely tells you nothing '
+        "concrete, say you're still deep in it in your own natural words. Output only the line itself."
+    )
+    try:
+        proc = subprocess.run(
+            [CLAUDE_BIN, "-p", prompt, "--model", PROGRESS_MODEL, "--allowedTools", ""],
+            capture_output=True, text=True, timeout=PROGRESS_TIMEOUT, cwd="/tmp",
+        )
+        line = " ".join((proc.stdout or "").split()).replace("—", ",").replace(" ,", ",")
+        if proc.returncode == 0 and 0 < len(line) <= 300:
+            return line
+        log(f"progress_line unusable output rc={proc.returncode} len={len(line)}")
+    except Exception as e:
+        log(f"progress_line error: {e}")
+    return fallback
+
+
 def process(chat, text, image_path=None, file_path=None):
     """Handle one job: stream the run, send the model's opening line as the live ack,
     keep typing alive, then send the final summary."""
@@ -369,6 +452,9 @@ def process(chat, text, image_path=None, file_path=None):
     done = threading.Event()
     ack = {"sent": False, "text": None}
     ack_lock = threading.Lock()
+    activity = []                     # tool-call log the run streams into, read by heartbeat()
+    activity_lock = threading.Lock()
+    started = time.time()
 
     def send_ack(t):
         # Fire exactly one ack, whoever gets there first: the model's streamed
@@ -418,21 +504,27 @@ def process(chat, text, image_path=None, file_path=None):
         # Liveness, not acknowledgement. On a long run the ack has already gone out
         # and then Rob gets nothing until the summary, so silence reads as "hung"
         # (it genuinely was, 2026-08-21). Deliberately does NOT touch the ack slot:
-        # these fire on top of the ack, and say the elapsed time so the pause is
-        # legible rather than ambiguous.
+        # these fire on top of the ack. Each beat is a summarized readout of the
+        # run's tool activity so far (Rob, 2026-08-24: a bare "still on it" is
+        # uncanny, tell me what's actually happened). If the run finishes while
+        # the summarizer is thinking, the beat is dropped — the real reply wins.
         prev = 0
         for mark in HEARTBEAT_AT:
             if done.wait(mark - prev):
                 return
             prev = mark
-            send(chat, f"Still on it, {mark // 60} min in.")
+            line = progress_line(text, activity, activity_lock, time.time() - started)
+            if done.is_set():
+                return
+            send(chat, line)
 
     threading.Thread(target=keep_typing, daemon=True).start()
     threading.Thread(target=grace_fallback, daemon=True).start()
     threading.Thread(target=long_job_notice, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()
 
-    reply = run_claude(text, buffer, on_text, image_path, file_path)
+    reply = run_claude(text, buffer, on_text, image_path, file_path,
+                       activity=activity, activity_lock=activity_lock)
     done.set()
 
     ack_text = (ack["text"] or "").strip()
