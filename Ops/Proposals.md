@@ -26,7 +26,7 @@ Format per entry:
 **Risk:** Account-level deletion I have no credentials for anyway — genuinely needs Rob, not just a caution. Low urgency now that the symptom has cleared, but worth closing out so it can't recur.
 
 ## HA core_ssh add-on stuck failing to update (2026-08-21)
-**Problem:** `ha addons update --backup core_ssh` has now failed three heartbeat runs (2026-08-20, 2026-08-21, 2026-08-23), stuck at 10.3.0 while 10.4.0 is available. HA core/OS and everything else update clean (host + all 17 LXCs upgraded fine on 2026-08-23, HA core went to 2026.8.3). HA itself is fully up. Already flagged to Rob via Telegram on 2026-08-20, so not re-pinging for the same unresolved issue, but this is now three-for-three, not a blip.
+**Problem:** `ha addons update --backup core_ssh` has now failed four heartbeat runs (2026-08-20, 2026-08-21, 2026-08-23, 2026-08-24), stuck at 10.3.0 while 10.4.0 is available. HA core/OS and everything else update clean (host + all 18 LXCs upgraded fine on 2026-08-24). HA itself is fully up. Already flagged to Rob via Telegram on 2026-08-20, so not re-pinging for the same unresolved issue, but this is now four-for-four, not a blip.
 **Option:** Rob checks the add-on update manually from the HA UI (Settings > Add-ons > Terminal & SSH > Update) to see the actual error, since the CLI update call doesn't surface one.
 **Risk:** None from waiting, core_ssh at the old version still works. Just don't want this to become a silent recurring failure nobody looks at.
 
