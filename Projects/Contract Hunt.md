@@ -36,14 +36,22 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - Interviews.
 - Contract review when an offer lands (IR35 status determination, working practices).
 
-## Positioning (settled 2026-08-24)
-- This is **alongside Superdry**, not a replacement. Rob has spare capacity in the day (Claude-assisted delivery).
-- Rate history: started £375, last contract £425/day. Pitch £400 to £450; private floor £200.
-- Triage preference order: part-time / flexible / deliverable-based gigs first (lowest timesheet friction alongside a day job), then full-time remote outside-IR35 where the working pattern is async enough to juggle. Skip anything onsite-heavy or rigid-hours.
+## Positioning (settled 2026-08-24, revised same day)
+- **Overemployed setup.** The contract runs alongside Superdry in reality, but externally Rob presents as a normal fully-available contractor. Superdry is never named to recruiters or clients: the CV anonymises it as "major UK fashion retailer", cover notes never hint at concurrent work, availability is "immediate, fully remote". Legally fine on Rob's side (no moonlighting clause, confirmed 2026-08-24); discretion is the whole game.
+- Rate history: started £375, last contract £425/day. Pitch £400 to £450; private floor £200 (never advertised).
+- Triage preference order (private, capacity is still real even if we don't say so): part-time / flexible / deliverable-based gigs first, then full-time remote outside-IR35 where the working pattern is async enough to juggle. Skip anything onsite-heavy, rigid-hours, or with heavy synchronous meeting load.
+
+## Overemployment risk notes (for Rob, not for anyone else)
+- **LinkedIn is the mismatch point.** Recruiters cross-check the CV against LinkedIn within minutes, and Rob's presumably names Superdry. Either blur it there too (title + "UK fashion retail", no company page link) or accept that anyone who looks will connect the dots. Decide before the first application goes out.
+- **References:** don't offer current-employer references. Use the prior contract client and/or the SaaS products as proof of work.
+- **Client-side exclusivity:** some contracts include an exclusivity or "declare other engagements" clause. Read for it at offer stage (already on the contract-review checklist). Outside-IR35 actually helps here: a genuine business-to-business supplier having multiple clients is normal and supports the IR35 position.
+- **Tax is a non-issue:** PAYE at SD plus Ltd dividends/salary is standard and legal; HMRC seeing both is fine. Just means the Ltd accountant should know about the PAYE income for tax-band planning.
 
 ## Status
 - 2026-08-24: plan agreed with Rob (via Telegram). Contract gate cleared (no moonlighting clause). Rate + positioning settled (above). CV draft written at `Projects/Contract Hunt CV.md`, awaiting Rob's gap-fill + one review.
+- 2026-08-24 (later): Rob switched positioning to overemployed. Superdry scrubbed from CV and cover-note template (anonymised as "major UK fashion retailer"), risk notes added above. Open: Rob to decide LinkedIn treatment.
 
 ## Open questions
 - Rob's pre-Superdry career history for the CV (employers, dates, roles). See TBC markers in the CV draft.
 - Whether to name Tethered on the CV or describe it neutrally (see note in CV draft).
+- LinkedIn: blur the Superdry name there to match the CV, or leave it and accept the connectable dots?
