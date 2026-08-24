@@ -14,12 +14,24 @@ it actually DOES the work (edits code in `/home/jarvis/projects`, runs commands,
 pushes, updates the vault) end to end, then replies with a short summary. When
 it says it did something, it did.
 
-Jobs run **one at a time** — rapid-fire messages queue behind the current job
-(Rob is told), so two agentic runs never fight over the same git repo. Timeout
-is 25 min per job. Continuity is faked cheaply by feeding the last ~16 lines of
-`conversation.log` into each prompt — no persistent Claude process, so it's
-model-agnostic and doesn't rack up context cost ("stateless engine, stateful
-memory").
+Jobs run **one at a time**, so two agentic runs never fight over the same git
+repo. Timeout is 15 min per job (reset by fold-ins). Continuity is faked
+cheaply by feeding the last ~16 lines of `conversation.log` into each prompt —
+no persistent Claude process, so it's model-agnostic and doesn't rack up
+context cost ("stateless engine, stateful memory").
+
+## Fold-ins (2026-08-24)
+
+A plain text message that lands while a job is running is **folded into the
+live run**, not parked behind a holding message: the prompt goes in over stdin
+(`--input-format stream-json`) and stdin stays open, so the poll loop can write
+Rob's mid-job message straight into the running claude process as a new user
+message. The model sees it inside the current turn and adjusts, exactly like
+typing into Claude Code while it works. The ack slot reopens on a fold-in so
+the model's next streamed line reaches Rob as the reaction to it. Media
+(voice/photo/file) still queues with the holding line (needs download or
+transcription first), as does anything arriving once the run is winding down
+(stdin closes at the first result) or when a queue has already formed.
 
 The old design was one-shot chat-only: it could talk but not act, so every "on
 it, give me a few" was a dead end (the process died the instant it replied).

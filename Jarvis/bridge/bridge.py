@@ -18,9 +18,15 @@ Continuity comes from a rolling conversation buffer fed into each prompt, not
 from a persistent Claude process, so the whole thing survives a model swap and
 stays cheap ("stateless engine, stateful memory").
 
-Jobs are processed one at a time. Rapid-fire messages queue behind the current
-job (Rob gets told), which keeps two agentic runs from fighting over the same
-git repo.
+Jobs are processed one at a time. A plain text message that lands while a job
+is running is FOLDED INTO the live run (written to the running claude process
+over stdin as a new user message, --input-format stream-json), so the model
+sees it mid-work and adjusts, exactly like typing into Claude Code while it's
+busy (Rob asked for this, 2026-08-24). Media messages (voice/photo/file) still
+queue behind the current job with a holding line, since they need downloading
+or transcribing first, as does anything that arrives once the run is past the
+point of accepting input. The queue keeps two agentic runs from fighting over
+the same git repo.
 
 Config: ~/.config/jarvis/telegram.env  (TELEGRAM_BOT_TOKEN, TELEGRAM_ALLOWED_CHAT)
 State:  ~/.local/state/jarvis-bridge/  (offset, conversation.log, bridge.log)
@@ -91,6 +97,12 @@ LOG = STATE / "bridge.log"
 JOBS = queue.Queue()
 BUSY = threading.Event()          # set while a job is actively running
 CONVO_LOCK = threading.Lock()     # serialise conversation.log appends
+# The live run's fold-in hook: while an agentic run is streaming, CURRENT holds
+# a callable that writes a new user message into that run's stdin. The poll
+# loop uses it to fold Rob's mid-job texts into the run instead of queueing
+# them behind a holding message.
+CURRENT = {"inject": None, "chat": None}
+CURRENT_LOCK = threading.Lock()
 
 
 def load_conf():
@@ -247,7 +259,8 @@ def tool_call_detail(inp):
 
 
 def run_claude(text, buffer, on_text, image_path=None, file_path=None,
-               activity=None, activity_lock=None):
+               activity=None, activity_lock=None, chat=None,
+               on_inject=None, on_result=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
     Calls on_text(block) for each completed top-level assistant text block, in
@@ -257,6 +270,16 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
     If `activity` (a list) is given, top-level tool calls are appended to it as
     timestamped one-liners while the run streams — the heartbeat summarizer
     reads this to tell Rob where the work actually is.
+
+    The prompt goes in over stdin as stream-json rather than argv, and stdin
+    stays open while the run streams: a fold-in hook is registered in CURRENT
+    so the poll loop can write Rob's mid-job messages straight into the live
+    run (verified 2026-08-24: a message injected mid-turn is seen by the model
+    within that same turn). `on_inject` fires when a fold-in lands (the caller
+    reopens the ack slot so the model's next line streams to Rob). `on_result`
+    receives any completed turn's reply that a later folded-in turn supersedes,
+    so no reply is ever silently dropped. Stdin closes at the first result;
+    input already queued by then still gets processed (EOF doesn't discard it).
     """
     prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
 
@@ -292,24 +315,46 @@ Rob's new message: {text}"""
 
     finished = threading.Event()
     killed = {"v": False}
+    deadline = {"t": time.time()}  # fold-ins push this forward so an extended job isn't killed mid-extension
 
     def watchdog():
-        if not finished.wait(CLAUDE_TIMEOUT):
-            killed["v"] = True
-            try:
-                proc.kill()
-            except Exception:
-                pass
+        while not finished.wait(10):
+            if time.time() - deadline["t"] > CLAUDE_TIMEOUT:
+                killed["v"] = True
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+                return
 
     try:
         proc = subprocess.Popen(
-            [CLAUDE_BIN, "-p", prompt, "--model", pick_model(), "--dangerously-skip-permissions",
+            [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
+             "--input-format", "stream-json",
              "--output-format", "stream-json", "--verbose", "--include-partial-messages"],
             cwd=VAULT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-            stdin=subprocess.DEVNULL, bufsize=1,
+            stdin=subprocess.PIPE, bufsize=1,
         )
     except Exception as e:
         log(f"claude spawn error: {e}")
+        return "(Something broke my end on that one. Try again?)"
+
+    stdin_lock = threading.Lock()
+    stdin_open = {"v": True}
+
+    def write_msg(t):
+        proc.stdin.write(json.dumps({"type": "user", "message": {
+            "role": "user", "content": [{"type": "text", "text": t}]}}) + "\n")
+        proc.stdin.flush()
+
+    try:
+        write_msg(prompt)
+    except Exception as e:
+        log(f"claude initial write error: {e}")
+        try:
+            proc.kill()
+        except Exception:
+            pass
         return "(Something broke my end on that one. Try again?)"
 
     # Drain stderr in its own thread so a full pipe can't deadlock the stdout read.
@@ -333,6 +378,31 @@ Rob's new message: {text}"""
                     del activity[:200]
         else:
             activity.append(line)
+
+    def inject(new_text):
+        """Fold a mid-job Telegram message into this live run. Returns True if
+        the running model will see it, False if the run is already winding down
+        (the caller then queues the message the old way)."""
+        with stdin_lock:
+            if not stdin_open["v"]:
+                return False
+            try:
+                write_msg(new_text)
+            except Exception as e:
+                log(f"inject write error: {e}")
+                return False
+            deadline["t"] = time.time()
+        note_activity(f"Rob folded in: {' '.join(new_text.split())[:110]}")
+        if on_inject:
+            try:
+                on_inject()
+            except Exception as e:
+                log(f"on_inject error: {e}")
+        return True
+
+    with CURRENT_LOCK:
+        CURRENT["inject"] = inject
+        CURRENT["chat"] = chat
 
     try:
         for line in proc.stdout:
@@ -373,11 +443,38 @@ Rob's new message: {text}"""
                         name = cb.get("name") or "tool"
                         note_activity(f"{name}: {detail}" if detail else name)
             elif t == "result":
+                # A completed turn. If a folded-in message spilled into a turn
+                # of its own, an earlier turn's reply is being superseded here:
+                # hand it to on_result so it still reaches Rob.
+                if final_result and final_result.strip() and on_result:
+                    try:
+                        on_result(final_result.strip())
+                    except Exception as e:
+                        log(f"on_result error: {e}")
                 final_result = obj.get("result")
+                # Close stdin so the run winds down. Anything already folded in
+                # but not yet processed survives EOF and still runs; a message
+                # arriving after this point fails inject() and queues normally.
+                with stdin_lock:
+                    stdin_open["v"] = False
+                    try:
+                        proc.stdin.close()
+                    except Exception:
+                        pass
     except Exception as e:
         log(f"claude stream read error: {e}")
     finally:
         finished.set()
+        with CURRENT_LOCK:
+            if CURRENT["inject"] is inject:
+                CURRENT["inject"] = None
+                CURRENT["chat"] = None
+        with stdin_lock:
+            stdin_open["v"] = False
+            try:
+                proc.stdin.close()
+            except Exception:
+                pass
 
     proc.wait()
     if killed["v"]:
@@ -475,6 +572,21 @@ def process(chat, text, image_path=None, file_path=None):
         # suppressed (the final summary is sent from the run's result).
         send_ack(block)
 
+    def on_inject():
+        # Rob folded a new message into the live run: reopen the ack slot so
+        # the model's next streamed line goes straight to him as the reaction
+        # to what he just said, instead of being swallowed as interstitial.
+        with ack_lock:
+            ack["sent"] = False
+            ack["text"] = None
+
+    def on_result(prev_reply):
+        # A folded-in message extended the run past an already-completed turn;
+        # send that turn's reply now rather than losing it to the final one.
+        append_convo(f"Jarvis: {prev_reply}")
+        send(chat, prev_reply)
+        log(f">> {chat}: (superseded turn) {prev_reply[:80]}")
+
     def keep_typing():
         typing(chat)
         while not done.wait(TYPING_EVERY):
@@ -524,7 +636,8 @@ def process(chat, text, image_path=None, file_path=None):
     threading.Thread(target=heartbeat, daemon=True).start()
 
     reply = run_claude(text, buffer, on_text, image_path, file_path,
-                       activity=activity, activity_lock=activity_lock)
+                       activity=activity, activity_lock=activity_lock,
+                       chat=chat, on_inject=on_inject, on_result=on_result)
     done.set()
 
     ack_text = (ack["text"] or "").strip()
@@ -649,8 +762,19 @@ def main():
                 append_convo(f"Jarvis: {stats}")
                 log(f">> {chat}: (stats) {stats[:80]}")
                 continue
-            # If a job is already running (or waiting), tell Rob this one is queued.
+            # If a job is already running, fold a plain text message straight
+            # into the live run (like typing into Claude Code while it works)
+            # instead of parking it behind a holding message. Media still
+            # queues (needs downloading/transcribing first), as does anything
+            # arriving once the run is winding down or a queue has formed.
             if BUSY.is_set() or not JOBS.empty():
+                if text and not voice and not photo and not doc and JOBS.empty():
+                    with CURRENT_LOCK:
+                        inj = CURRENT["inject"] if CURRENT["chat"] == chat else None
+                    if inj and inj(text):
+                        append_convo(f"Rob: {text}")
+                        log(f"<< folded into live run: {text[:60]}")
+                        continue
                 send(chat, "Noted, I'll pick this up right after the current job.")
             JOBS.put((chat, text, {"file_id": voice["file_id"]} if voice else None, photo, doc))
 
