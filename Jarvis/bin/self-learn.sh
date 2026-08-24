@@ -93,7 +93,7 @@ When done, your FINAL message must be a short, mobile-friendly Telegram summary 
 PROMPT_EOF
 
 cd "$VAULT"
-SUMMARY="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-4-8 --dangerously-skip-permissions 2>/tmp/jarvis-self-learn-err.$$)" || {
+SUMMARY="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-5 --dangerously-skip-permissions 2>/tmp/jarvis-self-learn-err.$$)" || {
   echo "$(date -Iseconds) ERROR: claude invocation failed"
   cat /tmp/jarvis-self-learn-err.$$ || true
   echo "not advancing offset; will retry the same slice next run"
