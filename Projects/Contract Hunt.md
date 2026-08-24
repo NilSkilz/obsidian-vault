@@ -63,3 +63,4 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - ~~Education~~ omitted.
 - LinkedIn job alerts: only Rob can create these (in his LinkedIn app, 2 minutes: search "TypeScript contract remote", toggle Set alert). They already pass the email judge unbinned once they arrive.
 - Standing auto-send approval for applications: still ask-first (step 4 above), revisit once the drafts prove trustworthy.
+- 2026-08-24 (22:50): **TechShack FDE application SENT** via JobServe (JSBH-11959, Louis DaSilva, £450/day pitched). Confirmation email to rob_stokes@me.com. Cover note reworded on Rob's request: no "day job" or "current work" language, nothing that implies employment; use "most recent engagement" / "work I've been doing for years". Apply script fix: with JS enabled the visible submit is `#btn2`, not `#btn2NoJS`. Apply form URL pattern: `https://www.jobserve.com/gb/en/W<JOBID>.jsap`.
