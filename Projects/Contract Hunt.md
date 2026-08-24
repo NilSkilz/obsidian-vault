@@ -19,7 +19,7 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 
 ### 2. Sourcing (fully automated)
 - Email alerts from the boards land in the inbox; the hourly email check picks them up.
-- Optionally add a direct JobServe RSS/search poll on cron for faster-than-alert pickup.
+- **Live 2026-08-24:** `Jarvis/bin/contract-hunt.sh` on cron (every 2h, 08:20 to 20:20). Headless-Chrome scrape of public JobServe search (`~/tools/contract-hunt/scrape-jobserve.js`, searches: typescript / react contract / node aws, last 2 days), dedupe on job id (`~/.local/state/jarvis-contract-hunt-seen.txt`), sonnet triage scores 0-9. 8+ pings Telegram immediately, everything lands in `jarvis-contract-hunt-digest.log` which the evening brief summarises. Log: `~/.local/state/jarvis-contract-hunt.log`.
 
 ### 3. Triage (Jarvis, zero Rob effort)
 - Extend the email-judge pattern: score each role against profile (stack match, remote, outside IR35 explicitly stated, rate floor, contract length).
@@ -53,8 +53,11 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - 2026-08-24 (later): Rob switched positioning to overemployed. Superdry scrubbed from CV and cover-note template (anonymised as "major UK fashion retailer"), risk notes added above.
 - 2026-08-24 (evening): Rob sent his 2024 CV as PDF. Career history backfilled into the master CV (13+ years: Redsource/Redware → LimeNinja → Headforwards → retail contract → retail perm). Rob decided Tethered/Tide stay anonymous. Bonus finds: the £375/£425 contract was at Superdry itself (test automation, Nov 2021 to May 2023, converted to perm), and he ran his own Ltd (LimeNinja) for four years, so the outside-IR35 setup is familiar ground, not a first rodeo.
 
+- 2026-08-24 (late): sourcing pipeline built and live (see step 2). First dry run: 61 ads scraped, 1 strong hit (Forward Deployed Engineer, TechShack, £400-450 outside IR35, remote, TypeScript/Next.js, Sept to Dec, http://www.jobserve.com/guYtY). JobServe's public site scrapes fine headless, no login or CAPTCHA involved. Apply step (4) still manual: Rob says "draft it" and Jarvis writes the cover note.
+
 ## Open questions
-- LinkedIn: blur the Superdry name there to match the CV, or leave it and accept the connectable dots? (Also need the profile URL for the CV header.)
-- GitHub URL, if anything public is worth showing.
-- Education line: include or omit.
-- Next build step: set up JobServe/LinkedIn/CWJobs email alerts so the sourcing pipeline goes live.
+- ~~LinkedIn~~ resolved 24 Aug: profile names Superdry, Rob accepts the connectable dots. URL on CV header. Don't re-raise.
+- ~~GitHub~~ omitted (Rob: half-finished projects, nothing worth showing).
+- ~~Education~~ omitted.
+- LinkedIn job alerts: only Rob can create these (in his LinkedIn app, 2 minutes: search "TypeScript contract remote", toggle Set alert). They already pass the email judge unbinned once they arrive.
+- Standing auto-send approval for applications: still ask-first (step 4 above), revisit once the drafts prove trustworthy.

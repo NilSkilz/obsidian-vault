@@ -79,6 +79,18 @@ else
     ASK="${ASK} Also include one short receipt line on the email filter, from this data (no tools, just state it naturally): ${MAILSUM}${MAILWHO:+ (binned: ${MAILWHO})}. If anything was binned, note it sits in Deleted Messages for 30 days if he wants it back."
   fi
 
+  # Contract Hunt receipt (Projects/Contract Hunt.md): what the JobServe poll
+  # triaged today. Strong matches (8+) were already pinged live; this is the tally.
+  CHDIGEST="$HOME/.local/state/jarvis-contract-hunt-digest.log"
+  if [ -f "$CHDIGEST" ]; then
+    CHSUM="$(awk -v d="$TODAY" '$1==d { n++; s=$3+0; if (s>=8) hi++; else if (s>=5) mid++ }
+      END { if (n>0) printf "%d new contract roles scanned, %d strong (8+), %d plausible (5-7), rest rejected", n, hi, mid }' "$CHDIGEST" 2>/dev/null)" || CHSUM=""
+    if [ -n "$CHSUM" ]; then
+      CHBEST="$(awk -v d="$TODAY" '$1==d && $3+0>=5' "$CHDIGEST" | cut -d' ' -f3- | tail -5 | paste -sd '; ' -)"
+      ASK="${ASK} Also one short receipt line on the contract hunt (JobServe poll), from this data, no tools: ${CHSUM}.${CHBEST:+ Roles worth a mention: ${CHBEST}. Strong ones were already pinged to him earlier so just reference them, don't re-sell them.} If nothing scored 5+, one clause is enough."
+    fi
+  fi
+
   # Ambient signal from the junk-mail traffic (Rob, 2026-08-24: be intuitive,
   # don't make him define per-site rules). No sender filter: hand the model a
   # week of everything swept/binned and let its own judgment decide what, if
