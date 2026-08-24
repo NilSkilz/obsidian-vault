@@ -19,7 +19,7 @@ TCONF="$HOME/.config/jarvis/telegram.env"
 CLAUDE_BIN="$(command -v claude || echo "$HOME/.local/bin/claude")"
 DRYRUN="${DRYRUN:-0}"
 
-SEARCHES=("typescript" "react contract" "node aws")
+SEARCHES=("typescript" "react contract" "node aws" "next.js" "full stack javascript" "test automation playwright" "react native")
 
 mkdir -p "$STATE"; touch "$SEEN"
 exec >>"$LOG" 2>&1
