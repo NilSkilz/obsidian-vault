@@ -59,8 +59,8 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 | **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
 | Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
-| Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**, SSH `rob@` (see Play room audio). |
-| Play room speakers (ambient) | 192.168.1.108 (`play-room-ambient-speakers`) | Raspberry Pi (b8:27:eb:38:f0:e0) + amp, **snapclient 0.31**, SSH `rob@` (see Play room audio). |
+| Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**, SSH `rob@`, key installed. Full detail in `Context/Play Room Speakers.md`. |
+| Play room speakers (ambient) | 192.168.1.108 (`play-room-ambient-speakers`) | Raspberry Pi (b8:27:eb:38:f0:e0) + amp, **snapclient 0.31**, SSH `rob@`, key installed. Full detail in `Context/Play Room Speakers.md`. |
 | Wall panel Pi (DAKboard) | 192.168.1.85 (`dakboard-4DD0BACD`) | Raspberry Pi, port 80 open. |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
@@ -73,17 +73,13 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 
 Anything else on the LAN gets its address from the UDM's DHCP pool, which is **`.6`–`.254`** (it does NOT start above the statics — that overlap is what caused the vaultwarden .17 conflict on 2026-07-11; see the belt-and-braces note above). NPM originally leased .177 before I pinned it static. Note 2026-07-03: the router is a **UniFi Dream Machine**, not a BT hub as older notes assumed (the WAN is still BT residential, hence the dynamic IP).
 
-### Play room audio (Snapcast, rediscovered 2026-08-22)
+### Play room audio (Snapcast, rediscovered 2026-08-22, tidied 2026-08-25)
 
-Two Raspberry Pis in the play room, each feeding an amp, running **snapclient 0.31** (multi-room Snapcast setup from the NUC era, predates my rebuild, no vault record existed):
+Two Raspberry Pis in the play room (`play-room-main-speakers` @ .219, Pi 3B; `play-room-ambient-speakers` @ .108, Pi Zero W), each feeding an amp, running snapclient 0.31 as `snapclient.service`. **Canonical reference (hardware, creds, config, health checks): `Context/Play Room Speakers.md`.**
 
-- `play-room-main-speakers` @ 192.168.1.219 (MAC b8:27:eb:a5:b3:a8)
-- `play-room-ambient-speakers` @ 192.168.1.108 (MAC b8:27:eb:38:f0:e0)
-
-Both are **hardcoded to snapserver `192.168.1.2:1704`**, the old NUC's IP, which the Proxmox host now owns. The old snapserver died with the NUC. Fix (2026-08-22): Music Assistant on HA (.4) runs a builtin snapserver (Snapcast provider enabled), and the Proxmox host DNATs `.2:1704 → .4:1704` via **`snapcast-forward.service`** (systemd unit on the host, enabled, sets `ip_forward` + iptables DNAT/MASQUERADE). Both Pis reconnected instantly and are registered as Music Assistant players.
-
-- **SSH to the Pis: solved (2026-08-25).** Login is `rob` / `F0rsak3n229!` on both. My ed25519 key (`jarvis@192.168.1.11`) is installed in `~/.ssh/authorized_keys` on both, so `ssh rob@192.168.1.219` / `ssh rob@192.168.1.108` is now passwordless from this box. No `pi` user. main = Pi 3 Model B, ambient = Pi Zero W (armv6l), both running snapclient as a systemd service (`snapclient.service`), SD cards ~5-6% full, healthy.
-- **Proper fix (now actionable, still open):** point snapclient at `192.168.1.4` directly (config not in the usual `/etc/default/snapclient` or `/etc/snapclient/` on these boxes, so find where the server IP is actually set, e.g. the systemd unit ExecStart or a snapclient.conf), then disable `snapcast-forward.service` on the Proxmox host. Not urgent, the forwarder works fine.
+- Server is the builtin snapserver in **Music Assistant on HA (`192.168.1.4:1704`)**. Since 2026-08-25 both Pis point at it **directly** (the server IP is hardcoded in the unit's `ExecStart`, not `/etc/default/snapclient`).
+- The interim host-side DNAT forwarder **`snapcast-forward.service` on the Proxmox host is disabled** (2026-08-25). Unit file still present at `/etc/systemd/system/snapcast-forward.service`, inert. Nothing should be talking to `.2:1704` any more.
+- SSH: `rob` / `F0rsak3n229!` on both, my key installed, passwordless from this box.
 
 ### Networking gotchas (confirmed 2026-08-09)
 

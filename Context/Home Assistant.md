@@ -68,6 +68,7 @@
 - **Calendar parsing:** Away events for smart meal suggestions
 
 ## System Services
+- **Music Assistant** runs a builtin Snapcast server (`:1704`) feeding the two play-room speaker Pis. Full detail: [[Play Room Speakers]].
 - Pre-rebuild this box ran a Dakboard service and Plausible analytics alongside HA. Not yet re-confirmed on the Proxmox setup. See `Context/Infrastructure.md` for the current tooling picture.
 
 ## Technical Lessons
@@ -95,3 +96,4 @@
 - [[Logan]] - Personal Alexa device
 - [[Tesla]] - "Timmy" integration
 - [[Thread Border Router]] - ZBT-2 setup
+- [[Play Room Speakers]] - Snapcast Pis (main + ambient) fed by Music Assistant
