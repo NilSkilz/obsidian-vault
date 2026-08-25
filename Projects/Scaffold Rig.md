@@ -49,8 +49,9 @@ Rectangular tube footprint both configs plug into. Strip to this, rebuild either
 ## Inventory (salvaged, 2026-08-25)
 - 6x ~300mm lengths, 33.7mm mild steel, capped one end (short legs / stubs / bench uprights)
 - 10x 101 short tees (33.7)
+- 4x 131 round wall flanges (33.7), 4-hole. Used as base flanges: same perpendicular socket as the oval 132, bigger plate and two more fixings, so a better foot, not a compromise.
 
-**Still needed:** long lengths for uprights and rails (stockholder), base flanges (132) one per leg (try work first, else Scaffold Mart £4.73), plus swivels/elbows per the legend.
+**Still needed:** long lengths for uprights and rails (stockholder), more flanges if the design goes past four legs (131 or 132, either works; Scaffold Mart 132 £4.73), plus swivels/elbows per the legend.
 
 ## Assets
 - Blueprint SVG: `~/generated/scaffold-rig-design.svg` (orthographic, scale ~1:5, three views + legend + notes)
