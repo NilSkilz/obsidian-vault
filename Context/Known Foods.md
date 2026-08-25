@@ -8,6 +8,9 @@ Fixed calorie figures for foods Rob eats regularly, so I log from **known data**
 |---|---|---|---|
 | Chicken korma + rice | 1 portion (takeaway) | 720 | Korma's the calorie-heavy curry (cream + ghee). Rice ~200 of this. |
 | Coke | 330ml can | 139 | Rob corrected this 2026-08-15 (was over-estimating at 210). |
+| Coke | 500ml bottle | 210 | Meal-deal size. |
+| Greggs ham & cheese toastie | 1 | 380 | Greggs published figure ~375-385. |
+| Greggs potato wedges | 1 portion | 265 | Greggs published figure ~260-270. |
 
 <!--
 Add rows as Rob's regulars emerge. One row per food+portion. If a food comes in
