@@ -210,6 +210,10 @@ def recent_buffer():
 
 
 def append_convo(line):
+    # Rob's turns carry a timestamp so a later run can see how old the buffer is
+    # (a Monday-evening chat must not read as "tonight" on Tuesday morning).
+    if line.startswith("Rob: "):
+        line = f"Rob [{time.strftime('%a %d %b %H:%M')}]: " + line[5:]
     with CONVO_LOCK:
         with CONVO.open("a") as f:
             f.write(line.rstrip("\n") + "\n")
@@ -281,7 +285,10 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
     so no reply is ever silently dropped. Stdin closes at the first result;
     input already queued by then still gets processed (EOF doesn't discard it).
     """
+    now_str = time.strftime("%A %-d %B %Y, %H:%M %Z")
     prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
+
+RIGHT NOW it is {now_str}. This is the authoritative clock: use it for anything involving day of week, time of day, "next run", "tonight", "this morning", greetings, or scheduling. Never infer the time from the tone of earlier messages, and do not assume the previous turn happened today.
 
 This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
 
