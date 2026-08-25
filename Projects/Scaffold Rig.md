@@ -34,7 +34,8 @@ Rectangular tube footprint both configs plug into. Strip to this, rebuild either
 - **C50** — railing flange: bolt post to floor (max lateral resistance)
 
 ## Materials
-- 48.3mm O/D galvanised scaffold tube
+- **Decision 2026-08-24: 33.7mm (B34) key clamp**, not 48.3. Superdry head office shop fittings are all 33.7 so parts can be borrowed/salvaged from work. Cheapest new fittings: Scaffold Mart Avonmouth. Tube from a steel stockholder (33.7 CHS self colour, ~£3-4/m collected). Rob likes the bare mild steel look: Scotch-Brite + boiled linseed oil or dark wax.
+- 48.3mm O/D galvanised scaffold tube (original spec, superseded)
 - Cast key-clamp fittings as above
 - Pads: marine ply + high-density foam + wipe-clean PU / leather, bolted to the platform tubes
 
@@ -44,6 +45,12 @@ Rectangular tube footprint both configs plug into. Strip to this, rebuild either
 - Whipping post is demountable as drawn. **For suspension-adjacent loads**, bolt the base with C50 flanges into joists/masonry and **derate to the fittings, not the tube.**
 - Dimensions sized for a ~5'8"–6'0" body; tweak leg lengths to fit the user.
 - **All dims indicative — verify before build.**
+
+## Inventory (salvaged, 2026-08-25)
+- 6x ~300mm lengths, 33.7mm mild steel, capped one end (short legs / stubs / bench uprights)
+- 10x 101 short tees (33.7)
+
+**Still needed:** long lengths for uprights and rails (stockholder), base flanges (132) one per leg (try work first, else Scaffold Mart £4.73), plus swivels/elbows per the legend.
 
 ## Assets
 - Blueprint SVG: `~/generated/scaffold-rig-design.svg` (orthographic, scale ~1:5, three views + legend + notes)
