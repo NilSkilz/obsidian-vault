@@ -12,6 +12,11 @@ Subcommands:
   bin     Move specific INBOX messages to Deleted Messages by UID:
           `mail-tool.py bin 123,124`. Used by the hourly judge to bin
           sales/marketing/spam. Recoverable for 30 days via iCloud.
+  jobmail Print INBOX job-alert emails (LinkedIn Job Alerts etc, senders in
+          ~/.config/jarvis/mail-job-senders.txt) with the job cards/links
+          pulled out. Consumed by contract-hunt.sh, which bins each alert
+          once triaged. `new` skips these senders so the hourly email judge
+          never sees (and can never bin) them.
 
 Used by email-check.sh (hourly cron). Safe to run by hand.
 """
@@ -25,6 +30,7 @@ from pathlib import Path
 
 CONF = Path.home() / ".config/jarvis/icloud.env"
 SENDERS = Path.home() / ".config/jarvis/mail-bin-senders.txt"
+JOBSENDERS = Path.home() / ".config/jarvis/mail-job-senders.txt"
 STATE = Path.home() / ".local/state/jarvis-mail-check.uid"
 SWEPTLOG = Path.home() / ".local/state/jarvis-mail-swept.log"
 TRASH = '"Deleted Messages"'
@@ -123,6 +129,72 @@ def bin_uids(m, arg):
         print(f"bin failed for uids {','.join(uids)}")
 
 
+def job_senders():
+    if not JOBSENDERS.exists():
+        return []
+    return [
+        p.strip() for p in JOBSENDERS.read_text().splitlines()
+        if p.strip() and not p.strip().startswith("#")
+    ]
+
+
+def is_job_mail(msg):
+    frm = dh(msg["From"]).lower()
+    return any(p.lower() in frm for p in job_senders())
+
+
+def jobmail(m):
+    """Dump job-alert mail with the job links made usable for triage."""
+    import re
+    from html import unescape
+    import datetime
+    # Only recent alerts: the inbox holds a decade of old job-board mail and
+    # we must never triage (or bin) that backlog.
+    days = int(os.environ.get("JOBMAIL_DAYS", "3"))
+    since = (datetime.date.today() - datetime.timedelta(days=days)).strftime("%d-%b-%Y")
+    m.select("INBOX")
+    for pat in job_senders():
+        typ, data = m.uid("search", None, f'(FROM "{pat}" SINCE {since})')
+        if typ != "OK" or not data or not data[0]:
+            continue
+        for u in data[0].split():
+            typ, md = m.uid("fetch", u, "(BODY.PEEK[])")
+            if typ != "OK" or not md or md[0] is None:
+                continue
+            msg = email.message_from_bytes(md[0][1], policy=email.policy.default)
+            print(f"=== uid {u.decode()}")
+            print(f"From: {dh(msg['From'])}")
+            print(f"Subject: {dh(msg['Subject'])}")
+            print(f"Date: {msg['Date']}")
+            part = msg.get_body(preferencelist=("html", "plain"))
+            html = part.get_content() if part is not None else ""
+            # Job links, tracking junk stripped. LinkedIn: /jobs/view/<id>.
+            links = []
+            for href in re.findall(r'href="([^"]+)"', html):
+                href = unescape(href)
+                mm = re.search(r"linkedin\.com/(?:comm/)?jobs/view/(\d+)", href)
+                if mm:
+                    clean = f"https://www.linkedin.com/jobs/view/{mm.group(1)}"
+                elif re.search(r"jobserve\.com/", href) and "unsubscribe" not in href.lower():
+                    clean = href.split("?")[0]
+                else:
+                    continue
+                if clean not in links:
+                    links.append(clean)
+            text = re.sub(r"<(style|script)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+            text = re.sub(r"<[^>]+>", "\n", text)
+            text = unescape(text).replace("\u034f", "")
+            lines = [" ".join(l.split()) for l in text.splitlines()]
+            text = "\n".join(l for l in lines if l)
+            print("Body:")
+            print(text[:3500])
+            if links:
+                print("Links:")
+                for l in links:
+                    print(f"  {l}")
+            print()
+
+
 def new(m):
     m.select("INBOX")
     typ, data = m.status("INBOX", "(UIDNEXT)")
@@ -144,6 +216,8 @@ def new(m):
         if typ != "OK" or not md or md[0] is None:
             continue
         msg = email.message_from_bytes(md[0][1], policy=email.policy.default)
+        if is_job_mail(msg):
+            continue  # contract-hunt.sh owns these; never let the judge bin them
         print(f"=== uid {u.decode()}")
         print(f"From: {dh(msg['From'])}")
         print(f"To: {dh(msg['To'])}")
@@ -157,7 +231,7 @@ def new(m):
 
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
-    if cmd not in ("sweep", "new", "bin"):
+    if cmd not in ("sweep", "new", "bin", "jobmail"):
         sys.exit(__doc__)
     if cmd == "bin" and len(sys.argv) < 3:
         sys.exit("bin needs a comma-separated UID list")
@@ -166,7 +240,7 @@ def main():
         if cmd == "bin":
             bin_uids(m, sys.argv[2])
         else:
-            {"sweep": sweep, "new": new}[cmd](m)
+            {"sweep": sweep, "new": new, "jobmail": jobmail}[cmd](m)
     finally:
         try:
             m.logout()
