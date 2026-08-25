@@ -298,3 +298,6 @@ Rob asked for Slack messages to "wake Jarvis up". True push isn't available: the
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.
+
+### data1 backup retention (set 2026-08-25)
+`/data` in CT 110 is a bind mount of `/mnt/data1/jarvis`, so `df` inside me shows the whole 440GB `data1` disk (mostly `data1-backups`: weekly vzdump job `backup-cf999020-84ea`, Sunday 01:00, 18 guests). Rob approved **`keep-last=4`** (flat, ~4 weeks of restore points, ~36GB/week so ~150GB steady state). Set via `pvesh set /cluster/backup/backup-cf999020-84ea --prune-backups keep-last=4` and pruned immediately (91 dumps removed, 72 kept, disk 90% -> 55%). Change it: `ssh proxmox`, same command with a new policy.
