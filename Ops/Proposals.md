@@ -15,11 +15,6 @@ Format per entry:
 **Risk:** what could go wrong / why I didn't just do it
 ```
 
-## GitHub PAT for self-serve PRs (2026-07-09)
-**Problem:** No `gh` CLI or GitHub token on the jarvis LXC. Every PR on non-Tide repos (Tethered especially, which uses the branch+PR workflow) needs Rob to click a compare link manually. Came up repeatedly during the Tide build. (Tide itself no longer needs it: Rob's directive is commit to `feature/tide-build` + `deploy-tide.sh` straight to live, no PR.)
-**Option:** Drop a fine-grained PAT (repo scope, mission-control + tethered) into `~/.config/jarvis/github.env` so I can open PRs end to end.
-**Risk:** A token on the box widens blast radius if the LXC is compromised. Fine-grained + scoped to the two repos keeps it contained. Raising because it's a credential Rob has to mint and decide the scope of.
-
 ## Delete stale old Cloudflare zone for cracky.co.uk (2026-08-06)
 **Problem:** This morning's DDNS fix moved `cracky.co.uk` to a new Cloudflare account (new token, new zone id `da56…`), and Nominet now delegates the domain to that zone's nameservers (meg/owen) correctly. But the OLD account's zone for `cracky.co.uk` (nameservers edna/john) is still live and still answering with the dead `86.181.171.46`. Any resolver that still had the old edna/john delegation cached (or re-queries it before its own NS-record TTL expires) gets the stale answer, which caused the ~16:00 today "site is slow/not loading" flakiness. Confirmed as of this heartbeat run (19:07) it's now cleared everywhere I can check (1.1.1.1, 8.8.8.8, and the house router's resolver all return the correct proxied IPs, and all five public subdomains served 200/302 directly) — so it's not urgent, but the old zone is still sitting there as a landmine for the next resolver that hasn't refreshed.
 **Option:** Rob deletes the old `cracky.co.uk` zone from the OLD Cloudflare account (the one before the account migration). My DDNS token only has access to the new account (zones: cracky `da56…` + kernowlabs), so I can't reach the old zone to remove it myself.
