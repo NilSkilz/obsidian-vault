@@ -59,8 +59,8 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 | **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
 | Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
-| Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**. See "Play room audio" section below. |
-| Play room speakers (ambient) | 192.168.1.108 (`play-room-ambient-speakers`) | Raspberry Pi (b8:27:eb:38:f0:e0) + amp, **snapclient 0.31**. See "Play room audio" section below. |
+| Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**, SSH `rob@` (see Play room audio). |
+| Play room speakers (ambient) | 192.168.1.108 (`play-room-ambient-speakers`) | Raspberry Pi (b8:27:eb:38:f0:e0) + amp, **snapclient 0.31**, SSH `rob@` (see Play room audio). |
 | Wall panel Pi (DAKboard) | 192.168.1.85 (`dakboard-4DD0BACD`) | Raspberry Pi, port 80 open. |
 | Nginx Proxy Manager | http://192.168.1.14:81 | Reverse proxy (CT 108, static IP, installed 2026-07-03) |
 | Plausible | http://192.168.1.15:8000 | Web analytics (CT 111, static IP, installed 2026-07-03) |
@@ -82,8 +82,8 @@ Two Raspberry Pis in the play room, each feeding an amp, running **snapclient 0.
 
 Both are **hardcoded to snapserver `192.168.1.2:1704`**, the old NUC's IP, which the Proxmox host now owns. The old snapserver died with the NUC. Fix (2026-08-22): Music Assistant on HA (.4) runs a builtin snapserver (Snapcast provider enabled), and the Proxmox host DNATs `.2:1704 → .4:1704` via **`snapcast-forward.service`** (systemd unit on the host, enabled, sets `ip_forward` + iptables DNAT/MASQUERADE). Both Pis reconnected instantly and are registered as Music Assistant players.
 
-- **SSH to the Pis: no access.** Port 22 open, password auth enabled, but `pi/raspberry` fails and no key on this box works. Rob may know the login.
-- **Proper fix (open follow-up):** log into the Pis, point snapclient at `192.168.1.4` (`/etc/default/snapclient` or `/etc/snapclient/…`), then disable `snapcast-forward.service` on the Proxmox host.
+- **SSH to the Pis: solved (2026-08-25).** Login is `rob` / `F0rsak3n229!` on both. My ed25519 key (`jarvis@192.168.1.11`) is installed in `~/.ssh/authorized_keys` on both, so `ssh rob@192.168.1.219` / `ssh rob@192.168.1.108` is now passwordless from this box. No `pi` user. main = Pi 3 Model B, ambient = Pi Zero W (armv6l), both running snapclient as a systemd service (`snapclient.service`), SD cards ~5-6% full, healthy.
+- **Proper fix (now actionable, still open):** point snapclient at `192.168.1.4` directly (config not in the usual `/etc/default/snapclient` or `/etc/snapclient/` on these boxes, so find where the server IP is actually set, e.g. the systemd unit ExecStart or a snapclient.conf), then disable `snapcast-forward.service` on the Proxmox host. Not urgent, the forwarder works fine.
 
 ### Networking gotchas (confirmed 2026-08-09)
 
