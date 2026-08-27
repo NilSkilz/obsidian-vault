@@ -72,6 +72,8 @@ Board 1200 x 600 ply. Four salvaged 470 capped uprights (front pair + mid pair, 
 - Wrist posts: **1200** full height, the board doesn't constrain those.
 - Cut long (+10) and trim once flanges are screwed down.
 
+**Flange fixing (decided 2026-08-27):** through-bolt, not wood screws. M8 x 40 coach/hex bolts down through the four holes of each 131 flange and the 18mm ply, repair washer + nyloc nut underneath (24 bolts for six flanges), or M8 pronged T-nuts hammered in from below if Rob wants flanges removable from the top. Rubber feet or a 15mm batten round the underside edge so the fixings clear the floor. Grub screw locks each upright in the flange.
+
 **Steel:** 2x1200 + 2x1030 = 4.46m (one 5m bar), 4x430 = 1.72m (second bar or a 2m offcut if the stockholder sells short). Two 5m bars still the safe buy.
 
 **Fittings:** the length rail has to pass *through* the mid uprights (cap stays above it), and a 101 short tee only lets one member pass. So **2x 126 two-socket crosses** for the mid uprights. Front uprights and wrist posts take the rail ends in 101 tees. Plus **2 more flanges** (six uprights, have four). Ten tees cover the rest.
