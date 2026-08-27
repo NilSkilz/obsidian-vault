@@ -47,9 +47,16 @@ Rectangular tube footprint both configs plug into. Strip to this, rebuild either
 - **All dims indicative — verify before build.**
 
 ## Inventory (salvaged, 2026-08-25)
-- 6x ~300mm lengths, 33.7mm mild steel, capped one end (short legs / stubs / bench uprights)
+- 6x ~470mm lengths (Rob re-measured 2026-08-27; earlier note said ~300mm), 33.7mm mild steel, domed cap one end. Capped end won't enter a socket, so either cut the caps off or use them as bench legs with the cap poking up above the platform rail. Good for short uprights, too short for the 600/900 rails.
 - 10x 101 short tees (33.7)
 - 4x 131 round wall flanges (33.7), 4-hole. Used as base flanges: same perpendicular socket as the oval 132, bigger plate and two more fixings, so a better foot, not a compromise.
+
+## Cut list (2026-08-27, indicative, verify against the drawing)
+Rob found a St Austell stockholder with 33.7 CHS at 5m for ~£40. Two 5m lengths cover the whole design:
+- Length A (5m): 2300 post + 1150 raked brace + 900 base rail + 600 base rail
+- Length B (5m): 3x 900 (base rail + 2 bench platform rails) + 600 base rail + 2x 760 rear bench legs, ~180 spare
+- Salvaged 470s: 2 cut to ~350 for front bench legs, 4 spare (stubs, anchor bar extension, spares)
+Ask them to cut to the list on the saw there; stockholders usually do it free or a quid a cut.
 
 **Still needed:** long lengths for uprights and rails (stockholder), more flanges if the design goes past four legs (131 or 132, either works; Scaffold Mart 132 £4.73), plus swivels/elbows per the legend.
 
