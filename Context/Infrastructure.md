@@ -16,6 +16,8 @@ The current, verified picture of where I live and what's around me, after the Ju
 - **GitHub CLI + PAT (added 2026-08-25):** `gh` 2.98 binary at `~/bin/gh` (release tarball, no apt; `~/bin` on PATH via `.profile` + `.bashrc`). Fine-grained PAT minted by Rob, scoped to `tethered`, `mission-control`, `ERP-app`, `kernowlabs` (Contents + Pull requests rw, Metadata read). Lives in `~/.config/jarvis/github.env` (600) and `~/.config/gh/hosts.yml` (600). Verified: `gh auth status` as NilSkilz, PR list works. Git push still goes over the SSH deploy key; gh is for PRs/issues/API only, `gh auth setup-git` deliberately NOT run. Rotate/revoke at GitHub > Settings > Developer settings > Fine-grained tokens.
 - No systemd `--user` bus / linger yet (no `/run/user/1000`), so always-on *services* still need a one-time root action. Cron works fine as `jarvis` without it.
 
+- **Autostart audit (2026-08-27):** Plex CT 100 had no `onboot` flag and stayed down for 28h after the 2026-08-26 host reboot (nobody noticed until Rob asked). Fixed with `pct set 100 --onboot 1`; every guest now has `onboot: 1`. When adding a new CT, set `--onboot 1` at create time.
+
 ## GPU passthrough (NVIDIA GTX 1080 Ti → Plex CT 100, Tdarr CT 109)
 
 The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and **Tdarr (CT 109)** for hardware transcoding. Both CTs' `.conf` files bind the device nodes (`dev0..dev6`: `/dev/nvidia0`, `nvidiactl`, `nvidia-modeset`, `nvidia-uvm`, `nvidia-uvm-tools`, `nvidia-caps/nvidia-cap1`+`cap2`, all `gid=44`). **If those nodes don't exist on the host, the CTs fail to start** with `Device /dev/nvidia-* does not exist`.
