@@ -51,7 +51,19 @@ Rectangular tube footprint both configs plug into. Strip to this, rebuild either
 - 10x 101 short tees (33.7)
 - 4x 131 round wall flanges (33.7), 4-hole. Used as base flanges: same perpendicular socket as the oval 132, bigger plate and two more fixings, so a better foot, not a compromise.
 
-## Cut list (2026-08-27, indicative, verify against the drawing)
+## D · Kneeling bench (Rob's reference photo, 2026-08-27)
+Rob sent a product photo of a key-clamp kneeling bench, which is what the 4x 1.2m + 2x 60cm guess maps to, not the whipping post. Layout: ply base (~600x900, edge-trimmed), six uprights on flanges. Four short capped uprights (two front carrying the knee rails with padded blocks, two mid carrying the front of the chest pad), two tall ~1200 wrist posts at the rear also carrying the back of the chest pad. Chest pad ~600mm high, knee rails ~300mm, cross ties at rail height. All rails run between tees, so socket-to-socket length is ~60-70mm less than the nominal, trim once the flanges are down.
+
+Cut list, two 5m 33.7 CHS bars:
+- Length A (5m): 2x 1200 wrist posts + 2x 650 mid (chest) uprights + 2x 600 chest platform rails (= 4900)
+- Length B (5m): 2x 600 knee rails + 3x 600 cross ties + 1x 600 top bar between the wrist posts (= 3600), ~1400 spare
+- Salvaged 470s: 4 as the front/knee uprights, domed cap up exactly like the photo, 2 spare
+- Extra fittings: 2 more flanges (6 uprights, have 4), ~4 crosses or side-outlet tees where the chest rail meets the wrist posts; the 10 short tees cover the rest
+- Pads: one ~600x250 chest pad, two ~150x150 knee blocks, ply + HD foam + PU
+
+Rob's own 4x 1.2m + 2x 0.6 guess is close (two 1.2s uncut as posts, two more halved gives six 600s) but the design wants eight or nine 600-ish pieces, so it's two 5m bars either way.
+
+## Cut list, post + bench design (2026-08-27, indicative, superseded by D unless Rob wants the post)
 Rob found a St Austell stockholder with 33.7 CHS at 5m for ~£40. Two 5m lengths cover the whole design:
 - Length A (5m): 2300 post + 1150 raked brace + 900 base rail + 600 base rail
 - Length B (5m): 3x 900 (base rail + 2 bench platform rails) + 600 base rail + 2x 760 rear bench legs, ~180 spare
