@@ -63,6 +63,19 @@ Cut list, two 5m 33.7 CHS bars:
 
 Rob's own 4x 1.2m + 2x 0.6 guess is close (two 1.2s uncut as posts, two more halved gives six 600s) but the design wants eight or nine 600-ish pieces, so it's two 5m bars either way.
 
+### D2 · Rob's simplified layout (2026-08-27, current plan)
+Board 1200 x 600 ply. Four salvaged 470 capped uprights (front pair + mid pair, domes up), two 1200 wrist posts at the back, two length rails running front to back, cross braces across the width. Flat platform on the 470s (knee blocks front, chest pad rear), wrists to the tall posts.
+
+**Board maths (131 flange ~100mm dia, so tube centres sit ~55mm in from each board edge):**
+- Length rails: centre-to-centre ~1090, socket-to-socket cut ≈ **1030**. Not 1200.
+- Cross braces: centre-to-centre ~490, cut ≈ **430**. Not 600. Four of them (front, mid, back, plus a top bar between the wrist posts).
+- Wrist posts: **1200** full height, the board doesn't constrain those.
+- Cut long (+10) and trim once flanges are screwed down.
+
+**Steel:** 2x1200 + 2x1030 = 4.46m (one 5m bar), 4x430 = 1.72m (second bar or a 2m offcut if the stockholder sells short). Two 5m bars still the safe buy.
+
+**Fittings:** the length rail has to pass *through* the mid uprights (cap stays above it), and a 101 short tee only lets one member pass. So **2x 126 two-socket crosses** for the mid uprights. Front uprights and wrist posts take the rail ends in 101 tees. Plus **2 more flanges** (six uprights, have four). Ten tees cover the rest.
+
 ## Cut list, post + bench design (2026-08-27, indicative, superseded by D unless Rob wants the post)
 Rob found a St Austell stockholder with 33.7 CHS at 5m for ~£40. Two 5m lengths cover the whole design:
 - Length A (5m): 2300 post + 1150 raked brace + 900 base rail + 600 base rail
