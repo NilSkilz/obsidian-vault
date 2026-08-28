@@ -14,6 +14,9 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-08-28 (Friday)
+- At lunchtime, told Aimee he's been chatting with **Mary** and that she wants to play. Rob is thinking about doing it at **NMM on the 5th** (Sat 5 Sept). First mention of Mary in the vault.
+
 ## 2026-08-23 (Sunday)
 - Talked through Aimee's possible upcoming dates. Nothing involving Rob came out of it, as far as he can tell.
 - Re-confirmed the Tash visit: Aimee is still okay with Rob going to Tash's on Tuesday (25 Aug). Rob is also travelling up Monday and staying at his mother's Monday night, catching up with his mum and Sharon, deliberately so the trip doesn't read to Aimee as purely a Tash visit. This closes off the 21 Aug "did you tell me" friction, the visit is now explicitly confirmed with her.
