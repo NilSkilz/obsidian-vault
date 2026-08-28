@@ -26,12 +26,26 @@ The plug closes the loop. Orgasm detected -> machine reacts (stop for denial/edg
 ## Existing assets
 
 - `github.com/NilSkilz/FuckIO-UI` (private): CRA + MUI slider UI, axios GET to firmware. Scaffold only, one App.js, but it shows the parameter model Rob liked.
-- Rob's 2021 hardware: unknown whether the ESP32/stepper build still exists. Ask.
+- Rob's 2021 hardware: **still mostly exists** (confirmed 28 Aug 2026). NEMA stepper (size/driver TBC). It was mounted on a tripod, which was unstable; needs a firmer base (plywood sled or 2040/4040 ali extrusion frame, sub-£30). Check what survived before buying anything.
 - Overlap with **Tethered** (safety, consent, check-ins) and the Saline Pump (ESP32 motor control, same toolchain).
 
 ## Open questions
 
 - FuckIO firmware base or OSSM base?
 - Build the plug (Edge-o-Matic DIY) or buy one?
-- Does the 2021 machine still exist, and what motor/driver was it?
+- Exact NEMA size (17 vs 23) and which driver board survived? Determines whether it goes straight onto FuckIO/OSSM firmware or needs a new driver.
+- Base design: sled vs extrusion frame.
 - Backend: reuse Tethered's stack, or standalone?
+
+## Plug cost estimate (28 Aug 2026, ballpark)
+
+Edge-o-Matic DIY from scratch, UK prices:
+- ESP32 dev board: £6-10
+- Pressure sensor: MPXV5100GP £12-20, or a generic 5V 15psi analog car/exhaust pressure sensor £6-10 (EOM community confirms these work)
+- Inflatable butt plug with squeeze bulb (the plug's own bulb is the pump, no motor needed): £15-35
+- Silicone tubing + tee: £5
+- Small OLED/TFT + rotary encoder or buttons: £8-12
+- Perfboard/wiring/enclosure: £10
+- **Total roughly £60-90.** Rob already owns ESP32s and perfboard, so realistically £40-60.
+
+Buying instead: Maus-Tec sells the EOM3000 built (historically ~$250-300 USD, plus shipping/import), and a cheaper DIY kit (bare board + parts). Building is the obvious call here, same toolchain as the Saline Pump.
