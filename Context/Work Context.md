@@ -68,3 +68,6 @@
 - [[Tethered]] - Primary side project
 - [[Mission Control]] - Side project
 - [[Haven]] - Side project
+## Secure Properties tool
+- Working URL: https://secure-properties-api-ch.us-e2.cloudhub.io/ (the us-e1 host in older Slack threads 504s, ignore it)
+- Fallback: MuleSoft secure-properties-tool.jar locally, Blowfish/CBC default
