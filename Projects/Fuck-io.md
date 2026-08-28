@@ -26,14 +26,14 @@ The plug closes the loop. Orgasm detected -> machine reacts (stop for denial/edg
 ## Existing assets
 
 - `github.com/NilSkilz/FuckIO-UI` (private): CRA + MUI slider UI, axios GET to firmware. Scaffold only, one App.js, but it shows the parameter model Rob liked.
-- Rob's 2021 hardware: **still mostly exists** (confirmed 28 Aug 2026). NEMA stepper (size/driver TBC). It was mounted on a tripod, which was unstable; needs a firmer base (plywood sled or 2040/4040 ali extrusion frame, sub-£30). Check what survived before buying anything.
+- Rob's 2021 hardware: **still mostly exists** (confirmed 28 Aug 2026). **NEMA 23** stepper plus its driver (both believed to survive, driver model TBC). It **stalled sometimes** in 2021: almost certainly driver/PSU starved (a 2A-class driver on 12V will do exactly that to a NEMA 23), or crank binding, not a dead motor. Check the driver label before reusing it. It was mounted on a tripod, which was unstable; needs a firmer base (plywood sled or 2040/4040 ali extrusion frame, sub-£30). Check what survived before buying anything.
 - Overlap with **Tethered** (safety, consent, check-ins) and the Saline Pump (ESP32 motor control, same toolchain).
 
 ## Open questions
 
 - FuckIO firmware base or OSSM base?
 - Build the plug (Edge-o-Matic DIY) or buy one?
-- Exact NEMA size (17 vs 23) and which driver board survived? Determines whether it goes straight onto FuckIO/OSSM firmware or needs a new driver.
+- Which driver board survived (A4988/DRV8825 class = replace; TB6600/DM542 = keep)? And what PSU voltage?
 - Base design: sled vs extrusion frame.
 - Backend: reuse Tethered's stack, or standalone?
 
@@ -49,3 +49,28 @@ Edge-o-Matic DIY from scratch, UK prices:
 - **Total roughly £60-90.** Rob already owns ESP32s and perfboard, so realistically £40-60.
 
 Buying instead: Maus-Tec sells the EOM3000 built (historically ~$250-300 USD, plus shipping/import), and a cheaper DIY kit (bare board + parts). Building is the obvious call here, same toolchain as the Saline Pump.
+
+## Full machine cost estimate (28 Aug 2026, ballpark UK prices)
+
+Assumes the NEMA 23 is reused. Stalling fix = proper driver + 24-36V supply, so those are costed as new.
+
+| Part | Cost | Notes |
+|---|---|---|
+| NEMA 23 stepper | £0 (have) | 2.8-3A, ~1.9 Nm typical. Replacement if dead: £25-35 |
+| Driver: TB6600 (4A) | £12-18 | Cheap fix. Better: DM542 digital driver £25-35, quieter and smoother |
+| Alt: closed-loop upgrade (iHSV57 servo, the OSSM default) | £90-130 | Cannot stall, encoder feedback. Only if budget allows |
+| PSU 36V 10A (or 24V 15A) | £20-30 | The stalling fix. 12V is not enough for a 23 at speed |
+| ESP32 | £0 (have) | FuckIO / OSSM firmware both target it |
+| Linear motion: 2040 extrusion rail + carriage + GT2 belt + pulleys + idler | £35-55 | OSSM-style belt drive. Alt: crank + con-rod off a flywheel, £15-25 in printed/laser parts, simpler but fixed stroke |
+| Frame/base: 2040/4040 extrusion + corner brackets, or 18mm ply sled | £25-45 | Replaces the tripod. Weight matters more than stiffness; add a sandbag pocket |
+| Vac-U-Lock adapter + double-ended rod | £10-15 | Standard toy mount |
+| E-stop mushroom button, wired to driver enable | £5-8 | Non-negotiable |
+| Wiring, connectors, ferrules, enclosure for driver+PSU | £15-20 | |
+| Printed parts (carriage ends, motor mount) | £0-15 | Depends on printer access |
+| **Machine total** | **£125-200** reusing motor | **£220-330** with closed-loop servo |
+
+Plus the plug (£40-60 above), plus £0 for the remote/backend if it rides on Tethered infra.
+
+**Whole fuck-io, realistic: £170-260.** Buying equivalents: OSSM kit ~$300-400, EOM3000 ~$250-300, a Hismith is £250-500 with none of the integration. Build wins comfortably.
+
+**Stalling diagnosis for the old rig:** (1) driver current limit set below motor rating, (2) 12V supply, torque collapses above a few hundred RPM, (3) microstepping too fine with no acceleration ramp in firmware, (4) mechanical binding on the tripod flexing. New driver + 36V PSU + StrokeEngine's acceleration profiles fix 1-3; the base fixes 4.
