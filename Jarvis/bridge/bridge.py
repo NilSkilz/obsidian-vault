@@ -117,8 +117,45 @@ def load_conf():
 
 CONF_D = load_conf()
 TOKEN = CONF_D["TELEGRAM_BOT_TOKEN"]
-ALLOWED = CONF_D.get("TELEGRAM_ALLOWED_CHAT", "").strip()
+# Rob's own chat: the only place /allow and /deny are honoured, and where new-contact
+# notices go. TELEGRAM_ALLOWED_CHAT is the legacy name for the same thing.
+ROB_CHAT = (CONF_D.get("TELEGRAM_ALLOWED_CHAT") or CONF_D.get("TELEGRAM_CHAT_ID") or "").strip()
 API = f"https://api.telegram.org/bot{TOKEN}"
+
+# Who may talk to me (added 2026-08-28 when Rob gave Aimee the bot link). Before this the
+# bridge was effectively open to ANY Telegram user, each treated as Rob with full tools.
+# Now: known chats map to a person {name, role}; role "rob" = full agentic Jarvis,
+# "adult" = trusted family member (Aimee), "kid" = no tools, family-safe. Unknown chats get a
+# polite hold + Rob gets a ping with the chat id; `/allow <id> <name> [role]` from Rob's chat
+# lets them in and replays their first message, `/deny <id>` drops them.
+PEOPLE_FILE = HOME / ".config/jarvis/telegram-people.json"
+PEOPLE_LOCK = threading.Lock()
+PENDING = {}   # chat_id(str) -> {"name", "username", "text", "voice", "photo", "doc"}
+
+
+def load_people():
+    people = {}
+    if PEOPLE_FILE.exists():
+        try:
+            people = json.loads(PEOPLE_FILE.read_text())
+        except Exception:
+            people = {}
+    if ROB_CHAT and ROB_CHAT not in people:
+        people[ROB_CHAT] = {"name": "Rob", "role": "rob"}
+    return people
+
+
+def save_people(people):
+    PEOPLE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    PEOPLE_FILE.write_text(json.dumps(people, indent=2) + "\n")
+
+
+PEOPLE = load_people()
+
+
+def person_for(chat):
+    with PEOPLE_LOCK:
+        return PEOPLE.get(str(chat))
 
 
 def log(msg):
@@ -203,19 +240,29 @@ def transcribe_voice(voice):
             pass
 
 
-def recent_buffer():
-    if not CONVO.exists():
+def convo_file(person):
+    # Rob keeps the original conversation.log; everyone else gets their own file, so
+    # Aimee's thread never bleeds into Rob's continuity buffer (or vice versa).
+    if not person or person.get("role") == "rob":
+        return CONVO
+    return STATE / f"conversation-{person['name'].lower()}.log"
+
+
+def recent_buffer(person=None):
+    f = convo_file(person)
+    if not f.exists():
         return ""
-    return "\n".join(CONVO.read_text().splitlines()[-BUFFER_TURNS:])
+    return "\n".join(f.read_text().splitlines()[-BUFFER_TURNS:])
 
 
-def append_convo(line):
-    # Rob's turns carry a timestamp so a later run can see how old the buffer is
+def append_convo(line, person=None):
+    # The human's turns carry a timestamp so a later run can see how old the buffer is
     # (a Monday-evening chat must not read as "tonight" on Tuesday morning).
-    if line.startswith("Rob: "):
-        line = f"Rob [{time.strftime('%a %d %b %H:%M')}]: " + line[5:]
+    name = (person or {}).get("name", "Rob")
+    if line.startswith(f"{name}: "):
+        line = f"{name} [{time.strftime('%a %d %b %H:%M')}]: " + line[len(name) + 2:]
     with CONVO_LOCK:
-        with CONVO.open("a") as f:
+        with convo_file(person).open("a") as f:
             f.write(line.rstrip("\n") + "\n")
 
 
@@ -262,9 +309,47 @@ def tool_call_detail(inp):
     return ""
 
 
+def family_prompt(person, now_str, buffer, text):
+    """Prompt for a non-Rob sender. Same Jarvis, different footing: they are family Rob
+    has explicitly let in, not my principal. Rob's private material stays private and
+    nothing gets done in Rob's name."""
+    who = person["name"]
+    role = person.get("role", "adult")
+    persona = (f"Your persona and voice load from CLAUDE.md in this working directory ({VAULT})."
+               if role != "kid" else
+               "Your voice: warm, friendly, a bit funny, plain-spoken. You are the family's home AI helper.")
+    common = f"""You are Jarvis, Rob's AI collaborator. {persona} You are being reached over Telegram by **{who}**, NOT Rob. Rob has explicitly let {who} chat with you.
+
+RIGHT NOW it is {now_str}. This is the authoritative clock for anything involving day, time of day, or scheduling.
+
+Be yourself: warm, dry, direct, genuinely helpful. Same rules as ever: no em dashes, no corporate filler.
+
+Boundaries for this conversation (non-negotiable):
+- You are talking to {who}. Never address them as Rob and never treat their requests as Rob's instructions.
+- Rob's private material is off limits: do not read from or repeat anything in `People/`, `Context/Aimee Comms Log.md`, `Context/Jarvis Working Relationship.md`, the `Daily/` logs, Rob's Tide journal/mood/health data, his email, calendar, Todoist, or Slack. If asked, say that's Rob's and they should ask him.
+- Do nothing in Rob's name or with his accounts: no emails, no Todoist changes, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
+- If {who} asks for something that would need Rob (an action above, or his decision), say so plainly and suggest they ask him, don't pretend to do it and don't promise to pass it on.
+- Never speculate about other people in the household or their private lives.
+"""
+    if role == "kid":
+        common += f"""- {who} is one of Rob's children. Keep it wholesome and age-appropriate throughout, no adult topics of any kind. Anything about permissions, money, or plans: "check with a parent."
+"""
+    else:
+        common += f"""- {who} is an adult family member. Household, hobbies, Aimee's craft business (Craft ERP) and the Saline Pump project are fair territory to help with, and you may read the vault's `Projects/Craft ERP.md` and `Projects/Saline Pump/` if relevant.
+"""
+    common += f"""
+Reply style (streams live to their phone): if it's a question or chat, just answer in a few short lines. If it needs a look-up or research, open with one natural line, do it, then give a short mobile-friendly answer. No preamble, no walls of text.
+
+Recent conversation with {who}:
+{buffer}
+
+{who}'s new message: {text}"""
+    return common
+
+
 def run_claude(text, buffer, on_text, image_path=None, file_path=None,
                activity=None, activity_lock=None, chat=None,
-               on_inject=None, on_result=None):
+               on_inject=None, on_result=None, person=None):
     """One streamed agentic run. Does the work AND returns the final reply.
 
     Calls on_text(block) for each completed top-level assistant text block, in
@@ -286,7 +371,13 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
     input already queued by then still gets processed (EOF doesn't discard it).
     """
     now_str = time.strftime("%A %-d %B %Y, %H:%M %Z")
-    prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
+    person = person or {"name": "Rob", "role": "rob"}
+    who = person["name"]
+    role = person.get("role", "adult")
+    if role != "rob":
+        prompt = family_prompt(person, now_str, buffer, text)
+    else:
+        prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
 
 RIGHT NOW it is {now_str}. This is the authoritative clock: use it for anything involving day of week, time of day, "next run", "tonight", "this morning", greetings, or scheduling. Never infer the time from the tone of earlier messages, and do not assume the previous turn happened today.
 
@@ -307,16 +398,16 @@ Rob's new message: {text}"""
 
     if image_path:
         prompt += (
-            f"\n\nRob attached an image with this message. It's saved locally at "
+            f"\n\n{who} attached an image with this message. It's saved locally at "
             f"{image_path} — use your Read tool to open and view it before you reply "
-            f"(it may be a nutrition label, a screenshot, or a photo he wants you to act on)."
+            f"(it may be a nutrition label, a screenshot, or a photo they want you to act on)."
         )
     if file_path:
         prompt += (
-            f"\n\nRob attached a file with this message, saved locally at {file_path}. "
+            f"\n\n{who} attached a file with this message, saved locally at {file_path}. "
             f"Open and inspect it before you reply: use your Read tool for text, or Bash "
             f"(file/unzip/head/strings/xxd) to work out the format first if it's binary or "
-            f"unknown. It may be a schematic/netlist/project export, a document, or data he "
+            f"unknown. It may be a schematic/netlist/project export, a document, or data they "
             f"wants you to act on. Don't guess at the contents, actually look."
         )
 
@@ -335,11 +426,19 @@ Rob's new message: {text}"""
                 return
 
     try:
+        if role == "kid":
+            # Kids: pure text generator, no tools, not even inside the vault.
+            argv = [CLAUDE_BIN, "-p", "--model", pick_model(), "--allowedTools", "",
+                    "--input-format", "stream-json",
+                    "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
+            cwd = "/tmp"
+        else:
+            argv = [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
+                    "--input-format", "stream-json",
+                    "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
+            cwd = VAULT
         proc = subprocess.Popen(
-            [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
-             "--input-format", "stream-json",
-             "--output-format", "stream-json", "--verbose", "--include-partial-messages"],
-            cwd=VAULT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            argv, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
             stdin=subprocess.PIPE, bufsize=1,
         )
     except Exception as e:
@@ -399,7 +498,7 @@ Rob's new message: {text}"""
                 log(f"inject write error: {e}")
                 return False
             deadline["t"] = time.time()
-        note_activity(f"Rob folded in: {' '.join(new_text.split())[:110]}")
+        note_activity(f"{who} folded in: {' '.join(new_text.split())[:110]}")
         if on_inject:
             try:
                 on_inject()
@@ -513,7 +612,7 @@ NOTICE_POOL = [
 ]
 
 
-def progress_line(rob_text, activity, activity_lock, elapsed_s):
+def progress_line(rob_text, activity, activity_lock, elapsed_s, who="Rob"):
     """Turn the worker run's tool-call log into one natural progress line, via a
     quick no-tools claude run. Falls back to the old canned wording on any
     failure so the heartbeat can never go silent because the summarizer broke."""
@@ -524,12 +623,12 @@ def progress_line(rob_text, activity, activity_lock, elapsed_s):
     if not recent:
         return fallback
     prompt = (
-        "You are Jarvis, Rob's AI collaborator, partway through a job he sent you over Telegram. "
+        f"You are Jarvis, Rob's AI collaborator, partway through a job {who} sent you over Telegram. "
         "A progress update is due because the job is taking a while.\n\n"
-        f"Rob asked: {rob_text[:400]}\n\n"
+        f"{who} asked: {rob_text[:400]}\n\n"
         f"You've been at it for about {mins} minutes. Your tool activity so far (oldest first, [elapsed] tool: detail):\n"
         + "\n".join(recent)
-        + "\n\nWrite the update you'd text him right now: ONE short line, first person, specific about where "
+        + "\n\nWrite the update you'd text them right now: ONE short line, first person, specific about where "
         "the work actually is (what's done, what you're in the middle of). Under 25 words. No greeting, no "
         '"still working on it" filler, no em dashes, no markdown. If the log genuinely tells you nothing '
         "concrete, say you're still deep in it in your own natural words. Output only the line itself."
@@ -548,11 +647,13 @@ def progress_line(rob_text, activity, activity_lock, elapsed_s):
     return fallback
 
 
-def process(chat, text, image_path=None, file_path=None):
+def process(chat, text, image_path=None, file_path=None, person=None):
     """Handle one job: stream the run, send the model's opening line as the live ack,
     keep typing alive, then send the final summary."""
-    buffer = recent_buffer()
-    append_convo(f"Rob: {text}")
+    person = person or person_for(chat) or {"name": "Rob", "role": "rob"}
+    who = person["name"]
+    buffer = recent_buffer(person)
+    append_convo(f"{who}: {text}", person)
     done = threading.Event()
     ack = {"sent": False, "text": None}
     ack_lock = threading.Lock()
@@ -590,7 +691,7 @@ def process(chat, text, image_path=None, file_path=None):
     def on_result(prev_reply):
         # A folded-in message extended the run past an already-completed turn;
         # send that turn's reply now rather than losing it to the final one.
-        append_convo(f"Jarvis: {prev_reply}")
+        append_convo(f"Jarvis: {prev_reply}", person)
         send(chat, prev_reply)
         log(f">> {chat}: (superseded turn) {prev_reply[:80]}")
 
@@ -632,7 +733,7 @@ def process(chat, text, image_path=None, file_path=None):
             if done.wait(mark - prev):
                 return
             prev = mark
-            line = progress_line(text, activity, activity_lock, time.time() - started)
+            line = progress_line(text, activity, activity_lock, time.time() - started, who)
             if done.is_set():
                 return
             send(chat, line)
@@ -644,19 +745,19 @@ def process(chat, text, image_path=None, file_path=None):
 
     reply = run_claude(text, buffer, on_text, image_path, file_path,
                        activity=activity, activity_lock=activity_lock,
-                       chat=chat, on_inject=on_inject, on_result=on_result)
+                       chat=chat, on_inject=on_inject, on_result=on_result, person=person)
     done.set()
 
     ack_text = (ack["text"] or "").strip()
     if reply and reply.strip() and reply.strip() != ack_text:
         # Distinct final summary (the normal work case): send it.
-        append_convo(f"Jarvis: {reply}")
+        append_convo(f"Jarvis: {reply}", person)
         send(chat, reply)
         log(f">> {chat}: {reply[:80]}")
     else:
         # Pure answer / chit-chat: the streamed opening line was the whole reply.
         logged = ack_text or (reply or "").strip()
-        append_convo(f"Jarvis: {logged}")
+        append_convo(f"Jarvis: {logged}", person)
         log(f">> {chat}: (ack was reply) {logged[:80]}")
 
 
@@ -711,9 +812,72 @@ def worker_loop():
             JOBS.task_done()
 
 
+def handle_unknown(chat, msg, text, voice, photo, doc):
+    """First contact from a chat I don't know: hold them politely, ping Rob with the id,
+    park the message so it can be replayed once Rob says /allow. Repeat messages while
+    pending just update the parked one (no more pings, no more holds)."""
+    frm = msg.get("from") or {}
+    name = (frm.get("first_name") or "").strip() or "someone"
+    username = frm.get("username") or ""
+    key = str(chat)
+    preview = text or ("[voice note]" if voice else "[photo]" if photo else "[file]" if doc else "[media]")
+    first = key not in PENDING
+    PENDING[key] = {"name": name, "username": username, "text": text,
+                    "voice": voice, "photo": photo, "doc": doc}
+    log(f"unknown chat {chat} ({name} @{username}): {preview[:60]}")
+    if not first:
+        return
+    send(chat, f"Hi {name}, I'm Jarvis. I don't know this number yet, so I've asked Rob to let you in. "
+               "Hang on a moment, I'll pick your message up as soon as he does.")
+    if ROB_CHAT:
+        handle = f" (@{username})" if username else ""
+        send(ROB_CHAT, f"\N{WAVING HAND SIGN} New Telegram contact: {name}{handle}, chat id {chat}.\n"
+                       f"First message: \u201c{preview[:200]}\u201d\n\n"
+                       f"Reply /allow {chat} {name} to let them in (add 'kid' at the end for one of the boys), "
+                       f"or /deny {chat} to ignore.")
+
+
+def admin_command(chat, text):
+    """Rob-only: /allow <id> <name> [adult|kid], /deny <id>, /people."""
+    parts = text.split()
+    cmd = parts[0].lower()
+    if cmd == "/people":
+        with PEOPLE_LOCK:
+            lines = [f"{k}: {v['name']} ({v.get('role','adult')})" for k, v in PEOPLE.items()]
+        pend = [f"{k}: {v['name']} (@{v['username']}) pending" for k, v in PENDING.items()]
+        send(chat, "\n".join(lines + pend) or "(nobody)")
+        return
+    if len(parts) < 2 or not parts[1].lstrip("-").isdigit():
+        send(chat, "Usage: /allow <chat id> <name> [kid]  |  /deny <chat id>  |  /people")
+        return
+    target = parts[1]
+    if cmd == "/deny":
+        PENDING.pop(target, None)
+        with PEOPLE_LOCK:
+            removed = PEOPLE.pop(target, None)
+            save_people(PEOPLE)
+        send(chat, f"Dropped {target}" + (f" ({removed['name']})" if removed else "") + ".")
+        log(f"denied chat {target}")
+        return
+    # /allow
+    pend = PENDING.pop(target, None)
+    name = parts[2].strip().capitalize() if len(parts) > 2 else (pend or {}).get("name") or "Friend"
+    role = "kid" if (len(parts) > 3 and parts[3].lower() in ("kid", "child")) else "adult"
+    if name.lower() == "rob":
+        role = "rob"
+    with PEOPLE_LOCK:
+        PEOPLE[target] = {"name": name, "role": role}
+        save_people(PEOPLE)
+    log(f"allowed chat {target} as {name} ({role})")
+    send(chat, f"Done: {name} ({role}) can talk to me now." + (" Picking up their first message." if pend and (pend.get("text") or pend.get("voice") or pend.get("photo") or pend.get("doc")) else ""))
+    send(int(target), f"Rob's let you in, {name}. Ask away." + (" Answering what you sent a moment ago first." if pend and pend.get("text") else ""))
+    if pend and (pend.get("text") or pend.get("voice") or pend.get("photo") or pend.get("doc")):
+        JOBS.put((int(target), pend.get("text"), pend.get("voice"), pend.get("photo"), pend.get("doc")))
+
+
 def main():
     offset = int(OFFSET_FILE.read_text()) if OFFSET_FILE.exists() else 0
-    log(f"bridge started (agentic; model={MODEL}, allowed={ALLOWED or 'ANY'})")
+    log(f"bridge started (agentic; model={MODEL}, people={sorted(p['name'] for p in PEOPLE.values())})")
     threading.Thread(target=worker_loop, daemon=True).start()
     while True:
         resp = api("getUpdates", {"offset": offset + 1, "timeout": 50}, timeout=65)
@@ -749,8 +913,12 @@ def main():
                 text = msg.get("caption")
             if chat is None or (not text and not voice and not photo and not doc):
                 continue
-            if ALLOWED and str(chat) != ALLOWED:
-                log(f"ignored msg from unlisted chat {chat}: {(text or '[media]')[:50]}")
+            person = person_for(chat)
+            if person is None:
+                handle_unknown(chat, msg, text, voice, photo, doc)
+                continue
+            if person.get("role") == "rob" and text and text.strip().startswith(("/allow", "/deny", "/people")):
+                admin_command(chat, text.strip())
                 continue
             if voice:
                 log(f"<< {chat}: [voice {str(voice.get('file_id',''))[:12]}… {voice.get('duration','?')}s]")
@@ -765,8 +933,8 @@ def main():
             if text and text.strip().lower() in ("/stats", "/usage"):
                 stats = usage_stats()
                 send(chat, stats)
-                append_convo("Rob: /stats")
-                append_convo(f"Jarvis: {stats}")
+                append_convo(f"{person['name']}: /stats", person)
+                append_convo(f"Jarvis: {stats}", person)
                 log(f">> {chat}: (stats) {stats[:80]}")
                 continue
             # If a job is already running, fold a plain text message straight
@@ -779,7 +947,7 @@ def main():
                     with CURRENT_LOCK:
                         inj = CURRENT["inject"] if CURRENT["chat"] == chat else None
                     if inj and inj(text):
-                        append_convo(f"Rob: {text}")
+                        append_convo(f"{person['name']}: {text}", person)
                         log(f"<< folded into live run: {text[:60]}")
                         continue
                 send(chat, "Noted, I'll pick this up right after the current job.")
