@@ -24,11 +24,11 @@
 **"Timmy" the family Tesla is no longer owned (confirmed by Rob 2026-07-03).** The `timmy_*` entities are dead; the integration should be removed from HA if it's still installed. Tesla widget/cards were stripped from Mission Control the same day.
 
 ### Alexa Ecosystem
-Alexa Media Player (HACS) survived the rebuild and is installed. Entities use the **new-style notify entities**, not the old `notify.alexa_media_*` services:
+The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B998D8SWTMZYBP6MZQT8`, account rob_stokes@me.com) is installed, not the HACS Alexa Media Player. Entities use the **new-style notify entities**, not the old `notify.alexa_media_*` services:
 - `notify.<device>_announce` (Alexa "announcement" chime + speech) and `notify.<device>_speak` (plain TTS), called via `notify.send_message` with `entity_id` + `message`.
 - Devices: `living_room_echo`, `kitchen_dot`, `bedroom_dot`, `dexter_s_dot`, `logan_s_dot`. Also `media_player.<device>` for each.
 - **Helper:** `Jarvis/bin/jarvis-say.sh "message" [device]` (default living_room_echo). Verified working 2026-08-28 11:41.
-- **Status 2026-08-28:** Living Room Echo online and announcing. Kitchen, Bedroom, Dexter's and Logan's Dots all went `unavailable` at 2026-08-26 11:14 (same second, so likely an integration reload after which Amazon reported them offline). Needs a physical check: are they plugged in / on wifi / still in the Alexa app? If they show in the Alexa app but not HA, reload the Alexa Media Player integration.
+- **Status 2026-08-28:** Living Room Echo online and announcing. Kitchen, Bedroom, Dexter's and Logan's Dots all went `unavailable` at 2026-08-26 11:14 (same second, so likely an integration reload after which Amazon reported them offline). Needs a physical check: are they plugged in / on wifi / still in the Alexa app? Reloaded the entry 28 Aug 11:50, no change: diagnostics (`/api/diagnostics/config_entry/<id>`) show Amazon's API itself returning `online=False` for all four Dots, so the fault is Amazon-side (device/wifi/account), not HA. Reload: `curl -X POST $HA_URL/api/config/config_entries/entry/<id>/reload`.
 - Aimee's preference: voice announcements over phone notifications, Living Room Echo for family stuff. Kids' Dots are theirs, don't announce on them without a reason.
 
 **Note:** Alexa integration was [[Aimee]]'s idea - she gets full credit! 🏆
