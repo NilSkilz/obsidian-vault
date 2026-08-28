@@ -91,6 +91,15 @@ else
     fi
   fi
 
+  # Applications actually sent today (auto-apply, standing approval 2026-08-28).
+  CHAPPLIED="$HOME/.local/state/jarvis-contract-hunt-applied.log"
+  if [ -f "$CHAPPLIED" ]; then
+    CHAPP="$(grep "^${TODAY} " "$CHAPPLIED" 2>/dev/null | cut -d' ' -f3- | sed 's/ | cover=.*//' | paste -sd '; ' -)" || CHAPP=""
+    if [ -n "$CHAPP" ]; then
+      ASK="${ASK} Also, applications I sent on his behalf today (he asked to just be told in the evening, so state each plainly: role, agency, rate pitched, sent or FAILED): ${CHAPP}."
+    fi
+  fi
+
   # Ambient signal from the junk-mail traffic (Rob, 2026-08-24: be intuitive,
   # don't make him define per-site rules). No sender filter: hand the model a
   # week of everything swept/binned and let its own judgment decide what, if

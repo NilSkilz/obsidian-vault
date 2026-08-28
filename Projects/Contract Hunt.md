@@ -26,10 +26,12 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - Dedupe across boards (same role gets posted by 5 agencies).
 - Daily digest line in the evening brief; instant Telegram ping only for strong matches.
 
-### 4. Apply (Jarvis drafts, Rob one-taps)
-- Tailored short cover note (3 lines, rate, availability, right CV variant attached).
-- Telegram ping: role summary + draft. Rob replies "send" and Jarvis sends from his mail.
-- Once the pattern is trusted, Rob can grant standing approval for auto-send within tight rules (explicit outside-IR35, rate above floor, remote). Ask-first until then.
+### 4. Apply (fully automated since 2026-08-28)
+- **Standing approval from Rob (28 Aug): "Those contracts might be worth a shot, I can always back out later, so in future send an application. No need to ask me. Just let me know in the evening what was done."**
+- Flow: JobServe role scores 8+ in triage → `~/contract-hunt/auto-apply.sh` writes a tailored cover note (sonnet, modelled on the two sent examples, same wording rules: never imply employment, Superdry/Tethered anonymised, rate pitched mid-to-upper in the ad range, £450 if no rate, never under £400) → wording guard grep → `apply-jobserve.js` submits with the CV PDF → result logged to `~/.local/state/jarvis-contract-hunt-applied.log` (+ `applied-ids.txt` so nothing goes twice, screenshot `out/apply-result-<id>.png`).
+- Evening brief reads the applied log and lists each application sent. No live Telegram ping for strong matches any more; only a FAILED submit pings, because that needs him.
+- LinkedIn-alert roles can't be auto-applied (no full ad, portal login); they still show in the digest for Rob to eyeball.
+- Triage told to be strict on 8+ (explicit outside IR35, remote, TS/React/Node/AWS core), since an 8 now sends.
 
 ### 5. Rob's irreducible bits
 - Recruiter phone calls (the market runs on them, no way round it).
@@ -58,11 +60,13 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 
 - 2026-08-24 (22:30): **first application ready to send.** TechShack FDE (JSBH-11959, contact Louis DaSilva). JobServe apply is a plain ASP.NET form (email, UK status, CV upload, cover text), no CAPTCHA, no login needed. Built `~/contract-hunt/apply-jobserve.js` (fills + submits; `--dry` previews to `out/apply-preview.png`) and a md→PDF renderer (`~/contract-hunt/topdf.js`, 2-page A4 at `out/Rob Stokes CV.pdf`, strips internal notes). Cover note at `out/cover-techshack-JSBH-11959.txt`, pitched £450. Dry run verified, awaiting Rob's "send". Hourly-rate dropdown mapped to £50-65/h (≈£400-520/day).
 
+- 2026-08-28 (evening): **auto-apply live.** Rob granted standing approval; `auto-apply.sh` built and dry-run tested (cover generation + form preview OK on a live ad). Poll now applies to 8+ JobServe roles itself and the evening brief carries the receipt. Applications so far: TechShack FDE (24 Aug, £450), Smart-Sourcer JS-SS-124 (27 Aug, £650). No replies yet.
+
 ## Open questions
 - ~~LinkedIn~~ resolved 24 Aug: profile names Superdry, Rob accepts the connectable dots. URL on CV header. Don't re-raise.
 - ~~GitHub~~ omitted (Rob: half-finished projects, nothing worth showing).
 - ~~Education~~ omitted.
 - ~~LinkedIn job alerts~~ done 24/25 Aug: Rob created "TypeScript Contract Remote" (Bristol + Bude). Since 25 Aug the poll consumes them: `mail-tool.py jobmail` pulls alert mail (senders in `~/.config/jarvis/mail-job-senders.txt`, last 3 days only), LinkedIn job ids dedupe via the seen file (`li-<id>`), triaged alongside the JobServe scrape, then the emails are binned. The hourly email judge never sees those senders, so it cannot bin them first (Rob's worry on 25 Aug; it hadn't happened, but nothing prevented it). `SKIP_SCRAPE=1 DRYRUN=1 contract-hunt.sh` = quick email-only test.
-- Standing auto-send approval for applications: still ask-first (step 4 above), revisit once the drafts prove trustworthy.
+- ~~Standing auto-send approval~~ granted 2026-08-28, see step 4.
 - 2026-08-24 (22:50): **TechShack FDE application SENT** via JobServe (JSBH-11959, Louis DaSilva, £450/day pitched). Confirmation email to rob_stokes@me.com. Cover note reworded on Rob's request: no "day job" or "current work" language, nothing that implies employment; use "most recent engagement" / "work I've been doing for years". Apply script fix: with JS enabled the visible submit is `#btn2`, not `#btn2NoJS`. Apply form URL pattern: `https://www.jobserve.com/gb/en/W<JOBID>.jsap`.
 - 2026-08-24 (21:40): funnel widened. Searches now: typescript, react contract, node aws, next.js, full stack javascript, test automation playwright, react native (was 3 terms; tonight's 21:17 pass was mostly Python/DevOps/data noise, nothing above 3/9 bar TechShack). A poll takes ~3 min per search term, so ~20 min per run; fine on the 2h cron but too long to run inline in a chat turn. Next real step is Rob's: LinkedIn job alerts (2 min in the app) and answering Louis when he rings.

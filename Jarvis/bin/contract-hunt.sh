@@ -6,9 +6,13 @@
 # 3. Pulls job-alert emails (LinkedIn Job Alerts etc) from the inbox via
 #    `mail-tool.py jobmail`. The hourly email judge never sees these senders,
 #    so they cannot be binned as noise before we read them.
-# 4. A one-shot `claude -p` triages new roles against Rob's profile: strong
-#    matches ping Telegram immediately, everything triaged goes to the digest
-#    log so the evening briefing can give a daily receipt.
+# 4. A one-shot `claude -p` triages new roles against Rob's profile. Everything
+#    triaged goes to the digest log so the evening briefing can give a receipt.
+# 4b. Strong JobServe matches (8+) are APPLIED TO automatically via
+#    ~/contract-hunt/auto-apply.sh (Rob's standing approval, 2026-08-28: "send
+#    an application, no need to ask, just tell me in the evening"). Applications
+#    land in jarvis-contract-hunt-applied.log for the evening brief. No live
+#    Telegram ping any more; only a failed apply pings, since that needs him.
 # 5. Bins the alert emails it has actioned (30-day iCloud recovery).
 # Set DRYRUN=1 to print instead of pinging/binning. SKIP_SCRAPE=1 skips the
 # ~20 min JobServe scrape (email-only pass, handy for testing).
@@ -106,7 +110,7 @@ Two sources may follow. "JobServe jobs" are scraped ads with full text. "Job-ale
 
 Reply in EXACTLY this format:
 First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 8-9 = apply-now fit, 5-7 = plausible, 0-4 = reject.
-Then either exactly NOTHING_INTERESTING, or (only if at least one job scores 8+) a line "PING:" followed by a short Telegram message: chat-shaped, dry, plain text, no em dashes. Lead with the best role: title, rate, remote status, agency, permalink. Max 3 roles per ping. End with: reply "draft it" and I will write the application.
+Then exactly one line: NOTHING_INTERESTING if nothing scored 8+, otherwise STRONG_MATCHES. Nothing else. Score 8+ only when the ad is explicitly outside IR35 (or clearly a Ltd/B2B contract), fully remote or at most occasional travel, and the stack is squarely TS/React/Node/AWS; an 8 triggers an automatic application sent as Rob, so be strict.
 
 '
 
@@ -126,19 +130,32 @@ printf '%s\n' "$OUT" | grep -i '^DIGEST:' | while IFS= read -r line; do
   echo "$(date +%Y-%m-%d) $(date +%H:%M) ${line#DIGEST: }" >>"$DIGEST"
 done
 
-# Ping if the judge composed one
-MSG="$(printf '%s\n' "$OUT" | sed -n '/^PING:/,$p' | sed '1s/^PING:[[:space:]]*//' | sed -e '/./,$!d')"
-if [ -n "$MSG" ] && ! printf '%s' "$OUT" | grep -q 'NOTHING_INTERESTING'; then
+# Auto-apply: every JobServe job the judge scored 8+ (matched by permalink or
+# id back to the scraped JSON) gets an application via auto-apply.sh.
+APPLIED_N=0; FAILED_N=0; FAILED_MSG=""
+while IFS= read -r line; do
+  score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
+  [ -n "$score" ] && [ "$score" -ge 8 ] || continue
+  link="$(printf '%s' "$line" | grep -oE 'jobserve\.com/[A-Za-z0-9]+' | tail -1)"
+  [ -n "$link" ] || continue
+  job="$(grep -F "$link" "$NEWJOBS" | head -1)"
+  [ -n "$job" ] || { echo "auto-apply: no scraped job for $link (email-only role, nothing to submit)"; continue; }
   if [ "$DRYRUN" = "1" ]; then
-    echo "DRYRUN: would ping:"; echo "$MSG"
-  else
-    set -a; source "$TCONF"; set +a
-    curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-      --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-      --data-urlencode "text=💼 ${MSG}" >/dev/null && echo "pinged Rob" || echo "telegram send failed"
+    echo "DRYRUN: would auto-apply to $link"; DRYRUN=1 "$HOME/contract-hunt/auto-apply.sh" "$job"; continue
   fi
-else
-  echo "no ping-worthy roles"
+  if "$HOME/contract-hunt/auto-apply.sh" "$job"; then APPLIED_N=$((APPLIED_N+1))
+  else FAILED_N=$((FAILED_N+1)); FAILED_MSG="${FAILED_MSG}${line#DIGEST: }
+"; fi
+done < <(printf '%s\n' "$OUT" | grep -i '^DIGEST:')
+echo "auto-apply: sent=$APPLIED_N failed=$FAILED_N"
+
+# Only a failed application is worth interrupting Rob for.
+if [ "$FAILED_N" -gt 0 ] && [ "$DRYRUN" != "1" ]; then
+  set -a; source "$TCONF"; set +a
+  curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+    --data-urlencode "text=💼 Tried to auto-apply and it fell over, might want a look:
+${FAILED_MSG}Log: ~/.local/state/jarvis-contract-hunt.log" >/dev/null || echo "telegram send failed"
 fi
 
 # Alert emails are actioned: bin them (Deleted Messages, 30-day recovery).
