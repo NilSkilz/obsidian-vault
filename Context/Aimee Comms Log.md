@@ -15,7 +15,7 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 -->
 
 ## 2026-08-28 (Friday)
-- At lunchtime, told Aimee he's been chatting with **Mary** and that she wants to play. Rob is thinking about doing it at **NMM on the 5th** (Sat 5 Sept). First mention of Mary in the vault.
+- At lunchtime, told Aimee he's been chatting with **Mary** and that she wants to play. Rob is thinking about doing it at **NMM on the 5th** (Sat 5 Sept). First mention of Mary in the vault. Fet handle: puss-and-boots (People/Mary.md).
 - Aimee's response: NMM might be okay **with a curfew** (not out all night), or it might be better to go to a **swing night on another night** instead. Not a no, but not a clean yes either. Still to be settled.
 
 ## 2026-08-23 (Sunday)
