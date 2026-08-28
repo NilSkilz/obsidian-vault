@@ -24,15 +24,12 @@
 **"Timmy" the family Tesla is no longer owned (confirmed by Rob 2026-07-03).** The `timmy_*` entities are dead; the integration should be removed from HA if it's still installed. Tesla widget/cards were stripped from Mission Control the same day.
 
 ### Alexa Ecosystem
-**Device List:**
-- `notify.alexa_media_bedroom_dot`
-- `notify.alexa_media_kitchen_dot`
-- `notify.alexa_media_living_room_echo`
-- `notify.alexa_media_dexter_s_dot`
-- `notify.alexa_media_logan_s_dot`
-- `notify.alexa_media_rob_s_echo_dot`
-- `notify.alexa_media_everywhere`
-- `notify.alexa_media_last_called`
+Alexa Media Player (HACS) survived the rebuild and is installed. Entities use the **new-style notify entities**, not the old `notify.alexa_media_*` services:
+- `notify.<device>_announce` (Alexa "announcement" chime + speech) and `notify.<device>_speak` (plain TTS), called via `notify.send_message` with `entity_id` + `message`.
+- Devices: `living_room_echo`, `kitchen_dot`, `bedroom_dot`, `dexter_s_dot`, `logan_s_dot`. Also `media_player.<device>` for each.
+- **Helper:** `Jarvis/bin/jarvis-say.sh "message" [device]` (default living_room_echo). Verified working 2026-08-28 11:41.
+- **Status 2026-08-28:** Living Room Echo online and announcing. Kitchen, Bedroom, Dexter's and Logan's Dots all went `unavailable` at 2026-08-26 11:14 (same second, so likely an integration reload after which Amazon reported them offline). Needs a physical check: are they plugged in / on wifi / still in the Alexa app? If they show in the Alexa app but not HA, reload the Alexa Media Player integration.
+- Aimee's preference: voice announcements over phone notifications, Living Room Echo for family stuff. Kids' Dots are theirs, don't announce on them without a reason.
 
 **Note:** Alexa integration was [[Aimee]]'s idea - she gets full credit! 🏆
 
