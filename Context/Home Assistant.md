@@ -36,6 +36,11 @@
 
 **Note:** Alexa integration was [[Aimee]]'s idea - she gets full credit! 🏆
 
+### LG TV (living room, webOS)
+- **Entity:** `media_player.lg_webos_tv_ua73006la_2` (webostv integration; `_1` is Cast, `_3` is Music Assistant, ignore those for control)
+- **Remote:** `webostv.button` service (UP/DOWN/LEFT/RIGHT/ENTER/BACK/HOME/EXIT/MENU/VOLUMEUP/MUTE/digits/RED etc). Verified working 2026-08-28.
+- **"TV Remote" dashboard** at http://192.168.1.4:8123/tv-remote (sidebar, storage mode, created by Jarvis via websocket 2026-08-28 when Rob lost the physical remote). D-pad, volume, numbers, colours, source shortcuts, power.
+
 ### Other Entities
 - **OctoPrint:** 3D printer monitoring
 - **Tumble dryer:** Sensor integration
