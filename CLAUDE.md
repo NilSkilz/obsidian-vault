@@ -40,7 +40,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Topic | File |
 |---|---|
 | Working relationship | `Context/Jarvis Working Relationship.md` |
-| Rob's private context (ENM history, mood log, comms log, partner search, Mary) | `Private/Rob/` (never reaches Aimee's sessions) |
+| Rob's private context (ENM history, mood log, partner search, Mary) | `Private/Rob/` (never reaches Aimee's sessions) |
 | Work (Superdry) | `Context/Work Context.md` |
 | Home Assistant | `Context/Home Assistant.md` |
 | Infrastructure (current layout) | `Context/Infrastructure.md` |

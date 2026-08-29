@@ -2,6 +2,8 @@
 
 A running record of what Rob has actually communicated to Aimee, day by day. Rob and Aimee sometimes land in a "you never told me" / "I definitely did" standoff, or Rob realises he only *thought* he'd said something. This file is the neutral reference: he can look back and see what was said, when, and just as usefully, what was never said.
 
+**Flow:** 21:00 daily Telegram nudge (`Jarvis/bin/comms-nudge.sh`, cron) asks Rob what he told Aimee that day. Dated entries, newest first. A quiet day gets logged as such; no reply, no entry. Aimee-related things said mid-conversation get logged here too. **Aimee does not know this log exists (Rob's call, 29 Aug 2026); nothing in the shared vault should mention it.**
+
 **Jarvis flow:** at **21:00** each day the comms-log nudge rides in on the evening briefing (`Jarvis/bin/briefing.sh evening`, cron) as one combined Telegram message, so Rob gets a single wind-down note that both catches him up and asks what he communicated to Aimee that day. The ask only appears if today has no entry yet. When he replies, I append a dated entry below, newest date at the top. Capture the substance, not a transcript. If Rob says nothing notable was said, log that too, a quiet day is still signal. If he never replies, no entry for that day (a gap is honest). No em dashes.
 
 ---
