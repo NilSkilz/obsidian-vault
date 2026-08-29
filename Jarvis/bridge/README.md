@@ -84,3 +84,16 @@ one-liners read as uncanny to Rob; real voice or nothing.
 
 - `JARVIS_MODEL` env (default `claude-opus-4-8`) — anything that messages Rob runs Opus 4.8 or higher; background/subagent work can stay on Sonnet.
 - `JARVIS_PROGRESS_MODEL` env (default `claude-sonnet-5`) — the heartbeat summarizer.
+
+## Family privacy (2026-08-29)
+
+Anyone who isn't Rob runs in `/home/jarvis/family/<name>/`, not the vault. That folder holds a
+voice-only `CLAUDE.md` (copied from `family/_template/` on first use) and a generated
+`.claude/settings.json` deny list (no Bash/Agent, no reads or edits under `/data`, Rob's dotfiles,
+projects, or other family folders). Adults get `Read,Write,Edit,Glob,Grep,WebSearch,WebFetch` only,
+without `--dangerously-skip-permissions`; kids stay tool-less in `/tmp`.
+
+Why: a session cwd'd in `/data/memory` auto-loads the vault `CLAUDE.md` and the auto-memory index
+(`~/.claude/projects/-data-memory/memory/`), which is how Rob's rope-dye notes surfaced in Aimee's
+thread. Rob's own prompt now forbids reading family threads/workspaces and summarising them into
+daily logs. Privacy is two-way and agreed with Rob.

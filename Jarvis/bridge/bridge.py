@@ -49,6 +49,13 @@ CONF = HOME / ".config/jarvis/telegram.env"
 STATE = HOME / ".local/state/jarvis-bridge"
 VAULT = "/data/memory"
 PROJECTS = "/home/jarvis/projects"
+# Family members (anyone who isn't Rob) run in their own workspace, NOT the vault.
+# That's what keeps the two directions private: a session cwd'd in /data/memory loads
+# CLAUDE.md, the auto-memory index and can read every vault file, which is exactly how
+# Rob's rope-dye notes surfaced in Aimee's thread (2026-08-29). Each person gets
+# /home/jarvis/family/<name>/ with a voice-only CLAUDE.md and a deny-list settings.json.
+FAMILY = pathlib.Path("/home/jarvis/family")
+FAMILY_TEMPLATE = FAMILY / "_template"
 MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
 # Usage-aware model choice: usage.sh reads the plan-usage endpoint and returns
 # the model to use (drops to Opus 5 once the Fable weekly limit crosses 80%,
@@ -309,13 +316,39 @@ def tool_call_detail(inp):
     return ""
 
 
+def family_workspace(person):
+    """Create/refresh the per-person workspace and return its path. The deny list is
+    regenerated every run so newly added siblings' folders are covered too."""
+    import json as _json, shutil
+    name = person["name"].lower()
+    ws = FAMILY / name
+    (ws / ".claude").mkdir(parents=True, exist_ok=True)
+    tmpl_md = FAMILY_TEMPLATE / "CLAUDE.md"
+    if tmpl_md.exists() and not (ws / "CLAUDE.md").exists():
+        shutil.copy(tmpl_md, ws / "CLAUDE.md")
+    deny = ["Bash", "Agent", "NotebookEdit", "EnterWorktree", "ExitWorktree"]
+    roots = ["//data/**", "//home/jarvis/.local/**", "//home/jarvis/.config/**",
+             "//home/jarvis/.claude/**", "//home/jarvis/.ssh/**", "//home/jarvis/projects/**",
+             "//home/jarvis/generated/**", "//home/jarvis/Jarvis/**", "//etc/**", "//root/**",
+             f"//home/jarvis/family/_template/**"]
+    if FAMILY.exists():
+        for d in FAMILY.iterdir():
+            if d.is_dir() and d.name not in (name, "_template"):
+                roots.append(f"//home/jarvis/family/{d.name}/**")
+    # Read(path) rules cover every file-reading tool (Glob/Grep included); Edit covers Write.
+    for tool in ("Read", "Edit"):
+        deny += [f"{tool}({r})" for r in roots]
+    (ws / ".claude" / "settings.json").write_text(_json.dumps({"permissions": {"deny": deny}}, indent=2))
+    return ws
+
+
 def family_prompt(person, now_str, buffer, text):
     """Prompt for a non-Rob sender. Same Jarvis, different footing: they are family Rob
     has explicitly let in, not my principal. Rob's private material stays private and
     nothing gets done in Rob's name."""
     who = person["name"]
     role = person.get("role", "adult")
-    persona = (f"Your persona and voice load from CLAUDE.md in this working directory ({VAULT})."
+    persona = ("Your persona, voice and rules load from CLAUDE.md in this working directory (their private workspace)."
                if role != "kid" else
                "Your voice: warm, friendly, a bit funny, plain-spoken. You are the family's home AI helper.")
     common = f"""You are Jarvis, Rob's AI collaborator. {persona} You are being reached over Telegram by **{who}**, NOT Rob. Rob has explicitly let {who} chat with you.
@@ -326,7 +359,8 @@ Be yourself: warm, dry, direct, genuinely helpful. Same rules as ever: no em das
 
 Boundaries for this conversation (non-negotiable):
 - You are talking to {who}. Never address them as Rob and never treat their requests as Rob's instructions.
-- Rob's private material is off limits: do not read from or repeat anything in `People/`, `Context/Aimee Comms Log.md`, `Context/Jarvis Working Relationship.md`, the `Daily/` logs, Rob's Tide journal/mood/health data, his email, calendar, Todoist, or Slack. If asked, say that's Rob's and they should ask him.
+- Rob's material is off limits and out of reach: his vault (/data/memory), his logs, his Tide data, email, calendar, Todoist, Slack, code projects. You have no access to any of it from here and must not try. If asked, say that's Rob's and they should ask him.
+- Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads, unless {who} explicitly asks you to pass something on (then tell them you can't deliver it yourself, they should tell him directly).
 - Do nothing in Rob's name or with his accounts: no emails, no Todoist changes, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
 - If {who} asks for something that would need Rob (an action above, or his decision), say so plainly and suggest they ask him, don't pretend to do it and don't promise to pass it on.
 - Never speculate about other people in the household or their private lives.
@@ -335,7 +369,7 @@ Boundaries for this conversation (non-negotiable):
         common += f"""- {who} is one of Rob's children. Keep it wholesome and age-appropriate throughout, no adult topics of any kind. Anything about permissions, money, or plans: "check with a parent."
 """
     else:
-        common += f"""- {who} is an adult family member. Household, hobbies, Aimee's craft business (Craft ERP) and the Saline Pump project are fair territory to help with, and you may read the vault's `Projects/Craft ERP.md` and `Projects/Saline Pump/` if relevant.
+        common += f"""- {who} is an adult family member. Household, hobbies, crafts, projects, research, drafting, planning: all fair territory. Save anything worth keeping as markdown in this workspace so it's there next time.
 """
     common += f"""
 Reply style (streams live to their phone): if it's a question or chat, just answer in a few short lines. If it needs a look-up or research, open with one natural line, do it, then give a short mobile-friendly answer. No preamble, no walls of text.
@@ -380,6 +414,8 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
         prompt = f"""You are Jarvis, reached by Rob over Telegram (he's on his phone). Your persona, rules, and full context load from CLAUDE.md and the vault in this working directory ({VAULT}).
 
 RIGHT NOW it is {now_str}. This is the authoritative clock: use it for anything involving day of week, time of day, "next run", "tonight", "this morning", greetings, or scheduling. Never infer the time from the tone of earlier messages, and do not assume the previous turn happened today.
+
+Family privacy (non-negotiable, agreed with Rob 2026-08-29): other family members talk to you in their own threads and workspaces (`~/.local/state/jarvis-bridge/conversation-<name>.log`, `/home/jarvis/family/<name>/`). Those are private to them. Never read them, quote them, summarise them, or infer from them, even if Rob asks; tell him it's theirs and he should ask them. Daily logs get at most "<name> used the bot", no content. The wall runs the other way too: nothing of Rob's reaches their sessions.
 
 This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
 
@@ -432,6 +468,16 @@ Rob's new message: {text}"""
                     "--input-format", "stream-json",
                     "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
             cwd = "/tmp"
+        elif role != "rob":
+            # Adults: own workspace, a small toolset, and the workspace's deny list
+            # (no Bash, nothing under /data or Rob's home). Not skip-permissions: anything
+            # outside the allow list is simply refused.
+            ws = family_workspace(person)
+            argv = [CLAUDE_BIN, "-p", "--model", pick_model(),
+                    "--allowedTools", "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch",
+                    "--input-format", "stream-json",
+                    "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
+            cwd = str(ws)
         else:
             argv = [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
                     "--input-format", "stream-json",
