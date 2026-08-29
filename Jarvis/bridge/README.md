@@ -85,15 +85,21 @@ one-liners read as uncanny to Rob; real voice or nothing.
 - `JARVIS_MODEL` env (default `claude-opus-4-8`) — anything that messages Rob runs Opus 4.8 or higher; background/subagent work can stay on Sonnet.
 - `JARVIS_PROGRESS_MODEL` env (default `claude-sonnet-5`) — the heartbeat summarizer.
 
-## Family privacy (2026-08-29)
+## Family privacy: shared vault, private pockets (2026-08-29)
 
-Anyone who isn't Rob runs in `/home/jarvis/family/<name>/`, not the vault. That folder holds a
-voice-only `CLAUDE.md` (copied from `family/_template/` on first use) and a generated
-`.claude/settings.json` deny list (no Bash/Agent, no reads or edits under `/data`, Rob's dotfiles,
-projects, or other family folders). Adults get `Read,Write,Edit,Glob,Grep,WebSearch,WebFetch` only,
-without `--dangerously-skip-permissions`; kids stay tool-less in `/tmp`.
+Anyone who isn't Rob runs in `/home/jarvis/family/<name>/`, not the vault, with a `CLAUDE.md`
+copied from `family/_template/` on first use and a generated `.claude/settings.json` deny list.
 
-Why: a session cwd'd in `/data/memory` auto-loads the vault `CLAUDE.md` and the auto-memory index
-(`~/.claude/projects/-data-memory/memory/`), which is how Rob's rope-dye notes surfaced in Aimee's
-thread. Rob's own prompt now forbids reading family threads/workspaces and summarising them into
-daily logs. Privacy is two-way and agreed with Rob.
+- **Kids:** no tools at all, cwd `/tmp`. Pure text.
+- **Adults (Aimee):** `Read,Write,Edit,Glob,Grep,WebSearch,WebFetch`. The vault `/data/memory` is
+  **shared household context**: she can read and write People/, Projects/, Context/, Reference/ etc.
+  Denied (read and write): `Private/Rob/`, `Daily/`, `Weekly/`, `Archive/`, `Jarvis/`, `CLAUDE.md`,
+  `.git/`, other family members' `Private/<Name>/` and workspaces, plus everything else on the box
+  (`~/.local`, `~/.claude`, `~/projects`, `/etc`...). Not skip-permissions, so a denied path is refused.
+- **Private pockets:** `/data/memory/Private/<Name>/` per person. Rob's prompt says to put anything
+  Aimee shouldn't see in `Private/Rob/` and to announce it in chat; Aimee's prompt says the same for
+  `Private/Aimee/`. Rob's sessions never read `Private/Aimee/`, her workspace, or any
+  `conversation-<name>.log`. Daily logs get at most "<name> used the bot".
+
+Agreed by Rob and Aimee together on 2026-08-29 (replaces the full two-way wall from earlier that day,
+which cost Aimee the Craft ERP / Saline Pump context).

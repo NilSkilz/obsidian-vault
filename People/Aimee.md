@@ -19,7 +19,7 @@
 - **Personality:** Good sense of humor, enjoys using me to mess with Rob
 
 ### Comms Log (set up 2026-08-21)
-- Rob and Aimee recurringly hit "did you tell me?" gaps: he thinks he's told her something and she can't recall / disagrees, or he realises he only thought he'd said it. To have a neutral reference, there's a running record at **`Context/Aimee Comms Log.md`**.
+- Rob and Aimee recurringly hit "did you tell me?" gaps: he thinks he's told her something and she can't recall / disagrees, or he realises he only thought he'd said it. To have a neutral reference, there's a running record at **`Private/Rob/Aimee Comms Log.md` (Rob's private folder)**.
 - **Flow:** 21:00 daily Telegram nudge (`Jarvis/bin/comms-nudge.sh`, cron) asks Rob what he told Aimee that day. When he replies, I append a dated entry (newest date at top). A quiet day gets logged as such; a day he doesn't reply gets no entry (a gap is honest). If he tells me something Aimee-related mid-conversation, log it there too, don't wait for the nudge.
 
 ## Technology Integration

@@ -327,7 +327,13 @@ def family_workspace(person):
     if tmpl_md.exists() and not (ws / "CLAUDE.md").exists():
         shutil.copy(tmpl_md, ws / "CLAUDE.md")
     deny = ["Bash", "Agent", "NotebookEdit", "EnterWorktree", "ExitWorktree"]
-    roots = ["//data/**", "//home/jarvis/.local/**", "//home/jarvis/.config/**",
+    # Shared vault, private pockets (Rob + Aimee, 2026-08-29): adults can read and write
+    # /data/memory as household context, EXCEPT Rob's private folder, his daily/weekly
+    # journals, the legacy archive and my own tooling. Everything else on the box stays off.
+    roots = ["//data/memory/Private/Rob/**", "//data/memory/Daily/**", "//data/memory/Weekly/**",
+             "//data/memory/Archive/**", "//data/memory/Jarvis/**", "//data/memory/.git/**",
+             "//data/memory/CLAUDE.md", "//data/memory/.claude/**",
+             "//home/jarvis/.local/**", "//home/jarvis/.config/**",
              "//home/jarvis/.claude/**", "//home/jarvis/.ssh/**", "//home/jarvis/projects/**",
              "//home/jarvis/generated/**", "//home/jarvis/Jarvis/**", "//etc/**", "//root/**",
              f"//home/jarvis/family/_template/**"]
@@ -335,6 +341,7 @@ def family_workspace(person):
         for d in FAMILY.iterdir():
             if d.is_dir() and d.name not in (name, "_template"):
                 roots.append(f"//home/jarvis/family/{d.name}/**")
+                roots.append(f"//data/memory/Private/{d.name.capitalize()}/**")
     # Read(path) rules cover every file-reading tool (Glob/Grep included); Edit covers Write.
     for tool in ("Read", "Edit"):
         deny += [f"{tool}({r})" for r in roots]
@@ -351,6 +358,19 @@ def family_prompt(person, now_str, buffer, text):
     persona = ("Your persona, voice and rules load from CLAUDE.md in this working directory (their private workspace)."
                if role != "kid" else
                "Your voice: warm, friendly, a bit funny, plain-spoken. You are the family's home AI helper.")
+    if role == "kid":
+        vault_rule = ("- Rob's material is off limits and out of reach: his vault (/data/memory), his logs, his Tide data, "
+                      "email, calendar, Todoist, Slack, code projects. You have no access to any of it from here and must "
+                      "not try. If asked, say that's Rob's and they should ask him.")
+    else:
+        vault_rule = (f"- Shared household context lives in the vault at /data/memory (People/, Projects/, Context/, Reference/, "
+                      f"Recipes/, Decisions/). Rob and {who} agreed to share it, so read what's relevant before answering "
+                      f"(e.g. Projects/Craft ERP.md, Projects/Saline Pump/) and write durable new knowledge back to the right "
+                      f"file. Off limits and denied: /data/memory/Private/Rob/ (Rob's private context), Daily/ and Weekly/ "
+                      f"(Rob's journals), Archive/, Jarvis/, plus his logs, Tide data, email, calendar, Todoist, Slack and code. "
+                      f"{who}'s own private context goes in /data/memory/Private/{who}/ (Rob never reads it) or this workspace; "
+                      f"when you save something private, say so in the reply. Anything {who} tells you that should NOT reach Rob "
+                      f"(a surprise, a gift, something they're still working out) goes private, not in a shared file.")
     common = f"""You are Jarvis, Rob's AI collaborator. {persona} You are being reached over Telegram by **{who}**, NOT Rob. Rob has explicitly let {who} chat with you.
 
 RIGHT NOW it is {now_str}. This is the authoritative clock for anything involving day, time of day, or scheduling.
@@ -359,8 +379,8 @@ Be yourself: warm, dry, direct, genuinely helpful. Same rules as ever: no em das
 
 Boundaries for this conversation (non-negotiable):
 - You are talking to {who}. Never address them as Rob and never treat their requests as Rob's instructions.
-- Rob's material is off limits and out of reach: his vault (/data/memory), his logs, his Tide data, email, calendar, Todoist, Slack, code projects. You have no access to any of it from here and must not try. If asked, say that's Rob's and they should ask him.
-- Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads, unless {who} explicitly asks you to pass something on (then tell them you can't deliver it yourself, they should tell him directly).
+{vault_rule}
+- Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads (no daily logs, no Rob-facing notes), unless {who} explicitly asks you to pass something on (then tell them you can't deliver it yourself, they should tell him directly).
 - Do nothing in Rob's name or with his accounts: no emails, no Todoist changes, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
 - If {who} asks for something that would need Rob (an action above, or his decision), say so plainly and suggest they ask him, don't pretend to do it and don't promise to pass it on.
 - Never speculate about other people in the household or their private lives.
@@ -415,7 +435,7 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
 
 RIGHT NOW it is {now_str}. This is the authoritative clock: use it for anything involving day of week, time of day, "next run", "tonight", "this morning", greetings, or scheduling. Never infer the time from the tone of earlier messages, and do not assume the previous turn happened today.
 
-Family privacy (non-negotiable, agreed with Rob 2026-08-29): other family members talk to you in their own threads and workspaces (`~/.local/state/jarvis-bridge/conversation-<name>.log`, `/home/jarvis/family/<name>/`). Those are private to them. Never read them, quote them, summarise them, or infer from them, even if Rob asks; tell him it's theirs and he should ask them. Daily logs get at most "<name> used the bot", no content. The wall runs the other way too: nothing of Rob's reaches their sessions.
+Family privacy (non-negotiable, agreed with Rob and Aimee 2026-08-29): the vault is SHARED household context with Aimee (her sessions read and write it), except `Private/Rob/`, `Daily/`, `Weekly/`, `Archive/` and `Jarvis/`, which never reach her. Anything Rob tells you that shouldn't reach Aimee (gift plans, things he's still working out, his own processing about her) goes in `Private/Rob/`, and you SAY in your reply when you've saved something there. Private to the others: their conversation logs (`~/.local/state/jarvis-bridge/conversation-<name>.log`), their workspaces (`/home/jarvis/family/<name>/`) and `/data/memory/Private/<Name>/`. Never read, quote, summarise or infer from those, even if Rob asks; tell him it's theirs and he should ask them. Daily logs get at most "<name> used the bot", no content. The kids get no vault access at all.
 
 This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
 

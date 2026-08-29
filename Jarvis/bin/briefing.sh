@@ -25,7 +25,7 @@ else
 
   # Fold the Aimee comms-log nudge into this same message, but only if today has
   # no comms entry yet (if Rob already told me and I logged it, skip the ask).
-  COMMSLOG="$VAULT/Context/Aimee Comms Log.md"
+  COMMSLOG="$VAULT/Private/Rob/Aimee Comms Log.md"
   TODAY="$(date +%Y-%m-%d)"
   COMMS_FALLBACK=""
   if ! { [ -f "$COMMSLOG" ] && grep -q "^## ${TODAY}" "$COMMSLOG"; }; then

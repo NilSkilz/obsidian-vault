@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Evening nudge for Rob's Aimee Comms Log. Cron fires this once at 21:00.
 # Asks Rob what he communicated to Aimee today; when he replies, Jarvis appends
-# a dated entry to Context/Aimee Comms Log.md. Purpose: a neutral record of what
+# a dated entry to Private/Rob/Aimee Comms Log.md. Purpose: a neutral record of what
 # was actually said (and what wasn't), for the recurring "did you tell me?" gap.
 #
 # Usage: comms-nudge.sh
@@ -10,7 +10,7 @@
 set -euo pipefail
 
 TCONF="$HOME/.config/jarvis/telegram.env"
-LOGFILE="/data/memory/Context/Aimee Comms Log.md"
+LOGFILE="/data/memory/Private/Rob/Aimee Comms Log.md"
 LOG="$HOME/.local/state/jarvis-comms-nudge.log"
 mkdir -p "$(dirname "$LOG")"
 exec >>"$LOG" 2>&1

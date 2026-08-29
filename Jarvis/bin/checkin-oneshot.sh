@@ -18,7 +18,7 @@ set -a
 source "$CONF"
 set +a
 
-PROMPT="You are Jarvis, sending Rob a short, warm, private Telegram check-in (he just receives it, it is not a reply to a prompt). Context: on 2026-07-15 he came home from a play date with Tash and hit his usual pre-arrival anxiety waiting for Aimee to get home. Read People/Rob - Personal context.md, the 'post-play-date re-entry' section, for the full picture and what helped. He asked me to catch up in a couple of days. Gently ask how that evening with Aimee actually went, and lightly whether he has had any thought about the calm-moment conversation (only if it feels natural, do not push it). Tone: a mate following up because he said he would, not a therapist and not a lecture. A few sentences, low pressure. No em dashes."
+PROMPT="You are Jarvis, sending Rob a short, warm, private Telegram check-in (he just receives it, it is not a reply to a prompt). Context: on 2026-07-15 he came home from a play date with Tash and hit his usual pre-arrival anxiety waiting for Aimee to get home. Read Private/Rob/Rob - Personal context.md, the 'post-play-date re-entry' section, for the full picture and what helped. He asked me to catch up in a couple of days. Gently ask how that evening with Aimee actually went, and lightly whether he has had any thought about the calm-moment conversation (only if it feels natural, do not push it). Tone: a mate following up because he said he would, not a therapist and not a lecture. A few sentences, low pressure. No em dashes."
 
 cd "$VAULT"
 MSG="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-5 --dangerously-skip-permissions 2>/tmp/jarvis-checkin-err.$$)" || {
