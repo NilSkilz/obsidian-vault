@@ -44,6 +44,20 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 - **Triggers/history:** unanswered messages spike his anxiety (rooted in a past partner being hurt when he couldn't reach her); a near-affair around Logan's birth during Aimee's postnatal depression; shame around sex he links to a "Christian upbringing."
 - A grounding mantra he wrote: _"I am loved, I am wanted, I am safe. The fear isn't real."_
 
+## Update, late Aug 2026: what he actually wants
+
+Two things shifted in the 25 Aug conversation, both worth carrying forward.
+
+**1. One ongoing dynamic, not a rota.** After the recent run of conversations with Aimee, Rob has landed on wanting **a single ongoing dynamic with one person** rather than multiple one-off play partners. Partly to protect Aimee, partly because it's what he actually wants. This supersedes the "freedom for play and casual/sexual connection" framing above, which was the Mar 2025 - Jul 2026 position. He's not certain of it ("I don't know about an ongoing dynamic anyway"), but it's the direction he's steering, and he's now saying it out loud to prospects rather than leaving it vague. See [[Partner Search]].
+
+**2. What actually drives him: mastery, and being seen.** He worked this out himself, unprompted. Not popularity, not pulling: **respect from people who know the craft**, being viewed as "a clever guy that's able to make cool stuff and do cool scenes", a master of his craft. When he pushed on it ("do I just wanna be seen as a master to get more girls?"), the honest answer is a bit, and that's fine: the sex drive is the fuel, the mastery is what he's chosen to burn it on. Everything he listed is about being *good*, not being *wanted*. This is a more precise version of the "outsourcing validation" self-insight above, and it's a kinder one.
+
+**What follows from that, and it's the useful bit:**
+- When play goes flat (the 25 Aug "not bored, but not excited" about a Tash night), the missing ingredient is **intent**, not novelty. He's been turning up and doing stuff rather than *making* something. The answer is a scene with a point, not a new person.
+- Mastery is fed by **output**. Flat stretches line up with stretches where he's been consuming (kit, parties, the next scene) rather than making. Since the saline rig went quiet he's had a thin run of it.
+- Wanting photos afterwards is **not** the shameful thing he treats it as. Rope and impact are crafts; the photo is the finished object. Painters don't feel hollow for wanting the painting. The question worth asking is whether he wants the picture or the audience, and "both" is a fine answer.
+- He's not lacking the mastery, he's lacking the **receipts**: it's visible in his tech life and invisible in his kink life. That's a portfolio problem, not an identity crisis. "How I built this" lands with the respect crowd far harder than a body shot. Steer him that way when he's flat.
+
 ## Frameworks he built
 
 - An **ENM "manual"** documenting Aimee's boundaries, **aftercare needs for both** (Aimee: communication + processing space, low libido afterwards; Rob: contact, feeling loved/wanted/desired), and reciprocal privacy rules that work both ways.

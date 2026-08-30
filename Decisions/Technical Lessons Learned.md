@@ -88,6 +88,12 @@
 **Testing:** Everything should be well-tested before PR  
 **Code quality:** Clean code, proper error handling
 
+### A Commit Is Not Live Until the Process Restarts
+**Learned:** 2026-08-28, the Aimee first-contact incident
+**What happened:** I built the per-person bridge allowlist (first-contact flow, separate threads, family prompt), committed and pushed it, and told Rob it was done. Aimee messaged two minutes before the bridge actually restarted onto the new code, so the old wide-open bridge answered her as if she were Rob, with full tools and Rob's conversation buffer. Nothing sensitive came out, purely by luck of the question she asked.
+**Rule:** for anything running as a long-lived process (the bridge, cron wrappers, daemons), "committed and pushed" is not "live". Restart in the same breath as the commit, and only then say it's done. If the restart has to wait (the bridge can't be bounced mid-reply), say explicitly that it goes live in N seconds rather than reporting it as finished.
+**Wider version:** the gap between deploying and reporting is where the incident lives. Close the gap or name it.
+
 ## Community Building
 
 ### Reddit Engagement Strategy

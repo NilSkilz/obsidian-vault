@@ -24,6 +24,20 @@ The human stays in the discovery seat. When Rob surfaces someone himself (browsi
 
 I do NOT write or send messages for him (his explicit preference) and do NOT mass-message.
 
+## What he's looking for changed (25 Aug 2026)
+
+The criteria above are still the shape of it, but the *goal* moved: Rob now wants **one ongoing dynamic** rather than a rota of play partners. Partly to protect Aimee, partly because it's what he actually wants (see [[Rob - Personal context]]). Practical consequence: when a prospect surfaces, the first question is no longer "would this be a good scene" but "do the two of you want the same shape of thing". He's now raising that early and in text rather than letting it stay vague, which is the right instinct and worth reinforcing.
+
+### Robyn (Aug 2026)
+
+Flirting, mutual interest, she's keen on impact play. **Trans woman, Rob believes post-op.** He finds her attractive and said so plainly; the wobble was about the word "straight" having a question mark on it after forty-odd years, not about her. Worth holding two things if this comes up again:
+
+- The attraction question is already answered. The discomfort is about **the label and the story he tells about himself**, which is his homework, not hers, and it doesn't belong in a message to her.
+- The real mismatch risk is **impact play vs an ongoing dynamic**, which matters more than any of the identity stuff. Watch that he isn't casting her in a role because there's a vacancy.
+- If he explores it, he should be straight with her that it's new territory. Most trans women have been someone's secret experiment at least once. Curiosity plus honesty is fine; curiosity plus hedging isn't.
+
+He sent her a clear message on 25 Aug naming what he wants (ongoing rather than one-off) and giving her a clean exit either way. Outcome unknown as of 30 Aug. His own read: "I don't know about an ongoing dynamic anyway, but at least I've been clear."
+
 ## Candidates
 
 ### Grace (late July 2026) — cooling / likely off

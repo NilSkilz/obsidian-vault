@@ -90,3 +90,25 @@ Ask them to cut to the list on the saw there; stockholders usually do it free or
 ## Assets
 - Blueprint SVG: `~/generated/scaffold-rig-design.svg` (orthographic, scale ~1:5, three views + legend + notes)
 - Photoreal render: `~/generated/img-20260730-234237.png` (both pieces, studio floor, OpenAI image gen, 2026-07-30)
+
+## Finishing bare mild steel (settled 2026-08-26 / 29)
+The tube is **non-galvanised** 33.7 x 3mm mild steel and Rob wants the dark gunmetal look, so **boiled linseed oil (BLO)**, not paint and not zinc.
+
+- **Ruled out: cold galv / zinc spray.** It's the engineer's answer (sacrificial, best protection) but it comes out matt battleship grey and stays that way. Kills the look.
+- **Ruled out: paint.** Key clamps chew through it at the contact points and you get rust rings under flaking paint, which is worse than nothing.
+- **If galv tube ever gets bought for the price:** don't strip it. Scotch-Brite or 120 grit to kill the shine, wipe with white vinegar 15-30 min so it goes matte, then BLO as below. Ends up muted pewter rather than gunmetal-brown, and keeps the zinc. Acid-stripping is only for chasing the exact black-pipe look. **Never grind, weld or heat galv indoors** (zinc fume fever).
+
+**Prep** (matters more than the oil): deburr the cut end inside and out (file, 120 then 240 grit), break the outer edge so it can't slice a hand, sand the whole tube to knock back mill scale and give a key (no need to go to bright metal), then degrease thoroughly with meths/IPA or brake cleaner until the rag comes away clean. Any oil left behind stops the BLO bonding.
+
+**Oiling:** warm the tube first if possible (hairdryer or sun), thin coat of BLO on a lint-free rag, leave 5-10 min, then **wipe off everything that hasn't soaked in**. It should look barely damp. Thin coats are the whole game; a thick one stays gummy for weeks and that's what transfers onto skin and rope. Cure 24h somewhere warm, then repeat. Two or three coats gives a satin, slightly bronzed finish. Leave a week before it sees skin or rope; press white kitchen roll on hard and twist, clean paper means cured. Re-wipe (thin) once or twice a year.
+
+**Darker, tougher, faster:** heat-blue with a blowtorch until it goes straw/brown/blue, then wipe BLO on while still hot. Bakes the oil into a hard skin in minutes rather than days. Do it outside, it smokes.
+
+**Safety, non-negotiable:** BLO-soaked rags self-ignite as they cure. Lay them flat outside or drop them in a jar of water. Never balled up in a bin or a pile in the garage.
+
+**Not for chrome.** The 25mm chrome whip-handle tube needs nothing: chrome plating *is* the finish, and oil just leaves a film that never cures. Only the bare cut end wants treating (deburr, IPA, thin smear of BLO or just cap it). Degrease chrome with IPA before any grip wrap or the adhesive won't stick.
+
+## Cutting the tube
+33.7 OD / 3mm wall / plain mild steel: **Faithfull 6-42mm manual steel pipe cutter, Screwfix £20.99, code 161YL** (5mm wall clearance, rated for steel, retractable deburrer). A dozen turns per cut, quarter-turn tighter each pass, don't rush or the wheel wanders. It rolls a lip into the bore, so deburrer inside and a file on the outside so fittings slide on.
+- Fallback if it's hard work: **Erbauer 750W 115mm angle grinder £32.99** + 1mm cutting discs + a flap disc. 15 seconds a cut.
+- Do NOT buy the Rothenberger 6-67mm (£109.99): it's rated for thin-wall only. Toolstation is a dead end entirely, their steel-rated cutters stop at 28mm.
