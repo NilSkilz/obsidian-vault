@@ -8,7 +8,8 @@
 #    so they cannot be binned as noise before we read them.
 # 4. A one-shot `claude -p` triages new roles against Rob's profile. Everything
 #    triaged goes to the digest log so the evening briefing can give a receipt.
-# 4b. Strong JobServe matches (8+) are APPLIED TO automatically via
+# 4b. Strong JobServe matches (7+, lowered from 8+ on Rob's say-so 2026-08-31)
+#    are APPLIED TO automatically via
 #    ~/contract-hunt/auto-apply.sh (Rob's standing approval, 2026-08-28: "send
 #    an application, no need to ask, just tell me in the evening"). Applications
 #    land in jarvis-contract-hunt-applied.log for the evening brief. No live
@@ -109,8 +110,8 @@ Duplicate roles (same job via several agencies) count once; mention the duplicat
 Two sources may follow. "JobServe jobs" are scraped ads with full text. "Job-alert emails" (LinkedIn Job Alerts etc) list several roles per email with only title, company and a link; the Links section lists them in the same order as the job cards. Triage each listed role as best you can from title + company; where the email gives too little to judge, score 5 and say "needs a look" rather than rejecting. Links marked ALREADY TRIAGED were scored in a previous run: skip them entirely. Ignore the alert boilerplate (it is not a role).
 
 Reply in EXACTLY this format:
-First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 8-9 = apply-now fit, 5-7 = plausible, 0-4 = reject.
-Then exactly one line: NOTHING_INTERESTING if nothing scored 8+, otherwise STRONG_MATCHES. Nothing else. Score 8+ only when the ad is explicitly outside IR35 (or clearly a Ltd/B2B contract), fully remote or at most occasional travel, and the stack is squarely TS/React/Node/AWS; an 8 triggers an automatic application sent as Rob, so be strict.
+First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 7-9 = apply-now fit (triggers an automatic application sent as Rob), 5-6 = plausible, 0-4 = reject.
+Then exactly one line: NOTHING_INTERESTING if nothing scored 7+, otherwise STRONG_MATCHES. Nothing else. Score 7+ only when the ad is outside IR35 (or clearly a Ltd/B2B contract), fully remote or at most occasional travel, and the stack fits: reserve 8-9 for squarely TS/React/Node/AWS bullseyes, use 7 for strong-but-imperfect fits (TS/React-adjacent stack emphasis, rate at the edge of range, minor ambiguity in the ad). Inside IR35, umbrella-only, hybrid/onsite or wrong-stack roles must stay 6 or below no matter what; an application goes out as Rob on every 7+, so the deal-breakers stay hard.
 
 '
 
@@ -130,12 +131,12 @@ printf '%s\n' "$OUT" | grep -i '^DIGEST:' | while IFS= read -r line; do
   echo "$(date +%Y-%m-%d) $(date +%H:%M) ${line#DIGEST: }" >>"$DIGEST"
 done
 
-# Auto-apply: every JobServe job the judge scored 8+ (matched by permalink or
+# Auto-apply: every JobServe job the judge scored 7+ (matched by permalink or
 # id back to the scraped JSON) gets an application via auto-apply.sh.
 APPLIED_N=0; FAILED_N=0; FAILED_MSG=""
 while IFS= read -r line; do
   score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
-  [ -n "$score" ] && [ "$score" -ge 8 ] || continue
+  [ -n "$score" ] && [ "$score" -ge 7 ] || continue
   link="$(printf '%s' "$line" | grep -oE 'jobserve\.com/[A-Za-z0-9]+' | tail -1)"
   [ -n "$link" ] || continue
   job="$(grep -F "$link" "$NEWJOBS" | head -1)"
