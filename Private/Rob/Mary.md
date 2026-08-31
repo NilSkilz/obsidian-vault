@@ -11,3 +11,4 @@
 
 - Kids do not know about the ENM arrangement. Never surface Mary in any context the kids could see.
 - **2026-08-30**: Aimee has said yes to Rob taking Mary out next weekend (Sat 5 Sept, NMM likely). Rob is excited but anxious: worried she's quite young, that she's very active on Fet and making lots of friends so will probably play with lots of others ("where does that leave me"), and whether he'll be impressive enough. Logged mood 2/5 same day (general stress, house projects stalled).
+- **2026-08-31**: Anxiety carrying over. Wants to hear from her to confirm the weekend is still on, but feels he has nothing to say and doesn't want to bug her; recognises it's probably paranoia but feeling low with it. Mood logged 2/5. Jarvis's read: 5 days out from a confirmed date, quiet is normal; a light logistics message ("still good for Saturday? thinking X for time/place") is legitimate and not chasing.
