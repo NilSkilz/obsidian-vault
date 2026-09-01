@@ -3,6 +3,8 @@
 **Fet handle:** puss-and-boots
 **Relationship:** Play partner prospect for Rob (ENM). First mentioned 28 Aug 2026.
 
+**Full verbatim message thread:** `Private/Rob/Mary Fet Thread.md` (saved 1 Sept 2026, first contact through the logistics message, with quick answers to likely Aimee questions at the top).
+
 ## Profile (from Fet thread, saved 1 Sept 2026)
 
 - Final-year English student at Oxford (specialises in medieval literature). Back in Devon for the summer until **October**; away the week of 1 Sept for a comms internship in Slough (hotel week, then WFH).
