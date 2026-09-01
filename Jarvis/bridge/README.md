@@ -46,6 +46,11 @@ thread isn't re-swept. "general" never gets swept.
 
 History was backfilled with `backfill_topics.py` (one-off, batched haiku,
 atomic rewrite with a growth check so live appends survive; `.bak` kept).
+Completed 1 Sept evening: 1289 entries, 0 untagged. Lesson: haiku refuses to
+emit clean slugs for batches heavy on explicit kink content, so one batch (the
+pasted Mary thread) had to be hand-tagged with sed. If live `classify_topic`
+hits the same refusal it falls back to the previous topic, which is the right
+behaviour anyway; expect the odd sticky misfile on explicit messages.
 
 ## Fold-ins (2026-08-24)
 

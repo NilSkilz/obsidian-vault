@@ -118,7 +118,7 @@ def main():
     tmp.replace(path)
     counts = {}
     for e in entries:
-        counts[e["topic"]] = counts.get(e["topic"], 0) + 1
+        counts[e["topic"] or "(untagged)"] = counts.get(e["topic"] or "(untagged)", 0) + 1
     print("done. topic counts:", json.dumps(counts, indent=0, sort_keys=True))
 
 
