@@ -16,9 +16,36 @@ it says it did something, it did.
 
 Jobs run **one at a time**, so two agentic runs never fight over the same git
 repo. Timeout is 15 min per job (reset by fold-ins). Continuity is faked
-cheaply by feeding the last ~16 lines of `conversation.log` into each prompt —
-no persistent Claude process, so it's model-agnostic and doesn't rack up
-context cost ("stateless engine, stateful memory").
+cheaply by feeding recent `conversation.log` context into each prompt — no
+persistent Claude process, so it's model-agnostic and doesn't rack up context
+cost ("stateless engine, stateful memory").
+
+## Topic-threaded context (2026-09-01)
+
+Rob's design (see `topic-context-design.md`): the flat 16-line tail wasted
+context when conversations bounce between topics. Now every entry in Rob's
+`conversation.log` carries a topic slug prefix (`[rope]`, `[work]`,
+`[jarvis-dev]`...). A quick haiku call (`JARVIS_CLASSIFY_MODEL`, ~6-8s) tags
+each incoming message against the live thread list, minting new slugs for new
+subjects; on any failure it falls back to the current topic, so classification
+can never break the exchange. Fold-ins skip the classifier and inherit the live
+run's topic.
+
+Context per reply is three layers: the matched topic's thread (last ~20
+entries, the priority context), a flat cross-topic tail (last ~8 lines, keeps
+"yeah do that" working right after a switch), and a one-line index of parked
+threads with last-touched stamps (plus a grep recipe to pull any of them back).
+Family logs stay on the plain flat buffer.
+
+**Memory promoter** (Rob's addition): when the classifier detects a topic
+switch, a background `claude -p` run (`JARVIS_PROMOTE_MODEL`, Sonnet) sweeps
+the parked thread and promotes anything durable to the vault, then commits and
+pushes (with git-lock retries, since the main run may be working too). One
+sweep at a time; `topics-promoted.json` tracks line counts so an unchanged
+thread isn't re-swept. "general" never gets swept.
+
+History was backfilled with `backfill_topics.py` (one-off, batched haiku,
+atomic rewrite with a growth check so live appends survive; `.bak` kept).
 
 ## Fold-ins (2026-08-24)
 
@@ -82,8 +109,10 @@ one-liners read as uncanny to Rob; real voice or nothing.
 
 ## Knobs
 
-- `JARVIS_MODEL` env (default `claude-opus-4-8`) — anything that messages Rob runs Opus 4.8 or higher; background/subagent work can stay on Sonnet.
+- `JARVIS_MODEL` env (default `claude-fable-5`) — anything that messages Rob runs Opus-class or higher; background/subagent work can stay on Sonnet.
 - `JARVIS_PROGRESS_MODEL` env (default `claude-sonnet-5`) — the heartbeat summarizer.
+- `JARVIS_CLASSIFY_MODEL` env (default Haiku 4.5) — the topic tagger.
+- `JARVIS_PROMOTE_MODEL` env (default `claude-sonnet-5`) — the topic-switch memory promoter.
 
 ## Family privacy: shared vault, private pockets (2026-08-29)
 

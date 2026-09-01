@@ -36,6 +36,7 @@ import os
 import pathlib
 import queue
 import random
+import re
 import shutil
 import subprocess
 import tempfile
@@ -65,7 +66,25 @@ USAGE_SH = f"{VAULT}/Jarvis/bin/usage.sh"
 MODEL_AUTO = os.environ.get("JARVIS_MODEL_AUTO", "1") == "1"
 MODEL_CACHE_TTL = 300
 _model_cache = {"model": MODEL, "ts": 0.0}
-BUFFER_TURNS = 16          # recent lines fed back for conversational continuity
+BUFFER_TURNS = 16          # recent lines fed back for conversational continuity (family logs; Rob gets topic threads)
+# --- Topic-threaded working memory (Rob's design, 1 Sept 2026; see topic-context-design.md) ---
+# Each entry in Rob's conversation.log carries a topic slug prefix ([rope], [work]...).
+# Context per reply = flat recency tail + the matched topic's thread + an index of the
+# other open threads. A cheap haiku call classifies each incoming message; on any
+# failure it falls back to the current topic (sticky), so classification can never
+# break the exchange. Family logs stay on the plain flat buffer for now.
+FLAT_LINES = 8             # cross-topic recency tail: keeps pronouns and "yes do that" working after a switch
+THREAD_ENTRIES = 20        # entries of the matched topic fed back as priority context
+THREAD_MAX_LINES = 80      # hard cap on the thread section so one huge reply can't flood the prompt
+TOPIC_RE = re.compile(r"^\[([a-z0-9][a-z0-9-]{0,23})\] ")
+STAMP_RE = re.compile(r"^\S+ \[([^\]]+)\]: ")
+CLASSIFY_MODEL = os.environ.get("JARVIS_CLASSIFY_MODEL", "claude-haiku-4-5-20251001")
+CLASSIFY_TIMEOUT = 30
+# When the conversation switches away from a topic, a background subagent sweeps the
+# parked thread and promotes anything durable to the vault (Rob's addition, 1 Sept 2026).
+PROMOTE_MODEL = os.environ.get("JARVIS_PROMOTE_MODEL", "claude-sonnet-5")
+PROMOTE_TIMEOUT = 480
+PROMOTE_MIN_LINES = 6      # skip the sweep if the thread has barely grown since its last one
 CLAUDE_TIMEOUT = 900       # 15 min. Measured from bridge.log 2026-08-22: even on the
                            # heaviest days (57 replies, deep infra digs) p99 lands under
                            # 10 min, so 25 was just dead air on a genuinely wedged run.
@@ -108,7 +127,7 @@ CONVO_LOCK = threading.Lock()     # serialise conversation.log appends
 # a callable that writes a new user message into that run's stdin. The poll
 # loop uses it to fold Rob's mid-job texts into the run instead of queueing
 # them behind a holding message.
-CURRENT = {"inject": None, "chat": None}
+CURRENT = {"inject": None, "chat": None, "topic": None}
 CURRENT_LOCK = threading.Lock()
 
 
@@ -262,15 +281,202 @@ def recent_buffer(person=None):
     return "\n".join(f.read_text().splitlines()[-BUFFER_TURNS:])
 
 
-def append_convo(line, person=None):
+def append_convo(line, person=None, topic=None):
     # The human's turns carry a timestamp so a later run can see how old the buffer is
     # (a Monday-evening chat must not read as "tonight" on Tuesday morning).
     name = (person or {}).get("name", "Rob")
     if line.startswith(f"{name}: "):
         line = f"{name} [{time.strftime('%a %d %b %H:%M')}]: " + line[len(name) + 2:]
+    if topic:
+        # Tag only the entry's first line; continuation lines inherit it at parse time.
+        line = f"[{topic}] {line}"
     with CONVO_LOCK:
         with convo_file(person).open("a") as f:
             f.write(line.rstrip("\n") + "\n")
+
+
+def entry_start(line, names):
+    """If this log line starts a new entry, return (topic_or_None, line_without_tag).
+    Else None (it's a continuation line of the entry above)."""
+    topic = None
+    rest = line
+    m = TOPIC_RE.match(line)
+    if m:
+        topic = m.group(1)
+        rest = line[m.end():]
+    for n in names:
+        if rest.startswith(f"{n}: ") or re.match(rf"^{re.escape(n)} \[[^\]]+\]: ", rest):
+            return topic, rest
+    # A tagged line is an entry start even if the speaker prefix looks odd.
+    return (topic, rest) if topic else None
+
+
+def parse_entries(person=None):
+    """Group the conversation log into entries of {"topic", "lines"}. Untagged
+    legacy entries get topic None: they show in the flat recency tail but belong
+    to no thread (the backfill pass tags history; new lines are tagged at append)."""
+    f = convo_file(person)
+    if not f.exists():
+        return []
+    names = ((person or {}).get("name", "Rob"), "Jarvis")
+    entries = []
+    for line in f.read_text().splitlines():
+        st = entry_start(line, names)
+        if st is not None:
+            entries.append({"topic": st[0], "lines": [st[1]]})
+        elif entries:
+            entries[-1]["lines"].append(line)
+        else:
+            entries.append({"topic": None, "lines": [line]})
+    return entries
+
+
+def entry_stamp(e):
+    """The [Tue 01 Sep 18:14]-style stamp off an entry's first line, if it has one."""
+    m = STAMP_RE.match(e["lines"][0]) if e["lines"] else None
+    return m.group(1) if m else None
+
+
+def last_topic(person=None):
+    """Most recent tagged entry's topic, or None if the log has no tags yet."""
+    for e in reversed(parse_entries(person)):
+        if e["topic"]:
+            return e["topic"]
+    return None
+
+
+def topic_buffer(person, topic):
+    """Three-layer context (Rob's topic-threaded working memory, 1 Sept 2026):
+    the matched topic's thread as priority context, a flat recency tail so short
+    confirmations survive a switch, and a one-line index of the parked threads."""
+    entries = parse_entries(person)
+    if not entries:
+        return ""
+    thread = []
+    for e in [e for e in entries if e["topic"] == topic][-THREAD_ENTRIES:]:
+        thread.extend(e["lines"])
+    thread = thread[-THREAD_MAX_LINES:]
+    flat = []
+    for e in entries:
+        flat.extend(e["lines"])
+    flat = flat[-FLAT_LINES:]
+    # Parked threads, most recently touched first, with the last stamp we know for each.
+    seen = {}
+    for i, e in enumerate(entries):
+        t = e["topic"]
+        if t and t != topic:
+            seen[t] = (i, entry_stamp(e) or (seen.get(t) or (0, None))[1])
+    parked = sorted(seen.items(), key=lambda kv: -kv[1][0])[:12]
+    idx = ", ".join(t + (f" (last {s})" if s else "") for t, (_, s) in parked)
+    parts = []
+    if thread:
+        parts.append(f"Current topic thread [{topic}], the conversation this message belongs to; treat it as the primary context:\n"
+                     + "\n".join(thread))
+    parts.append("Last few lines across all topics (immediate recency, whatever the thread):\n" + "\n".join(flat))
+    if idx:
+        parts.append("Other open threads, parked. If he pivots back to one, pull its tail with: "
+                     f"grep '^\\[<slug>\\]' {convo_file(person)} | tail -30\n"
+                     f"Parked: {idx}")
+    return "\n\n".join(parts)
+
+
+def classify_topic(text, person):
+    """Tag an incoming message with a topic slug: quick no-tools haiku call given
+    the live thread list. Falls back to the current topic (sticky) on any failure,
+    so a classifier hiccup can never break the exchange."""
+    who = (person or {}).get("name", "Rob")
+    entries = parse_entries(person)
+    fallback = last_topic(person) or "general"
+    seen = {}
+    for i, e in enumerate(entries):
+        if e["topic"] and e["lines"]:
+            seen[e["topic"]] = (i, " ".join(e["lines"][0].split())[:100])
+    threads = [f"- {t}: {snip}" for t, (i, snip) in sorted(seen.items(), key=lambda kv: kv[1][0])[-15:]]
+    flat = []
+    for e in entries[-4:]:
+        flat.extend(e["lines"])
+    prompt = (
+        "You tag chat messages with a topic slug so a conversation can be read as threads.\n\n"
+        "Active threads (oldest first; slug: a line from the thread):\n"
+        + ("\n".join(threads) or "(none yet)")
+        + "\n\nLast lines of the conversation:\n" + "\n".join(flat[-8:])
+        + f"\n\nNew message from {who}: {text[:500]}\n\n"
+        "Answer with ONE slug and nothing else. Reuse an active slug if the message continues that thread; "
+        "short replies like \"yes do that\" continue the thread of the lines directly above. Only mint a new "
+        "lowercase-kebab-case slug (max 20 chars) for a genuinely new subject. Use general for greetings or "
+        "banter that belongs to no thread."
+    )
+    try:
+        proc = subprocess.run(
+            [CLAUDE_BIN, "-p", prompt, "--model", CLASSIFY_MODEL, "--allowedTools", ""],
+            capture_output=True, text=True, timeout=CLASSIFY_TIMEOUT, cwd="/tmp",
+        )
+        out = (proc.stdout or "").strip().lower()
+        slug = out.split()[-1].strip("`\"'.[]") if out else ""
+        if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,23}", slug):
+            return slug
+        log(f"classify_topic unusable output: {out[:80]!r}")
+    except Exception as e:
+        log(f"classify_topic error: {e}")
+    return fallback
+
+
+PROMOTED_FILE = STATE / "topics-promoted.json"
+PROMOTE_RUNNING = threading.Lock()
+
+
+def promote_topic(person, topic):
+    """Rob's addition to the topic design (1 Sept 2026): when the conversation
+    switches away from a topic, a background subagent sweeps the parked thread
+    and promotes anything durable to the vault, so nothing important dies in
+    working memory. One sweep at a time; a skipped sweep gets another chance the
+    next time the topic parks. Never blocks or breaks the reply path."""
+    if not topic or topic == "general":
+        return
+    try:
+        promoted = json.loads(PROMOTED_FILE.read_text()) if PROMOTED_FILE.exists() else {}
+    except Exception:
+        promoted = {}
+    entries = [e for e in parse_entries(person) if e["topic"] == topic]
+    n_lines = sum(len(e["lines"]) for e in entries)
+    if n_lines - int(promoted.get(topic, 0)) < PROMOTE_MIN_LINES:
+        return
+    if not PROMOTE_RUNNING.acquire(blocking=False):
+        return
+    thread_lines = []
+    for e in entries[-40:]:
+        thread_lines.extend(e["lines"])
+    thread_text = "\n".join(thread_lines[-200:])
+
+    def run():
+        try:
+            prompt = f"""You are Jarvis's memory-promotion subagent, working in Rob's vault ({VAULT}). Your persona, privacy rules and hard rules (including: no em dashes anywhere) load from CLAUDE.md in this directory and apply in full.
+
+The Telegram conversation just switched away from the topic thread [{topic}]. Below is that thread. Your one job: promote anything DURABLE from it into the vault before it fades from working memory. Durable means decisions made, facts about people or projects, preferences Rob voiced, lessons learned, open commitments. Ephemeral chat, moods already logged, and anything the vault already records do NOT get duplicated; check before writing.
+
+- Update the right existing file (People/, Projects/, Context/, Decisions/; Private/Rob/ for anything that must not reach Aimee) rather than creating new files, unless it is genuinely new ground.
+- Small surgical edits, no rewrites.
+- If you changed any file: git add the specific files, commit with a one-line message, then git pull --rebase and push. Another Jarvis run may hold the git lock; if a git command fails, wait 10 seconds and retry a couple of times, then give up gracefully (the change is still on disk).
+- If nothing in the thread is durable (common for banter), change nothing and output exactly: nothing durable.
+- Output at most two lines describing what you promoted.
+
+The [{topic}] thread:
+{thread_text}"""
+            proc = subprocess.run(
+                [CLAUDE_BIN, "-p", prompt, "--model", PROMOTE_MODEL, "--dangerously-skip-permissions"],
+                capture_output=True, text=True, timeout=PROMOTE_TIMEOUT, cwd=VAULT,
+            )
+            out = " ".join((proc.stdout or "").split())[:200]
+            log(f"promote[{topic}] rc={proc.returncode}: {out or '(no output)'}")
+            if proc.returncode == 0:
+                promoted[topic] = n_lines
+                PROMOTED_FILE.write_text(json.dumps(promoted, indent=2) + "\n")
+        except Exception as e:
+            log(f"promote[{topic}] error: {e}")
+        finally:
+            PROMOTE_RUNNING.release()
+
+    threading.Thread(target=run, daemon=True).start()
 
 
 def pick_model():
@@ -447,7 +653,7 @@ How to reply (this streams live, so Rob sees your text as it lands):
 - WHEN DONE, write a short, mobile-friendly summary of what you actually did. Concise and chat-shaped, warm and direct, no walls of text, no preamble.
 - If Rob's message needs no tools (a question or chit-chat), skip the separate ack and just answer it in one short line.
 
-Recent conversation:
+Conversation context (topic-threaded working memory: the current topic's thread is the primary context, the flat tail keeps immediate recency, parked threads are listed so you know what else is in flight):
 {buffer}
 
 Rob's new message: {text}"""
@@ -718,8 +924,21 @@ def process(chat, text, image_path=None, file_path=None, person=None):
     keep typing alive, then send the final summary."""
     person = person or person_for(chat) or {"name": "Rob", "role": "rob"}
     who = person["name"]
-    buffer = recent_buffer(person)
-    append_convo(f"{who}: {text}", person)
+    if person.get("role") == "rob":
+        # Topic-threaded working memory: classify the message, sweep the parked
+        # topic if this is a switch, and build the three-layer context.
+        prev = last_topic(person)
+        topic = classify_topic(text, person)
+        if prev and topic != prev:
+            log(f"topic switch: {prev} -> {topic}")
+            promote_topic(person, prev)
+        buffer = topic_buffer(person, topic)
+    else:
+        topic = None
+        buffer = recent_buffer(person)
+    with CURRENT_LOCK:
+        CURRENT["topic"] = topic
+    append_convo(f"{who}: {text}", person, topic=topic)
     done = threading.Event()
     ack = {"sent": False, "text": None}
     ack_lock = threading.Lock()
@@ -757,7 +976,7 @@ def process(chat, text, image_path=None, file_path=None, person=None):
     def on_result(prev_reply):
         # A folded-in message extended the run past an already-completed turn;
         # send that turn's reply now rather than losing it to the final one.
-        append_convo(f"Jarvis: {prev_reply}", person)
+        append_convo(f"Jarvis: {prev_reply}", person, topic=topic)
         send(chat, prev_reply)
         log(f">> {chat}: (superseded turn) {prev_reply[:80]}")
 
@@ -817,13 +1036,13 @@ def process(chat, text, image_path=None, file_path=None, person=None):
     ack_text = (ack["text"] or "").strip()
     if reply and reply.strip() and reply.strip() != ack_text:
         # Distinct final summary (the normal work case): send it.
-        append_convo(f"Jarvis: {reply}", person)
+        append_convo(f"Jarvis: {reply}", person, topic=topic)
         send(chat, reply)
         log(f">> {chat}: {reply[:80]}")
     else:
         # Pure answer / chit-chat: the streamed opening line was the whole reply.
         logged = ack_text or (reply or "").strip()
-        append_convo(f"Jarvis: {logged}", person)
+        append_convo(f"Jarvis: {logged}", person, topic=topic)
         log(f">> {chat}: (ack was reply) {logged[:80]}")
 
 
@@ -1012,8 +1231,11 @@ def main():
                 if text and not voice and not photo and not doc and JOBS.empty():
                     with CURRENT_LOCK:
                         inj = CURRENT["inject"] if CURRENT["chat"] == chat else None
+                        cur_topic = CURRENT["topic"]
                     if inj and inj(text):
-                        append_convo(f"{person['name']}: {text}", person)
+                        # Fold-ins skip the classifier: mid-job messages continue
+                        # the live run's topic (and must not add latency).
+                        append_convo(f"{person['name']}: {text}", person, topic=cur_topic)
                         log(f"<< folded into live run: {text[:60]}")
                         continue
                 send(chat, "Noted, I'll pick this up right after the current job.")

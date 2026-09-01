@@ -1,6 +1,10 @@
 # Topic-threaded conversation context (Rob's idea, 1 Sept 2026)
 
-Status: design captured, not yet greenlit for build.
+Status: BUILT and live as of 1 Sept 2026 evening (Rob greenlit same day). See
+README.md "Topic-threaded context" for the as-built shape. Rob's addition at
+greenlight: on every topic switch, a background subagent sweeps the parked
+thread and promotes anything durable to the vault (`promote_topic` in
+bridge.py). History backfilled via `backfill_topics.py`.
 
 ## The problem
 The bridge feeds each run a flat tail of the last 16 lines of `conversation.log`
