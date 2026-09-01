@@ -16,6 +16,9 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-08-31 (Monday)
+- Evening: Rob gave Aimee the advance notice she asked for on 28 Aug: Saturday with Mary will likely be sexual and include sex. It turned into a falling out. Her stress points: Mary is currently on the local scene (back to uni in October) and it might be a one-off. At one point she said she felt **"railroaded"** and that she doesn't remember actually agreeing. Rob's position: she did agree (out if home by 2am, logged here 30 Aug via Mary.md), and Mary's signals point to ongoing rather than one-off, though he can't promise that. Reported to Jarvis 1 Sept. Fuller note in Private/Rob/Mary.md.
+
 ## 2026-08-28 (Friday)
 - Evening: Rob said it felt good to have talked to Aimee about Mary. **New ask from Aimee: let her know in advance if a night is going to be a sexual one.** Applies to next weekend (Sat 5 Sept, Mary/NMM) onward. Todoist reminder set for Wed 2 Sept so it happens before, not on the day.
 - At lunchtime, told Aimee he's been chatting with **Mary** and that she wants to play. Rob is thinking about doing it at **NMM on the 5th** (Sat 5 Sept). First mention of Mary in the vault. Fet handle: puss-and-boots (Private/Rob/Mary.md).
