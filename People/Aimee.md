@@ -52,6 +52,7 @@
 ### Birthday 2026 gift plan (set 23 Aug)
 - Rob is making her a **teal-dyed natural rope set** (hemp or jute from Ropelocker Dawlish, decision after samples w/c 24 Aug), finished with jojoba oil and a nice drawstring rope bag.
 - Not a secret: Aimee will probably help with the dye day. Timeline and links live on the Todoist Wishlist task ("Aimee's birthday rope set"). Order-by for the main reel: ~6 Sept, so it's broken in, dyed, and oiled by 11 Oct.
+- **Rope art idea (28 Aug):** Aimee separately asked Rob about a shibari-art piece, a hidden-in-plain-sight frame (Ikea box frame) that reads as normal decor to guests but is a rope-community nod to anyone who knows. Rob liked the idea, no piece chosen yet. See [[Rope - conditioning and dyeing]] for the dyed rope this could use.
 
 ## Calendar signal
 - When Aimee is marked **"away"** on the calendar, that usually means she's seeing Sean (her Dom). Rob is fine with her going but tends to have a **short fuse** during those times and things get to him quickly. Keep his plate light, don't pile on decisions, be around if a rough evening lands.

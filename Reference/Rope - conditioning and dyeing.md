@@ -9,7 +9,7 @@ Applies to natural jute AND hemp, both cellulose, so identical chemistry. Hemp c
 Oil blocks dye. So: condition, dye, dry, singe, oil, break in. Never oil before dye.
 
 1. **Cut and whip.** Cut to length (8m is the usual working length), whip or overhand-knot the ends so it can't unlay.
-2. **Boil / hot soak.** Big pan, simmer 20-30 min. Strips mill oil and dust, softens the fibre. Don't stir violently or it fuzzes.
+2. **Hot soak, not boil.** 40-50°C, hand-hot, 20-30 min, squirt of washing-up liquid or a tsp of soda ash. Strips mill oil and dust without weakening the fibre. **Don't actually boil jute** (corrected 30 Aug): simmering strips the lignin/pectin that holds bast fibre together and the rope comes out floppy and fuzzy with a real tensile loss. Boiling is fine for cotton, not for jute/hemp. Don't stir hard either, it fuzzes.
 3. **Dye** (optional, see below). Do it here, while the rope is clean and unoiled.
 4. **Dry under tension.** Stretch between two points with a bit of weight, 24-48 hours, fully dry. This is what stops it drying kinky and uneven.
 5. **Singe.** Run the dry rope quickly through a gas hob flame or blowtorch, keep it moving, to burn off the hairy fuzz. Wipe with a dry cloth. Jute scorches fast, don't linger.
@@ -23,6 +23,7 @@ Oil blocks dye. So: condition, dye, dry, singe, oil, break in. Never oil before 
 - **Soda ash is not optional.** It's the fixer; without it the dye won't bond. Some Jacquard sets include a sachet, the plain colour sets often don't. ~£5 separately.
 - **Teal** = Turquoise, plus a pinch of navy or black if it needs deepening. Turquoise is the slowest-reacting colour in the set, so give it the full time and keep the bath warm.
 - Follow **Jacquard's "Immersion Dyeing Cellulose Fibers, Method One"**. Ignore the tie-dye/batik/protein sections entirely.
+- **Lesson from testing (30 Aug-2 Sept):** jute's natural yellow sits under the dye, so turquoise-on-jute reads green, not teal, and judging it wet makes it look worse (turquoise strikes slowly, black/dark colour strikes fast, so mid-bath is falsely dark/green). Two test hanks (turquoise+black, and turquoise alone) both dried green. **Fix is adding a red-shade blue, not more turquoise or black** — cancel the yellow, don't deepen it. Rob's on-hand dye is **Cerulean = Blue MX-G** (Jacquard 070, verified via Paula Burch/Jacquard charts) — a green-shade blue, so blunter than ideal but still workable since it's much redder than turquoise. Next test ratio: per 100g rope, **~2.5g turquoise + ~0.8-1g cerulean** (cerulean at ~25-30% of dye weight). If that still dries green, next buy is **Mixing Blue MX-R** or a pinch of violet (10-15% would suffice with MX-R, since it's a true red-shade blue).
 
 ### Quantities
 
