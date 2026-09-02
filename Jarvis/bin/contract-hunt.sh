@@ -103,7 +103,7 @@ if [ "${NEW:-0}" -eq 0 ] && [ -z "$MAIL_UIDS" ]; then echo "nothing new"; exit 0
 
 PROMPT='You are Jarvis triaging freshly scraped UK contract job ads for Rob (unattended cron, not a chat). One JSON object per line below.
 
-ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid/onsite = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
+ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, prefers FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid up to 2 days/week onsite in a major city (London, Manchester etc) is acceptable if the stack fits and the rate covers travel (Rob, 2 Sept 2026: he will hotel it for the right money); score those 5-6 so they surface, never 7+. Mostly/fully onsite (3+ days/week) = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
 
 Duplicate roles (same job via several agencies) count once; mention the duplicate agencies on one line.
 
