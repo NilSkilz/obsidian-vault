@@ -4,6 +4,7 @@
 **Relationship:** Play partner prospect for Rob (ENM). First mentioned 28 Aug 2026.
 
 **Full verbatim message thread:** `Private/Rob/Mary Fet Thread.md` (saved 1 Sept 2026, first contact through the logistics message, with quick answers to likely Aimee questions at the top).
+**Scene plan for Sat 5 Sept (NMM):** `Private/Rob/Mary Saturday Scene Plan.md` (saved 3 Sept 2026: menu vs her consent, safety notes, kit list, timing around the 2am curfew).
 
 ## Profile (from Fet thread, saved 1 Sept 2026)
 
