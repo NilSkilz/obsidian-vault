@@ -23,6 +23,10 @@ The plug closes the loop. Orgasm detected -> machine reacts (stop for denial/edg
 - Network dropout = machine stops, never "hold last command".
 - Inflatable plug: pressure ceiling in firmware, manual deflate valve.
 
+## Motivation
+
+Came up unprompted in Rob's Fet chat with [[Mary]] (1 Sept 2026): she's obsessed with fucking machines and has used one before. Rob mentioned the old motor got poached for another project and floated remote-controlling it for her once she's back in Oxford in October. Not a commitment, just a live reason to actually revive this rather than let it stay an idea.
+
 ## Existing assets
 
 - `github.com/NilSkilz/FuckIO-UI` (private): CRA + MUI slider UI, axios GET to firmware. Scaffold only, one App.js, but it shows the parameter model Rob liked.
