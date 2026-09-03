@@ -32,6 +32,7 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - Evening brief reads the applied log and lists each application sent. No live Telegram ping for strong matches any more; only a FAILED submit pings, because that needs him.
 - LinkedIn-alert roles can't be auto-applied (no full ad, portal login); they still show in the digest for Rob to eyeball.
 - Triage told to be strict on 8+ (explicit outside IR35, remote, TS/React/Node/AWS core), since an 8 now sends.
+- Triage judgment call (Rob, 2026-08-25): numeric bar stays, but Jarvis should weigh "would Rob plausibly take this if offered" alongside the score, not just the raw number. Seniority mismatch, sub-£40/hr, or portal-only (LinkedIn Easy Apply, no recruiter email) still get filtered without a ping even at 6-7. Rob's stance: "as a numbers game, more applications is generally better" but he trusts Jarvis's judgment on which numbers are worth it, and said to revisit the bar if scores stay low for a week.
 
 ### 5. Rob's irreducible bits
 - Recruiter phone calls (the market runs on them, no way round it).
@@ -63,6 +64,7 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - 2026-08-28 (evening): **auto-apply live.** Rob granted standing approval; `auto-apply.sh` built and dry-run tested (cover generation + form preview OK on a live ad). Poll now applies to 8+ JobServe roles itself and the evening brief carries the receipt. Applications so far: TechShack FDE (24 Aug, £450), Smart-Sourcer JS-SS-124 (27 Aug, £650). No replies yet.
 - 2026-08-31 (13:20): **auto-apply bar lowered to 7+** on Rob's instruction ("lower the bar to 7+"). Judge prompt reworked: 8-9 reserved for TS/React/Node/AWS bullseyes, 7 = strong-but-imperfect fit (adjacent stack, rate at edge, minor ambiguity); deal-breakers (inside IR35, umbrella, hybrid/onsite, wrong stack) stay capped at 6. Threshold changed in `contract-hunt.sh` (judge prompt + apply loop).
 - 2026-08-31 (13:25): **TechShack chase sent.** One week of silence after the 24 Aug application and the 1 Sept start is tomorrow, so a short follow-up went to the role's contact address (apply.a4lq2e2hbr9y@aptrack.co, routes to Louis DaSilva), CV re-attached, sent as Rob from rob_stokes@me.com via iCloud SMTP and filed to Sent Messages. The aptrack address came out of the JobServe confirmation email (Deleted Messages, uid 1867); JobServe confirmations carry the recruiter contact block, useful for future chases.
+- 2026-09-03 (14:12): **scoreboard: 4 applications sent, 0 replies.** TechShack FDE (24 Aug, £450, chased 31 Aug, still silent), Smart-Sourcer JS-SS-124 (27 Aug, £650), plus Ventula and GBV (auto-applied under the 7+ bar, exact dates not logged here). September wave so far is mostly dross (inside-IR35 London hybrid, DV-clearance, thin aggregator ads); nothing scored above 5-6 in the three 3 Sept polls.
 
 ## Open questions
 - ~~LinkedIn~~ resolved 24 Aug: profile names Superdry, Rob accepts the connectable dots. URL on CV header. Don't re-raise.
