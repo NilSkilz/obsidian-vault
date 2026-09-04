@@ -8,8 +8,8 @@
 #    so they cannot be binned as noise before we read them.
 # 4. A one-shot `claude -p` triages new roles against Rob's profile. Everything
 #    triaged goes to the digest log so the evening briefing can give a receipt.
-# 4b. Strong JobServe matches (7+, lowered from 8+ on Rob's say-so 2026-08-31)
-#    are APPLIED TO automatically via
+# 4b. Suitable JobServe matches (6+; bar history 8+ at launch, 7+ from 31 Aug,
+#    6+ "apply if near suitable" from Rob 4 Sept) are APPLIED TO automatically via
 #    ~/contract-hunt/auto-apply.sh (Rob's standing approval, 2026-08-28: "send
 #    an application, no need to ask, just tell me in the evening"). Applications
 #    land in jarvis-contract-hunt-applied.log for the evening brief. No live
@@ -103,15 +103,15 @@ if [ "${NEW:-0}" -eq 0 ] && [ -z "$MAIL_UIDS" ]; then echo "nothing new"; exit 0
 
 PROMPT='You are Jarvis triaging freshly scraped UK contract job ads for Rob (unattended cron, not a chat). One JSON object per line below.
 
-ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, prefers FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid up to 2 days/week onsite in a major city (London, Manchester etc) is acceptable if the stack fits and the rate covers travel (Rob, 2 Sept 2026: he will hotel it for the right money); score those 5-6 so they surface, never 7+. Mostly/fully onsite (3+ days/week) = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
+ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, prefers FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid up to 2 days/week onsite in a major city (London, Manchester etc) is acceptable if the stack fits and the rate covers travel (Rob, 2 Sept 2026: he will hotel it for the right money); score those 6 when stack and rate fit, never 7+. Mostly/fully onsite (3+ days/week) = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
 
 Duplicate roles (same job via several agencies) count once; mention the duplicate agencies on one line.
 
 Two sources may follow. "JobServe jobs" are scraped ads with full text. "Job-alert emails" (LinkedIn Job Alerts etc) list several roles per email with only title, company and a link; the Links section lists them in the same order as the job cards. Triage each listed role as best you can from title + company; where the email gives too little to judge, score 5 and say "needs a look" rather than rejecting. Links marked ALREADY TRIAGED were scored in a previous run: skip them entirely. Ignore the alert boilerplate (it is not a role).
 
 Reply in EXACTLY this format:
-First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 7-9 = apply-now fit (triggers an automatic application sent as Rob), 5-6 = plausible, 0-4 = reject.
-Then exactly one line: NOTHING_INTERESTING if nothing scored 7+, otherwise STRONG_MATCHES. Nothing else. Score 7+ only when the ad is outside IR35 (or clearly a Ltd/B2B contract), fully remote or at most occasional travel, and the stack fits: reserve 8-9 for squarely TS/React/Node/AWS bullseyes, use 7 for strong-but-imperfect fits (TS/React-adjacent stack emphasis, rate at the edge of range, minor ambiguity in the ad). Inside IR35, umbrella-only, hybrid/onsite or wrong-stack roles must stay 6 or below no matter what; an application goes out as Rob on every 7+, so the deal-breakers stay hard.
+First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 6-9 = apply-now fit (triggers an automatic application sent as Rob, standing approval "apply to them all if near suitable", 4 Sept), 5 = plausible but too thin or too ambiguous to apply blind, 0-4 = reject.
+Then exactly one line: NOTHING_INTERESTING if nothing scored 6+, otherwise STRONG_MATCHES. Nothing else. An application goes out as Rob on every 6+, so score 6+ only when the ad is outside IR35 or IR35-unstated (never stated-inside), remote or hybrid up to 2 days/week, rate £350+ (or unstated), and the stack genuinely fits. Reserve 8-9 for squarely TS/React/Node/AWS fully-remote outside-IR35 bullseyes; 7 = strong-but-imperfect (adjacent stack emphasis, rate at the edge, minor ambiguity); 6 = near suitable (hybrid up to 2 days/week with fitting stack and travel-covering rate, or IR35/remote unstated but plausibly fine). Use 5 for email-only listings with no detail ("needs a look") and ads too vague to commit an application to. HARD deal-breakers score 4 or below no matter what: stated inside IR35, umbrella-only, 3+ days/week onsite, wrong stack, rate clearly under £350/day.
 
 '
 
@@ -131,12 +131,12 @@ printf '%s\n' "$OUT" | grep -i '^DIGEST:' | while IFS= read -r line; do
   echo "$(date +%Y-%m-%d) $(date +%H:%M) ${line#DIGEST: }" >>"$DIGEST"
 done
 
-# Auto-apply: every JobServe job the judge scored 7+ (matched by permalink or
+# Auto-apply: every JobServe job the judge scored 6+ (matched by permalink or
 # id back to the scraped JSON) gets an application via auto-apply.sh.
 APPLIED_N=0; FAILED_N=0; FAILED_MSG=""
 while IFS= read -r line; do
   score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
-  [ -n "$score" ] && [ "$score" -ge 7 ] || continue
+  [ -n "$score" ] && [ "$score" -ge 6 ] || continue
   link="$(printf '%s' "$line" | grep -oE 'jobserve\.com/[A-Za-z0-9]+' | tail -1)"
   [ -n "$link" ] || continue
   job="$(grep -F "$link" "$NEWJOBS" | head -1)"
