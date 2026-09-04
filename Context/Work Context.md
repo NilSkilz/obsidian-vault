@@ -57,6 +57,8 @@
 - The Data team's board 668 has a zombie "Data Sprint 8" open since Nov 2025, so `sprint in openSprints()` on DGF returns their stale sprint, not Rob's board. Query board-ish views with `project = DGF AND statusCategory != Done` plus the team field instead
 - Project-wide open ticket count is huge (1,100+); only the recently-updated slice is real activity
 - 2026-08-24: cleaned Rob's assigned tickets down to 8 real DGF items (EP/Straightline closed by Chaz, DIGI relics unassigned)
+- **DGF-2757 (Bloomreach Experiments SDK), 2026-09-01:** unrefined intake ticket from Jan, March deadline dead. Charlotte's meeting with Bloomreach/Claire only produced "they still want the feature". Agreed plan: Rob does a timeboxed feasibility spike (Engagement JS SDK is client-side, unrelated to the existing server-side feed cartridge; needs anti-flicker approach, identity matching, cookie-consent handling), then uses that to force a properly refined ticket with real requirements before any build work is scheduled.
+- **Working pattern with Isaac and Charlotte:** Isaac has a habit of not reading docs/investigating himself and outsourcing his own tickets upward; Charlotte's tickets tend to land unrefined (no requirements). Push back by closing out evidence on the ticket itself and handing next-steps back explicitly, rather than leaving an open-ended "let me know if you need help".
 
 ## Tags
 #work #superdry #remote #software-development #career #employment
