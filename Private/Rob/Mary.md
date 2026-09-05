@@ -17,6 +17,45 @@
 - **Care flags:** canes/punishment carry emotional baggage from the old dynamic, she asked to check in on the night about that. She's a giggler during pain and calls it her bratting, which combined with her history of not advocating for herself means don't rely on her to safeword; check in explicitly, especially first time. Aftercare: cuddle plus a good debrief.
 - Logistics for NMM Sat 5 Sept: she doesn't drive; Rob offered pick-up in Exeter en route from Bude and a lift home, and told her he won't stay to the very end (which fits Aimee's home-by-2am condition). Rob's 1 Sept message covered photo consent (faces avoided, nothing posted without her sign-off), safe words (No means No or traffic lights, drop-object if gagged). Awaiting her reply as of 1 Sept ~13:30.
 
+## Fet profile (verbatim, shared by Rob 5 Sept 2026)
+
+> Hey stranger! Thanks for checking me out 😇
+>
+> **Introductions**
+>
+> I'm a small but mighty sub local to Devon and Oxford.
+>
+> If you love restraining someone cute, don't mind correcting some light bratty behaviour, and combining pleasure with sadism, feel free to make yourself known! The more debauched your fantasies, the better. If anyone wants to keep me as a pet please send applications in. I'm not currently seeking a monogamous or 24/7 dynamic.
+>
+> What I'm honestly looking for is an evil scientist. I lose my mind over gadgets, toys, machines. The more evil the restraints and devious the toys you have, the happier a victim I'll be. A german accent would be a bonus.
+>
+> **Perversions**
+>
+> My style ranges from high protocol to very playful, and I tend to giggle to get through pain. I combine an inner brat/flirt/overtired energy with a serious respect for dominance and need to please 💗 Forced orgasms and overstimulation are my favourites. I love to be talked gently through taking pain and impact. My kink list is growing and expanding with everything I try! But for now I'm a masochist, I love all things bondage, impact, and restraint, especially shibari. When I'm treated like an object, a pet, or a toy, I feel seen. I'm really getting into exhibitionism, and exploring torture and cnc.
+>
+> I love kink events, parties, and club nights, anywhere I can get hurt in front of a crowd is my happy place. I'm also always looking for new friendships and I'm very friendly in person so please do say hi ✨
+>
+> My limits are scat play, blood play, race play, age regression, stinging nettles, and unprotected sex
+>
+> **When I'm not tied up and giggling**
+>
+> 5'1 of fun
+>
+> Out of kink I'm left wing, a foodie, and a great dinner party guest. I'm intellectual, a lover of art, music, and medieval literature, feminist and sex positivist. A night of great conversation and delicious drinks is the way to my heart!
+>
+> It's important to me that my submission in consensual and negotiated settings is not mistaken for my whole identity, so please do not assume entitlement to dominate, proposition, or project your fantasies onto me. Sometimes I channel masochism into bouldering and pilates, hence the ass 😌🍑
+>
+> Currently on my very optimistic kink bucket list are:
+> mmf threesome / gangbang 🤭 / an extended cnc abduction scene / a romantic dinner with secret vibrator / to be used as a party favour / a kinky dinner party / to be a hucow / to ride a sybian / 100 bullwhip lashes / to have my own dog cage / e-stim play / lots more play in front of audiences / being co-topped / play with dommes / lots more threesomes / lots more shibari / waterboarding / mummification
+> "And many more horrible things like this 🎀"
+
+**What the profile adds beyond the thread (5 Sept 2026):**
+- **E-stim play is explicitly on her bucket list**, so the shock collar isn't a reach, it's a bucket-list item. Still needs naming before the night since she's never done it, but the appetite is confirmed in her own public words.
+- **"Evil scientist... gadgets, toys, machines"** is her stated ideal top. Rob's DIY builds (saline pump, fucking machine, custom rigs) are precisely this profile's target. Long-term compatibility signal, not just tonight's.
+- **Limits list is fuller than the thread version**: adds blood play, race play, stinging nettles; "age regression" phrasing rather than age play. Blood play limit worth remembering alongside her never-done-needles-but-willing comment in the thread (needles break skin; if that ever comes up, re-negotiate explicitly against this stated limit).
+- Bucket list overlaps with Rob's existing kit/plans: sybian/machines ([[Fuck-io]]), dog cage, mummification, waterboarding, CNC abduction, hucow, co-topping, audiences. She's 5'1", bouldering/pilates fit.
+- Tone matches the thread: not seeking mono or 24/7, wants friendships, loves public play. Consistent story across profile and DMs.
+
 ## Timeline
 
 - **2026-08-28**: Rob has been chatting with Mary; she wants to play. Rob told Aimee at lunchtime. Thinking of NMM on Sat 5 Sept. Aimee's response: maybe okay with a curfew (not out all night), or a swing night on another evening might be better. Unresolved as of 28 Aug. See `Private/Rob/Aimee Comms Log.md`.
