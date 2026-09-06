@@ -2,6 +2,15 @@
 
 **Goal:** supplement Superdry income with outside-IR35 contract work. Rob does as close to nothing as possible; Jarvis runs the pipeline. Started 2026-08-24, planning stage.
 
+## Why Rob wants this (clarified 2026-09-01/02)
+
+Two motives, and they pull the search in slightly different directions, so keep both in view:
+
+1. **Money, and it does not have to be sustainable.** Rob's words on 2 Sept: "I just wanna try and make some quick cash so it doesn't need to be sustainable... if I could make a quick few £k that would help a lot." A short, well-paid contract counts as a win. This is why the travel rules loosened: he will book a hotel in London or Manchester for one or two days a week if the rate justifies it.
+2. **Getting back into real development.** On 1 Sept, mid-Bloomreach-ticket, he said it plainly: he is "so bored of replying to people". His Superdry role has quietly become reading comprehension for the rest of the team (Isaac not reading docs and outsourcing his tickets, Charlotte handing over unrefined intake forms), and that is the part of the craft that gives nothing back. The contract hunt is not escapism, it is him correctly spotting what is missing. See `Context/Work Context.md` and [[Jarvis Working Relationship]].
+
+Practical effect on triage: favour hands-on build roles over lead/architecture/BA-flavoured ones even at a similar rate, and do not discount a role just because it is a short engagement.
+
 ## The key insight
 
 UK contract recruitment does not run on application portals, it runs on **recruiters and email**. JobServe applications are literally emails with a CV attached. Recruiter ads carry email addresses. LinkedIn/CWJobs alerts arrive by email. So the "anti-bot" problem mostly doesn't exist for this market: the high-converting channel (fast, tailored email replies to recruiters) has no CAPTCHA in the way, and Jarvis already has full iCloud mail access.

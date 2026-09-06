@@ -102,6 +102,8 @@ The tube is **non-galvanised** 33.7 x 3mm mild steel and Rob wants the dark gunm
 
 **Oiling:** warm the tube first if possible (hairdryer or sun), thin coat of BLO on a lint-free rag, leave 5-10 min, then **wipe off everything that hasn't soaked in**. It should look barely damp. Thin coats are the whole game; a thick one stays gummy for weeks and that's what transfers onto skin and rope. Cure 24h somewhere warm, then repeat. Two or three coats gives a satin, slightly bronzed finish. Leave a week before it sees skin or rope; press white kitchen roll on hard and twist, clean paper means cured. Re-wipe (thin) once or twice a year.
 
+**Heat gun (settled 2026-08-30):** a heat gun genuinely shortens the cycle, because BLO cures by oxidising rather than drying. Thin coat, wipe it back hard, then heat on low-medium, keep moving, take the steel to "too hot to touch" (roughly 100-150C) until it just hazes or lightly smokes. Recoat as soon as the previous coat is dry to the touch and no longer smells of raw oil, usually 20 to 60 minutes rather than 24 hours, so three or four coats in an afternoon is realistic. If it is still tacky once cool, the coat was too thick or the steel too cold. The finish keeps hardening for about a week afterwards, so don't judge toughness (or stack the tube where it can scuff) before then. Heat does not rescue a thick gummy coat.
+
 **Darker, tougher, faster:** heat-blue with a blowtorch until it goes straw/brown/blue, then wipe BLO on while still hot. Bakes the oil into a hard skin in minutes rather than days. Do it outside, it smokes.
 
 **Safety, non-negotiable:** BLO-soaked rags self-ignite as they cure. Lay them flat outside or drop them in a jar of water. Never balled up in a bin or a pile in the garage.

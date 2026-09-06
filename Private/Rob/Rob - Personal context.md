@@ -38,6 +38,17 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 - **What helped in the moment (2026-07-15):** naming it as a trained response, not a malfunction; long-exhale breathing (reaches the body where words don't); sensory grounding; and pointing out he'd already done the one controllable thing right (texted Aimee "safe and missed you" the moment he got home). Taking the self-blame off him — "if she's off despite that text, it genuinely isn't about what you did" — landed well.
 - **The longer thread:** if coming home happy reliably costs him a toll, that's a shared/structural issue in the arrangement, not his failure to "keep in touch." Worth a calm, *cold-moment* conversation (never in the aftermath), framed from his body ("here's what happens to me") not her behaviour ("you do X"). If even that detonates, it's a real case for **ENM-aware couples counselling** — ties into the "therapist near Bude" thread in Wellbeing below.
 
+### The pre-play-date wobble and the contested yes (surfaced 2026-08-31 / 09-01)
+
+The mirror image of the re-entry panic, and now clearly a pattern rather than an incident. Shape: a play date is agreed → it gets closer → Aimee's anxiety spikes → it comes out as "you did this to me", and specifically as **"I never actually agreed"**. It ran again on 31 Aug over [[Mary]], the night Rob gave her the advance notice she herself had asked for on 28 Aug. She said she felt **"railroaded"**. He was right on the record (she agreed on 30 Aug, home by 2am) and it made no difference.
+
+- **What Rob is actually frightened of** is not losing the argument, it is the framing sticking: "in future arguments it will always be that she never agreed and I did it anyway, and once it's framed like that I never get it back." That is the fear to address, not the facts.
+- **Both things are true at once.** She agreed to a night out with a curfew; what later landed (sexual, possibly ongoing, someone visible on the local scene) is bigger than the yes she remembers giving. That gap genuinely feels like railroading from the inside, even though he did nothing wrong.
+- **The move that works: a fresh, fully-informed yes, not winning the old one.** A contested agreement is unwinnable ground. A yes she gives *this week*, with everything on the table, cannot be un-remembered later. It costs the risk that she says no; it buys never having that particular argument about that particular date again.
+- **Do not use the vault as ammunition.** The comms log and dated entries are there so Rob stops relying on duelling memories and stops doubting himself. They are for his footing, not for winning a row. Saying "the vault backs you" privately is right; suggesting he produce it is not.
+- Worth naming the pattern with her in a **cold moment**, as a pattern, never mid-row.
+- Watch for her worries being anxiety rather than a coherent objection: on 31 Aug her two fears (that Mary is local and that it might be a one-off) could not both land, since a one-off dissolves the local-visibility problem. That is a tell that reassurance is wanted, not rebuttal. Point it out to Rob so he does not argue the logic *at* her.
+
 ## Self-insight Rob reached along the way
 
 - His compulsive **phone-checking** and habit of **making things to "show off"** trace back to a long-standing pattern of **outsourcing stability/validation to others**. He did real work on this (e.g. a phone-airplane-mode exercise, deliberately doing a project just for himself, not to post).

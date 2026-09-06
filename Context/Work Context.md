@@ -59,6 +59,7 @@
 - 2026-08-24: cleaned Rob's assigned tickets down to 8 real DGF items (EP/Straightline closed by Chaz, DIGI relics unassigned)
 - **DGF-2757 (Bloomreach Experiments SDK), 2026-09-01:** unrefined intake ticket from Jan, March deadline dead. Charlotte's meeting with Bloomreach/Claire only produced "they still want the feature". Agreed plan: Rob does a timeboxed feasibility spike (Engagement JS SDK is client-side, unrelated to the existing server-side feed cartridge; needs anti-flicker approach, identity matching, cookie-consent handling), then uses that to force a properly refined ticket with real requirements before any build work is scheduled.
 - **Working pattern with Isaac and Charlotte:** Isaac has a habit of not reading docs/investigating himself and outsourcing his own tickets upward; Charlotte's tickets tend to land unrefined (no requirements). Push back by closing out evidence on the ticket itself and handing next-steps back explicitly, rather than leaving an open-ended "let me know if you need help".
+- **What it's costing him (2026-09-01, his words):** he is "so bored of replying to people". The job has quietly become being the reading comprehension for the rest of the team, which is the one part of the craft that gives nothing back, and it is a direct driver of the contract hunt. Read his flat work moods through this lens rather than treating them as general low mood. See `Projects/Contract Hunt.md` ("Why Rob wants this").
 
 ## Tags
 #work #superdry #remote #software-development #career #employment
