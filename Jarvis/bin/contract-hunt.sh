@@ -133,7 +133,7 @@ done
 
 # Auto-apply: every JobServe job the judge scored 6+ (matched by permalink or
 # id back to the scraped JSON) gets an application via auto-apply.sh.
-APPLIED_N=0; FAILED_N=0; FAILED_MSG=""
+APPLIED_N=0; FAILED_N=0; FAILED_MSG=""; SENT_MSG=""
 while IFS= read -r line; do
   score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
   [ -n "$score" ] && [ "$score" -ge 6 ] || continue
@@ -144,11 +144,23 @@ while IFS= read -r line; do
   if [ "$DRYRUN" = "1" ]; then
     echo "DRYRUN: would auto-apply to $link"; DRYRUN=1 "$HOME/contract-hunt/auto-apply.sh" "$job"; continue
   fi
-  if "$HOME/contract-hunt/auto-apply.sh" "$job"; then APPLIED_N=$((APPLIED_N+1))
+  if "$HOME/contract-hunt/auto-apply.sh" "$job"; then
+    APPLIED_N=$((APPLIED_N+1)); SENT_MSG="${SENT_MSG}${line#DIGEST: }
+"
   else FAILED_N=$((FAILED_N+1)); FAILED_MSG="${FAILED_MSG}${line#DIGEST: }
 "; fi
 done < <(printf '%s\n' "$OUT" | grep -i '^DIGEST:')
 echo "auto-apply: sent=$APPLIED_N failed=$FAILED_N"
+
+# Instant receipt per application (Rob, 6 Sept: he was missing the evening-brief
+# receipts, so each sent application now pings him a one-liner immediately).
+if [ "$APPLIED_N" -gt 0 ] && [ "$DRYRUN" != "1" ]; then
+  set -a; source "$TCONF"; set +a
+  curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+    --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+    --data-urlencode "text=💼 Applied on your behalf just now:
+${SENT_MSG}Full detail in tonight's brief as usual." >/dev/null || echo "telegram send failed"
+fi
 
 # Only a failed application is worth interrupting Rob for.
 if [ "$FAILED_N" -gt 0 ] && [ "$DRYRUN" != "1" ]; then
