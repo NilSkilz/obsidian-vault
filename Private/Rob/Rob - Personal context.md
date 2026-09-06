@@ -29,6 +29,7 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 - **Rob's pattern:** downplaying or withholding things from Aimee → it builds up → gets discovered → guilt spiral and self-blame. He repeatedly resolves to be more transparent and keeps working at it.
 - **The loop:** when things are good he loves Aimee and loves this life; when he's exhausted or tempted he questions whether he'd be better off alone or with "someone less insecure" — then feels awful for thinking it. This cycle repeats across the whole period.
 - Boundaries negotiated with Aimee: no dates, nothing "couply"/romantic that could grow into leaving her; be respected and considered; communicate about encounters.
+- **Where the sting actually is (Rob, 2026-09-06):** Aimee struggles with reading about the *sexual and intimate* side of Rob's play (sex, cuddles, hot-tub closeness), not the kink. Impact/BDSM detail is fine; intimacy detail is what hurts. Consistent with the "no couply/romantic" boundary above: the threat is closeness, not sadism. Applies to anything she might read (e.g. a partner's Fet write-up); Rob asked [[Mary]] to keep sexual/affectionate content vague where he's mentioned, kink detail unrestricted.
 
 ### The post-play-date re-entry panic (surfaced 2026-07-15)
 
