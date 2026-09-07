@@ -326,6 +326,39 @@ Display BLK + VCC, encoder +, and HX711 VCC all to **3V3** (not 5V). ESP32 power
 - E-stop sits in the +12V **pump** rail only; buck runs off raw +12V so ESP32 stays alive to show STOPPED when pumps are killed.
 - **E-stop = a 2-pin header on the board for a panel switch (Rob, 2026-08-14).** Header wired in series in the +12V pump branch (after the buck tap), so the physical switch lives on the enclosure. Must carry full pump current (both pumps ~0.5-0.6A peak, trivial for any switch) and sit in the *pump* branch, not the shared input. A simple SPST on/off toggle works electrically; a latching red mushroom is the nicer slam-in-a-panic ergonomics, but the header takes either.
 
+## Board bring-up sequence (2026-09-07, boards + components in hand)
+
+Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2026-09-07. Principle: **power path first, prove each stage before adding the next.** Never populate everything and hope.
+
+**Stage 1 — solder, shortest parts first (not the terminal block first):**
+1. Resistors R1-R4 (R2/R3 = 150Ω gate series, R1/R4 = 10k pulldowns — don't swap them).
+2. Flyback diodes U1/U2 (1N5822) — **band (cathode) toward the +12V rail**, match the silk. Backwards = dead short through the diode when the pump runs.
+3. 100nF film snubbers C2/C3 (no polarity).
+4. MOSFETs Q1/Q2 (IRLZ44N, tab orientation per silk).
+5. Female headers for the ESP32 socket + peripheral pin headers (SPI, encoders, reservoir 4-pins, e-stop 2-pin).
+6. C1 470µF electrolytic — **polarity matters**, stripe = negative, negative to GND.
+7. MP1584 buck module.
+8. Terminal blocks last (they're the tallest). 12V input: wire openings facing the board edge.
+
+**Stage 2 — pre-power checks (multimeter, no power):**
+- Continuity beep test: 12V+ to GND must NOT beep. 5V to GND must not beep. Anything beeps, find the bridge before applying power.
+- Visual: diode bands, C1 stripe, no solder bridges on the MOSFET pins.
+
+**Stage 3 — first power, board EMPTY (no ESP32, nothing plugged in):**
+- 12V on. Nothing should warm up.
+- **Trim the MP1584 pot to 5.0V measured at its output BEFORE the ESP32 ever goes in the socket.** Adjustable bucks ship at random voltages; an untrimmed one can kill the devkit.
+- Jumper the e-stop header: switched pump rail reads 12V. Pull the jumper: rail dead, buck output still 5V (buck taps raw 12V by design). That's the e-stop topology proven.
+
+**Stage 4 — ESP32 in:**
+- Flash it BEFORE connecting any pump: minimal sketch whose first line in `setup()` forces GPIO14 LOW (the boot-twitch pin, Pump L gate). Then socket it, confirm 3V3 pin reads 3.3V, WiFi AP comes up.
+
+**Stage 5 — pumps, dry, one at a time:**
+- Connect Pump L only. PWM sweep test. MOSFET should stay cold at our currents. Hit the e-stop mid-run: pump dies, screen/ESP stays alive. Repeat for R. Then both together.
+
+**Stage 6 — peripherals, one subsystem at a time:** displays (check both CS lines address the right screen), encoders, HX711 bases. Add one, prove it, add the next. If something breaks you know exactly which addition did it.
+
+**Stage 7 — wet calibration (tap water, NOT saline, sterile path untouched):** run each pump into a measuring jug at fixed duty, time it, derive ml/min per side. Store per-side calibration. Only after the whole rig is proven does the medical tube + sterile path get fitted.
+
 ## Open questions to resolve with Rob
 
 1. ~~One reservoir or two?~~ **Decided: two**, each a printed base with load cell + HX711 built in, connected by cable + 3.5mm TRRS (or keyed) jack.
