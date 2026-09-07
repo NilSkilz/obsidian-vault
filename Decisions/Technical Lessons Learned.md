@@ -156,6 +156,12 @@
 **Aside:** restic keeps both the newest AND oldest snapshot of each retention window (reason shows `oldest daily snapshot`), so a lone extra snapshot at the boundary is normal, not a leak.  
 **Date:** Jul 11, 2026
 
+### JLCPCB Pricing Has a Flat Floor, Not a Sliding Scale
+**Fact:** For a 2-layer board, JLCPCB's ~$2 (5 pcs) price is a flat floor for *anything up to 100×100mm* — a 20×20mm board costs the same as a 100×100mm one. Shrinking a board below that size saves nothing. Cost only starts climbing once you cross 100×100mm (priced by area beyond that). For 4-layer boards the free-floor threshold is smaller, 50×50mm.
+**Why it matters:** Don't shrink a layout for cost reasons on a 2-layer board under 100×100mm — use the space if it helps routing, you're already paying for it. Watch board *count* and shipping instead; qty 5 is the sweet spot and shipping usually costs more than the boards.
+**Context:** [[Saline Pump]] PCB v2 sizing, Sep 2026.
+**Date:** Sep 7, 2026
+
 ## Tags
 #lessons-learned #technical #development #infrastructure #home-automation #ai-strategy #community-building
 

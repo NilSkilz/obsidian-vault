@@ -326,6 +326,17 @@ Display BLK + VCC, encoder +, and HX711 VCC all to **3V3** (not 5V). ESP32 power
 - E-stop sits in the +12V **pump** rail only; buck runs off raw +12V so ESP32 stays alive to show STOPPED when pumps are killed.
 - **E-stop = a 2-pin header on the board for a panel switch (Rob, 2026-08-14).** Header wired in series in the +12V pump branch (after the buck tap), so the physical switch lives on the enclosure. Must carry full pump current (both pumps ~0.5-0.6A peak, trivial for any switch) and sit in the *pump* branch, not the shared input. A simple SPST on/off toggle works electrically; a latching red mushroom is the nicer slam-in-a-panic ergonomics, but the header takes either.
 
+## Netlist v2 review — two real bugs found and fixed (2026-09-07)
+
+Rob had another schematic pass reviewed the same day he started populating the v1 boards. **Two bugs, both fixed in the netlist (confirmed landed):**
+
+1. **Critical — pumps weren't independent.** Q1 (pump L) had its source tied to Q2's drain (pump R's low-side node) instead of GND, so the two low-side switches were stacked in series: pump L couldn't run unless pump R's FET was also on. **Fix: Q1 source → GND**, same as Q2, each FET fully independent.
+2. **Important — e-stop defeated its own purpose.** The 5V buck was taking its 12V input from the *switched* rail (after the e-stop), so hitting the e-stop also killed the ESP32 and it couldn't show STOPPED. **Fix: buck now taps raw 12V, before the e-stop.** Pumps stay downstream of the e-stop, ESP feeds from upstream.
+
+Minor (not fixed, doesn't matter functionally): the 10k gate pulldowns land on the ESP32 side of the 150Ω series resistor rather than gate-to-source. Still holds the gate low at boot (gate tracks through the resistor since no DC flows into a capacitive gate), just not the textbook spot. Move it if trivial on the layout, not worth reworking if not.
+
+**⚠ Reconcile against the physical v1 boards before wiring Stage 1 above.** These fixes went into the netlist the same day Rob started soldering the v1 boards (ordered 2026-08-20, before this review). If the fabbed v1 copper has either bug baked in, Q1's source needs a bodge wire to GND and the buck's 12V input needs to be re-run from the raw rail before power-on — check the physical board against this section, don't assume the netlist fix retroactively applies.
+
 ## Board bring-up sequence (2026-09-07, boards + components in hand)
 
 Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2026-09-07. Principle: **power path first, prove each stage before adding the next.** Never populate everything and hope.
@@ -359,10 +370,12 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 
 **Stage 7 — wet calibration (tap water, NOT saline, sterile path untouched):** run each pump into a measuring jug at fixed duty, time it, derive ml/min per side. Store per-side calibration. Only after the whole rig is proven does the medical tube + sterile path get fitted.
 
+**Wiring gauge (2026-09-07):** whole rig draws only ~4-8W (pumps ≈0.5-0.6A peak combined at 12V), so gauge is barely a constraint. 22 AWG is comfortable headroom on the 12V pump rail; 24-28 AWG fine for all signal/logic. Dupont (~24-26 AWG) is electrically fine everywhere, including the power rail — the risk isn't current, it's the crimp working loose. Call: **prototype on Dupont, but solder (or JST/screw-terminal) the 12V pump rail and e-stop connections on the keeper build** — those are the "must not fail mid-scene" wires. Signal wires can stay Dupont permanently. (If the v2 inline heater ever lands, that's up to ~2.5A and would need 20 AWG on that rail — not a v1 concern.)
+
 ## Open questions to resolve with Rob
 
 1. ~~One reservoir or two?~~ **Decided: two**, each a printed base with load cell + HX711 built in, connected by cable + 3.5mm TRRS (or keyed) jack.
-2. **Volume sensing method**: load cell (accurate, recommended) vs pump-calibration-only (simpler, less accurate) vs inline flow sensor (pricey at low flow)?
+2. **Volume sensing method**: load cell (accurate, recommended) vs pump-calibration-only (simpler, less accurate) vs inline flow sensor (pricey at low flow)? **New consideration (2026-09-07):** Rob is wary of 3D-printing the load-cell mounting bases (cantilever geometry with clearance gaps top/bottom is fiddly to get right — platform touching the base anywhere kills the reading). Two alternatives raised: **(a) gut a cheap 5kg digital kitchen scale per side** and solder the same raw load cell straight to the HX711, skipping the mounting-geometry problem entirely (Jarvis's pick — mechanically already solved, same cell, same amp). **(b) Count pump revolutions** (hall/optical encoder on the rotor) instead of weighing at all — no reservoir-side hardware, but drifts with tube wear/back-pressure so needs periodic recalibration. Not yet decided; if going the load-cell route regardless, mount as a **cantilever**: fixed end bolted to the base on a spacer, loaded end carrying the platform on a spacer at the opposite side, beam floating free in between, watch the load arrow direction and check reservoir+tubing tension doesn't add a constant offset.
 3. ~~Pump model / tube bore~~ **Decided: Kamoer NKP 12V, ~17 ml/min working rate for 1L/hr per side.** Still need Aimee to confirm doubling the rate is comfortable, and to pick exact tube bore.
 4. **Needle gauge + how the tubing connects** (luer lock?).
 5. ~~AP mode vs join home WiFi~~ **Decided: AP mode.** ESP32 runs its own WiFi access point, phone joins it directly. No dependency on home WiFi, works anywhere, and keeps the rig off the home network (nice for privacy on this one).
