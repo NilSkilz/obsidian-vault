@@ -16,6 +16,13 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-09-07 (Monday)
+- Evening: proper chat about Mary. Aimee's preferred shape for future Mary dates: Rob books a **day off work, daytime date, no overnight**, rather than staying over or a double hotel room. Rob's genuinely fine with that at this stage.
+- Talked about **sexting**: Aimee said she might start with Sean, and assumed Rob already sexts. Rob's own read: he doesn't really, though his convos do get hot sometimes; he's unsure where the line even is. Net effect: hot conversation is inside what Aimee already assumes happens.
+- Rob told her he'll **probably stop seeing Tash**, by just not arranging new play dates rather than a formal ending.
+- On Mary as a person: told Aimee she isn't very chatty, sometimes takes a while to respond, and doesn't want a 24/7 dynamic.
+- Also mentioned he hasn't spoken to **Fen** in a while.
+
 ## 2026-08-31 (Monday)
 - Evening: Rob gave Aimee the advance notice she asked for on 28 Aug: Saturday with Mary will likely be sexual and include sex. It turned into a falling out. Her stress points: Mary is currently on the local scene (back to uni in October) and it might be a one-off. At one point she said she felt **"railroaded"** and that she doesn't remember actually agreeing. Rob's position: she did agree (out if home by 2am, logged here 30 Aug via Mary.md), and Mary's signals point to ongoing rather than one-off, though he can't promise that. Reported to Jarvis 1 Sept. Fuller note in Private/Rob/Mary.md.
 

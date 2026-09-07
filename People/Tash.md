@@ -48,6 +48,9 @@
 ## Calendar signal
 - When **Rob is marked "away"** on the calendar, that usually means he's at work, and roughly **50/50** he's also seeing Tash. Combines work travel with partner time.
 
+## Status
+- **2026-09-07:** Rob said (in conversation with Aimee) he'll probably stop seeing Tash, by simply not arranging new play dates rather than a formal ending. Soft intent, not a hard decision yet.
+
 ## Tags
 #enm #partner #tash #cheltenham #work-coordination #relationships
 
