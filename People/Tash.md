@@ -50,6 +50,7 @@
 
 ## Status
 - **2026-09-07:** Rob said (in conversation with Aimee) he'll probably stop seeing Tash, by simply not arranging new play dates rather than a formal ending. Soft intent, not a hard decision yet.
+- **2026-09-07 (later):** No contact from Tash since their last date. She's very independent; Rob suspects she may have someone else filling the kink void. If so, the wind-down may be quietly mutual rather than one-sided.
 
 ## Tags
 #enm #partner #tash #cheltenham #work-coordination #relationships
