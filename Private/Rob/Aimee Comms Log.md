@@ -16,6 +16,11 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-09-08 (Tuesday)
+- 09:30: Rob texted Aimee "Have a good day baby. I love you." No reply until teatime.
+- 17:55: Aimee messaged: "Hey, I don't know what to say other than I love you and I'm sorry I'm not okay." First contact since the Monday-night row; first person, no blame, no asks.
+- 18:11: Rob replied: "I love you too. I know you're not okay and you don't need to be sorry for that. I'll be home when u get back and we can have a cuddle if you'd like." Warm, no pressure, no relitigating. The proper talk (planned Tuesday morning, didn't happen) is still to be arranged.
+
 ## 2026-09-07 (Monday)
 - Evening: proper chat about Mary. Aimee's preferred shape for future Mary dates: Rob books a **day off work, daytime date, no overnight**, rather than staying over or a double hotel room. Rob's genuinely fine with that at this stage.
 - Talked about **sexting**: Aimee said she might start with Sean, and assumed Rob already sexts. Rob's own read: he doesn't really, though his convos do get hot sometimes; he's unsure where the line even is. Net effect: hot conversation is inside what Aimee already assumes happens.
