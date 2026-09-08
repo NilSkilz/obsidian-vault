@@ -34,6 +34,7 @@
 - **Support role:** Rob's ENM understanding and accommodation
 - **The full story:** [[Rob - Personal context]] — the 15-month arc of the open marriage from Rob's side (Mar 2025 – Jul 2026): how it opened, the recurring insecurity/communication tension, aftercare needs, and where things stand. Read that before reasoning about anything ENM-related.
 - **Standing agreement (28 Aug 2026):** Aimee wants to be told **in advance** when a night of Rob's is going to be sexual, not on the day or after. First applies to the Mary/NMM night (Sat 5 Sept). When Rob has play plans, nudge him to give her the heads-up early in the week.
+- **What she's okay reading about vs not (confirmed 6 Sept 2026):** kink/impact detail (rope, canes, marks, scenes) doesn't bother her. What she struggles with is **sexual/intimate detail** — cuddles, sex, hot-tub-sex-type content. So when Rob asks a partner to be discreet about a Fet post, the ask is "keep the sexual/intimate stuff vague where I'm mentioned," not "don't post about the kink."
 
 ## Smart Home Notes
 - **Alexa credit:** The Alexa voice integration was AIMEE'S IDEA. She gets full credit. 🏆
