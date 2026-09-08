@@ -1,6 +1,6 @@
 # Rope: conditioning and dyeing (jute + hemp)
 
-Worked out properly 26-28 Aug 2026 for the sample lengths, and the process Rob will repeat on the big reel for [[Aimee]]'s birthday set (teal, order by ~6 Sept, gift 11 Oct). Written down so none of it gets re-derived.
+Worked out properly 26-28 Aug 2026 for the sample lengths, and the process Rob will repeat on the big reel. Written down so none of it gets re-derived.
 
 Applies to natural jute AND hemp, both cellulose, so identical chemistry. Hemp comes out darker and a touch stiffer than jute after the same treatment; that's normal.
 
@@ -61,5 +61,4 @@ One 2/3 oz jar (~19g, 7-8 tsp) does **1 to 1.2kg of rope** at a medium shade. 6m
 - Burn test if in doubt: natural chars and smells like burnt grass, synthetic melts to a hard bead.
 
 ## Links
-- [[Aimee]] (birthday rope set, 11 Oct)
 - [[Product Ideas - Sellable Kink Goods]]
