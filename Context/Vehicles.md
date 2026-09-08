@@ -5,7 +5,7 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 ## Car 1 — Ford Fiesta (Rob's)
 - **Reg: CV59 POA**
 - Blue 2009 Ford Fiesta Zetec
-- **MOT expires: 25 Sep 2026** (Todoist booking task 8 Sep 2026)
+- **MOT expires: 25 Sep 2026**. **MOT booked for Mon 22 Sep 2026** (booked 8 Sep, Todoist task closed). Going to a garage, car may be out of action for a few days around then. On the Shared Home Calendar.
 - **Tax expires: 1 Mar 2027**
 - **Open issue (24 Aug 2026):** red coolant temperature light came on mid-drive then cleared on its own. Rob checked the expansion tank on arrival: coolant LOW but not empty, consistent with the level-sloshing-over-the-sensor theory. Plan: top up cold in the morning (Prestone ready-mixed, Tesco, ~£5.25 Clubcard) then watch the level over the following days. If it drops again within a week, that confirms a leak and the garage visit is non-negotiable; MOT is due 25 Sep anyway, could combine. Warned: mayo under the oil cap or white smoke = stop driving (head gasket). **Update 24 Aug 21:55:** topped up that evening (not waiting for morning). Rob checks for leakage under the car / tank level on the morning of 25 Aug. Watch the level through the week; a visible drop = book the garage. **Update 25 Aug 07:xx:** checked cold: level still just under MAX, no puddle under the car. Holding for now. Keep watching through the week (re-check ~Fri 28 Aug and before MOT on 25 Sep); a visible drop = book the garage.
 
