@@ -1,6 +1,17 @@
 # Fuck-io
 
-**Status:** idea, noted 28 Aug 2026. Not greenlit, no budget, no timeline.
+**Status:** design phase as of 9 Sept 2026. Soft deadline: [[Mary]] back in Oxford in October.
+
+## Decisions (9 Sept 2026, Rob via Telegram)
+
+- **Mount the machine on the [[Scaffold Rig]]** (33.7mm key-clamp build). Solves the v1 tripod-wobble problem outright: clamp the machine to the rig's tube instead of building a separate sled/frame. Needs a mounting plate or printed saddle that grips 33.7 tube (or a pair of spare 101 tees / half clamps bolted to the machine base).
+- **Reuse the v1 linear rail.** Rob confirmed the rail survived, so the crank-vs-rail question is settled: **belt-driven rail**, OSSM-style. Measure the rail (length, carriage type) before ordering belt/pulleys.
+- **Motor is the main purchase.** The old NEMA 23 was poached for another project, so plan on buying the drive.
+- **Edge-o-Matic: build it, DIY**, per the plug cost estimate below (£40-60 given parts on hand). Same ESP32 toolchain as the Saline Pump.
+
+### Motor recommendation
+
+Given the 2021 stall history and that this thing will be remote-driven (a silent stall mid-session is exactly what closed loop prevents), the OSSM-standard **closed-loop integrated servo (iHSV57 / 57AIM30 class, £90-130 with a 36V PSU)** is the right buy. Budget fallback: NEMA 23 3Nm + DM542 digital driver + 36V 10A PSU, ~£60-80 all in, but it can still stall. Decide firmware base (FuckIO/StrokeEngine vs OSSM) before ordering, since OSSM firmware assumes the servo.
 
 ## The idea
 
@@ -30,16 +41,17 @@ Came up unprompted in Rob's Fet chat with [[Mary]] (1 Sept 2026): she's obsessed
 ## Existing assets
 
 - `github.com/NilSkilz/FuckIO-UI` (private): CRA + MUI slider UI, axios GET to firmware. Scaffold only, one App.js, but it shows the parameter model Rob liked.
-- Rob's 2021 hardware: **still mostly exists** (confirmed 28 Aug 2026). **NEMA 23** stepper plus its driver (both believed to survive, driver model TBC). It **stalled sometimes** in 2021: almost certainly driver/PSU starved (a 2A-class driver on 12V will do exactly that to a NEMA 23), or crank binding, not a dead motor. Check the driver label before reusing it. It was mounted on a tripod, which was unstable; needs a firmer base (plywood sled or 2040/4040 ali extrusion frame, sub-£30). Check what survived before buying anything.
+- Rob's 2021 hardware: **the linear rail survives** (confirmed 9 Sept 2026) and is being reused. The **NEMA 23 did not** (poached for another project, confirmed 9 Sept, superseding the 28 Aug "believed to survive" note); driver status moot since the motor's being replaced. For the record, the 2021 rig **stalled sometimes**: almost certainly driver/PSU starved (a 2A-class driver on 12V will do exactly that to a NEMA 23), or crank binding, not a dead motor. Check the driver label before reusing it. It was mounted on a tripod, which was unstable; needs a firmer base (plywood sled or 2040/4040 ali extrusion frame, sub-£30). Check what survived before buying anything.
 - Overlap with **Tethered** (safety, consent, check-ins) and the Saline Pump (ESP32 motor control, same toolchain).
 
 ## Open questions
 
-- FuckIO firmware base or OSSM base?
-- Build the plug (Edge-o-Matic DIY) or buy one?
-- Which driver board survived (A4988/DRV8825 class = replace; TB6600/DM542 = keep)? And what PSU voltage?
-- Base design: sled vs extrusion frame.
-- Backend: reuse Tethered's stack, or standalone?
+- FuckIO firmware base or OSSM base? (Leaning OSSM if the servo gets bought, StrokeEngine motion model still the nicer one.)
+- Rail spec: what length/profile is the surviving v1 rail, and does its carriage take a GT2 belt clamp?
+- Mounting detail: printed saddle vs key-clamp fittings to marry machine base to 33.7 tube.
+- Backend: reuse Tethered's stack, or standalone? (Sneaky one: on Tethered it half-becomes a product feature.)
+
+Settled 9 Sept: rail drive not crank (rail survived), plug is a DIY Edge-o-Matic build, machine mounts on the scaffold rig, motor to buy (old one poached).
 
 ## Plug cost estimate (28 Aug 2026, ballpark)
 

@@ -87,6 +87,10 @@ Ask them to cut to the list on the saw there; stockholders usually do it free or
 
 **Still needed:** long lengths for uprights and rails (stockholder), more flanges if the design goes past four legs (131 or 132, either works; Scaffold Mart 132 £4.73), plus swivels/elbows per the legend.
 
+## Fuck-io mount (decided 9 Sept 2026)
+
+The [[Fuck-io]] machine will mount to this rig rather than getting its own base: v1 linear rail clamped to the tube (printed 33.7 saddle or spare key-clamp fittings bolted to the machine plate). The rig's mass and floor-bolted flanges kill the v1 tripod-wobble problem for free. Detail lives in the Fuck-io project file.
+
 ## Assets
 - Blueprint SVG: `~/generated/scaffold-rig-design.svg` (orthographic, scale ~1:5, three views + legend + notes)
 - Photoreal render: `~/generated/img-20260730-234237.png` (both pieces, studio floor, OpenAI image gen, 2026-07-30)
