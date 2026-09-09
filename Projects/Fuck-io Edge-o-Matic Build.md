@@ -56,6 +56,16 @@ Build: `git clone https://github.com/MausTec/nogasm-wifi && git checkout v0.4.0`
 | Rotary encoder A / B / switch | 33 / 32 / 35 |
 | Encoder RGB LED: R / G / B | 2 / 4 / 27 |
 
+## Sensor sourcing reality check (9 Sept 2026, evening)
+
+Rob spotted it: the **MP3V5050GP is SMD-only** (8-pin gullwing SOP, ~1.27mm pitch) and **nobody sells a breakout module for it**. Checked distributors and the usual module shops. Three real options:
+
+1. **MPX5050GP (recommended).** Same sensor family, **through-hole unibody package**, pins on 2.54mm, solders straight into perfboard. It's 5V supply with Vout up to ~4.7V, so it needs 5V (the dev board's VIN/USB rail) and a **2:1 divider on Vout** (e.g. 10k/10k, then the RC into GPIO 34). In stock at [Farnell UK](https://uk.farnell.com/nxp/mpx5050gp/ic-sensor-gauge-press-7-25-psi/dp/1457154), roughly £12-16. This is the classic nogasm-community DIY choice.
+2. **HX710B module (cheapest, ~£3-6).** Ready-made board: MPS20N0040D bridge sensor + HX710B 24-bit ADC, 0-40 kPa, ported, 3.3V-friendly, digital 2-wire (DOUT/SCK, HX711-style bit-bang, trivial in custom firmware). Caveats: **max ~40 samples/sec** (10 SPS in some modes), where the analog sensor samples as fast as the loop runs; clench spikes last hundreds of ms so 40 SPS is probably fine, but it's less headroom for the arousal algorithm. Known gain quirk: can saturate below 20 kPa. Quality varies, it's an AliExpress-grade part. Fine as a cheap first prototype.
+3. **Hand-solder the MP3V5050GP** onto an SOP-8 adapter board. Doable, the gullwing legs are big enough, but it's the fiddly option for no gain.
+
+Decision: **buy the MPX5050GP + divider** for the real build; optionally grab an HX710B module too since it's pocket money and arrives faster.
+
 ## Analog front-end (from the nogasm schematic)
 
 - Sensor in the original: **NXP MP3V5050GP** (0-50 kPa gauge, ported, **3V supply**, so its output range suits the ESP32 ADC directly).
@@ -83,7 +93,7 @@ Build: `git clone https://github.com/MausTec/nogasm-wifi && git checkout v0.4.0`
 
 | # | Part | Est. |
 |---|---|---|
-| 1 | Pressure sensor MP3V5050GP (or 5V MPXV + divider) | £10-18 |
+| 1 | Pressure sensor **MPX5050GP** (through-hole, 5V + 2:1 divider; MP3V is SMD-only, no breakout exists) | £12-16 |
 | 2 | Inflatable plug with squeeze bulb | £15-35 |
 | 3 | Silicone tube (4mm ID) + tee | ~£5 |
 | 4 | Passives: 750R, 0.33uF, decoupling caps | ~£2 |
