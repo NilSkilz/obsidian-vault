@@ -2,6 +2,27 @@
 
 Researched 9 Sept 2026, straight from the source repos. Part of [[Fuck-io]]: this is the orgasm-detecting plug that closes the loop.
 
+## REVISED PLAN (9 Sept 2026, evening): headless, same ESP32 as the machine
+
+Rob's call, and it's the right one: no screen, no encoder, no SD, no MOSFET, no second ESP32. The plug side reduces to **one analog pressure sensor wired into the machine's ESP32**, with everything (arousal graph, thresholds, machine control) exposed through one web app served off that ESP32. The commercial EOM needs standalone UI hardware; we have a phone.
+
+What this wins:
+
+- **BOM collapses.** Electronics for the plug side: sensor + a resistor + two caps, ~£12-20. Whole plug incl. the inflatable itself: **~£35-55** (was £40-60 with the UI parts).
+- **No network hop in the safety loop.** Orgasm detection and motor stop live in the same firmware; no WebSocket between "detected" and "stop". Remote viewers get the stream over the web app, but the loop closes locally.
+- **The only thing running to the wearer is an air tube.** Sensor sits in the machine's control box, plug connects by silicone tube. Zero electrical contact with the body, which is the nicest galvanic-isolation story possible.
+- One codebase, one web app, one box.
+
+What it costs:
+
+- **nogasm-wifi firmware is no longer used as-is.** It becomes donor code: port the arousal algorithm (`OrgasmControl.cpp` in v0.4.0, rolling pressure average + clench spikes accumulate an arousal score + threshold) into the machine firmware. It's small and readable; this is an afternoon, not a project.
+- This tips the machine firmware question to **custom firmware using StrokeEngine as a library** (FuckIO lineage) rather than stock OSSM firmware, since we're modifying either way. Rob's written the React control panel for exactly this before (FuckIO-UI, 2021).
+- Single point of failure: one crash takes out sensing AND motion. Mitigations are the ones already planned anyway: hardware E-stop on driver enable (not the ESP32), watchdog reboot with motor enable defaulting OFF, pressure ceiling check in the sampling loop.
+
+One hard technical constraint: **the sensor must be on an ADC1 pin (GPIO 32-39)**. ADC2 is unusable while WiFi is up, and this firmware is always on WiFi. The nogasm-wifi default of GPIO 34 is ADC1, keep it.
+
+Everything below is the original standalone-build research. **Still current: the sensor choice, analog front-end, plumbing, and safety sections.** The OLED/encoder/SD/MOSFET rows and the v0.4.0 flash instructions are kept for reference only.
+
 ## How it works
 
 Inflatable butt plug -> air line -> analog pressure sensor -> ESP32 ADC. Pelvic-floor contractions during arousal/orgasm show up as rhythmic pressure spikes; the firmware graphs arousal, detects orgasm, and can stop/ramp an output (or feed a remote over WebSocket). Design lineage: nogasm (Teensy, 2016) -> nogasm-wifi / Edge-o-Matic 3000 (ESP32, Maus-Tec).
@@ -57,6 +78,24 @@ Build: `git clone https://github.com/MausTec/nogasm-wifi && git checkout v0.4.0`
 | 10 | Perfboard, wire, enclosure | ~£10 | Have most of it |
 
 **Realistic spend with parts on hand: £40-60**, matching the earlier estimate in [[Fuck-io]].
+
+### Revised headless BOM (the one to actually order)
+
+| # | Part | Est. |
+|---|---|---|
+| 1 | Pressure sensor MP3V5050GP (or 5V MPXV + divider) | £10-18 |
+| 2 | Inflatable plug with squeeze bulb | £15-35 |
+| 3 | Silicone tube (4mm ID) + tee | ~£5 |
+| 4 | Passives: 750R, 0.33uF, decoupling caps | ~£2 |
+
+Rows 5-9 of the table above (OLED, encoder, SD, MOSFET stage) are **dropped**. ESP32 is the machine's own.
+
+### Revised build order
+
+1. Sensor + RC front-end on the machine ESP32 (GPIO 34), sketch that streams raw ADC over a websocket, blow in the tube, watch it move in the browser.
+2. Port the v0.4.0 arousal algorithm, tune against the raw stream.
+3. Plumb plug + tee + bulb, test inflate/deflate and the pressure ceiling.
+4. Wire detection into the motion loop (stop/ramp actions), then build out the web app properly.
 
 ## Plumbing
 

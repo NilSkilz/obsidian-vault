@@ -7,11 +7,12 @@
 - **Mount the machine on the [[Scaffold Rig]]** (33.7mm key-clamp build). Solves the v1 tripod-wobble problem outright: clamp the machine to the rig's tube instead of building a separate sled/frame. Needs a mounting plate or printed saddle that grips 33.7 tube (or a pair of spare 101 tees / half clamps bolted to the machine base).
 - **Reuse the v1 linear rail.** Rob confirmed the rail survived, so the crank-vs-rail question is settled: **belt-driven rail**, OSSM-style. Measure the rail (length, carriage type) before ordering belt/pulleys.
 - **Motor is the main purchase.** The old NEMA 23 was poached for another project, so plan on buying the drive.
-- **Edge-o-Matic: build it, DIY**, per the plug cost estimate below (£40-60 given parts on hand). Same ESP32 toolchain as the Saline Pump. Full build instructions, verified pin map and BOM: [[Fuck-io Edge-o-Matic Build]] (researched 9 Sept).
+- **Edge-o-Matic: build it, DIY, headless, on the machine's own ESP32** (revised same evening). No screen/encoder/SD/MOSFET, no second board: just the pressure sensor into the machine ESP32's ADC, arousal algorithm ported from nogasm-wifi v0.4.0, everything exposed via one web app. Plug side drops to ~£35-55 incl. the inflatable. Full detail + revised BOM: [[Fuck-io Edge-o-Matic Build]].
+- **Firmware base: custom, with StrokeEngine as the motion library** (follows from the merge above; we're writing firmware either way, and stock OSSM firmware assumes its own UI/remote ecosystem). Rob's 2021 FuckIO-UI is the web-app prior art.
 
 ### Motor recommendation
 
-Given the 2021 stall history and that this thing will be remote-driven (a silent stall mid-session is exactly what closed loop prevents), the OSSM-standard **closed-loop integrated servo (iHSV57 / 57AIM30 class, £90-130 with a 36V PSU)** is the right buy. Budget fallback: NEMA 23 3Nm + DM542 digital driver + 36V 10A PSU, ~£60-80 all in, but it can still stall. Decide firmware base (FuckIO/StrokeEngine vs OSSM) before ordering, since OSSM firmware assumes the servo.
+Given the 2021 stall history and that this thing will be remote-driven (a silent stall mid-session is exactly what closed loop prevents), the OSSM-standard **closed-loop integrated servo (iHSV57 / 57AIM30 class, £90-130 with a 36V PSU)** is the right buy. Budget fallback: NEMA 23 3Nm + DM542 digital driver + 36V 10A PSU, ~£60-80 all in, but it can still stall. Firmware base is now settled (custom + StrokeEngine, see Decisions), and StrokeEngine drives either motor via step/dir, so the servo choice is purely about stall immunity, not firmware compatibility.
 
 ## The idea
 
@@ -46,12 +47,11 @@ Came up unprompted in Rob's Fet chat with [[Mary]] (1 Sept 2026): she's obsessed
 
 ## Open questions
 
-- FuckIO firmware base or OSSM base? (Leaning OSSM if the servo gets bought, StrokeEngine motion model still the nicer one.)
 - Rail spec: what length/profile is the surviving v1 rail, and does its carriage take a GT2 belt clamp?
 - Mounting detail: printed saddle vs key-clamp fittings to marry machine base to 33.7 tube.
 - Backend: reuse Tethered's stack, or standalone? (Sneaky one: on Tethered it half-becomes a product feature.)
 
-Settled 9 Sept: rail drive not crank (rail survived), plug is a DIY Edge-o-Matic build, machine mounts on the scaffold rig, motor to buy (old one poached).
+Settled 9 Sept: rail drive not crank (rail survived), machine mounts on the scaffold rig, motor to buy (old one poached), plug is DIY and headless on the machine's own ESP32, firmware is custom with StrokeEngine (which retired the FuckIO-vs-OSSM question).
 
 ## Plug cost estimate (28 Aug 2026, ballpark)
 
