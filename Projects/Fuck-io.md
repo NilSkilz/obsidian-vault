@@ -7,7 +7,7 @@
 - **Mount the machine on the [[Scaffold Rig]]** (33.7mm key-clamp build). Solves the v1 tripod-wobble problem outright: clamp the machine to the rig's tube instead of building a separate sled/frame. Needs a mounting plate or printed saddle that grips 33.7 tube (or a pair of spare 101 tees / half clamps bolted to the machine base).
 - **Reuse the v1 linear rail.** Rob confirmed the rail survived, so the crank-vs-rail question is settled: **belt-driven rail**, OSSM-style. Measure the rail (length, carriage type) before ordering belt/pulleys.
 - **Motor is the main purchase.** The old NEMA 23 was poached for another project, so plan on buying the drive.
-- **Edge-o-Matic: build it, DIY**, per the plug cost estimate below (£40-60 given parts on hand). Same ESP32 toolchain as the Saline Pump.
+- **Edge-o-Matic: build it, DIY**, per the plug cost estimate below (£40-60 given parts on hand). Same ESP32 toolchain as the Saline Pump. Full build instructions, verified pin map and BOM: [[Fuck-io Edge-o-Matic Build]] (researched 9 Sept).
 
 ### Motor recommendation
 
