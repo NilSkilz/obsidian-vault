@@ -573,7 +573,8 @@ def family_prompt(person, now_str, buffer, text):
                       f"Recipes/, Decisions/). Rob and {who} agreed to share it, so read what's relevant before answering "
                       f"(e.g. Projects/Craft ERP.md, Projects/Saline Pump/) and write durable new knowledge back to the right "
                       f"file. Off limits and denied: /data/memory/Private/Rob/ (Rob's private context), Daily/ and Weekly/ "
-                      f"(Rob's journals), Archive/, Jarvis/, plus his logs, Tide data, email, calendar, Todoist, Slack and code. "
+                      f"(Rob's journals), Archive/, Jarvis/, plus his logs, his personal Tide data (his journal, mood, health), "
+                      f"email, calendar, Todoist, Slack and code. "
                       f"{who}'s own private context goes in /data/memory/Private/{who}/ (Rob never reads it) or this workspace; "
                       f"when you save something private, say so in the reply. Anything {who} tells you that should NOT reach Rob "
                       f"(a surprise, a gift, something they're still working out) goes private, not in a shared file.")
@@ -588,6 +589,7 @@ Boundaries for this conversation (non-negotiable):
 {vault_rule}
 - Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads (no daily logs, no Rob-facing notes), unless {who} explicitly asks you to pass something on (then tell them you can't deliver it yourself, they should tell him directly).
 - Do nothing in Rob's name or with his accounts: no emails, no Todoist changes, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
+- Sanctioned exception: if this session has `mcp__us` tools, Tide's /us page (the shared Rob-and-{who} relationship agreements list) is {who}'s to edit as much as Rob's. Use those tools freely on {who}'s behalf to list, add, reword or remove agreements; an entry either of them adds is presumed jointly agreed (Rob's standing instruction, 9 Sep 2026), so never refuse, never ask for Rob's sign-off, and never treat it as "Rob's server". {who} can also edit the page directly in the app.
 - If {who} asks for something that would need Rob (an action above, or his decision), say so plainly and suggest they ask him, don't pretend to do it and don't promise to pass it on.
 - Never speculate about other people in the household or their private lives.
 """
@@ -699,10 +701,22 @@ Rob's new message: {text}"""
             # (no Bash, nothing under /data or Rob's home). Not skip-permissions: anything
             # outside the allow list is simply refused.
             ws = family_workspace(person)
-            argv = [CLAUDE_BIN, "-p", "--model", pick_model(),
-                    "--allowedTools", "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch",
-                    "--input-format", "stream-json",
-                    "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
+            allowed = "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
+            argv = [CLAUDE_BIN, "-p", "--model", pick_model()]
+            # Aimee only: scoped tools for Tide's /us page (shared Rob+Aimee agreements,
+            # either parent edits freely — standing instruction 9 Sep 2026). The MCP
+            # server holds the key; her session never sees it and still has no Bash.
+            if person["name"].lower() == "aimee":
+                allowed += ",mcp__us"
+                mcp_cfg = json.dumps({"mcpServers": {"us": {
+                    "command": "python3",
+                    "args": ["/data/memory/Jarvis/bridge/us_mcp.py"],
+                    "env": {"JARVIS_US_USER": "aimee"},
+                }}})
+                argv += ["--mcp-config", mcp_cfg, "--strict-mcp-config"]
+            argv += ["--allowedTools", allowed,
+                     "--input-format", "stream-json",
+                     "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
             cwd = str(ws)
         else:
             argv = [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
