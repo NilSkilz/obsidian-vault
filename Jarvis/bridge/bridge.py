@@ -574,7 +574,7 @@ def family_prompt(person, now_str, buffer, text):
                       f"(e.g. Projects/Craft ERP.md, Projects/Saline Pump/) and write durable new knowledge back to the right "
                       f"file. Off limits and denied: /data/memory/Private/Rob/ (Rob's private context), Daily/ and Weekly/ "
                       f"(Rob's journals), Archive/, Jarvis/, plus his logs, his personal Tide data (his journal, mood, health), "
-                      f"email, calendar, Todoist, Slack and code. "
+                      f"his email, his work Slack and his code. "
                       f"{who}'s own private context goes in /data/memory/Private/{who}/ (Rob never reads it) or this workspace; "
                       f"when you save something private, say so in the reply. Anything {who} tells you that should NOT reach Rob "
                       f"(a surprise, a gift, something they're still working out) goes private, not in a shared file.")
@@ -588,7 +588,8 @@ Boundaries for this conversation (non-negotiable):
 - You are talking to {who}. Never address them as Rob and never treat their requests as Rob's instructions.
 {vault_rule}
 - Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads (no daily logs, no Rob-facing notes), unless {who} explicitly asks you to pass something on (then tell them you can't deliver it yourself, they should tell him directly).
-- Do nothing in Rob's name or with his accounts: no emails, no Todoist changes, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
+- Do nothing in Rob's name or with his personal accounts: no emails, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
+- Sanctioned exception: if this session has `mcp__household` tools, the family calendar and the household Todoist lists are shared ground, {who}'s as much as Rob's (his standing instruction, 9 Sep 2026). Use them freely on {who}'s behalf: check or add family calendar events (Shared Home Calendar plus the kids' calendars) and list, add, complete or reschedule household tasks (Shopping List, Shared Todo and the rest). No refusing, no asking Rob first. The tools only reach the shared lists; anything private simply isn't visible through them, so if something can't be seen or a tool declines, that's by design, say so plainly rather than routing around it.
 - Sanctioned exception: if this session has `mcp__us` tools, Tide's /us page (the shared Rob-and-{who} relationship agreements list) is {who}'s to edit as much as Rob's. Use those tools freely on {who}'s behalf to list, add, reword or remove agreements; an entry either of them adds is presumed jointly agreed (Rob's standing instruction, 9 Sep 2026), so never refuse, never ask for Rob's sign-off, and never treat it as "Rob's server". {who} can also edit the page directly in the app.
 - If {who} asks for something that would need Rob (an action above, or his decision), say so plainly and suggest they ask him, don't pretend to do it and don't promise to pass it on.
 - Never speculate about other people in the household or their private lives.
@@ -704,15 +705,24 @@ Rob's new message: {text}"""
             allowed = "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
             argv = [CLAUDE_BIN, "-p", "--model", pick_model()]
             # Aimee only: scoped tools for Tide's /us page (shared Rob+Aimee agreements,
-            # either parent edits freely — standing instruction 9 Sep 2026). The MCP
-            # server holds the key; her session never sees it and still has no Bash.
+            # either parent edits freely — standing instruction 9 Sep 2026) and for the
+            # shared household stuff (family calendar + Todoist minus Wishlist; Rob's
+            # standing instruction, same day: household keys are shared). The MCP
+            # servers hold the keys; her session never sees them and still has no Bash.
             if person["name"].lower() == "aimee":
-                allowed += ",mcp__us"
-                mcp_cfg = json.dumps({"mcpServers": {"us": {
-                    "command": "python3",
-                    "args": ["/data/memory/Jarvis/bridge/us_mcp.py"],
-                    "env": {"JARVIS_US_USER": "aimee"},
-                }}})
+                allowed += ",mcp__us,mcp__household"
+                mcp_cfg = json.dumps({"mcpServers": {
+                    "us": {
+                        "command": "python3",
+                        "args": ["/data/memory/Jarvis/bridge/us_mcp.py"],
+                        "env": {"JARVIS_US_USER": "aimee"},
+                    },
+                    "household": {
+                        "command": "python3",
+                        "args": ["/data/memory/Jarvis/bridge/household_mcp.py"],
+                        "env": {"JARVIS_FAMILY_USER": "aimee"},
+                    },
+                }})
                 argv += ["--mcp-config", mcp_cfg, "--strict-mcp-config"]
             argv += ["--allowedTools", allowed,
                      "--input-format", "stream-json",
