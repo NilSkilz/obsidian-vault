@@ -16,6 +16,23 @@ Oil blocks dye. So: condition, dye, dry, singe, oil, break in. Never oil before 
 6. **Oil.** Small amount of camellia or jojoba (optionally a touch of beeswax) on a cloth, run the rope through your hands. Less than you think: it should feel dry-ish, not greasy.
 7. **Break in.** Pull it round a smooth post or through a carabiner, back and forth, ~20 min. Stiff string becomes rope. Repeat a light singe/oil every few months of use.
 
+## Oil: what works and what doesn't (added 9 Sep 2026)
+
+The job is light lubrication of the fibres so they flex instead of cracking, without leaving grease on skin or sheets. That rules out most things in a kitchen cupboard.
+
+**Use:**
+- **Camellia (tsubaki) oil.** The traditional Japanese choice, light, highly oxidation-stable, skin-safe. Kurobara 100% camellia oil (the knife-maintenance brand, same stuff) or a pure cosmetic tsubaki, ~£8-12 for 70-100ml on Amazon. A bottle lasts ages at rope quantities.
+- **Jojoba oil.** Technically a liquid wax, essentially never goes rancid, easy to get (any "100% pure jojoba", e.g. Naissance, ~£9-10/100ml). Functionally interchangeable with camellia for rope.
+- Optional: a little **beeswax** melted into either (roughly 1:4 wax to oil) for a slicker finish on high-wear rope. Not required.
+
+**Don't use:**
+- **Boiled linseed oil.** It's a *drying* oil for wood: it polymerises, so the rope goes stiff and varnish-crusty over weeks. "Boiled" means metallic drier additives (cobalt/manganese), not skin-safe. And BLO-soaked rags/fibre can spontaneously combust as they cure. Wrong on all three axes.
+- **Cocoa butter.** Skin-safe but solid at room temp, so it sits on the surface as grease, grabs dirt, and goes rancid. Keep it for skin after rope, not on rope.
+- **Olive/veg/raw linseed and other kitchen oils.** All go rancid in the fibre; the rope ends up smelling like an old chip pan.
+- **Mineral oil / baby oil** gets used by some riggers and won't go rancid, but it wicks endlessly and can weep onto skin/sheets. Camellia or jojoba are better and barely cost more.
+
+**Amount:** a few ml on a cloth per 8m length, run the rope through. It should feel dry-ish afterwards, never greasy. Re-oil lightly every few months of use, after any singe.
+
 ## Dye
 
 **Use fibre-reactive dye (Procion MX).** Nothing else bonds to plant fibre. Rob bought the **Jacquard Procion MX set** (Amazon, 28 Aug). Avoid Rit or anything labelled "all-purpose"/"multi-fabric": it sits on the fibre and crocks straight onto skin and sheets.
