@@ -369,6 +369,7 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 
 **Stage 5 — pumps, dry, one at a time:**
 - Connect Pump L only. PWM sweep test. MOSFET should stay cold at our currents. Hit the e-stop mid-run: pump dies, screen/ESP stays alive. Repeat for R. Then both together.
+- **Polarity doesn't matter electrically** — it's a bare 2-wire brushed DC motor, so wired backwards just spins the head the other way, nothing at risk. It does flip which port sucks and which pushes, so check flow direction when each pump first goes in: run at 50%, watch roller direction / tube ends, swap the two motor wires at the terminal block if it's backwards. Once confirmed, mark the + wire so both sides end up plumbed the same way (inlet from bottle, outlet to line).
 - **Pump control in the bring-up sketch (2026-09-10):** `firmware/bringup/bringup.ino` serves a test panel at `http://salinepump.local/` (phone or Mac, same WiFi): per-pump duty buttons, automated 0→100→0 sweep (~20s), STOP ALL. LEDC PWM at 1kHz/8-bit on GPIO14/13 (guarded for both 2.x and 3.x Arduino-ESP32 cores). Safety: pumps boot OFF, manual duty auto-stops after 30s without a fresh command, OTA start forces both off, sweep runs one pump at a time. Screens show live duty per side.
 
 **Stage 6 — peripherals, one subsystem at a time:** displays (check both CS lines address the right screen), encoders, HX711 bases. Add one, prove it, add the next. If something breaks you know exactly which addition did it.
