@@ -364,6 +364,7 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 
 **Stage 4 — ESP32 in:**
 - Flash it BEFORE connecting any pump: minimal sketch whose first line in `setup()` forces GPIO14 LOW (the boot-twitch pin, Pump L gate). Then socket it, confirm 3V3 pin reads 3.3V, WiFi AP comes up.
+- **Sketch written 2026-09-10:** `firmware/bringup/bringup.ino` (this folder). Pins 14 + 13 LOW as the first lines of `setup()`, then serial heartbeat at 115200 and a WiFi AP `SalinePump-Test` (password `primefirst`) as the alive-proof. Flash bare over USB: Arduino IDE, board "ESP32 Dev Module".
 
 **Stage 5 — pumps, dry, one at a time:**
 - Connect Pump L only. PWM sweep test. MOSFET should stay cold at our currents. Hit the e-stop mid-run: pump dies, screen/ESP stays alive. Repeat for R. Then both together.
