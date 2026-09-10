@@ -50,7 +50,7 @@ def api(method, path, body=None):
 TOOLS = [
     {
         "name": "list_agreements",
-        "description": "List every entry on the shared /us page (Rob and Aimee's written relationship agreements and limits), oldest first, with id, text, note, kind ('agreement', 'soft' = soft limit, 'hard' = hard limit, 'messy' = messy-list person neither plays with) and who added it.",
+        "description": "List every entry on the shared /us page (Rob and Aimee's written relationship agreements and limits), oldest first, with id, text, note, kind ('agreement', 'soft' = soft limit, 'hard' = hard limit, 'messy' = messy-list person neither plays with, 'interested' = interested-list person one of them has mentioned potential interest in, with 'who' = whose interest: 'rob' or 'aimee') and who added it.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
@@ -61,7 +61,8 @@ TOOLS = [
             "properties": {
                 "text": {"type": "string", "description": "The agreement itself, as one clear sentence."},
                 "note": {"type": "string", "description": "Optional context or nuance shown under the agreement."},
-                "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy"], "description": "Entry type: 'agreement' (default), 'soft' = soft limit (approach with care, talk first), 'hard' = hard limit (absolute no), 'messy' = messy-list entry (text is the person's name; someone neither parent plays with)."},
+                "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy", "interested"], "description": "Entry type: 'agreement' (default), 'soft' = soft limit (approach with care, talk first), 'hard' = hard limit (absolute no), 'messy' = messy-list entry (text is the person's name; someone neither parent plays with), 'interested' = interested-list entry (text is the person's name; someone one parent has mentioned potential interest in)."},
+                "who": {"type": "string", "enum": ["rob", "aimee"], "description": "For kind 'interested' only: whose interest it is. Defaults to the person adding it."},
             },
             "required": ["text"],
             "additionalProperties": False,
@@ -76,7 +77,8 @@ TOOLS = [
                 "id": {"type": "string", "description": "The agreement id (from list_agreements)."},
                 "text": {"type": "string"},
                 "note": {"type": ["string", "null"], "description": "New note, or null to clear it."},
-                "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy"], "description": "Reclassify the entry: 'agreement', 'soft' (soft limit), 'hard' (hard limit) or 'messy' (messy list)."},
+                "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy", "interested"], "description": "Reclassify the entry: 'agreement', 'soft' (soft limit), 'hard' (hard limit), 'messy' (messy list) or 'interested' (interested list)."},
+                "who": {"type": "string", "enum": ["rob", "aimee"], "description": "For kind 'interested' only: whose interest it is."},
             },
             "required": ["id"],
             "additionalProperties": False,
@@ -104,6 +106,8 @@ def call_tool(name, args):
             body["note"] = args["note"]
         if args.get("kind"):
             body["kind"] = args["kind"]
+        if args.get("who"):
+            body["who"] = args["who"]
         return api("POST", "/enm", body)
     if name == "edit_agreement":
         body = {}
@@ -113,6 +117,8 @@ def call_tool(name, args):
             body["note"] = args["note"]
         if "kind" in args:
             body["kind"] = args["kind"]
+        if "who" in args:
+            body["who"] = args["who"]
         return api("PATCH", "/enm/" + str(args["id"]), body)
     if name == "remove_agreement":
         return api("DELETE", "/enm/" + str(args["id"]))
