@@ -9,9 +9,11 @@
 // Needs library: "Adafruit GC9A01A" (Library Manager; say yes to
 // installing its dependencies, Adafruit GFX + BusIO).
 //
-// OTA: join the SalinePump-Test network (password primefirst) and the
-// board appears as network port "salinepump at 192.168.4.1" in the IDE.
-// OTA password: primefirst. Serial only works over USB.
+// WiFi: joins the house network (PidgeonsNest) so the Mac never has to
+// leave its own WiFi. If it can't connect within 15s it falls back to its
+// own AP (SalinePump-Test / primefirst) so OTA is never unreachable.
+// OTA: the board appears as a network port "salinepump at <its IP>" in the
+// IDE. OTA password: primefirst. Serial only works over USB.
 //
 // Board: ESP32 DevKitC 30-pin. Pin map per PCB v1 (locked 2026-08-20):
 //   GPIO14 = Pump L gate   GPIO13 = Pump R gate   GPIO2 = onboard LED
@@ -98,9 +100,26 @@ void setup() {
   drawFace(tftR, "R", COL_R);
   Serial.println("Displays up: L=cyan on CS5, R=orange on CS4");
 
-  WiFi.softAP("SalinePump-Test", "primefirst");
-  Serial.print("WiFi AP up: SalinePump-Test  password: primefirst  IP: ");
-  Serial.println(WiFi.softAPIP());
+  // Join the house WiFi. Fall back to our own AP if it doesn't take, so
+  // the board is never OTA-unreachable over a typo or a router sulk.
+  WiFi.mode(WIFI_STA);
+  WiFi.begin("PidgeonsNest", "3b5794e3e9");
+  Serial.print("Joining PidgeonsNest");
+  unsigned long t0 = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 15000) {
+    delay(250);
+    Serial.print(".");
+  }
+  Serial.println();
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.print("WiFi up on PidgeonsNest, IP: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP("SalinePump-Test", "primefirst");
+    Serial.print("House WiFi failed, fallback AP SalinePump-Test up, IP: ");
+    Serial.println(WiFi.softAPIP());
+  }
 
   // OTA. An update reboots the chip, and the pulldowns hold the gates
   // through the reboot, so mid-flash the pumps stay off.
@@ -117,7 +136,9 @@ void setup() {
     Serial.printf("OTA error %u\n", err);
   });
   ArduinoOTA.begin();
-  Serial.println("OTA ready: hostname salinepump, IP 192.168.4.1");
+  Serial.print("OTA ready: hostname salinepump, IP ");
+  Serial.println(WiFi.status() == WL_CONNECTED ? WiFi.localIP()
+                                               : WiFi.softAPIP());
 }
 
 void loop() {
