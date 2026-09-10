@@ -50,7 +50,7 @@ def api(method, path, body=None):
 TOOLS = [
     {
         "name": "list_agreements",
-        "description": "List every entry on the shared /us page (Rob and Aimee's written relationship agreements and limits), oldest first, with id, text, note, kind ('agreement', 'soft' = soft limit, 'hard' = hard limit, 'messy' = messy-list person neither plays with, 'interested' = interested-list person one of them has mentioned potential interest in, with 'who' = whose interest: 'rob' or 'aimee') and who added it.",
+        "description": "List every entry on the shared /us page (Rob and Aimee's written relationship agreements and limits), oldest first, with id, text, note, kind ('agreement', 'soft' = soft limit, 'hard' = hard limit, 'messy' = messy-list person neither plays with, 'interested' = interested-list person one of them has mentioned potential interest in, with 'who' = whose interest: 'rob', 'aimee' or 'both' for a couple they might play with together) and who added it.",
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
     },
     {
@@ -62,7 +62,7 @@ TOOLS = [
                 "text": {"type": "string", "description": "The agreement itself, as one clear sentence."},
                 "note": {"type": "string", "description": "Optional context or nuance shown under the agreement."},
                 "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy", "interested"], "description": "Entry type: 'agreement' (default), 'soft' = soft limit (approach with care, talk first), 'hard' = hard limit (absolute no), 'messy' = messy-list entry (text is the person's name; someone neither parent plays with), 'interested' = interested-list entry (text is the person's name; someone one parent has mentioned potential interest in)."},
-                "who": {"type": "string", "enum": ["rob", "aimee"], "description": "For kind 'interested' only: whose interest it is. Defaults to the person adding it."},
+                "who": {"type": "string", "enum": ["rob", "aimee", "both"], "description": "For kind 'interested' only: whose interest it is. 'both' means a couple Rob and Aimee might play with together. Defaults to the person adding it."},
             },
             "required": ["text"],
             "additionalProperties": False,
@@ -78,7 +78,7 @@ TOOLS = [
                 "text": {"type": "string"},
                 "note": {"type": ["string", "null"], "description": "New note, or null to clear it."},
                 "kind": {"type": "string", "enum": ["agreement", "soft", "hard", "messy", "interested"], "description": "Reclassify the entry: 'agreement', 'soft' (soft limit), 'hard' (hard limit), 'messy' (messy list) or 'interested' (interested list)."},
-                "who": {"type": "string", "enum": ["rob", "aimee"], "description": "For kind 'interested' only: whose interest it is."},
+                "who": {"type": "string", "enum": ["rob", "aimee", "both"], "description": "For kind 'interested' only: whose interest it is ('both' = a couple they might play with together)."},
             },
             "required": ["id"],
             "additionalProperties": False,
