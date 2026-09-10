@@ -163,6 +163,12 @@
 **Context:** [[Saline Pump]] PCB v2 sizing, Sep 2026.
 **Date:** Sep 7, 2026
 
+### ESP32 esptool Upload Fails at Default 921600 Baud on Clone Devkits
+**Problem:** Arduino IDE flash to an ESP32 devkit connects fine (chip type, MAC read correctly) then dies with "Unable to verify flash chip connection" right after "Changing baud rate to 921600..." — looks like a dead flash chip but isn't.
+**Solution:** Tools → Upload Speed → **115200** (default 921600 is too fast for the cheap USB-serial chip on clone boards). Fixes it most of the time; if not, hold BOOT during "Connecting...", or swap the USB cable/skip any hub.
+**Context:** [[Saline Pump]] ESP32 bring-up, Sep 10 2026.
+**Date:** Sep 10, 2026
+
 ## Tags
 #lessons-learned #technical #development #infrastructure #home-automation #ai-strategy #community-building
 
