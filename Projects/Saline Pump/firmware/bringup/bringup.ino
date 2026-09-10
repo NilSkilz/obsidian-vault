@@ -1,19 +1,22 @@
-// Saline Pump v1 — Stage 4/6 bring-up sketch
+// Saline Pump v1 — Stage 5 bring-up sketch (dry pump test)
 //
-// Job: hold both pump gates LOW from the first instant of setup(), then
-// prove the ESP32 is alive (serial heartbeat + WiFi AP + OTA), and now
-// drive the two round GC9A01 gauges: left shows a cyan L, right an orange
-// R, each with a READY tag and a heartbeat dot that blinks with the LED.
-// If the letters come up on the wrong sides, the CS wires are swapped.
+// Adds pump control to the display/WiFi/OTA bring-up. The board now serves
+// a phone-friendly test panel at http://salinepump.local (or its IP): per-
+// pump duty buttons (Off/25/50/75/100%), an automated 0→100→0 sweep, and a
+// big STOP ALL. Pump gates run LEDC PWM at 1kHz. Everything defaults OFF,
+// and any manually set duty auto-stops after 30s so a forgotten browser tab
+// can't leave a pump running. Screens show live duty per side.
 //
-// Needs library: "Adafruit GC9A01A" (Library Manager; say yes to
-// installing its dependencies, Adafruit GFX + BusIO).
+// Stage 5 protocol (hardware.md): DRY, one pump at a time. Connect Pump L
+// only, sweep it, feel that Q1 stays cold, pull the e-stop mid-run (pump
+// dies, screens/ESP stay up), then repeat for R, then both together.
 //
-// WiFi: joins the house network (PidgeonsNest) so the Mac never has to
-// leave its own WiFi. If it can't connect within 15s it falls back to its
-// own AP (SalinePump-Test / primefirst) so OTA is never unreachable.
-// OTA: the board appears as a network port "salinepump at <its IP>" in the
-// IDE. OTA password: primefirst. Serial only works over USB.
+// Libraries: "Adafruit GC9A01A" + its deps (Adafruit GFX, Adafruit BusIO).
+//
+// WiFi: joins the house network (PidgeonsNest); falls back to its own AP
+// (SalinePump-Test / primefirst) after 15s so OTA is never unreachable.
+// OTA: network port "salinepump at <its IP>", password primefirst. An OTA
+// update forces both pumps off before flashing. Serial only works over USB.
 //
 // Board: ESP32 DevKitC 30-pin. Pin map per PCB v1 (locked 2026-08-20):
 //   GPIO14 = Pump L gate   GPIO13 = Pump R gate   GPIO2 = onboard LED
@@ -21,6 +24,7 @@
 //   Display VCC + BLK to 3V3, never 5V.
 
 #include <WiFi.h>
+#include <WebServer.h>
 #include <ArduinoOTA.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
@@ -39,12 +43,40 @@ const int TFT_CS_R = 4;
 
 const uint16_t COL_L = 0x07FF;  // cyan
 const uint16_t COL_R = 0xFD20;  // orange
+const uint16_t COL_DIM = 0x8410;
+
+// 1kHz keeps MOSFET switching losses negligible (Q1/Q2 should stay cold);
+// the mild motor hum at 1kHz is fine for a bench test.
+const int PWM_FREQ = 1000;
+const int PWM_RES = 8;  // duty 0-255
+const unsigned long AUTO_STOP_MS = 30000;
 
 // RST goes to the left object only: its begin() pulses the shared line and
 // resets both panels, then the right begin() configures its panel without
 // yanking reset again (which would wipe the left one's setup).
 Adafruit_GC9A01A tftL(TFT_CS_L, TFT_DC, TFT_RST);
 Adafruit_GC9A01A tftR(TFT_CS_R, TFT_DC, -1);
+
+WebServer server(80);
+
+int dutyPct[2] = {0, 0};  // 0 = L, 1 = R
+unsigned long lastCmdMs = 0;
+
+// Sweep state machine: -1 = idle, else the side being swept.
+int sweepSide = -1;
+int sweepPct = 0;
+int sweepDir = 5;
+unsigned long sweepLastMs = 0;
+
+void pumpWrite(int side, int pct) {
+  int pin = (side == 0) ? PUMP_L_GATE : PUMP_R_GATE;
+  int duty = (255 * pct) / 100;
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcWrite(pin, duty);
+#else
+  ledcWrite(side, duty);  // channel number = side on the 2.x core
+#endif
+}
 
 void drawCentred(Adafruit_GC9A01A &tft, const char *txt, int y, int size,
                  uint16_t colour) {
@@ -57,17 +89,106 @@ void drawCentred(Adafruit_GC9A01A &tft, const char *txt, int y, int size,
   tft.print(txt);
 }
 
+void drawDuty(int side) {
+  Adafruit_GC9A01A &tft = (side == 0) ? tftL : tftR;
+  uint16_t accent = (side == 0) ? COL_L : COL_R;
+  tft.fillRect(30, 100, 180, 60, GC9A01A_BLACK);
+  if (dutyPct[side] == 0) {
+    drawCentred(tft, "OFF", 130, 5, COL_DIM);
+  } else {
+    char buf[8];
+    snprintf(buf, sizeof buf, "%d%%", dutyPct[side]);
+    drawCentred(tft, buf, 130, 5, accent);
+  }
+}
+
 void drawFace(Adafruit_GC9A01A &tft, const char *label, uint16_t accent) {
   tft.fillScreen(GC9A01A_BLACK);
   for (int r = 112; r <= 116; r++) tft.drawCircle(120, 120, r, accent);
-  drawCentred(tft, label, 90, 7, GC9A01A_WHITE);
-  drawCentred(tft, "READY", 150, 2, accent);
-  drawCentred(tft, "gates LOW", 204, 1, 0x8410);
+  drawCentred(tft, label, 58, 4, GC9A01A_WHITE);
+  drawCentred(tft, "DRY TEST", 180, 2, COL_DIM);
 }
 
 void heartbeatDot(bool on) {
-  tftL.fillCircle(120, 180, 4, on ? COL_L : GC9A01A_BLACK);
-  tftR.fillCircle(120, 180, 4, on ? COL_R : GC9A01A_BLACK);
+  tftL.fillCircle(120, 208, 4, on ? COL_L : GC9A01A_BLACK);
+  tftR.fillCircle(120, 208, 4, on ? COL_R : GC9A01A_BLACK);
+}
+
+void setDuty(int side, int pct) {
+  pct = constrain(pct, 0, 100);
+  pumpWrite(side, pct);
+  if (pct != dutyPct[side]) {
+    dutyPct[side] = pct;
+    drawDuty(side);
+  }
+  lastCmdMs = millis();
+  Serial.printf("Pump %c -> %d%%\n", side == 0 ? 'L' : 'R', pct);
+}
+
+void stopAll() {
+  sweepSide = -1;
+  setDuty(0, 0);
+  setDuty(1, 0);
+}
+
+const char PAGE[] PROGMEM = R"HTML(<!doctype html><html><head>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Saline Pump dry test</title><style>
+body{background:#111;color:#eee;font-family:-apple-system,sans-serif;margin:16px;text-align:center}
+h1{font-size:1.15em;color:#aaa}
+.pump{border:1px solid #333;border-radius:14px;padding:10px;margin:12px 0}
+.pump h2{margin:4px 0}
+button{font-size:1.05em;padding:12px 14px;margin:3px;border:0;border-radius:10px;background:#333;color:#eee}
+.L h2,#vL{color:#0ff}.R h2,#vR{color:#f90}
+.stop{background:#a00;color:#fff;font-size:1.3em;width:100%;padding:16px;margin-top:8px}
+.val{font-size:2em;font-weight:700;margin:6px}
+small{color:#888}
+</style></head><body>
+<h1>Saline Pump &mdash; Stage 5 dry test</h1>
+<div class="pump L"><h2>Pump L</h2><div class=val id=vL>OFF</div><div>
+<button onclick="set('L',0)">Off</button><button onclick="set('L',25)">25%</button>
+<button onclick="set('L',50)">50%</button><button onclick="set('L',75)">75%</button>
+<button onclick="set('L',100)">100%</button><button onclick="sweep('L')">Sweep</button>
+</div></div>
+<div class="pump R"><h2>Pump R</h2><div class=val id=vR>OFF</div><div>
+<button onclick="set('R',0)">Off</button><button onclick="set('R',25)">25%</button>
+<button onclick="set('R',50)">50%</button><button onclick="set('R',75)">75%</button>
+<button onclick="set('R',100)">100%</button><button onclick="sweep('R')">Sweep</button>
+</div></div>
+<button class=stop onclick="fetch('/stop')">STOP ALL</button>
+<p><small>Dry only, one pump at a time. Manual duty auto-stops after 30s.
+Pull the e-stop mid-run: pump dies, this page and the screens stay up.</small></p>
+<script>
+function set(s,p){fetch('/set?side='+s+'&pct='+p)}
+function sweep(s){fetch('/sweep?side='+s)}
+setInterval(async()=>{try{const j=await(await fetch('/status')).json();
+vL.textContent=j.L?j.L+'%':'OFF';vR.textContent=j.R?j.R+'%':'OFF';
+}catch(e){}},1000);
+</script></body></html>)HTML";
+
+void handleSet() {
+  int side = (server.arg("side") == "R") ? 1 : 0;
+  sweepSide = -1;  // a manual command cancels any running sweep
+  setDuty(side, server.arg("pct").toInt());
+  server.send(200, "text/plain", "ok");
+}
+
+void handleSweep() {
+  int side = (server.arg("side") == "R") ? 1 : 0;
+  setDuty(1 - side, 0);  // one pump at a time
+  sweepSide = side;
+  sweepPct = 0;
+  sweepDir = 5;
+  sweepLastMs = millis();
+  Serial.printf("Sweep started on pump %c\n", side == 0 ? 'L' : 'R');
+  server.send(200, "text/plain", "ok");
+}
+
+void handleStatus() {
+  char buf[48];
+  snprintf(buf, sizeof buf, "{\"L\":%d,\"R\":%d,\"sweep\":%d}", dutyPct[0],
+           dutyPct[1], sweepSide);
+  server.send(200, "application/json", buf);
 }
 
 void setup() {
@@ -89,7 +210,21 @@ void setup() {
   Serial.begin(115200);
   delay(300);
   Serial.println();
-  Serial.println("Saline Pump bring-up. Pump gates GPIO14 + GPIO13 held LOW.");
+  Serial.println("Saline Pump bring-up, Stage 5. Pumps start OFF.");
+
+  // Hand the gate pins to LEDC at duty 0. The pulldowns cover the gap
+  // between reset and this point.
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcAttach(PUMP_L_GATE, PWM_FREQ, PWM_RES);
+  ledcAttach(PUMP_R_GATE, PWM_FREQ, PWM_RES);
+#else
+  ledcSetup(0, PWM_FREQ, PWM_RES);
+  ledcAttachPin(PUMP_L_GATE, 0);
+  ledcSetup(1, PWM_FREQ, PWM_RES);
+  ledcAttachPin(PUMP_R_GATE, 1);
+#endif
+  pumpWrite(0, 0);
+  pumpWrite(1, 0);
 
   // Claim the SPI bus with our pins (no MISO — displays are write-only,
   // and GPIO19 is busy being DC). The library's own begin() is then a no-op.
@@ -98,6 +233,8 @@ void setup() {
   tftR.begin(27000000);
   drawFace(tftL, "L", COL_L);
   drawFace(tftR, "R", COL_R);
+  drawDuty(0);
+  drawDuty(1);
   Serial.println("Displays up: L=cyan on CS5, R=orange on CS4");
 
   // Join the house WiFi. Fall back to our own AP if it doesn't take, so
@@ -126,28 +263,38 @@ void setup() {
   ArduinoOTA.setHostname("salinepump");
   ArduinoOTA.setPassword("primefirst");
   ArduinoOTA.onStart([]() {
-    // Gates are already LOW, but make it explicit before flash writes begin.
-    digitalWrite(PUMP_L_GATE, LOW);
-    digitalWrite(PUMP_R_GATE, LOW);
-    Serial.println("OTA update starting, gates LOW");
+    stopAll();
+    Serial.println("OTA update starting, pumps forced off");
   });
   ArduinoOTA.onEnd([]() { Serial.println("OTA done, rebooting"); });
   ArduinoOTA.onError([](ota_error_t err) {
     Serial.printf("OTA error %u\n", err);
   });
   ArduinoOTA.begin();
-  Serial.print("OTA ready: hostname salinepump, IP ");
+
+  server.on("/", []() { server.send_P(200, "text/html", PAGE); });
+  server.on("/set", handleSet);
+  server.on("/sweep", handleSweep);
+  server.on("/stop", []() {
+    stopAll();
+    server.send(200, "text/plain", "stopped");
+  });
+  server.on("/status", handleStatus);
+  server.begin();
+
+  Serial.print("Test panel: http://salinepump.local/ or http://");
   Serial.println(WiFi.status() == WL_CONNECTED ? WiFi.localIP()
                                                : WiFi.softAPIP());
 }
 
 void loop() {
-  // Non-blocking heartbeat so OTA gets serviced constantly: short blink
-  // every second (LED + a dot on each screen), serial ping every 5s.
+  unsigned long now = millis();
+
+  // Non-blocking heartbeat: short blink every second (LED + a dot on each
+  // screen), serial ping every 5s.
   static unsigned long lastBlink = 0;
   static unsigned long lastPrint = 0;
   static bool dotOn = false;
-  unsigned long now = millis();
 
   bool on = (now - lastBlink) < 80;
   digitalWrite(LED, on ? HIGH : LOW);
@@ -159,8 +306,32 @@ void loop() {
 
   if (now - lastPrint > 5000) {
     lastPrint = now;
-    Serial.println("alive, gates LOW");
+    Serial.printf("alive, L=%d%% R=%d%%\n", dutyPct[0], dutyPct[1]);
+  }
+
+  // Sweep: 5% step every 500ms, 0 -> 100 -> 0, ~20s total, ends OFF.
+  if (sweepSide >= 0 && now - sweepLastMs >= 500) {
+    sweepLastMs = now;
+    sweepPct += sweepDir;
+    if (sweepPct >= 100) {
+      sweepPct = 100;
+      sweepDir = -5;
+    }
+    setDuty(sweepSide, sweepPct);
+    if (sweepPct <= 0) {
+      Serial.println("Sweep done");
+      sweepSide = -1;
+    }
+  }
+
+  // Dead-man: a manually set duty with no fresh command for 30s stops
+  // everything. Sweep steps count as commands, so sweeps never trip it.
+  if ((dutyPct[0] > 0 || dutyPct[1] > 0) && sweepSide < 0 &&
+      now - lastCmdMs > AUTO_STOP_MS) {
+    Serial.println("Auto-stop: no command for 30s");
+    stopAll();
   }
 
   ArduinoOTA.handle();
+  server.handleClient();
 }

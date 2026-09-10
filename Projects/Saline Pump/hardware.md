@@ -361,6 +361,7 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 - 12V on. Nothing should warm up.
 - **Trim the MP1584 pot to 5.0V measured at its output BEFORE the ESP32 ever goes in the socket.** Adjustable bucks ship at random voltages; an untrimmed one can kill the devkit.
 - Jumper the e-stop header: switched pump rail reads 12V. Pull the jumper: rail dead, buck output still 5V (buck taps raw 12V by design). That's the e-stop topology proven.
+- **Confirmed live 2026-09-10:** 12V on the pump rail with the jumper in, bled to 0V with it pulled, ESP32 + screens stayed alive throughout (buck on the raw rail proven by survival). E-stop topology verified on the real board.
 
 **Stage 4 — ESP32 in:**
 - Flash it BEFORE connecting any pump: minimal sketch whose first line in `setup()` forces GPIO14 LOW (the boot-twitch pin, Pump L gate). Then socket it, confirm 3V3 pin reads 3.3V, WiFi AP comes up.
@@ -368,6 +369,7 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 
 **Stage 5 — pumps, dry, one at a time:**
 - Connect Pump L only. PWM sweep test. MOSFET should stay cold at our currents. Hit the e-stop mid-run: pump dies, screen/ESP stays alive. Repeat for R. Then both together.
+- **Pump control in the bring-up sketch (2026-09-10):** `firmware/bringup/bringup.ino` serves a test panel at `http://salinepump.local/` (phone or Mac, same WiFi): per-pump duty buttons, automated 0→100→0 sweep (~20s), STOP ALL. LEDC PWM at 1kHz/8-bit on GPIO14/13 (guarded for both 2.x and 3.x Arduino-ESP32 cores). Safety: pumps boot OFF, manual duty auto-stops after 30s without a fresh command, OTA start forces both off, sweep runs one pump at a time. Screens show live duty per side.
 
 **Stage 6 — peripherals, one subsystem at a time:** displays (check both CS lines address the right screen), encoders, HX711 bases. Add one, prove it, add the next. If something breaks you know exactly which addition did it.
 - **Displays in the bring-up sketch (2026-09-10):** `firmware/bringup/bringup.ino` now drives both GC9A01s — left screen cyan "L", right orange "R", READY tag, heartbeat dot synced with the LED. Wrong-sided letters = CS wires swapped (L should be on GPIO5, R on GPIO4). Needs Arduino library "Adafruit GC9A01A" (+ its GFX/BusIO deps). SPI at 27MHz, drop to 10MHz in the two `begin()` calls if a panel shows garbage. Display VCC + BLK to 3V3 only. Note GPIO19 doubles as DC so the sketch claims the SPI bus with no MISO pin; keep that `SPI.begin(18, -1, 23, -1)` line in future firmware.
