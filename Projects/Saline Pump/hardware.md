@@ -337,6 +337,8 @@ Minor (not fixed, doesn't matter functionally): the 10k gate pulldowns land on t
 
 **⚠ Reconcile against the physical v1 boards before wiring Stage 1 above.** These fixes went into the netlist the same day Rob started soldering the v1 boards (ordered 2026-08-20, before this review). If the fabbed v1 copper has either bug baked in, Q1's source needs a bodge wire to GND and the buck's 12V input needs to be re-run from the raw rail before power-on — check the physical board against this section, don't assume the netlist fix retroactively applies.
 
+**Resolved (2026-09-10):** both traces beep-tested clean on the physical v1 board before Rob started soldering — Q1 source lands on GND (not Q2's drain), and the buck's 12V input comes from the raw rail. The v1 copper dodged both netlist bugs. No bodge wires needed.
+
 ## Board bring-up sequence (2026-09-07, boards + components in hand)
 
 Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2026-09-07. Principle: **power path first, prove each stage before adding the next.** Never populate everything and hope.
