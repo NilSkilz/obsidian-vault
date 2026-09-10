@@ -370,6 +370,7 @@ Rob has PCB v1 and (he believes) all components. Assembly + test order, agreed 2
 - Connect Pump L only. PWM sweep test. MOSFET should stay cold at our currents. Hit the e-stop mid-run: pump dies, screen/ESP stays alive. Repeat for R. Then both together.
 
 **Stage 6 — peripherals, one subsystem at a time:** displays (check both CS lines address the right screen), encoders, HX711 bases. Add one, prove it, add the next. If something breaks you know exactly which addition did it.
+- **Displays in the bring-up sketch (2026-09-10):** `firmware/bringup/bringup.ino` now drives both GC9A01s — left screen cyan "L", right orange "R", READY tag, heartbeat dot synced with the LED. Wrong-sided letters = CS wires swapped (L should be on GPIO5, R on GPIO4). Needs Arduino library "Adafruit GC9A01A" (+ its GFX/BusIO deps). SPI at 27MHz, drop to 10MHz in the two `begin()` calls if a panel shows garbage. Display VCC + BLK to 3V3 only. Note GPIO19 doubles as DC so the sketch claims the SPI bus with no MISO pin; keep that `SPI.begin(18, -1, 23, -1)` line in future firmware.
 
 **Stage 7 — wet calibration (tap water, NOT saline, sterile path untouched):** run each pump into a measuring jug at fixed duty, time it, derive ml/min per side. Store per-side calibration. Only after the whole rig is proven does the medical tube + sterile path get fitted.
 
