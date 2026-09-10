@@ -1,11 +1,16 @@
 // Saline Pump v1 — Stage 5 bring-up sketch (dry pump test)
 //
 // Adds pump control to the display/WiFi/OTA bring-up. The board now serves
-// a phone-friendly test panel at http://salinepump.local (or its IP): per-
-// pump duty buttons (Off/25/50/75/100%), an automated 0→100→0 sweep, and a
-// big STOP ALL. Pump gates run LEDC PWM at 1kHz. Everything defaults OFF,
-// and any manually set duty auto-stops after 30s so a forgotten browser tab
-// can't leave a pump running. Screens show live duty per side.
+// a phone-friendly test panel at http://salinepump.local (or its IP): a duty
+// slider + Off/100%/Sweep per pump, an automated 0→100→0 sweep, and a big
+// STOP ALL. Pump gates run LEDC PWM at 1kHz. Everything defaults OFF, and
+// any manually set duty auto-stops after 30s so a forgotten browser tab
+// can't leave a pump running. Screens show live duty per side. Starting a
+// stopped pump below 90% fires a 250ms 100% kick-start to break roller
+// stiction, then settles to the requested duty (so the sweep now shows where
+// the pump HOLDS speed, not where it manages to start). Each pump has a
+// "Set stall limit": drag the slider to where the pump just still holds, tap
+// it, and that duty becomes a persistent (NVS) floor for nonzero commands.
 //
 // Stage 5 protocol (hardware.md): DRY, one pump at a time. Connect Pump L
 // only, sweep it, feel that Q1 stays cold, pull the e-stop mid-run (pump
@@ -26,6 +31,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ArduinoOTA.h>
+#include <Preferences.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_GC9A01A.h>
@@ -51,6 +57,13 @@ const int PWM_FREQ = 1000;
 const int PWM_RES = 8;  // duty 0-255
 const unsigned long AUTO_STOP_MS = 30000;
 
+// Kick-start: the peristaltic head's rollers need near-full torque to break
+// away from standstill (bench test 2026-09-10: stalls below ~75% duty from
+// rest, holds lower once moving). Starting a stopped pump below KICK_PCT_MAX
+// gets a KICK_MS burst at 100%, then settles to the requested duty.
+const int KICK_PCT_MAX = 90;
+const unsigned long KICK_MS = 250;
+
 // RST goes to the left object only: its begin() pulses the shared line and
 // resets both panels, then the right begin() configures its panel without
 // yanking reset again (which would wipe the left one's setup).
@@ -61,6 +74,17 @@ WebServer server(80);
 
 int dutyPct[2] = {0, 0};  // 0 = L, 1 = R
 unsigned long lastCmdMs = 0;
+
+// Per-side kick-start state: 0 = no kick pending, else millis() deadline to
+// drop from the 100% burst down to kickTarget.
+unsigned long kickUntil[2] = {0, 0};
+int kickTarget[2] = {0, 0};
+
+// Per-side stall limit, found empirically with the slider: any nonzero duty
+// command below it is clamped up to it. 0 = no limit set. Persisted in NVS
+// so it survives reboots and OTA updates.
+Preferences prefs;
+int minPct[2] = {0, 0};
 
 // Sweep state machine: -1 = idle, else the side being swept.
 int sweepSide = -1;
@@ -116,13 +140,25 @@ void heartbeatDot(bool on) {
 
 void setDuty(int side, int pct) {
   pct = constrain(pct, 0, 100);
-  pumpWrite(side, pct);
+  if (pct > 0 && pct < minPct[side]) pct = minPct[side];  // stall limit
+  bool kick = (dutyPct[side] == 0 && pct > 0 && pct < KICK_PCT_MAX);
+  if (kick) {
+    pumpWrite(side, 100);
+    kickUntil[side] = millis() + KICK_MS;
+    kickTarget[side] = pct;
+  } else if (kickUntil[side] && pct > 0) {
+    kickTarget[side] = pct;  // slider moved mid-kick: keep the burst going
+  } else {
+    kickUntil[side] = 0;  // Off (or a high duty) cancels a pending kick
+    pumpWrite(side, pct);
+  }
   if (pct != dutyPct[side]) {
     dutyPct[side] = pct;
     drawDuty(side);
   }
   lastCmdMs = millis();
-  Serial.printf("Pump %c -> %d%%\n", side == 0 ? 'L' : 'R', pct);
+  Serial.printf("Pump %c -> %d%%%s\n", side == 0 ? 'L' : 'R', pct,
+                kick ? " (kick-start)" : "");
 }
 
 void stopAll() {
@@ -142,27 +178,39 @@ button{font-size:1.05em;padding:12px 14px;margin:3px;border:0;border-radius:10px
 .L h2,#vL{color:#0ff}.R h2,#vR{color:#f90}
 .stop{background:#a00;color:#fff;font-size:1.3em;width:100%;padding:16px;margin-top:8px}
 .val{font-size:2em;font-weight:700;margin:6px}
+input[type=range]{width:95%;height:34px;margin:4px 0}
+.lim{color:#888;display:block;margin-top:2px}
 small{color:#888}
 </style></head><body>
 <h1>Saline Pump &mdash; Stage 5 dry test</h1>
-<div class="pump L"><h2>Pump L</h2><div class=val id=vL>OFF</div><div>
-<button onclick="set('L',0)">Off</button><button onclick="set('L',25)">25%</button>
-<button onclick="set('L',50)">50%</button><button onclick="set('L',75)">75%</button>
-<button onclick="set('L',100)">100%</button><button onclick="sweep('L')">Sweep</button>
-</div></div>
-<div class="pump R"><h2>Pump R</h2><div class=val id=vR>OFF</div><div>
-<button onclick="set('R',0)">Off</button><button onclick="set('R',25)">25%</button>
-<button onclick="set('R',50)">50%</button><button onclick="set('R',75)">75%</button>
-<button onclick="set('R',100)">100%</button><button onclick="sweep('R')">Sweep</button>
-</div></div>
+<div class="pump L"><h2>Pump L</h2><div class=val id=vL>OFF</div>
+<input type=range min=0 max=100 step=1 value=0 id=sL oninput="slide('L')">
+<div><button onclick="set('L',0)">Off</button><button onclick="set('L',100)">100%</button>
+<button onclick="sweep('L')">Sweep</button><button onclick="setMin('L')">Set stall limit</button></div>
+<small class=lim id=mL>stall limit: none</small></div>
+<div class="pump R"><h2>Pump R</h2><div class=val id=vR>OFF</div>
+<input type=range min=0 max=100 step=1 value=0 id=sR oninput="slide('R')">
+<div><button onclick="set('R',0)">Off</button><button onclick="set('R',100)">100%</button>
+<button onclick="sweep('R')">Sweep</button><button onclick="setMin('R')">Set stall limit</button></div>
+<small class=lim id=mR>stall limit: none</small></div>
 <button class=stop onclick="fetch('/stop')">STOP ALL</button>
 <p><small>Dry only, one pump at a time. Manual duty auto-stops after 30s.
-Pull the e-stop mid-run: pump dies, this page and the screens stay up.</small></p>
+Pull the e-stop mid-run: pump dies, this page and the screens stay up.<br>
+Stall hunt: start high, drag the slider down until the pump stalls, nudge back
+up one step to where it just holds, tap Set stall limit. The board then never
+runs that pump below the limit. To clear a limit: slider to 0, tap Set stall limit.</small></p>
 <script>
+const T={};
 function set(s,p){fetch('/set?side='+s+'&pct='+p)}
 function sweep(s){fetch('/sweep?side='+s)}
+function slide(s){clearTimeout(T[s]);const v=document.getElementById('s'+s).value;
+T[s]=setTimeout(()=>set(s,v),120)}
+function setMin(s){const v=document.getElementById('s'+s).value;
+fetch('/min?side='+s+'&pct='+v)}
 setInterval(async()=>{try{const j=await(await fetch('/status')).json();
 vL.textContent=j.L?j.L+'%':'OFF';vR.textContent=j.R?j.R+'%':'OFF';
+mL.textContent='stall limit: '+(j.minL?j.minL+'%':'none');
+mR.textContent='stall limit: '+(j.minR?j.minR+'%':'none');
 }catch(e){}},1000);
 </script></body></html>)HTML";
 
@@ -184,10 +232,20 @@ void handleSweep() {
   server.send(200, "text/plain", "ok");
 }
 
+void handleMin() {
+  int side = (server.arg("side") == "R") ? 1 : 0;
+  int pct = constrain(server.arg("pct").toInt(), 0, 100);
+  minPct[side] = pct;
+  prefs.putInt(side == 0 ? "minL" : "minR", pct);
+  Serial.printf("Pump %c stall limit -> %d%%\n", side == 0 ? 'L' : 'R', pct);
+  server.send(200, "text/plain", "ok");
+}
+
 void handleStatus() {
-  char buf[48];
-  snprintf(buf, sizeof buf, "{\"L\":%d,\"R\":%d,\"sweep\":%d}", dutyPct[0],
-           dutyPct[1], sweepSide);
+  char buf[80];
+  snprintf(buf, sizeof buf,
+           "{\"L\":%d,\"R\":%d,\"minL\":%d,\"minR\":%d,\"sweep\":%d}",
+           dutyPct[0], dutyPct[1], minPct[0], minPct[1], sweepSide);
   server.send(200, "application/json", buf);
 }
 
@@ -225,6 +283,12 @@ void setup() {
 #endif
   pumpWrite(0, 0);
   pumpWrite(1, 0);
+
+  // Stall limits from NVS (set from the test panel, 0 = none).
+  prefs.begin("pump", false);
+  minPct[0] = prefs.getInt("minL", 0);
+  minPct[1] = prefs.getInt("minR", 0);
+  Serial.printf("Stall limits: L=%d%% R=%d%%\n", minPct[0], minPct[1]);
 
   // Claim the SPI bus with our pins (no MISO — displays are write-only,
   // and GPIO19 is busy being DC). The library's own begin() is then a no-op.
@@ -275,6 +339,7 @@ void setup() {
   server.on("/", []() { server.send_P(200, "text/html", PAGE); });
   server.on("/set", handleSet);
   server.on("/sweep", handleSweep);
+  server.on("/min", handleMin);
   server.on("/stop", []() {
     stopAll();
     server.send(200, "text/plain", "stopped");
@@ -289,6 +354,14 @@ void setup() {
 
 void loop() {
   unsigned long now = millis();
+
+  // Kick-start settle: drop from the 100% burst to the requested duty.
+  for (int s = 0; s < 2; s++) {
+    if (kickUntil[s] && now >= kickUntil[s]) {
+      kickUntil[s] = 0;
+      pumpWrite(s, kickTarget[s]);
+    }
+  }
 
   // Non-blocking heartbeat: short blink every second (LED + a dot on each
   // screen), serial ping every 5s.
