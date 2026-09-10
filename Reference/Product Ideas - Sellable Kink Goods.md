@@ -35,6 +35,7 @@ Rob's idea, 2026-08-22. Metal lightsaber hilt with a base-lit RGB LED as the han
 - **Tail material**: the 2mm clear PVC strip already being sourced (eBay single strip ~£17.50 for 200mm x 2.5m).
 - **Sellable angle**: nobody sells this. Impact-toy crowd meets saber crowd; the 3D-printed blade-socket adapter is the proprietary bit, same print+electronics moat as the rest of the line. Sound-reactive hilts add scene theatre for free (swing hum, clash flash on impact).
 - **Watch-outs**: metal hilt is heavier than a normal dragon tail handle (fine, whips like a weighted handle, but check swing fatigue); make sure the adapter grips the PVC hard enough that the tail can't launch mid-swing.
+- **Rolling technique (2026-09-10)**: tail material is soft plasticised PVC fire-curtain sheet, goes pliable around 60-80°C (hot water dunk, not a heat gun, which scorches thin sheet and fire-curtain's flame-retardant additives fume). Cut the taper first, roll from the wide edge under tension while warm, bind snug with cord/self-amalgamating tape to cool. Vinyl/PVC cement between layers does the permanent hold, heat-setting alone relaxes over time. If the curtain is the reinforced type (polyester scrim inside, visible as threads on a cut edge), it won't heat-set well and tension + glue becomes the whole game.
 
 ## Wildcard: wipe-clean pro kit
 
