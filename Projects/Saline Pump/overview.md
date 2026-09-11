@@ -35,4 +35,6 @@ Subcutaneous saline infusion. Not IV, which lowers some risks, but still real. N
 
 ## Status
 
-Design phase, 2026-08-14. Working on electronics + circuit next. See [[hardware]].
+- 2026-08-14: design phase, electronics + circuit.
+- 2026-08-20: PCB v1 ordered, pinout locked (see [[hardware]]).
+- 2026-09-11: **both pumps running on the assembled board** (the FET deaths were solder-joint intermittents, fixed by rework). Enclosure printing. Firmware Stage 6 written: gauge UI on the GC9A01s (port of `gauge-mockup.html`) + dosing model, in `firmware/gauges/gauges.ino`. Next: flow calibration (ML_PER_MIN_AT_100 timed-jug test), then encoders (Stage 7), then HX711 load cells replace the estimated reservoir level.
