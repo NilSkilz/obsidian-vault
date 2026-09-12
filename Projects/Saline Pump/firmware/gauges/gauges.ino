@@ -179,22 +179,28 @@
 #include <soc/gpio_reg.h>  // REG_READ of the raw input registers, IRAM-safe
 #include <esp_system.h>    // esp_reset_reason(), for the boot diagnostics
 
-// ---- BENCH MODE (2026-09-12) ----------------------------------------
-// The board is out of the PCB socket and sitting bare on the desk: no
-// screens plugged in, no KY-040s, every peripheral pin floating. With
-// these at 0 the hardware is compiled OUT, not merely skipped:
+// ---- PERIPHERAL SWITCHES --------------------------------------------
+// At 0 the hardware is compiled OUT, not merely skipped:
 //   ENABLE_SCREENS 0 -> no 112KB frame buffer, no SPI, no CS pins, and
 //                       loop() stops spending ~40ms a frame on a redraw
 //                       nobody can see. Roughly 112KB more heap for WiFi.
 //   ENABLE_KNOBS   0 -> encoder pins are never even set to INPUT, so
 //                       nothing can attach an interrupt to a floating
 //                       GPIO34/35 and starve the loop.
-// What is left is exactly the bit we are working on: WiFi, the phone UI,
-// and the two pump gates (which still come up OFF and still honour every
-// cap, the stall floor, the low-reservoir stop and the E-stop).
-// PUT THE BOARD BACK IN THE SOCKET -> set both to 1 and reflash.
-#define ENABLE_SCREENS 0
+// 2026-09-12, Stage 7e: board back in the socket, screens and KY-040s
+// plugged in, running on USB only (no 12V, so the pumps cannot turn).
+// Screens ON, knobs still OFF **deliberately**: bring one subsystem up at
+// a time so that if the boot breaks we know exactly what broke it. The
+// KY-040s can stay physically plugged in with this build, because nothing
+// here ever touches an encoder pin. Knobs go to 1 once the glass is proven.
+#define ENABLE_SCREENS 1
 #define ENABLE_KNOBS 0
+
+// Bring-up aid: at boot each screen names itself for a moment before the
+// normal face appears, so "are both screens alive, and are CS_L/CS_R the
+// right way round?" is answered by looking at the glass, not by guessing.
+// Set to 0 once the rig is trusted.
+#define SCREEN_SPLASH 1
 
 // ---- pins (PCB v1, locked) ----
 const int PUMP_L_GATE = 14;
@@ -682,8 +688,32 @@ void drawFace(int s) {
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
 }
 
-#else  // ENABLE_SCREENS == 0: bench mode, the glass is compiled out
+// Boot identification splash. Each screen says which side it is, which CS
+// pin drove it, and that it got a frame at all. Three faults it catches on
+// sight: a dead/unpowered panel (stays black), CS_L and CS_R swapped at the
+// header (LEFT appears on the right-hand glass), and both CS lines shorted
+// or tied (both panels show the same word, the second one to be drawn).
+#if SCREEN_SPLASH
+void bootSplash(int s) {
+  if (!screensOk) return;
+  const int cx = 120, cy = 120;
+  canvas.fillScreen(COL_SLATE);
+  arcRing(cx, cy, 111, 3, 0, 6.2831853f, COL_RING);
+  drawCentred(s == 0 ? "LEFT" : "RIGHT", cx, cy - 22, &FreeSansBold24pt7b,
+              s == 0 ? COL_L_BADGE : COL_R_BADGE);
+  drawCentred("screen ok", cx, cy + 26, &FreeSansBold9pt7b, COL_RUN);
+  drawCentred(s == 0 ? "CS GPIO5" : "CS GPIO4", cx, cy + 50, &FreeSans9pt7b,
+              COL_DIM);
+  Adafruit_GC9A01A &tft = (s == 0) ? tftL : tftR;
+  tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
+}
+#else
+void bootSplash(int s) { (void)s; }
+#endif
+
+#else  // ENABLE_SCREENS == 0: the glass is compiled out
 void drawFace(int s) { (void)s; }
+void bootSplash(int s) { (void)s; }
 #endif
 
 // ---------------------------------------------------------------- web UI
@@ -691,6 +721,7 @@ void drawFace(int s) { (void)s; }
 // 60..100% duty: bottom of travel = 60%, everything on it is usable range.
 
 const char PAGE[] PROGMEM = R"HTML(<!doctype html><html><head>
+<meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name=theme-color content="#0e1417">
 <link rel=icon href="data:,">
@@ -1035,10 +1066,15 @@ function apply(j){
  $('knobcard').style.display=j.knobs?'':'none';
  const bm=$('bench'),off=[];
  if(!j.knobs)off.push('knobs');
- if(!j.screens)off.push('screens');
- bm.style.display=off.length?'flex':'none';
- bm.textContent='Bench mode: '+off.join(' and ')+' compiled out of this build.'
-  +' Both pumps, the firmware caps and the E-stop are all still live.';
+ if(!j.scomp)off.push('screens');
+ let t='';
+ if(off.length)t='Not in this build: '+off.join(' and ')
+  +' compiled out. Both pumps, the firmware caps and the E-stop are live.';
+ if(j.scomp&&!j.screens)t=(t?t+' ':'')
+  +'The round screens are compiled in but their frame buffer would not'
+  +' allocate, so the glass is dark. Everything else is unaffected.';
+ bm.style.display=t?'flex':'none';
+ bm.textContent=t;
  $('cnow').innerHTML='using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
  $('lvls').innerHTML='reservoirs: L <b>'+Math.round(j.L.lvl*100)
   +'%</b> &middot; R <b>'+Math.round(j.R.lvl*100)+'%</b>';
@@ -1096,10 +1132,11 @@ long calLeft(int s) {
 void sendStatus(const char *msg = nullptr, int code = 200) {
   char buf[1100];
   int n = snprintf(buf, sizeof buf,
-                   "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,\"screens\":%d,"
-                   "\"msg\":\"%s\",",
+                   "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,"
+                   "\"screens\":%d,\"scomp\":%d,\"msg\":\"%s\",",
                    mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
-                   screensOk ? 1 : 0, msg ? msg : "");
+                   screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0,
+                   msg ? msg : "");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
@@ -1257,8 +1294,8 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7d   built %s %s\n", __DATE__, __TIME__);
-  Serial.printf("BENCH MODE: screens %s, knobs %s\n",
+  Serial.printf("Saline Pump  STAGE 7e   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("PERIPHERALS: screens %s, knobs %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
                 ENABLE_KNOBS ? "IN" : "compiled out");
   Serial.println("If you cannot see this line, the board is not running");
@@ -1322,19 +1359,37 @@ void setup() {
   Serial.println("[3] knobs");
   encBegin();
 
+  // Broken into lettered sub-steps on purpose: "it stopped at [4]" was too
+  // coarse once two panels, a shared bus and a shared RST are all in play.
+  // Whichever letter is the last line on the monitor IS the fault.
   Serial.println("[4] SPI + screens");
 #if ENABLE_SCREENS
   if (screensOk) {
+    Serial.println("    [4a] SPI.begin (SCK 18, MOSI 23, write-only)");
     SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
+    Serial.println("    [4b] tftL.begin (CS 5, RST 15 resets BOTH panels)");
     tftL.begin(27000000);
+    Serial.println("    [4c] tftR.begin (CS 4, no RST of its own)");
     tftR.begin(27000000);
+    Serial.println("    [4d] splash L");
+    bootSplash(0);
+    Serial.println("    [4e] splash R");
+    bootSplash(1);
+#if SCREEN_SPLASH
+    delay(1500);  // long enough to read both panels, short enough to ignore
+#endif
+    Serial.println("    [4f] first face L");
     drawFace(0);
+    Serial.println("    [4g] first face R");
     drawFace(1);
+    Serial.println("    screens up. If a panel is still black here, it is");
+    Serial.println("    power or wiring, not this firmware: check 3V3, GND,");
+    Serial.println("    BLK to 3V3, and that its CS reaches GPIO5 / GPIO4.");
   } else {
     Serial.println("    skipped, no frame buffer");
   }
 #else
-  Serial.println("    skipped, screens compiled out (bench mode)");
+  Serial.println("    skipped, screens compiled out");
 #endif
 
   // WiFi. The old one-shot 15s window then AP-forever stranded the board
@@ -1371,7 +1426,12 @@ void setup() {
   ArduinoOTA.begin();
 
   Serial.println("[7] HTTP");
-  server.on("/", []() { server.send_P(200, "text/html", PAGE); });
+  // charset spelled out: the page uses real UTF-8 middle dots in its status
+  // line, and without this a browser falls back to its locale default and
+  // renders them as mojibake.
+  server.on("/", []() {
+    server.send_P(200, "text/html; charset=utf-8", PAGE);
+  });
   server.on("/set", handleSet);
   server.on("/run", handleRun);
   server.on("/prime", handlePrime);
@@ -1391,6 +1451,27 @@ void setup() {
 }
 
 // ---------------------------------------------------------------- loop
+
+#if ENABLE_SCREENS
+// Cheap signature of everything drawFace() actually puts on the glass, so an
+// idle panel is only pushed when it would look different. Each push is 115KB
+// over SPI and ~34ms of blocked loop(), which is far too much to spend on a
+// frame identical to the one already on the panel.
+uint32_t faceSig(int s) {
+  Side &S = sides[s];
+  uint32_t h = (uint32_t)S.running | ((uint32_t)S.priming << 1)
+             | ((uint32_t)S.done << 2) | ((uint32_t)S.lowStop << 3)
+             | ((uint32_t)S.calibrating << 4);
+  h = h * 31u + (uint32_t)((S.running || S.priming || S.calibrating)
+                           ? S.actualDuty : dutyFor(s));
+  h = h * 31u + (uint32_t)S.delivered;       // 1ml
+  h = h * 31u + (uint32_t)S.target;
+  h = h * 31u + (uint32_t)S.elapsedS;        // 1s
+  h = h * 31u + (uint32_t)(S.remain / 4.0f); // 4ml of level is about 1px
+  h = h * 31u + (uint32_t)(calLeft(s) / 1000);
+  return h;
+}
+#endif
 
 void loop() {
   unsigned long now = millis();
@@ -1449,14 +1530,39 @@ void loop() {
   }
 
 #if ENABLE_SCREENS
-  // redraw: one face per tick, alternating, so the loop never stalls long
-  static unsigned long lastDraw = 0;
+  // Redraw cadence, and why it is not a flat timer any more.
+  // A face costs a 240x240 canvas render plus a 115KB push, and at 27MHz
+  // that push alone blocks loop() for ~34ms. The old flat 40ms tick meant
+  // the board was drawing essentially all the time, leaving almost nothing
+  // for the web server: exactly the stickiness Stage 7d just took out of
+  // the phone page, and 7d was measured with the glass compiled OUT.
+  // So the glass now earns its loop time:
+  //   something moving -> 60ms alternating, water animating;
+  //   everything idle  -> push only when the face would actually look
+  //                       different, plus a 1s safety refresh. The water
+  //                       holds still when nothing is pumping, which is
+  //                       also a free at-a-glance "is it running?".
+  static unsigned long lastDraw = 0, lastForced[2] = {0, 0};
+  static uint32_t lastSig[2] = {0, 0};
   static int drawSide = 0;
-  if (now - lastDraw >= 40) {
+  bool busy = false;
+  for (int s = 0; s < 2; s++)
+    busy |= sides[s].running || sides[s].priming || sides[s].calibrating;
+  if (now - lastDraw >= (busy ? 60UL : 120UL)) {
     lastDraw = now;
-    wavePhase += 0.06f;
-    drawFace(drawSide);
+    int s = drawSide;
     drawSide = 1 - drawSide;
+    if (busy) {
+      wavePhase += 0.09f;  // bigger step, slower tick, same apparent speed
+      drawFace(s);
+    } else {
+      uint32_t sig = faceSig(s);
+      if (sig != lastSig[s] || now - lastForced[s] > 1000) {
+        lastSig[s] = sig;
+        lastForced[s] = now;
+        drawFace(s);
+      }
+    }
   }
 #endif
 
