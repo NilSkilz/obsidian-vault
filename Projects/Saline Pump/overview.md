@@ -42,5 +42,5 @@ Subcutaneous saline infusion. Not IV, which lowers some risks, but still real. N
   - **Encoders live.** Turn = 1% speed per detent, applied instantly if the pump is running; the knob and the phone slider share one variable so they can't disagree. Short press = STOP that side from any state; hold 1.2s = start (long-hold so a knock can't start a pump). Quadrature decoded in an ISR reading the GPIO input registers directly, because the 40ms-per-frame draw loop would drop detents if polled.
   - **Flow calibration is a button, not a reflash.** Calibrate runs a side at 100% for exactly 60s with a countdown on the glass, you type the ml caught, it stores ml/min-at-100% in NVS. Survives reboot and OTA. Until that's done every volume on the rig is a guess (default 100 ml/min).
   - Phone page verified in a real headless browser: no JS errors, gauges and CAL state render correctly.
-  - **OTA is off for now at Rob's call** (a previous OTA push left the board not booting); Rob flashes over USB and pulls the sketch from the vault.
+  - **Jarvis is not pushing OTA for now, at Rob's call** (a previous OTA push left the board not booting). ArduinoOTA is still compiled in, but Rob flashes over USB from the vault sketch until it's trusted again.
 - Next: run the wet calibration, then HX711 load cells to replace the estimated reservoir level with a real weight.
