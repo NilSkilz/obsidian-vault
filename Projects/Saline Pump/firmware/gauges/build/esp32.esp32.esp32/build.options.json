@@ -1,9 +1,0 @@
-{
-  "additionalFiles": "",
-  "compiler.optimization_flags": "-Os",
-  "customBuildProperties": "",
-  "fqbn": "esp32:esp32:esp32",
-  "hardwareFolders": "/home/jarvis/.arduino15/packages/esp32/hardware/esp32/3.3.11,/home/jarvis/.arduino15/packages/esp32/hardware/esp32/3.3.11",
-  "otherLibrariesFolders": "/home/jarvis/Arduino/libraries",
-  "sketchLocation": "/data/memory/Projects/Saline Pump/firmware/gauges"
-}

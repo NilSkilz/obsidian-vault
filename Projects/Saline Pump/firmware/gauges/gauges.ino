@@ -1,4 +1,25 @@
-// Saline Pump v1 — Stage 6b: gauge UI on the glass AND in the browser.
+// Saline Pump v1 — Stage 7: physical knobs + wet flow calibration.
+//
+// New in Stage 7 (2026-09-12):
+//   - The two KY-040 rotary encoders are LIVE. Turning a knob nudges that
+//     side's speed by 1% per detent (clamped to the same 60..100 range as
+//     the slider), applied instantly if the pump is already running. The
+//     knob and the phone slider edit the SAME variable, so they can never
+//     disagree: /status feeds the slider back every 700ms.
+//   - Encoder push button: a SHORT press STOPS that side (always, from any
+//     state — it is the panic button and it is never ambiguous). A DELIBERATE
+//     HOLD of 1.2s STARTS that side. Long-hold-to-start so a brush against
+//     the knob can never set a pump running.
+//   - Quadrature is decoded in an interrupt, not polled. The draw loop takes
+//     ~40ms a frame pushing a 240x240 buffer over SPI, so polling would drop
+//     detents on any brisk turn.
+//   - FLOW CALIBRATION IS NOW A BUTTON, not a reflash. Hit Calibrate on a
+//     side: it runs that pump at 100% for exactly 60s into a measuring jug,
+//     counting down on the glass. Type the ml you caught, hit Save, and the
+//     ml/min-at-100% constant is stored in NVS and used from then on. It
+//     survives reboots and OTA. Every volume on the rig scales off it.
+//
+// Carried over from Stage 6b:
 //
 // The GC9A01 faces are unchanged in spirit from Stage 6 (liquid fill with a
 // moving two-sine surface, dose ring, big number, state pill). New in 6b:
@@ -18,11 +39,13 @@
 // Reset run, low-reservoir auto-stop, 90 min timeout: all as Stage 6.
 //
 // ── CALIBRATION, DO THIS BEFORE ANY REAL RUN ─────────────────────────────
-// ML_PER_MIN_AT_100 below is the pump's flow at 100% duty and is currently
-// the datasheet-ish guess (~100 ml/min for a 500-series head at 12V). Wet
-// test: prime the line, run one pump at 100% into a measuring jug for
-// exactly 60s, type the ml you got into ML_PER_MIN_AT_100, reflash. Every
-// dose and level number scales off this one constant.
+// mlPerMin100 is the pump's flow at 100% duty. It defaults to a guess
+// (~100 ml/min for a 500-series head at 12V) and is WRONG until measured.
+// Wet test, now entirely on the phone page: prime the line, put the outlet
+// in a measuring jug, hit Calibrate, wait out the 60s countdown, type the
+// ml you caught, hit Save. Stored in NVS, survives reboot. Do it per side
+// if the two heads differ; the rig keeps one shared figure, so use the
+// average of the two or calibrate the side you care most about.
 // ─────────────────────────────────────────────────────────────────────────
 //
 // Safety carried over:
@@ -38,8 +61,9 @@
 // Board: ESP32 DevKitC 30-pin, PCB v1 locked pin map (2026-08-20):
 //   GPIO14 = Pump L gate   GPIO13 = Pump R gate   GPIO2 = onboard LED
 //   Displays (shared SPI): MOSI=23 SCK=18 DC=19 RST=15, CS L=5 / R=4
-// Encoders (27/26/25 + 34/35/32) are wired on the PCB but not read yet;
-// they land in Stage 7 as speed knobs + push-to-stop.
+// Encoders: Enc L CLK/DT/SW = 27/26/25, Enc R CLK/DT/SW = 34/35/32.
+// 34/35 are input-only (no internal pull-up) — the KY-040's own 10k
+// pull-ups cover CLK/DT, which is exactly why SW sits on 32.
 
 #include <WiFi.h>
 #include <WebServer.h>
@@ -51,6 +75,7 @@
 #include <Fonts/FreeSansBold24pt7b.h>
 #include <Fonts/FreeSansBold9pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
+#include <soc/gpio_reg.h>  // REG_READ of the raw input registers, IRAM-safe
 
 // ---- pins (PCB v1, locked) ----
 const int PUMP_L_GATE = 14;
@@ -62,17 +87,25 @@ const int TFT_DC = 19;
 const int TFT_RST = 15;
 const int TFT_CS_L = 5;
 const int TFT_CS_R = 4;
+// KY-040 encoders. 34/35 are input-only, so Enc R's switch must be on 32.
+const int ENC_L_A = 27, ENC_L_B = 26, ENC_L_SW = 25;
+const int ENC_R_A = 34, ENC_R_B = 35, ENC_R_SW = 32;
 
 // ---- flow model ----
-const float ML_PER_MIN_AT_100 = 100.0;  // CALIBRATE WET (see header)
+float mlPerMin100 = 100.0;      // CALIBRATE WET (see header). NVS key "mlmin"
+const float CAL_MIN = 5.0;      // sanity bounds on a typed calibration
+const float CAL_MAX = 400.0;
 const float MAX_TARGET = 600.0;         // ml per run, firmware cap
 const float RES_CAPACITY = 1000.0;      // ml, one saline bag/bottle per side
 const float RES_LOW_STOP = 30.0;        // stop before the line sucks air
 const unsigned long MAX_RUN_MS = 90UL * 60UL * 1000UL;
 const unsigned long PRIME_MAX_MS = 10000;
+const unsigned long CAL_MS = 60000;  // the calibration run is exactly 60s
 
 // ---- speed range (pumps stall ~55%, so the UI floor is 60) ----
 const int UI_MIN_DUTY = 60;
+const int KNOB_STEP = 1;                    // % duty per encoder detent
+const unsigned long HOLD_START_MS = 1200;   // press-and-hold to start a side
 
 // ---- PWM / kick (from Stage 5 bench findings) ----
 const int PWM_FREQ = 1000;
@@ -126,6 +159,8 @@ struct Side {
   int kickTarget = 0;
   unsigned long primeUntil = 0;
   unsigned long runStartMs = 0;
+  bool calibrating = false;      // 60s wide-open run into a jug
+  unsigned long calUntil = 0;
 };
 Side sides[2];  // 0 = L, 1 = R
 
@@ -147,9 +182,19 @@ int dutyFor(int s) {
   return duty;
 }
 
+// Push the current requested duty at a side that is already turning. Used
+// by both the phone slider and the encoder knob, so they can't diverge.
+void applyDuty(int s) {
+  Side &S = sides[s];
+  if (!S.running) return;
+  int duty = dutyFor(s);
+  if (S.kickUntil) S.kickTarget = duty;  // still kicking, land on the new one
+  else pumpWrite(s, duty);
+}
+
 void startRun(int s) {
   Side &S = sides[s];
-  if (S.priming) return;
+  if (S.priming || S.calibrating) return;  // one job at a time per side
   if (S.done || S.delivered >= S.target) {  // starting fresh: new run
     S.delivered = 0;
     S.elapsedS = 0;
@@ -178,14 +223,107 @@ void stopRun(int s) {
   Side &S = sides[s];
   S.running = false;
   S.priming = false;
+  S.calibrating = false;
   S.kickUntil = 0;
   S.primeUntil = 0;
+  S.calUntil = 0;
   pumpWrite(s, 0);
 }
 
 void stopAll() {
   stopRun(0);
   stopRun(1);
+}
+
+// ---------------------------------------------------------------- encoders
+// Table-driven quadrature, decoded in an interrupt. The draw loop spends
+// ~40ms a frame shovelling a 240x240 buffer down SPI, so anything polled at
+// loop rate drops detents the moment the knob is turned with any pace.
+//
+// Pin reads go straight at the GPIO input registers rather than through
+// digitalRead(): register reads are safe to do from IRAM, a call into a
+// flash-resident core function is not.
+
+const int8_t QTAB[16] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+
+struct Enc {
+  uint8_t pinA, pinB, pinSW;
+  volatile uint8_t prev;      // last AB state, 2 bits
+  volatile int8_t quarters;   // quarter-steps banked toward a detent
+  volatile int16_t detents;   // signed clicks waiting for loop() to spend
+  bool swDown;                // debounced switch state
+  bool holdFired;             // the 1.2s hold already started this side
+  unsigned long swSince;
+};
+Enc encs[2] = {{ENC_L_A, ENC_L_B, ENC_L_SW, 0, 0, 0, false, false, 0},
+               {ENC_R_A, ENC_R_B, ENC_R_SW, 0, 0, 0, false, false, 0}};
+
+static inline int IRAM_ATTR pinLevel(uint8_t pin) {
+  return (pin < 32) ? ((REG_READ(GPIO_IN_REG) >> pin) & 1)
+                    : ((REG_READ(GPIO_IN1_REG) >> (pin - 32)) & 1);
+}
+
+void IRAM_ATTR encISR(void *arg) {
+  Enc *e = (Enc *)arg;
+  uint8_t now = (uint8_t)((pinLevel(e->pinA) << 1) | pinLevel(e->pinB));
+  int8_t d = QTAB[(e->prev << 2) | now];
+  e->prev = now;
+  if (!d) return;  // bounce or missed edge, ignore rather than guess
+  e->quarters += d;
+  if (e->quarters >= 4) {        // KY-040 detent = one full quadrature cycle
+    e->detents++;
+    e->quarters = 0;
+  } else if (e->quarters <= -4) {
+    e->detents--;
+    e->quarters = 0;
+  }
+}
+
+void encBegin() {
+  pinMode(ENC_L_A, INPUT_PULLUP);
+  pinMode(ENC_L_B, INPUT_PULLUP);
+  pinMode(ENC_L_SW, INPUT_PULLUP);
+  pinMode(ENC_R_A, INPUT);  // 34/35 are input-only: no internal pull-up,
+  pinMode(ENC_R_B, INPUT);  // the KY-040 module's own 10k resistors do it
+  pinMode(ENC_R_SW, INPUT_PULLUP);
+  for (int i = 0; i < 2; i++) {
+    Enc &e = encs[i];
+    e.prev = (uint8_t)((digitalRead(e.pinA) << 1) | digitalRead(e.pinB));
+    attachInterruptArg(digitalPinToInterrupt(e.pinA), encISR, &e, CHANGE);
+    attachInterruptArg(digitalPinToInterrupt(e.pinB), encISR, &e, CHANGE);
+  }
+}
+
+// Spend whatever the ISR banked, and service the push switch.
+void encService(int s, unsigned long now) {
+  Enc &e = encs[s];
+  Side &S = sides[s];
+
+  noInterrupts();
+  int16_t clicks = e.detents;
+  e.detents = 0;
+  interrupts();
+  if (clicks) {
+    S.dutyReq = constrain(S.dutyReq + clicks * KNOB_STEP, UI_MIN_DUTY, 100);
+    applyDuty(s);  // no-op unless it's already turning
+  }
+
+  bool down = (digitalRead(e.pinSW) == LOW);  // KY-040 SW is active low
+  if (down != e.swDown) {
+    if (now - e.swSince < 30) return;  // contact bounce
+    e.swSince = now;
+    e.swDown = down;
+    if (down) {
+      e.holdFired = false;
+    } else if (!e.holdFired) {
+      stopRun(s);  // short press = stop, from any state, no questions
+      Serial.printf("Knob %c: stop\n", s == 0 ? 'L' : 'R');
+    }
+  } else if (down && !e.holdFired && now - e.swSince >= HOLD_START_MS) {
+    e.holdFired = true;  // deliberate hold = start, a knock never will
+    startRun(s);
+    Serial.printf("Knob %c: hold-start\n", s == 0 ? 'L' : 'R');
+  }
 }
 
 // ---------------------------------------------------------------- display
@@ -256,16 +394,15 @@ void drawFace(int s) {
               s == 0 ? COL_L_BADGE : COL_R_BADGE);
 
   // state pill
-  const char *pill = S.priming ? "PRIME"
-                   : S.running ? "RUN"
-                   : S.lowStop ? "LOW"
-                   : S.done    ? "DONE"
-                               : "STOP";
-  uint16_t pillCol = S.priming ? COL_LOW
-                   : S.running ? COL_RUN
-                   : S.lowStop ? COL_LOW
-                   : S.done    ? COL_RUN
-                               : COL_STOP;
+  const char *pill = S.calibrating ? "CAL"
+                   : S.priming     ? "PRIME"
+                   : S.running     ? "RUN"
+                   : S.lowStop     ? "LOW"
+                   : S.done        ? "DONE"
+                                   : "STOP";
+  uint16_t pillCol = (S.calibrating || S.priming || S.lowStop) ? COL_LOW
+                   : (S.running || S.done)                     ? COL_RUN
+                                                               : COL_STOP;
   int16_t x1, y1;
   uint16_t tw, th;
   canvas.setFont(&FreeSansBold9pt7b);
@@ -274,18 +411,27 @@ void drawFace(int s) {
   drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x08, 0x11, 0x0d));
 
   // big number: the duty actually on the gate (or what Start would give)
-  int shown = (S.running || S.priming) ? S.actualDuty : dutyFor(s);
+  int shown = (S.running || S.priming || S.calibrating) ? S.actualDuty
+                                                        : dutyFor(s);
   char buf[16];
   snprintf(buf, sizeof buf, "%d", shown);
   drawCentred(buf, cx, cy + 2, &FreeSansBold24pt7b, COL_INK);
   drawCentred("speed %", cx, cy + 34, &FreeSans9pt7b, COL_DIM);
 
-  // dose + time (bottom)
-  snprintf(buf, sizeof buf, "%.0f / %.0f ml", S.delivered, S.target);
-  drawCentred(buf, cx, cy + 62, &FreeSansBold9pt7b, COL_INK);
-  int m = (int)(S.elapsedS / 60), sec = (int)S.elapsedS % 60;
-  snprintf(buf, sizeof buf, "%02d:%02d", m, sec);
-  drawCentred(buf, cx, cy + 84, &FreeSans9pt7b, COL_DIM);
+  // bottom line: the dose normally, the calibration countdown during a cal
+  if (S.calibrating) {
+    long left = (long)(S.calUntil - millis());
+    if (left < 0) left = 0;
+    snprintf(buf, sizeof buf, "CATCH IT: %lds", (left + 999) / 1000);
+    drawCentred(buf, cx, cy + 62, &FreeSansBold9pt7b, COL_LOW);
+    drawCentred("into the jug", cx, cy + 84, &FreeSans9pt7b, COL_DIM);
+  } else {
+    snprintf(buf, sizeof buf, "%.0f / %.0f ml", S.delivered, S.target);
+    drawCentred(buf, cx, cy + 62, &FreeSansBold9pt7b, COL_INK);
+    int m = (int)(S.elapsedS / 60), sec = (int)S.elapsedS % 60;
+    snprintf(buf, sizeof buf, "%02d:%02d", m, sec);
+    drawCentred(buf, cx, cy + 84, &FreeSans9pt7b, COL_DIM);
+  }
 
   Adafruit_GC9A01A &tft = (s == 0) ? tftL : tftR;
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
@@ -327,11 +473,32 @@ button.warn{background:#5c4a1d;border-color:#866f2a}
  border:0;color:#fff;font-size:19px;font-weight:700;padding:16px;border-radius:14px;
  box-shadow:0 6px 18px rgba(0,0,0,.5)}
 small{display:block;color:#667;margin-top:14px;line-height:1.5}
+.cal{background:var(--panel);border:1px solid #202a35;border-radius:16px;
+ padding:14px;margin:18px auto 0;max-width:602px}
+.cal h2{font-size:13px;font-weight:650;color:var(--muted);margin:0 0 10px;
+ letter-spacing:.04em}
+.calrow{display:flex;gap:8px;justify-content:center;align-items:center;
+ flex-wrap:wrap;margin-bottom:8px;font-size:13px}
+.calnow{color:var(--muted);font-size:12px;margin-top:6px}
+.calnow b{color:var(--ink);font-variant-numeric:tabular-nums}
 </style></head><body>
 <h1>SALINE PUMP</h1>
 <div class=gauges id=g></div>
+<div class=cal><h2>FLOW CALIBRATION</h2>
+<div class=calrow>
+<button class=warn onclick="fetch('/cal?side=L')">Run L 60s</button>
+<button class=warn onclick="fetch('/cal?side=R')">Run R 60s</button>
+</div>
+<div class=calrow>
+<label>Caught</label>
+<input type=number id=cm min=5 max=400 step=.1 placeholder=ml>
+<span>ml in 60s</span>
+<button class=go onclick=saveCal()>Save</button>
+</div>
+<div class=calnow id=cnow>using <b>?</b> ml/min at 100%</div></div>
 <small>Slider bottom = 60% power (pumps stall below ~55%). Volumes are
-estimates until the flow calibration is done. Prime auto-stops after 10s.
+estimates until the flow calibration above is done. Prime auto-stops after
+10s. Knobs: turn = speed, short press = stop that side, hold 1.2s = start.
 E-stop kills pumps regardless of anything on this page.</small>
 <button class=stopall onclick="fetch('/stop')">STOP ALL</button>
 <script>
@@ -369,7 +536,8 @@ function fmtT(s){const m=Math.floor(s/60),ss=Math.floor(s%60);
  return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
 function gauge(side){
  const ctx=document.getElementById('c'+side).getContext('2d');
- const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,del:0,tgt:120,el:0};
+ const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,cal:0,calleft:0,
+  del:0,tgt:120,el:0};
  let t=0;
  function draw(){
   const W=240,H=240,cx=120,cy=120,R=120;
@@ -406,8 +574,9 @@ function gauge(side){
   ctx.font='700 14px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillStyle=side==='L'?C.badgeL:C.badgeR;
   ctx.fillText(side==='L'?'LEFT':'RIGHT',cx,40);
-  const pill=st.prime?'PRIME':st.run?'RUN':st.low?'LOW':st.done?'DONE':'STOP';
-  const pcol=(st.prime||st.low)?C.warn:(st.run||st.done)?C.run:C.stop;
+  const pill=st.cal?'CAL':st.prime?'PRIME':st.run?'RUN':st.low?'LOW'
+   :st.done?'DONE':'STOP';
+  const pcol=(st.cal||st.prime||st.low)?C.warn:(st.run||st.done)?C.run:C.stop;
   ctx.font='700 12px -apple-system,Segoe UI,Roboto,sans-serif';
   const pw=ctx.measureText(pill).width+18;
   ctx.shadowBlur=0;ctx.fillStyle=pcol;
@@ -420,13 +589,21 @@ function gauge(side){
   ctx.font='600 15px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillStyle=C.dim;ctx.fillText('speed %',cx,cy+34);
   ctx.font='700 16px -apple-system,Segoe UI,Roboto,sans-serif';
-  ctx.fillStyle=C.ink;
-  ctx.fillText(Math.round(st.del)+' / '+Math.round(st.tgt)+' ml',cx,cy+64);
-  ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
-  ctx.fillStyle=C.dim;ctx.fillText(fmtT(st.el),cx,cy+84);
+  if(st.cal){ctx.fillStyle=C.warn;
+   ctx.fillText('CATCH IT: '+st.calleft+'s',cx,cy+64);
+   ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+   ctx.fillStyle=C.dim;ctx.fillText('into the jug',cx,cy+84)}
+  else{ctx.fillStyle=C.ink;
+   ctx.fillText(Math.round(st.del)+' / '+Math.round(st.tgt)+' ml',cx,cy+64);
+   ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+   ctx.fillStyle=C.dim;ctx.fillText(fmtT(st.el),cx,cy+84)}
   ctx.shadowBlur=0}
  return {st,tick:dt=>{t+=dt;draw()}}}
 const G={L:gauge('L'),R:gauge('R')};
+async function saveCal(){const v=document.getElementById('cm').value;
+ const r=await fetch('/calsave?ml='+v);
+ document.getElementById('cnow').style.color=r.ok?'#38d39f':'#ff5a5a';
+ if(r.ok)document.getElementById('cm').value='';poll()}
 function send(s){fetch('/set?side='+s
  +'&duty='+document.getElementById('s'+s).value
  +'&target='+document.getElementById('t'+s).value)}
@@ -434,11 +611,14 @@ async function poll(){try{
  const j=await(await fetch('/status')).json();
  for(const s of SIDES){const d=j[s],g=G[s].st;
   g.lvl=d.lvl;g.run=d.run;g.prime=d.prime;g.done=d.done;g.low=d.low;
+  g.cal=d.cal;g.calleft=d.calleft;
   g.del=d.del;g.tgt=d.tgt;g.el=d.el;
-  g.duty=(d.run||d.prime)?d.duty:d.req;
+  g.duty=(d.run||d.prime||d.cal)?d.duty:d.req;
   if(!editing['s'+s]){const sl=document.getElementById('s'+s);
    sl.value=d.req;document.getElementById('o'+s).textContent=d.req+'%'}
   if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt}
+ document.getElementById('cnow').innerHTML=
+  'using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
 }catch(e){}}
 setInterval(poll,700);poll();
 let last=performance.now();
@@ -449,6 +629,13 @@ let last=performance.now();
 
 int sideArg() { return (server.arg("side") == "R") ? 1 : 0; }
 
+// Whole seconds left on a calibration run, 0 when there isn't one.
+long calLeft(int s) {
+  if (!sides[s].calibrating) return 0;
+  long ms = (long)(sides[s].calUntil - millis());
+  return ms > 0 ? (ms + 999) / 1000 : 0;
+}
+
 void handleSet() {
   int s = sideArg();
   Side &S = sides[s];
@@ -456,11 +643,7 @@ void handleSet() {
     S.dutyReq = constrain(server.arg("duty").toInt(), UI_MIN_DUTY, 100);
   if (server.hasArg("target"))
     S.target = constrain(server.arg("target").toFloat(), 10.0f, MAX_TARGET);
-  if (S.running) {  // live speed change, no kick (already moving)
-    int duty = dutyFor(s);
-    if (!S.kickUntil) pumpWrite(s, duty);
-    else S.kickTarget = duty;
-  }
+  applyDuty(s);  // live speed change if it's already turning
   server.send(200, "text/plain", "ok");
 }
 
@@ -474,7 +657,7 @@ void handleRun() {
 void handlePrime() {
   int s = sideArg();
   Side &S = sides[s];
-  if (S.running) {
+  if (S.running || S.calibrating) {
     server.send(409, "text/plain", "stop the run first");
     return;
   }
@@ -506,16 +689,54 @@ void handleRefill() {
   server.send(200, "text/plain", "ok");
 }
 
+// Start the 60s wide-open run into a measuring jug. Refuses if that side
+// is doing anything else, so a cal can never be layered over a real dose.
+void handleCal() {
+  int s = sideArg();
+  Side &S = sides[s];
+  if (S.calibrating) {  // second tap = abandon it
+    stopRun(s);
+    server.send(200, "text/plain", "cancelled");
+    return;
+  }
+  if (S.running || S.priming) {
+    server.send(409, "text/plain", "stop the run first");
+    return;
+  }
+  S.calibrating = true;
+  S.lowStop = false;
+  S.calUntil = millis() + CAL_MS;
+  pumpWrite(s, 100);
+  Serial.printf("Calibration run %c: 60s at 100%%\n", s == 0 ? 'L' : 'R');
+  server.send(200, "text/plain", "ok");
+}
+
+// The measured ml caught in 60s IS the ml/min figure. Persisted to NVS so
+// it survives a reboot or an OTA push.
+void handleCalSave() {
+  float ml = server.arg("ml").toFloat();
+  if (ml < CAL_MIN || ml > CAL_MAX) {
+    server.send(400, "text/plain", "out of range");
+    return;
+  }
+  mlPerMin100 = ml;
+  prefs.putFloat("mlmin", mlPerMin100);
+  Serial.printf("Calibrated: %.1f ml/min at 100%%\n", mlPerMin100);
+  server.send(200, "text/plain", "ok");
+}
+
 void handleStatus() {
-  char buf[400];
-  int n = snprintf(buf, sizeof buf, "{");
+  char buf[600];
+  int n = snprintf(buf, sizeof buf, "{\"mlmin\":%.1f,", mlPerMin100);
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
                   "\"%c\":{\"run\":%d,\"prime\":%d,\"done\":%d,\"low\":%d,"
+                  "\"cal\":%d,\"calleft\":%ld,"
                   "\"req\":%d,\"duty\":%d,\"tgt\":%.0f,\"del\":%.1f,"
                   "\"el\":%.0f,\"lvl\":%.3f}%s",
                   s == 0 ? 'L' : 'R', S.running, S.priming, S.done, S.lowStop,
+                  S.calibrating, calLeft(s),
                   dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
                   S.remain / RES_CAPACITY, s == 0 ? "," : "}");
   }
@@ -539,7 +760,7 @@ void setup() {
 
   Serial.begin(115200);
   delay(300);
-  Serial.println("\nSaline Pump Stage 6b: gauges + speed control. Pumps start OFF.");
+  Serial.println("\nSaline Pump Stage 7: knobs + calibration. Pumps start OFF.");
   if (!canvas.getBuffer()) {
     Serial.println("FATAL: frame buffer allocation failed");
     while (true) delay(1000);
@@ -560,8 +781,13 @@ void setup() {
   prefs.begin("pump", false);
   sides[0].minPct = prefs.getInt("minL", 0);  // stall floors from Stage 5
   sides[1].minPct = prefs.getInt("minR", 0);
+  mlPerMin100 = prefs.getFloat("mlmin", 100.0f);
   Serial.printf("Stall floors: L=%d%% R=%d%% (UI floor %d%%)\n",
                 sides[0].minPct, sides[1].minPct, UI_MIN_DUTY);
+  Serial.printf("Flow: %.1f ml/min at 100%%%s\n", mlPerMin100,
+                prefs.isKey("mlmin") ? "" : "  <-- UNCALIBRATED, guess");
+
+  encBegin();
 
   SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
   tftL.begin(27000000);
@@ -610,6 +836,8 @@ void setup() {
     stopAll();
     server.send(200, "text/plain", "stopped");
   });
+  server.on("/cal", handleCal);
+  server.on("/calsave", handleCalSave);
   server.on("/status", handleStatus);
   server.begin();
   Serial.println("UI: http://salinepump.local/");
@@ -628,6 +856,17 @@ void loop() {
       pumpWrite(s, S.kickTarget);
     }
     if (S.priming && now >= S.primeUntil) stopRun(s);
+    if (S.calibrating && (long)(now - S.calUntil) >= 0) {
+      stopRun(s);
+      Serial.printf("Calibration run %c finished, measure the jug\n",
+                    s == 0 ? 'L' : 'R');
+    }
+    // Guard the bag during a cal too: 60s wide open is ~100ml of it.
+    if (S.calibrating && S.remain <= RES_LOW_STOP) {
+      stopRun(s);
+      S.lowStop = true;
+    }
+    encService(s, now);
   }
 
   // flow integration: dt against the duty the gate is REALLY holding
@@ -639,7 +878,7 @@ void loop() {
     lastInteg = now;
     for (int s = 0; s < 2; s++) {
       Side &S = sides[s];
-      float flow = ML_PER_MIN_AT_100 * S.actualDuty / 100.0f * dtMin;
+      float flow = mlPerMin100 * S.actualDuty / 100.0f * dtMin;
       if (flow > 0) S.remain = max(0.0f, S.remain - flow);
       if (S.running) {
         S.delivered += flow;
@@ -688,7 +927,7 @@ void loop() {
 
   // LED: solid while any pump runs, short heartbeat blink when idle
   bool anyRun = sides[0].running || sides[1].running || sides[0].priming ||
-                sides[1].priming;
+                sides[1].priming || sides[0].calibrating || sides[1].calibrating;
   digitalWrite(LED, anyRun ? HIGH : ((now % 1000) < 80 ? HIGH : LOW));
 
   ArduinoOTA.handle();
