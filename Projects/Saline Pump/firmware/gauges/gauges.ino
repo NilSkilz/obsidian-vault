@@ -207,8 +207,28 @@
 // a time so that if the boot breaks we know exactly what broke it. The
 // KY-040s can stay physically plugged in with this build, because nothing
 // here ever touches an encoder pin. Knobs go to 1 once the glass is proven.
+//
+// 2026-09-12, Stage 7g: THE GLASS IS PROVEN, SO THE KNOBS GO ON.
+// 7f got both faces drawing on the real board (banded frame buffer), so the
+// last subsystem comes up. ENABLE_KNOBS is 1. Encoder pins are set to INPUT
+// here, but interrupts are still armed PER SIDE and only on demand, exactly
+// as designed: a knob is dark until it is declared wired on the Settings
+// page, and that choice lives in NVS.
+//
+// One thing had to change first. The runaway-edge guard that saves us from a
+// floating GPIO34/35 lived in loop() -- and loop() starving is the SYMPTOM
+// it exists to catch. A pin chattering flat out can eat the CPU so thoroughly
+// that the guard never runs to disarm it, which is precisely the dead-looking
+// board of 7a. So the guard is now a dead-man's switch instead: encStormGuard
+// zeroes the edge counter once a second, and if the ISR ever sees that
+// counter climb past the storm threshold it means loop() is NOT running, and
+// the ISR disables its own two pins from inside the interrupt (a bare
+// register write, no flash calls). loop() comes back to life, finds the
+// over-threshold count, and does the tidy-up: detach, clear the NVS opt-in,
+// show the side as STORM on the page. Four layers now, and the deepest one
+// no longer depends on the thing it is protecting.
 #define ENABLE_SCREENS 1
-#define ENABLE_KNOBS 0
+#define ENABLE_KNOBS 1
 
 // Bring-up aid: at boot each screen names itself for a moment before the
 // normal face appears, so "are both screens alive, and are CS_L/CS_R the
@@ -489,6 +509,7 @@ struct Enc {
   volatile int8_t quarters;   // quarter-steps banked toward a detent
   volatile int16_t detents;   // signed clicks waiting for loop() to spend
   volatile uint32_t edges;    // ISR entries this storm-guard window
+  volatile bool isrKilled;    // the ISR cut its own pins (loop() was starved)
   bool attached;              // interrupts actually armed on this pair
   uint8_t state;              // ENC_* above, what the page shows
   bool swDown;                // debounced switch state
@@ -496,17 +517,39 @@ struct Enc {
   unsigned long swSince;
 };
 Enc encs[2] = {
-    {ENC_L_A, ENC_L_B, ENC_L_SW, 0, 0, 0, 0, false, ENC_OFF, false, false, 0},
-    {ENC_R_A, ENC_R_B, ENC_R_SW, 0, 0, 0, 0, false, ENC_OFF, false, false, 0}};
+    {ENC_L_A, ENC_L_B, ENC_L_SW, 0, 0, 0, 0, false, false, ENC_OFF, false,
+     false, 0},
+    {ENC_R_A, ENC_R_B, ENC_R_SW, 0, 0, 0, 0, false, false, ENC_OFF, false,
+     false, 0}};
 
 static inline int IRAM_ATTR pinLevel(uint8_t pin) {
   return (pin < 32) ? ((REG_READ(GPIO_IN_REG) >> pin) & 1)
                     : ((REG_READ(GPIO_IN1_REG) >> (pin - 32)) & 1);
 }
 
+// Cut a pin's interrupt dead, from inside an interrupt. Zeroing GPIO_PINn_REG
+// clears int_ena and int_type in one write, so the pad stops reaching the CPU
+// immediately. A raw register write, deliberately: detachInterrupt() and the
+// gpio_* driver calls live in flash and must never be reached from an ISR.
+static inline void IRAM_ATTR pinIntOff(uint8_t pin) {
+  REG_WRITE(GPIO_PIN0_REG + 4 * (uint32_t)pin, 0);
+}
+
 void IRAM_ATTR encISR(void *arg) {
   Enc *e = (Enc *)arg;
-  e->edges++;  // the storm guard in loop() reads and clears this
+  // DEAD-MAN'S SWITCH. encStormGuard() zeroes this counter once a second, so
+  // a real thumb (a brisk turn is ~240 edges/s) can never reach the ceiling.
+  // If it does, it means the guard has not run for a second or more, i.e.
+  // loop() is being starved -- which is the exact damage a floating 34/35
+  // does, and the exact reason a guard living in loop() cannot save us. So
+  // the ISR takes its own pins away and lets loop() breathe; loop() then
+  // finds the over-threshold count and does the flash-side tidy-up.
+  if (++e->edges > ENC_STORM_EDGES) {
+    pinIntOff(e->pinA);
+    pinIntOff(e->pinB);
+    e->isrKilled = true;
+    return;
+  }
   uint8_t now = (uint8_t)((pinLevel(e->pinA) << 1) | pinLevel(e->pinB));
   int8_t d = QTAB[(e->prev << 2) | now];
   e->prev = now;
@@ -577,6 +620,7 @@ bool encArm(int s) {
   e.quarters = 0;
   e.detents = 0;
   e.edges = 0;
+  e.isrKilled = false;
   attachInterruptArg(digitalPinToInterrupt(e.pinA), encISR, &e, CHANGE);
   attachInterruptArg(digitalPinToInterrupt(e.pinB), encISR, &e, CHANGE);
   e.attached = true;
@@ -625,11 +669,15 @@ void encStormGuard(unsigned long now) {
     uint32_t ed = e.edges;
     e.edges = 0;
     interrupts();
-    if (ed > ENC_STORM_EDGES) {
-      encDisarm(s, ENC_STORM);
+    if (ed > ENC_STORM_EDGES || e.isrKilled) {
+      bool byIsr = e.isrKilled;
+      encDisarm(s, ENC_STORM);  // detaches properly, flash side, safe here
+      e.isrKilled = false;
       prefs.putBool(ENC_KEY[s], false);
-      Serial.printf("Knob %c DISARMED: %lu edges in 1s. Check its wiring.\n",
-                    s == 0 ? 'L' : 'R', (unsigned long)ed);
+      Serial.printf("Knob %c DISARMED%s: %lu edges. Check its wiring.\n",
+                    s == 0 ? 'L' : 'R',
+                    byIsr ? " BY THE ISR (loop() was being starved)" : "",
+                    (unsigned long)ed);
     }
   }
 }
@@ -1412,7 +1460,7 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7f   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("Saline Pump  STAGE 7g   built %s %s\n", __DATE__, __TIME__);
   Serial.printf("PERIPHERALS: screens %s, knobs %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
                 ENABLE_KNOBS ? "IN" : "compiled out");

@@ -203,3 +203,14 @@ Rules taken from it:
 - Pick the band size **at runtime**, biggest first (240/120/80/60/48/40/30/24 rows here). The firmware then adapts to whatever heap it finds instead of being tuned to one board on one day.
 - Expose diagnostics on the network interface, not just the serial port. `/status` now carries band height, free heap and largest block, so the fault was confirmed and the fix verified over WiFi without anyone at the bench.
 - A working reference sketch is a hypothesis test, not just a relic: `bringup.ino` drove the same panels perfectly because it draws straight to the glass and never asks for a buffer. That one fact isolated the fault to the allocation, not the wiring.
+
+## A guard must not live inside the thing it guards (2026-09-12, Saline Pump)
+The Saline Pump's runaway-edge guard counted interrupt entries per second and disarmed any pin firing like a floating input. It lived in `loop()`. The failure it exists to catch is a chattering GPIO starving `loop()` so completely that nothing else runs, which is to say: in the one scenario the guard was written for, the guard cannot execute. It survived two stages looking like a real defence.
+
+The fix generalises well beyond this board. A watchdog belongs strictly *below* the level it watches, and the cheapest way to get there is to invert the direction of trust: instead of the supervisor polling for trouble, make the supervised thing prove it is alive. Here the ISR now owns the decision. `loop()` zeroes an edge counter once a second; if the ISR ever sees that counter climb past the storm ceiling, that is proof `loop()` has not run, and the ISR disables its own two pins there and then. `loop()` recovers and does the tidy-up that needs flash (detach, clear NVS, update the UI).
+
+Rules:
+- Ask of any guard: **what state is it protecting against, and can it still run in that state?** If the answer is no, it is decoration.
+- A dead-man's switch beats a poll. "X has not happened for N seconds" is detectable from a lower level; "something is wrong" usually is not.
+- From an ISR, touch registers only. `detachInterrupt()` and the `gpio_*` driver calls are flash-resident and are not safe to reach from an interrupt; a single `REG_WRITE` to `GPIO_PINn_REG` does the same job. (Same reason a lookup table used by an IRAM ISR must be `DRAM_ATTR`.)
+- Set the trip point from measured normal behaviour, not a guess: a brisk human turn is ~240 encoder edges/s, the ceiling is 4000, so a real thumb can never trip it while a floating pin reaches it in milliseconds.
