@@ -1,4 +1,43 @@
-// Saline Pump v1 — Stage 7c: bench mode (screens + knobs compiled out).
+// Saline Pump v1 - Stage 7d: Tide-themed phone UI, split into Run/Settings.
+//
+// ── STAGE 7d: THE PAGE STOPS BEING A COCKPIT (2026-09-12) ──────────────
+// Rob's verdict on 7c's page: confusing, the big number looked low-res, and
+// calibration felt like it took ages to react. All three were real.
+//
+//   1. TWO VIEWS, not one wall. "Run" is the two gauges, speed, target and
+//      Start/Stop/Prime, nothing else. "Settings" holds flow calibration,
+//      refill/reset, the knobs and the safety notes. STOP ALL stays pinned
+//      to the bottom of both, always one thumb away.
+//   2. THE BIG NUMBER IS CRISP NOW. The canvas was 240x240 backing pixels
+//      stretched over a 240 CSS px box on a 2-3x phone screen, i.e. every
+//      glyph upscaled by the browser. The backing store is now sized to
+//      devicePixelRatio (capped at 2) with the context scaled to match, so
+//      text is rendered at device resolution.
+//   3. RESPONSIVENESS, three separate causes:
+//      a. EVERY endpoint now answers with the full status JSON instead of
+//         "ok", so a tap gets fresh truth in ONE round trip. Previously the
+//         page waited for the next poll to find out what its own command
+//         did: up to 700ms of nothing happening.
+//      b. ONE REQUEST AT A TIME. WebServer serves a single client, so
+//         overlapping fetches sat in the TCP backlog. All traffic goes
+//         through a queue on the page, and a button tap jumps the queue.
+//         Polling is adaptive: 400ms while anything is running, 1500ms
+//         idle, 250ms for 2.5s after a tap.
+//      c. THE NUMBERS MOVE BETWEEN POLLS. Delivered ml, elapsed time, the
+//         reservoir level and the calibration countdown are advanced
+//         locally off the known flow rate and corrected by each poll, so
+//         the 60s countdown ticks every second instead of lurching.
+//      Also: taps patch the UI optimistically before the request goes out,
+//      and the draw loop is 30fps when active / 10fps idle / nothing at all
+//      on the Settings tab or a backgrounded page (it was a flat 60fps
+//      redraw of two faces forever, which is what made touch feel sticky).
+//   4. THEMING lifted from Tide (mission-control/src/tide/tide.css): dark
+//      ground, one gradient voice, an ambient breathing glow, hairline
+//      sections instead of boxed cards, pill buttons. Tide runs coral/rose;
+//      this rig runs TEAL with coral as the rationed accent. The GC9A01
+//      faces were recoloured to the same palette so the glass and the phone
+//      read as one object.
+// ──────────────────────────────────────────────────────────────────────
 //
 // ── STAGE 7c: BENCH MODE (2026-09-12) ────────────────────────────────────
 // The ESP32 is out of the PCB socket and loose on the desk while we work on
@@ -195,19 +234,21 @@ const unsigned long KICK_MS = 250;
 
 // ---- colours (RGB565 versions of the mockup palette) ----
 #define C565(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
-const uint16_t COL_SLATE = C565(0x14, 0x1b, 0x23);
-const uint16_t COL_DEEP = C565(0x0a, 0x3f, 0x74);
-const uint16_t COL_MID = C565(0x11, 0x6b, 0xb0);
-const uint16_t COL_SURF = C565(0x33, 0xa6, 0xf0);
-const uint16_t COL_FOAM = C565(0xa9, 0xe2, 0xff);
-const uint16_t COL_RING = C565(0x26, 0x32, 0x3f);
-const uint16_t COL_RUN = C565(0x38, 0xd3, 0x9f);
-const uint16_t COL_STOP = C565(0xff, 0x5a, 0x5a);
-const uint16_t COL_LOW = C565(0xff, 0xb8, 0x4d);
+// Teal, matching the phone page's Tide-derived palette so the glass and the
+// phone read as the same object. Teal is the voice, coral the accent.
+const uint16_t COL_SLATE = C565(0x10, 0x1a, 0x1d);
+const uint16_t COL_DEEP = C565(0x07, 0x44, 0x3f);
+const uint16_t COL_MID = C565(0x0d, 0x94, 0x88);
+const uint16_t COL_SURF = C565(0x2d, 0xd4, 0xbf);
+const uint16_t COL_FOAM = C565(0xb6, 0xf5, 0xea);
+const uint16_t COL_RING = C565(0x24, 0x33, 0x3a);
+const uint16_t COL_RUN = C565(0x2d, 0xd4, 0xbf);
+const uint16_t COL_STOP = C565(0xff, 0x6b, 0x6b);
+const uint16_t COL_LOW = C565(0xf0, 0xa5, 0x7e);
 const uint16_t COL_INK = C565(0xff, 0xff, 0xff);
-const uint16_t COL_DIM = C565(0xb0, 0xbe, 0xc8);
-const uint16_t COL_L_BADGE = C565(0x00, 0xff, 0xff);
-const uint16_t COL_R_BADGE = C565(0xff, 0xa5, 0x20);
+const uint16_t COL_DIM = C565(0xa8, 0xbd, 0xc2);
+const uint16_t COL_L_BADGE = C565(0x5e, 0xea, 0xd4);
+const uint16_t COL_R_BADGE = C565(0xf0, 0xa5, 0x7e);
 
 #if ENABLE_SCREENS
 Adafruit_GC9A01A tftL(TFT_CS_L, TFT_DC, TFT_RST);  // RST on L resets both
@@ -588,7 +629,9 @@ void drawFace(int s) {
   frac = constrain(frac, 0.0f, 1.0f);
   const float top = -1.5707963f;
   arcRing(cx, cy, 111, 3, 0, TAU, COL_RING);
-  uint16_t ringCol = (S.running || S.done) ? COL_RUN : COL_STOP;
+  // coral, not teal: the liquid behind it is teal now and a teal ring on a
+  // teal fill is invisible at a glance across the room.
+  uint16_t ringCol = (S.running || S.done) ? COL_LOW : COL_STOP;
   if (frac > 0.002f) arcRing(cx, cy, 111, 3, top, top + frac * TAU, ringCol);
 
   // side badge (top)
@@ -610,7 +653,7 @@ void drawFace(int s) {
   canvas.setFont(&FreeSansBold9pt7b);
   canvas.getTextBounds(pill, 0, 0, &x1, &y1, &tw, &th);
   canvas.fillRoundRect(cx - tw / 2 - 9, 52, tw + 18, 22, 11, pillCol);
-  drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x08, 0x11, 0x0d));
+  drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x06, 0x20, 0x1d));
 
   // big number: the duty actually on the gate (or what Start would give)
   int shown = (S.running || S.priming || S.calibrating) ? S.actualDuty
@@ -648,113 +691,216 @@ void drawFace(int s) { (void)s; }
 // 60..100% duty: bottom of travel = 60%, everything on it is usable range.
 
 const char PAGE[] PROGMEM = R"HTML(<!doctype html><html><head>
-<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name=theme-color content="#0e1417">
+<link rel=icon href="data:,">
 <title>Saline Pump</title><style>
-:root{--bg:#0c0f14;--panel:#141a22;--ink:#e7edf3;--muted:#8aa0b3}
+/* Lifted from Tide's design system (mission-control/src/tide/tide.css):
+   one gradient voice, a dark ground, an ambient breathing glow, hairline
+   sections instead of cards. Tide's voice is coral/rose; this rig runs
+   teal, with coral kept as the rationed accent. */
+:root{
+ --grad:linear-gradient(90deg,#5eead4,#0d9488);
+ --grad135:linear-gradient(135deg,#2dd4bf,#0d9488);
+ --teal:#2dd4bf;--coral:#f0a57e;
+ --ground:#0e1417;--ink:#e9eff1;--muted:#8ea3a8;--faint:#6d8189;
+ --hair:rgba(255,255,255,.09);--input:rgba(255,255,255,.06);
+ --glow-teal:rgba(45,212,191,.24);--glow-sea:rgba(56,120,160,.22)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
+body{margin:0;background:var(--ground);color:var(--ink);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
- padding:14px 12px 90px;text-align:center}
-h1{font-size:17px;font-weight:650;color:var(--muted);margin:2px 0 14px}
-.gauges{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
-.unit{background:var(--panel);border:1px solid #202a35;border-radius:16px;
- padding:16px 14px 12px;width:290px;max-width:100%}
+ -webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.glow{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.glow::before,.glow::after{content:'';position:absolute;border-radius:50%;
+ filter:blur(56px);animation:breathe 14s ease-in-out infinite}
+.glow::before{width:72%;height:52%;left:-16%;top:-14%;
+ background:radial-gradient(circle,var(--glow-teal),transparent 70%)}
+.glow::after{width:62%;height:52%;right:-12%;bottom:-16%;
+ background:radial-gradient(circle,var(--glow-sea),transparent 70%);
+ animation-delay:-7s}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}
+ 50%{transform:scale(1.12) translate(2%,2%);opacity:1}}
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;
+ padding:20px 16px calc(104px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:flex-end;gap:10px;margin-bottom:6px}
+.brand{flex:1;text-align:left;min-width:0}
+h1{margin:0;font-size:clamp(23px,7vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.05;
+ background:var(--grad);-webkit-background-clip:text;background-clip:text;
+ color:transparent}
+.sub{margin:5px 0 0;font-size:12.5px;color:var(--muted);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav{display:flex;gap:6px;flex:none}
+.pill{font-size:12.5px;font-weight:650;border-radius:999px;padding:7px 14px;
+ background:transparent;border:1px solid var(--hair);color:var(--faint)}
+.pill.on{background:var(--grad135);border-color:transparent;color:#06201d}
+section{padding:20px 0 4px;border-top:1px solid var(--hair);margin-top:16px}
+section:first-of-type{border-top:0}
+.lbl{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+ color:var(--muted);text-align:left;margin-bottom:12px}
+.hint{color:var(--faint);font-size:12px;line-height:1.55;text-align:left;
+ margin-top:12px}
+.gauges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.unit{width:282px;max-width:100%;padding:4px 0 14px}
+.unit+.unit{border-top:1px solid var(--hair);padding-top:18px}
+@media(min-width:620px){.unit+.unit{border-top:0;padding-top:4px;
+ border-left:1px solid var(--hair);padding-left:15px}}
 .glass{width:240px;height:240px;border-radius:50%;margin:0 auto;
- box-shadow:0 0 0 6px #05070a,0 0 0 8px #262f3a,0 10px 26px rgba(0,0,0,.55);
- overflow:hidden;background:#12181f}
+ box-shadow:0 0 0 1px rgba(45,212,191,.22),0 0 0 7px #070c0e,
+ 0 0 0 8px rgba(255,255,255,.06),0 14px 34px rgba(0,0,0,.6),
+ 0 0 42px -12px rgba(45,212,191,.4);
+ overflow:hidden;background:#0b1114}
 canvas{display:block;width:240px;height:240px}
-.row{display:grid;grid-template-columns:52px 1fr 56px;gap:10px;align-items:center;
- margin:12px 0 4px;font-size:13px}
+.row{display:grid;grid-template-columns:48px 1fr 54px;gap:10px;align-items:center;
+ margin:14px 0 2px;font-size:12.5px}
 .row label{text-align:left;color:var(--muted)}
-.row output{text-align:right;font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;height:34px;accent-color:#33a6f0}
-input[type=number]{width:64px;font-size:15px;background:#1d2732;color:var(--ink);
- border:1px solid #2c3948;border-radius:8px;padding:6px;text-align:right}
-.btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-button{background:#1d2732;color:var(--ink);border:1px solid #2c3948;
- border-radius:10px;padding:10px 12px;font-size:13px}
-button.go{background:#1d5c46;border-color:#2a8666}
-button.warn{background:#5c4a1d;border-color:#866f2a}
-.stopall{position:fixed;left:12px;right:12px;bottom:12px;background:#a00;
- border:0;color:#fff;font-size:19px;font-weight:700;padding:16px;border-radius:14px;
- box-shadow:0 6px 18px rgba(0,0,0,.5)}
-small{display:block;color:#667;margin-top:14px;line-height:1.5}
-.cal{background:var(--panel);border:1px solid #202a35;border-radius:16px;
- padding:14px;margin:18px auto 0;max-width:602px}
-.cal h2{font-size:13px;font-weight:650;color:var(--muted);margin:0 0 10px;
- letter-spacing:.04em}
-.calrow{display:flex;gap:8px;justify-content:center;align-items:center;
- flex-wrap:wrap;margin-bottom:8px;font-size:13px}
-.calnow{color:var(--muted);font-size:12px;margin-top:6px}
-.calnow b{color:var(--ink);font-variant-numeric:tabular-nums}
-#bench{display:none;background:#3a2e10;border:1px solid #866f2a;color:#ffd489;
- border-radius:10px;padding:8px 10px;margin:0 auto 12px;max-width:602px;
- font-size:12px;letter-spacing:.02em}
+.row output{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums;
+ font-weight:600}
+input[type=range]{width:100%;height:32px;accent-color:var(--teal);background:none}
+input[type=number]{width:78px;font-size:16px;background:var(--input);
+ color:var(--ink);border:1px solid var(--hair);border-radius:12px;padding:9px 11px;
+ text-align:right;outline:none}
+input[type=number]:focus{border-color:var(--teal);
+ box-shadow:0 0 0 3px rgba(45,212,191,.15)}
+button{font-family:inherit;font-weight:600;border-radius:999px;
+ border:1px solid var(--hair);background:transparent;color:var(--ink);
+ padding:11px 14px;font-size:13px;transition:transform .12s ease}
+button:active{transform:scale(.97)}
+button.go{background:var(--grad135);border-color:transparent;color:#06201d}
+button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
+.btns{display:flex;gap:7px;margin-top:14px}
+.btns button{flex:1;padding:12px 6px}
+.duo{display:flex;gap:8px;margin-bottom:8px}
+.duo button{flex:1}
+.calrow{display:flex;gap:9px;align-items:center;font-size:12.5px;
+ color:var(--muted);margin-top:12px}
+.calrow span{flex:1;text-align:left}
+.stopall{position:fixed;left:16px;right:16px;
+ bottom:calc(14px + env(safe-area-inset-bottom));
+ background:linear-gradient(135deg,#e04a4a,#a81f1f);border:0;color:#fff;
+ font-size:18px;font-weight:800;letter-spacing:.06em;padding:17px;
+ border-radius:999px;box-shadow:0 10px 28px rgba(180,30,30,.36);z-index:5;
+ max-width:608px;margin:0 auto}
+#cnow{font-size:12.5px;color:var(--muted);margin-top:12px;text-align:left}
+#cnow b,#lvls b{color:var(--ink);font-variant-numeric:tabular-nums}
+#lvls{font-size:12.5px;color:var(--muted);margin-top:12px;text-align:left}
+#calstate{text-align:left;font-size:12.5px;color:var(--muted);margin-bottom:14px}
+#calstate .big{display:block;font-size:38px;font-weight:800;letter-spacing:-.02em;
+ color:var(--coral);font-variant-numeric:tabular-nums;line-height:1.1}
+#calstate.ready .big{background:var(--grad);-webkit-background-clip:text;
+ background-clip:text;color:transparent}
+#bench{display:none;align-items:center;gap:8px;text-align:left;
+ border:1px solid rgba(240,165,126,.35);background:rgba(240,165,126,.07);
+ color:var(--coral);border-radius:14px;padding:10px 13px;margin-top:16px;
+ font-size:12px;line-height:1.45}
+#toast{position:fixed;left:16px;right:16px;
+ bottom:calc(84px + env(safe-area-inset-bottom));max-width:608px;margin:0 auto;
+ background:rgba(13,148,136,.16);border:1px solid rgba(45,212,191,.4);
+ color:#bdf4ea;border-radius:14px;padding:11px 13px;font-size:13px;
+ opacity:0;transition:opacity .25s;pointer-events:none;z-index:6}
 </style></head><body>
-<h1>SALINE PUMP</h1>
+<div class=glow></div>
+<div class=wrap>
+<header><div class=brand><h1>Saline Pump</h1><p class=sub id=sub>connecting&hellip;</p></div>
+<nav><button class="pill on" id=tab0 onclick=show(0)>Run</button>
+<button class=pill id=tab1 onclick=show(1)>Settings</button></nav></header>
 <div id=bench></div>
-<div class=gauges id=g></div>
-<div class=cal><h2>FLOW CALIBRATION</h2>
-<div class=calrow>
-<button class=warn onclick="fetch('/cal?side=L')">Run L 60s</button>
-<button class=warn onclick="fetch('/cal?side=R')">Run R 60s</button>
-</div>
-<div class=calrow>
-<label>Caught</label>
+<div id=v0>
+<section><div class=gauges id=g></div>
+<div class=hint>Speed runs 60-100%: the heads stall below about 55%, so the
+bottom of the slider is the slowest they will actually turn. Delivered volume
+is an estimate until the flow calibration is done, over in Settings.</div>
+</section></div>
+<div id=v1 style=display:none>
+<section><div class=lbl>Flow calibration</div>
+<div id=calstate>Not running.</div>
+<div class=duo>
+<button class=warn onclick="act('/cal?side=L',{L:{cal:1,calEnd:Date.now()+60000}})">Calibrate L</button>
+<button class=warn onclick="act('/cal?side=R',{R:{cal:1,calEnd:Date.now()+60000}})">Calibrate R</button></div>
+<div class=calrow><span>ml caught in 60s</span>
 <input type=number id=cm min=5 max=400 step=.1 placeholder=ml>
-<span>ml in 60s</span>
-<button class=go onclick=saveCal()>Save</button>
-</div>
-<div class=calnow id=cnow>using <b>?</b> ml/min at 100%</div></div>
-<div class=cal id=knobcard><h2>KNOBS</h2>
-<div class=calrow>
+<button class=go onclick=saveCal()>Save</button></div>
+<div id=cnow>using <b>?</b> ml/min at 100%</div>
+<div class=hint>Prime the line, put the outlet in a measuring jug, hit
+Calibrate. That head runs wide open for exactly 60 seconds and counts down
+above. Type the ml you caught and Save: it is stored on the board and
+survives a reboot or an OTA push. Tap Calibrate again mid-run to abandon it.</div>
+</section>
+<section><div class=lbl>Reservoir &amp; run</div>
+<div class=duo>
+<button onclick="act('/refill?side=L')">L refilled</button>
+<button onclick="act('/refill?side=R')">R refilled</button></div>
+<div class=duo>
+<button onclick="act('/reset?side=L')">Reset L run</button>
+<button onclick="act('/reset?side=R')">Reset R run</button></div>
+<div id=lvls>reservoirs: L <b>?</b> &middot; R <b>?</b></div>
+<div class=hint>Refilled tells the rig that side's bag is full again. Reset
+run zeroes delivered ml and the clock, ready for the next dose.</div>
+</section>
+<section id=knobcard><div class=lbl>Knobs</div>
+<div class=duo>
 <button id=kL onclick=knob('L')>L knob: ?</button>
-<button id=kR onclick=knob('R')>R knob: ?</button>
+<button id=kR onclick=knob('R')>R knob: ?</button></div>
+<div class=hint>Turn one on only once its KY-040 is actually wired. Enc R sits
+on GPIO34/35, which have no internal pull-ups: unwired they chatter, and the
+interrupts starve the board. It refuses to arm on a floating pin and disarms
+itself if one starts storming. Turn = speed, short press = stop that side,
+hold 1.2s = start.</div>
+</section>
+<section><div class=lbl>Safety</div>
+<div class=hint>Prime auto-stops after 10 seconds and does not count toward
+the dose. Firmware caps, independent of this page: 600 ml a run, 90 minutes,
+and a low-reservoir stop so a primed line never pumps air. The stall floor
+clamps a too-low request upward rather than letting a head sit buzzing.
+STOP ALL and the physical E-stop kill both pumps regardless of anything
+here.</div>
+</section></div>
 </div>
-<div class=calnow>Turn one on only once its KY-040 is actually wired.
-Enc R sits on GPIO34/35, which have no pull-ups: unwired, they chatter and
-the interrupts starve the board. It disarms itself if that happens.</div></div>
-<small>Slider bottom = 60% power (pumps stall below ~55%). Volumes are
-estimates until the flow calibration above is done. Prime auto-stops after
-10s. Knobs: turn = speed, short press = stop that side, hold 1.2s = start.
-E-stop kills pumps regardless of anything on this page.</small>
-<button class=stopall onclick="fetch('/stop')">STOP ALL</button>
+<div id=toast></div>
+<button class=stopall onclick="act('/stop',{L:{run:0,prime:0,cal:0},R:{run:0,prime:0,cal:0}})">STOP ALL</button>
 <script>
-const TAU=Math.PI*2,SIDES=['L','R'];
-const C={slateTop:'#141b23',slateBot:'#0e141b',deep:'#0a3f74',mid:'#116bb0',
- surf:'#33a6f0',foam:'#a9e2ff',ring:'#26323f',run:'#38d39f',stop:'#ff5a5a',
- warn:'#ffb84d',ink:'#fff',dim:'rgba(255,255,255,.72)',
- badgeL:'#0ff',badgeR:'#ffa520'};
-let editing={};
+const TAU=Math.PI*2,SIDES=['L','R'],$=i=>document.getElementById(i);
+// Backing store at device resolution: a 240x240 canvas upscaled by the
+// browser is why the big number looked like a fax. Capped at 2x, which is
+// crisp on a 3x phone screen without quadrupling the fill cost.
+const DPR=Math.min(2,window.devicePixelRatio||1);
+const C={slateTop:'#101a1d',slateBot:'#0a1013',deep:'#07443f',mid:'#0d9488',
+ surf:'#2dd4bf',foam:'#b6f5ea',ring:'#24333a',run:'#2dd4bf',stop:'#ff6b6b',
+ warn:'#f0a57e',ink:'#fff',dim:'rgba(233,239,241,.7)',
+ badgeL:'#5eead4',badgeR:'#f0a57e'};
+const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
+let editing={},view=0,MLMIN=100,CAP=1000,calDone='',hot=0,timer=0,tt=0;
+
 function card(s){return `<div class=unit>
-<div class=glass><canvas id=c${s} width=240 height=240></canvas></div>
+<div class=glass><canvas id=c${s}></canvas></div>
 <div class=row><label>Speed</label>
 <input type=range min=60 max=100 step=1 value=70 id=s${s}
  onpointerdown="editing['s${s}']=1"
- oninput="o${s}.textContent=this.value+'%'"
+ oninput="o${s}.textContent=this.value+'%';G.${s}.st.duty=+this.value"
  onpointerup="editing['s${s}']=0;send('${s}')"
  onchange="editing['s${s}']=0;send('${s}')"><output id=o${s}>70%</output></div>
 <div class=row><label>Target</label>
 <input type=number min=10 max=600 step=10 value=120 id=t${s}
  onfocus="editing['t${s}']=1" onblur="editing['t${s}']=0"
- onchange="send('${s}')"
- style=justify-self:start><output>ml</output></div>
+ onchange="send('${s}')" style=justify-self:start><output>ml</output></div>
 <div class=btns>
-<button class=go onclick="fetch('/run?side=${s}&on=1')">Start</button>
-<button onclick="fetch('/run?side=${s}&on=0')">Stop</button>
-<button class=warn onclick="fetch('/prime?side=${s}')">Prime</button>
-<button onclick="fetch('/reset?side=${s}')">Reset</button>
-<button onclick="fetch('/refill?side=${s}')">Refilled</button>
+<button class=go onclick="act('/run?side=${s}&amp;on=1',{${s}:{run:1,done:0,low:0}})">Start</button>
+<button onclick="act('/run?side=${s}&amp;on=0',{${s}:{run:0,prime:0}})">Stop</button>
+<button class=warn onclick="act('/prime?side=${s}')">Prime</button>
 </div></div>`}
-g.innerHTML=card('L')+card('R');
+$('g').innerHTML=card('L')+card('R');
+
 function roundRect(x,y,w,h,r,ctx){ctx.beginPath();ctx.moveTo(x+r,y);
  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
 function fmtT(s){const m=Math.floor(s/60),ss=Math.floor(s%60);
  return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+function calLeft(s){const g=G[s].st;
+ return g.cal?Math.max(0,Math.ceil(((g.calEnd||0)-Date.now())/1000)):0}
+
 function gauge(side){
- const ctx=document.getElementById('c'+side).getContext('2d');
- const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,cal:0,calleft:0,
+ const cv=$('c'+side);cv.width=Math.round(240*DPR);cv.height=Math.round(240*DPR);
+ const ctx=cv.getContext('2d');ctx.scale(DPR,DPR);
+ const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,cal:0,calEnd:0,
   del:0,tgt:120,el:0};
  let t=0;
  function draw(){
@@ -765,7 +911,7 @@ function gauge(side){
   bg.addColorStop(0,C.slateTop);bg.addColorStop(1,C.slateBot);
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   const lvl=Math.max(0,Math.min(1,st.lvl)),baseY=H-lvl*H;
-  const act=(st.run||st.prime)?1:.35,a1=5.5,a2=3;
+  const act=(st.run||st.prime||st.cal)?1:.35,a1=5.5,a2=3;
   let lg=ctx.createLinearGradient(0,baseY-14,0,H);
   lg.addColorStop(0,C.surf);lg.addColorStop(.28,C.mid);lg.addColorStop(1,C.deep);
   ctx.beginPath();ctx.moveTo(0,H);
@@ -785,30 +931,30 @@ function gauge(side){
   const rr=R-9,frac=Math.max(0,Math.min(1,st.tgt>0?st.del/st.tgt:0));
   ctx.lineWidth=7;ctx.lineCap='round';
   ctx.strokeStyle=C.ring;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.stroke();
-  if(frac>.002){ctx.strokeStyle=(st.run||st.done)?C.run:C.stop;
+  if(frac>.002){ctx.strokeStyle=(st.run||st.done)?C.warn:C.stop;
    ctx.beginPath();ctx.arc(cx,cy,rr,-Math.PI/2,-Math.PI/2+frac*TAU);ctx.stroke()}
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;
-  ctx.font='700 14px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.font='700 13px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillStyle=side==='L'?C.badgeL:C.badgeR;
   ctx.fillText(side==='L'?'LEFT':'RIGHT',cx,40);
   const pill=st.cal?'CAL':st.prime?'PRIME':st.run?'RUN':st.low?'LOW'
    :st.done?'DONE':'STOP';
   const pcol=(st.cal||st.prime||st.low)?C.warn:(st.run||st.done)?C.run:C.stop;
-  ctx.font='700 12px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.font='700 11px -apple-system,Segoe UI,Roboto,sans-serif';
   const pw=ctx.measureText(pill).width+18;
   ctx.shadowBlur=0;ctx.fillStyle=pcol;
   roundRect(cx-pw/2,52,pw,20,10,ctx);ctx.fill();
-  ctx.fillStyle='#08110d';ctx.fillText(pill,cx,62.5);
+  ctx.fillStyle='#06201d';ctx.fillText(pill,cx,62.5);
   ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;
   ctx.fillStyle=C.ink;
-  ctx.font='800 52px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.font='800 54px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillText(String(Math.round(st.duty)),cx,cy+2);
-  ctx.font='600 15px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.font='600 14px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillStyle=C.dim;ctx.fillText('speed %',cx,cy+34);
   ctx.font='700 16px -apple-system,Segoe UI,Roboto,sans-serif';
   if(st.cal){ctx.fillStyle=C.warn;
-   ctx.fillText('CATCH IT: '+st.calleft+'s',cx,cy+64);
+   ctx.fillText('CATCH IT: '+calLeft(side)+'s',cx,cy+64);
    ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
    ctx.fillStyle=C.dim;ctx.fillText('into the jug',cx,cy+84)}
   else{ctx.fillStyle=C.ink;
@@ -816,50 +962,121 @@ function gauge(side){
    ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
    ctx.fillStyle=C.dim;ctx.fillText(fmtT(st.el),cx,cy+84)}
   ctx.shadowBlur=0}
- return {st,tick:dt=>{t+=dt;draw()}}}
+ // Between polls the numbers keep moving locally off the known flow rate, so
+ // nothing sits frozen waiting for the next /status. The poll corrects it.
+ return {st,tick:dt=>{t+=dt;
+  if(st.run||st.prime||st.cal){
+   const ml=MLMIN*(st.duty/100)*(dt/60);
+   st.lvl=Math.max(0,st.lvl-ml/CAP);
+   if(st.run){st.del+=ml;st.el+=dt}}
+  draw()}}}
 const G={L:gauge('L'),R:gauge('R')};
-async function saveCal(){const v=document.getElementById('cm').value;
- const r=await fetch('/calsave?ml='+v);
- document.getElementById('cnow').style.color=r.ok?'#38d39f':'#ff5a5a';
- if(r.ok)document.getElementById('cm').value='';poll()}
-const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
-async function knob(s){const b=document.getElementById('k'+s);
- const r=await fetch('/enc?side='+s+'&on='+(b.dataset.on=='1'?0:1));
- const t=await r.text();poll();
- if(t=='unsteady')alert(s+' knob: those pins are floating. Check the KY-040 '
-  +'wiring (GND, 3V3, CLK, DT, SW) before enabling it.')}
-function send(s){fetch('/set?side='+s
- +'&duty='+document.getElementById('s'+s).value
- +'&target='+document.getElementById('t'+s).value)}
-async function poll(){try{
- const j=await(await fetch('/status')).json();
+
+// ---- one request at a time -------------------------------------------
+// The ESP32's WebServer serves exactly one client at a time, so overlapping
+// fetches queue up in the TCP backlog and everything feels like treacle.
+// All traffic goes through this queue; a button tap jumps in front of a poll.
+let busy=false,q=[];
+async function fetchJSON(u){
+ const ac=new AbortController(),to=setTimeout(()=>ac.abort(),4000);
+ try{return await(await fetch(u,{cache:'no-store',signal:ac.signal})).json()}
+ catch(e){return null}finally{clearTimeout(to)}}
+function req(u,front){return new Promise(res=>{
+ const it={u,res};front?q.unshift(it):q.push(it);drain()})}
+async function drain(){if(busy||!q.length)return;busy=true;
+ const it=q.shift();const j=await fetchJSON(it.u);
+ busy=false;it.res(j);drain()}
+
+function active(){return SIDES.some(s=>{const d=G[s].st;
+ return d.run||d.prime||d.cal})}
+function schedule(){clearTimeout(timer);
+ let ms=active()?400:1500;
+ if(Date.now()<hot)ms=250;
+ timer=setTimeout(poll,ms)}
+async function poll(){clearTimeout(timer);
+ if(!busy&&!q.length){const j=await req('/status');if(j)apply(j)}
+ schedule()}
+// Optimistic patch first so the glass reacts on the tap, then the board's own
+// answer (every endpoint returns the full status) lands in the same round trip.
+async function act(u,patch){
+ if(patch)for(const s in patch)Object.assign(G[s].st,patch[s]);
+ calText();hot=Date.now()+2500;
+ const j=await req(u,true);if(j)apply(j);
+ schedule();return j}
+
+function toast(m){const e=$('toast');e.textContent=m;e.style.opacity=1;
+ clearTimeout(tt);tt=setTimeout(()=>e.style.opacity=0,2800)}
+
+function calText(){const el=$('calstate'),s=SIDES.find(x=>G[x].st.cal);
+ if(s){el.className='';
+  el.innerHTML='<b class=big>'+calLeft(s)+'s</b>Side '+s
+   +' is running wide open. Catch it in the jug.'}
+ else if(calDone){el.className='ready';
+  el.innerHTML='<b class=big>Done</b>Side '+calDone
+   +' finished. Measure the jug and type the ml below.'}
+ else{el.className='';
+  el.textContent='Not running. Calibrate a side to measure its real flow.'}}
+
+function apply(j){
+ MLMIN=j.mlmin;CAP=j.cap||1000;
  for(const s of SIDES){const d=j[s],g=G[s].st;
+  if(g.cal&&!d.cal){calDone=s;
+   if(view==0)toast('Side '+s+' calibration done, enter the ml in Settings.')}
+  if(d.cal)calDone='';
   g.lvl=d.lvl;g.run=d.run;g.prime=d.prime;g.done=d.done;g.low=d.low;
-  g.cal=d.cal;g.calleft=d.calleft;
+  g.cal=d.cal;g.calEnd=d.cal?Date.now()+d.calleft*1000:0;
   g.del=d.del;g.tgt=d.tgt;g.el=d.el;
   g.duty=(d.run||d.prime||d.cal)?d.duty:d.req;
-  if(!editing['s'+s]){const sl=document.getElementById('s'+s);
-   sl.value=d.req;document.getElementById('o'+s).textContent=d.req+'%'}
-  if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt;
-  const kb=document.getElementById('k'+s);
-  kb.dataset.on=(d.enc==1)?'1':'0';
+  if(!editing['s'+s]){$('s'+s).value=d.req;$('o'+s).textContent=d.req+'%'}
+  if(!editing['t'+s])$('t'+s).value=Math.round(d.tgt);
+  const kb=$('k'+s);kb.dataset.on=(d.enc==1)?'1':'0';
   kb.textContent=s+' knob: '+KST[d.enc];
   kb.className=(d.enc==1)?'go':(d.enc?'warn':'')}
- // bench mode: knobs and/or screens compiled out, say so and hide the card
- document.getElementById('knobcard').style.display=j.knobs?'':'none';
- const bm=document.getElementById('bench'),off=[];
- if(!j.knobs)off.push('knobs');if(!j.screens)off.push('screens');
- bm.style.display=off.length?'':'none';
- bm.textContent='BENCH MODE: '+off.join(' + ')+' compiled out. Pumps, caps '
-  +'and E-stop all still live.';
- document.getElementById('cnow').innerHTML=
-  'using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
-}catch(e){}}
-setInterval(poll,700);poll();
-let last=performance.now();
-(function loop(){const now=performance.now();
- const dt=Math.min(.05,(now-last)/1000);last=now;
- G.L.tick(dt);G.R.tick(dt);requestAnimationFrame(loop)})();
+ $('knobcard').style.display=j.knobs?'':'none';
+ const bm=$('bench'),off=[];
+ if(!j.knobs)off.push('knobs');
+ if(!j.screens)off.push('screens');
+ bm.style.display=off.length?'flex':'none';
+ bm.textContent='Bench mode: '+off.join(' and ')+' compiled out of this build.'
+  +' Both pumps, the firmware caps and the E-stop are all still live.';
+ $('cnow').innerHTML='using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
+ $('lvls').innerHTML='reservoirs: L <b>'+Math.round(j.L.lvl*100)
+  +'%</b> &middot; R <b>'+Math.round(j.R.lvl*100)+'%</b>';
+ const bits=SIDES.map(s=>{const d=j[s];
+  return s+' '+(d.cal?'calibrating':d.prime?'priming':d.run?'running'
+   :d.low?'low':d.done?'done':'idle')});
+ $('sub').textContent=bits.join('  ·  ')+'  ·  '
+  +j.mlmin.toFixed(0)+' ml/min';
+ calText();
+ if(j.msg)toast(j.msg)}
+
+function show(v){view=v;
+ $('v0').style.display=v?'none':'';$('v1').style.display=v?'':'none';
+ $('tab0').className='pill'+(v?'':' on');$('tab1').className='pill'+(v?' on':'');
+ window.scrollTo(0,0);hot=Date.now()+1200;poll()}
+function send(s){act('/set?side='+s+'&duty='+$('s'+s).value
+ +'&target='+$('t'+s).value)}
+async function saveCal(){const v=$('cm').value;
+ if(!v){toast('Type the ml you caught first.');return}
+ const j=await act('/calsave?ml='+encodeURIComponent(v));
+ if(j&&Math.abs(j.mlmin-parseFloat(v))<.05){$('cm').value='';calDone='';calText()}}
+async function knob(s){const b=$('k'+s);
+ await act('/enc?side='+s+'&on='+(b.dataset.on=='1'?0:1))}
+
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden){hot=Date.now()+1200;poll()}});
+// Frame budget: 30fps while something is moving, 10fps idle, nothing at all
+// on the settings tab or a hidden page. The old loop redrew two faces at
+// 60fps forever, which is what made touch feel sticky.
+let last=performance.now(),acc=0;
+(function frame(){requestAnimationFrame(frame);
+ const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
+ if(view!=0||document.hidden)return;
+ acc+=dt;const step=active()?1/30:1/10;
+ if(acc<step)return;
+ G.L.tick(acc);G.R.tick(acc);acc=0})();
+setInterval(calText,250);
+calText();poll();
 </script></body></html>)HTML";
 
 int sideArg() { return (server.arg("side") == "R") ? 1 : 0; }
@@ -871,123 +1088,18 @@ long calLeft(int s) {
   return ms > 0 ? (ms + 999) / 1000 : 0;
 }
 
-void handleSet() {
-  int s = sideArg();
-  Side &S = sides[s];
-  if (server.hasArg("duty"))
-    S.dutyReq = constrain(server.arg("duty").toInt(), UI_MIN_DUTY, 100);
-  if (server.hasArg("target"))
-    S.target = constrain(server.arg("target").toFloat(), 10.0f, MAX_TARGET);
-  applyDuty(s);  // live speed change if it's already turning
-  server.send(200, "text/plain", "ok");
-}
-
-void handleRun() {
-  int s = sideArg();
-  if (server.arg("on") == "1") startRun(s);
-  else stopRun(s);
-  server.send(200, "text/plain", "ok");
-}
-
-void handlePrime() {
-  int s = sideArg();
-  Side &S = sides[s];
-  if (S.running || S.calibrating) {
-    server.send(409, "text/plain", "stop the run first");
-    return;
-  }
-  if (S.priming) {  // second tap = stop priming
-    stopRun(s);
-  } else if (S.remain > RES_LOW_STOP) {
-    S.priming = true;
-    S.lowStop = false;
-    S.primeUntil = millis() + PRIME_MAX_MS;
-    pumpWrite(s, 100);
-  }
-  server.send(200, "text/plain", "ok");
-}
-
-void handleReset() {
-  int s = sideArg();
-  stopRun(s);
-  sides[s].delivered = 0;
-  sides[s].elapsedS = 0;
-  sides[s].done = false;
-  sides[s].lowStop = false;
-  server.send(200, "text/plain", "ok");
-}
-
-void handleRefill() {
-  int s = sideArg();
-  sides[s].remain = RES_CAPACITY;
-  sides[s].lowStop = false;
-  server.send(200, "text/plain", "ok");
-}
-
-// Start the 60s wide-open run into a measuring jug. Refuses if that side
-// is doing anything else, so a cal can never be layered over a real dose.
-void handleCal() {
-  int s = sideArg();
-  Side &S = sides[s];
-  if (S.calibrating) {  // second tap = abandon it
-    stopRun(s);
-    server.send(200, "text/plain", "cancelled");
-    return;
-  }
-  if (S.running || S.priming) {
-    server.send(409, "text/plain", "stop the run first");
-    return;
-  }
-  S.calibrating = true;
-  S.lowStop = false;
-  S.calUntil = millis() + CAL_MS;
-  pumpWrite(s, 100);
-  Serial.printf("Calibration run %c: 60s at 100%%\n", s == 0 ? 'L' : 'R');
-  server.send(200, "text/plain", "ok");
-}
-
-// The measured ml caught in 60s IS the ml/min figure. Persisted to NVS so
-// it survives a reboot or an OTA push.
-void handleCalSave() {
-  float ml = server.arg("ml").toFloat();
-  if (ml < CAL_MIN || ml > CAL_MAX) {
-    server.send(400, "text/plain", "out of range");
-    return;
-  }
-  mlPerMin100 = ml;
-  prefs.putFloat("mlmin", mlPerMin100);
-  Serial.printf("Calibrated: %.1f ml/min at 100%%\n", mlPerMin100);
-  server.send(200, "text/plain", "ok");
-}
-
-// Declare a side's knob wired (or not). Persisted, so it survives reboots.
-void handleEnc() {
-#if !ENABLE_KNOBS
-  server.send(200, "text/plain", "bench");
-  return;
-#endif
-  int s = sideArg();
-  bool on = (server.arg("on") == "1");
-  if (!on) {
-    encDisarm(s, ENC_OFF);
-    prefs.putBool(ENC_KEY[s], false);
-    server.send(200, "text/plain", "off");
-    return;
-  }
-  if (!encArm(s)) {  // refuse rather than arm an interrupt on a floating pin
-    prefs.putBool(ENC_KEY[s], false);
-    server.send(200, "text/plain", "unsteady");
-    return;
-  }
-  prefs.putBool(ENC_KEY[s], true);
-  server.send(200, "text/plain", "ok");
-}
-
-void handleStatus() {
-  char buf[820];  // + the bench-mode flags
+// EVERY endpoint answers with the full status blob, not "ok". The phone page
+// talks to a server that handles one client at a time, so a command that
+// needed a second round trip to find out what it did was the single biggest
+// source of the UI feeling laggy. One request in, fresh truth out.
+// msg, if given, is shown as a toast on the page: keep it quote-free.
+void sendStatus(const char *msg = nullptr, int code = 200) {
+  char buf[1100];
   int n = snprintf(buf, sizeof buf,
-                   "{\"mlmin\":%.1f,\"knobs\":%d,\"screens\":%d,",
-                   mlPerMin100, ENABLE_KNOBS ? 1 : 0, screensOk ? 1 : 0);
+                   "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,\"screens\":%d,"
+                   "\"msg\":\"%s\",",
+                   mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
+                   screensOk ? 1 : 0, msg ? msg : "");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
@@ -1000,7 +1112,126 @@ void handleStatus() {
                   dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
                   S.remain / RES_CAPACITY, s == 0 ? "," : "}");
   }
-  server.send(200, "application/json", buf);
+  server.send(code, "application/json", buf);
+}
+
+void handleStatus() { sendStatus(); }
+
+void handleSet() {
+  int s = sideArg();
+  Side &S = sides[s];
+  if (server.hasArg("duty"))
+    S.dutyReq = constrain(server.arg("duty").toInt(), UI_MIN_DUTY, 100);
+  if (server.hasArg("target"))
+    S.target = constrain(server.arg("target").toFloat(), 10.0f, MAX_TARGET);
+  applyDuty(s);  // live speed change if it's already turning
+  sendStatus();
+}
+
+void handleRun() {
+  int s = sideArg();
+  if (server.arg("on") == "1") startRun(s);
+  else stopRun(s);
+  sendStatus();
+}
+
+void handlePrime() {
+  int s = sideArg();
+  Side &S = sides[s];
+  if (S.running || S.calibrating) {
+    sendStatus("Stop that side first.", 409);
+    return;
+  }
+  if (S.priming) {  // second tap = stop priming
+    stopRun(s);
+  } else if (S.remain > RES_LOW_STOP) {
+    S.priming = true;
+    S.lowStop = false;
+    S.primeUntil = millis() + PRIME_MAX_MS;
+    pumpWrite(s, 100);
+  } else {
+    sendStatus("That reservoir is empty. Refill it in Settings.", 409);
+    return;
+  }
+  sendStatus();
+}
+
+void handleReset() {
+  int s = sideArg();
+  stopRun(s);
+  sides[s].delivered = 0;
+  sides[s].elapsedS = 0;
+  sides[s].done = false;
+  sides[s].lowStop = false;
+  sendStatus(s == 0 ? "Left run reset." : "Right run reset.");
+}
+
+void handleRefill() {
+  int s = sideArg();
+  sides[s].remain = RES_CAPACITY;
+  sides[s].lowStop = false;
+  sendStatus(s == 0 ? "Left reservoir marked full." : "Right reservoir marked full.");
+}
+
+// Start the 60s wide-open run into a measuring jug. Refuses if that side
+// is doing anything else, so a cal can never be layered over a real dose.
+void handleCal() {
+  int s = sideArg();
+  Side &S = sides[s];
+  if (S.calibrating) {  // second tap = abandon it
+    stopRun(s);
+    sendStatus("Calibration abandoned.");
+    return;
+  }
+  if (S.running || S.priming) {
+    sendStatus("Stop that side first.", 409);
+    return;
+  }
+  S.calibrating = true;
+  S.lowStop = false;
+  S.calUntil = millis() + CAL_MS;
+  pumpWrite(s, 100);
+  Serial.printf("Calibration run %c: 60s at 100%%\n", s == 0 ? 'L' : 'R');
+  sendStatus();
+}
+
+// The measured ml caught in 60s IS the ml/min figure. Persisted to NVS so
+// it survives a reboot or an OTA push.
+void handleCalSave() {
+  float ml = server.arg("ml").toFloat();
+  if (ml < CAL_MIN || ml > CAL_MAX) {
+    sendStatus("That is outside 5-400 ml, check what you typed.", 400);
+    return;
+  }
+  mlPerMin100 = ml;
+  prefs.putFloat("mlmin", mlPerMin100);
+  Serial.printf("Calibrated: %.1f ml/min at 100%%\n", mlPerMin100);
+  sendStatus("Calibrated. Every volume now scales off that.");
+}
+
+// Declare a side's knob wired (or not). Persisted, so it survives reboots.
+void handleEnc() {
+#if !ENABLE_KNOBS
+  sendStatus("Knobs are compiled out of this build.");
+  return;
+#else
+  int s = sideArg();
+  bool on = (server.arg("on") == "1");
+  if (!on) {
+    encDisarm(s, ENC_OFF);
+    prefs.putBool(ENC_KEY[s], false);
+    sendStatus();
+    return;
+  }
+  if (!encArm(s)) {  // refuse rather than arm an interrupt on a floating pin
+    prefs.putBool(ENC_KEY[s], false);
+    sendStatus("Those pins are floating. Check the KY-040 wiring (GND, 3V3, "
+               "CLK, DT, SW) before enabling it.");
+    return;
+  }
+  prefs.putBool(ENC_KEY[s], true);
+  sendStatus();
+#endif
 }
 
 // ---------------------------------------------------------------- setup
@@ -1026,7 +1257,7 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7c   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("Saline Pump  STAGE 7d   built %s %s\n", __DATE__, __TIME__);
   Serial.printf("BENCH MODE: screens %s, knobs %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
                 ENABLE_KNOBS ? "IN" : "compiled out");
