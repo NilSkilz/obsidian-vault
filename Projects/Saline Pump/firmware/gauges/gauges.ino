@@ -1,4 +1,19 @@
-// Saline Pump v1 — Stage 7b: physical knobs + wet flow calibration.
+// Saline Pump v1 — Stage 7c: bench mode (screens + knobs compiled out).
+//
+// ── STAGE 7c: BENCH MODE (2026-09-12) ────────────────────────────────────
+// The ESP32 is out of the PCB socket and loose on the desk while we work on
+// the phone UI. Nothing is plugged into it: no round screens, no KY-040s.
+// Two switches near the top of this file (ENABLE_SCREENS / ENABLE_KNOBS)
+// now compile those peripherals OUT rather than merely skipping them:
+//   * no 112KB frame buffer allocated at all (~112KB more heap for WiFi),
+//   * no SPI, no CS pins driven, no per-frame redraw burning ~40ms a tick,
+//   * encoder pins never even set to INPUT, so nothing can attach an
+//     interrupt to a floating GPIO34/35.
+// The phone page shows an amber BENCH MODE banner and hides the KNOBS card
+// so it is obvious which build is on the board. Pumps, the firmware caps,
+// the stall floor, the low-reservoir stop and the E-stop are all unchanged
+// and still live. Board back in the socket -> set both to 1 and reflash.
+// ─────────────────────────────────────────────────────────────────────────
 //
 // ── STAGE 7b: STOP GUESSING, MAKE THE BOARD TALK (2026-09-12) ────────────
 // 7a's floating-pin theory did not fix it: still no LED, still apparently
@@ -125,6 +140,23 @@
 #include <soc/gpio_reg.h>  // REG_READ of the raw input registers, IRAM-safe
 #include <esp_system.h>    // esp_reset_reason(), for the boot diagnostics
 
+// ---- BENCH MODE (2026-09-12) ----------------------------------------
+// The board is out of the PCB socket and sitting bare on the desk: no
+// screens plugged in, no KY-040s, every peripheral pin floating. With
+// these at 0 the hardware is compiled OUT, not merely skipped:
+//   ENABLE_SCREENS 0 -> no 112KB frame buffer, no SPI, no CS pins, and
+//                       loop() stops spending ~40ms a frame on a redraw
+//                       nobody can see. Roughly 112KB more heap for WiFi.
+//   ENABLE_KNOBS   0 -> encoder pins are never even set to INPUT, so
+//                       nothing can attach an interrupt to a floating
+//                       GPIO34/35 and starve the loop.
+// What is left is exactly the bit we are working on: WiFi, the phone UI,
+// and the two pump gates (which still come up OFF and still honour every
+// cap, the stall floor, the low-reservoir stop and the E-stop).
+// PUT THE BOARD BACK IN THE SOCKET -> set both to 1 and reflash.
+#define ENABLE_SCREENS 0
+#define ENABLE_KNOBS 0
+
 // ---- pins (PCB v1, locked) ----
 const int PUMP_L_GATE = 14;
 const int PUMP_R_GATE = 13;
@@ -177,11 +209,13 @@ const uint16_t COL_DIM = C565(0xb0, 0xbe, 0xc8);
 const uint16_t COL_L_BADGE = C565(0x00, 0xff, 0xff);
 const uint16_t COL_R_BADGE = C565(0xff, 0xa5, 0x20);
 
+#if ENABLE_SCREENS
 Adafruit_GC9A01A tftL(TFT_CS_L, TFT_DC, TFT_RST);  // RST on L resets both
 Adafruit_GC9A01A tftR(TFT_CS_R, TFT_DC, -1);
 // One shared 240x240 frame buffer (112KB). Global so it's allocated at boot
 // before WiFi fragments the heap; draw a face into it, push, reuse.
 GFXcanvas16 canvas(240, 240);
+#endif
 // False if the 112KB malloc failed. The round screens go dark, everything
 // else (WiFi, phone UI, pumps, knobs) still works. Never a boot-stopper.
 bool screensOk = false;
@@ -412,6 +446,12 @@ bool encArm(int s) {
 // Pin modes only. Safe with nothing wired: no interrupts are armed here
 // unless NVS says that side's knob exists.
 void encBegin() {
+#if !ENABLE_KNOBS
+  // Bench mode: do not even set pin modes. Nothing touches 34/35.
+  encs[0].state = ENC_OFF;
+  encs[1].state = ENC_OFF;
+  Serial.println("    knobs compiled out (bench mode), pins left alone");
+#else
   pinMode(ENC_L_A, INPUT_PULLUP);
   pinMode(ENC_L_B, INPUT_PULLUP);
   pinMode(ENC_L_SW, INPUT_PULLUP);
@@ -427,6 +467,7 @@ void encBegin() {
     }
     encArm(i);
   }
+#endif
 }
 
 // Once a second: any pin firing like a floating input gets disarmed, and the
@@ -486,6 +527,10 @@ void encService(int s, unsigned long now) {
 
 // ---------------------------------------------------------------- display
 
+float wavePhase = 0;
+
+#if ENABLE_SCREENS
+
 // Centred text at (cx, cy = centre of the glyph box) in the current font.
 void drawCentred(const char *txt, int cx, int cy, const GFXfont *font,
                  uint16_t colour) {
@@ -507,8 +552,6 @@ void arcRing(int cx, int cy, int r, int half, float a0, float a1,
     canvas.fillCircle(cx + (int)(r * cosf(a)), cy + (int)(r * sinf(a)), half,
                       colour);
 }
-
-float wavePhase = 0;
 
 void drawFace(int s) {
   if (!screensOk) return;  // no frame buffer: skip the glass, keep running
@@ -596,6 +639,10 @@ void drawFace(int s) {
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
 }
 
+#else  // ENABLE_SCREENS == 0: bench mode, the glass is compiled out
+void drawFace(int s) { (void)s; }
+#endif
+
 // ---------------------------------------------------------------- web UI
 // The gauge-mockup.html canvas gauges, live-fed from /status. Slider spans
 // 60..100% duty: bottom of travel = 60%, everything on it is usable range.
@@ -640,8 +687,12 @@ small{display:block;color:#667;margin-top:14px;line-height:1.5}
  flex-wrap:wrap;margin-bottom:8px;font-size:13px}
 .calnow{color:var(--muted);font-size:12px;margin-top:6px}
 .calnow b{color:var(--ink);font-variant-numeric:tabular-nums}
+#bench{display:none;background:#3a2e10;border:1px solid #866f2a;color:#ffd489;
+ border-radius:10px;padding:8px 10px;margin:0 auto 12px;max-width:602px;
+ font-size:12px;letter-spacing:.02em}
 </style></head><body>
 <h1>SALINE PUMP</h1>
+<div id=bench></div>
 <div class=gauges id=g></div>
 <div class=cal><h2>FLOW CALIBRATION</h2>
 <div class=calrow>
@@ -655,7 +706,7 @@ small{display:block;color:#667;margin-top:14px;line-height:1.5}
 <button class=go onclick=saveCal()>Save</button>
 </div>
 <div class=calnow id=cnow>using <b>?</b> ml/min at 100%</div></div>
-<div class=cal><h2>KNOBS</h2>
+<div class=cal id=knobcard><h2>KNOBS</h2>
 <div class=calrow>
 <button id=kL onclick=knob('L')>L knob: ?</button>
 <button id=kR onclick=knob('R')>R knob: ?</button>
@@ -794,6 +845,13 @@ async function poll(){try{
   kb.dataset.on=(d.enc==1)?'1':'0';
   kb.textContent=s+' knob: '+KST[d.enc];
   kb.className=(d.enc==1)?'go':(d.enc?'warn':'')}
+ // bench mode: knobs and/or screens compiled out, say so and hide the card
+ document.getElementById('knobcard').style.display=j.knobs?'':'none';
+ const bm=document.getElementById('bench'),off=[];
+ if(!j.knobs)off.push('knobs');if(!j.screens)off.push('screens');
+ bm.style.display=off.length?'':'none';
+ bm.textContent='BENCH MODE: '+off.join(' + ')+' compiled out. Pumps, caps '
+  +'and E-stop all still live.';
  document.getElementById('cnow').innerHTML=
   'using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
 }catch(e){}}
@@ -904,6 +962,10 @@ void handleCalSave() {
 
 // Declare a side's knob wired (or not). Persisted, so it survives reboots.
 void handleEnc() {
+#if !ENABLE_KNOBS
+  server.send(200, "text/plain", "bench");
+  return;
+#endif
   int s = sideArg();
   bool on = (server.arg("on") == "1");
   if (!on) {
@@ -922,8 +984,10 @@ void handleEnc() {
 }
 
 void handleStatus() {
-  char buf[760];
-  int n = snprintf(buf, sizeof buf, "{\"mlmin\":%.1f,", mlPerMin100);
+  char buf[820];  // + the bench-mode flags
+  int n = snprintf(buf, sizeof buf,
+                   "{\"mlmin\":%.1f,\"knobs\":%d,\"screens\":%d,",
+                   mlPerMin100, ENABLE_KNOBS ? 1 : 0, screensOk ? 1 : 0);
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
@@ -948,10 +1012,12 @@ void setup() {
   pinMode(PUMP_R_GATE, OUTPUT);
   digitalWrite(PUMP_R_GATE, LOW);
 
+#if ENABLE_SCREENS
   pinMode(TFT_CS_L, OUTPUT);
   digitalWrite(TFT_CS_L, HIGH);
   pinMode(TFT_CS_R, OUTPUT);
   digitalWrite(TFT_CS_R, HIGH);
+#endif
   pinMode(LED, OUTPUT);
 
   // Serial before anything that can hang, so a hang has already identified
@@ -960,7 +1026,10 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7b   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("Saline Pump  STAGE 7c   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("BENCH MODE: screens %s, knobs %s\n",
+                ENABLE_SCREENS ? "IN" : "compiled out",
+                ENABLE_KNOBS ? "IN" : "compiled out");
   Serial.println("If you cannot see this line, the board is not running");
   Serial.println("this binary: the upload did not take.");
   Serial.printf("reset reason: %d  (1=power-on 3=sw 4=panic 5-7=watchdog)\n",
@@ -984,11 +1053,17 @@ void setup() {
   // The frame buffer is 112KB in one contiguous lump and it is the single
   // most likely thing on this board to fail an allocation. It is NOT allowed
   // to stop the boot any more.
+#if ENABLE_SCREENS
   screensOk = (canvas.getBuffer() != nullptr);
   if (!screensOk) {
     Serial.println("!! frame buffer alloc FAILED: round screens disabled,");
     Serial.println("!! everything else (WiFi, phone UI, pumps) carries on.");
   }
+#else
+  screensOk = false;
+  Serial.println("Screens compiled out: no 112KB frame buffer, ~112KB more");
+  Serial.println("heap, and loop() does no drawing at all.");
+#endif
 
   Serial.println("[1] PWM");
 #if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
@@ -1017,6 +1092,7 @@ void setup() {
   encBegin();
 
   Serial.println("[4] SPI + screens");
+#if ENABLE_SCREENS
   if (screensOk) {
     SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
     tftL.begin(27000000);
@@ -1026,6 +1102,9 @@ void setup() {
   } else {
     Serial.println("    skipped, no frame buffer");
   }
+#else
+  Serial.println("    skipped, screens compiled out (bench mode)");
+#endif
 
   // WiFi. The old one-shot 15s window then AP-forever stranded the board
   // after an OTA reboot (2026-09-11): first reconnect after a soft reset
@@ -1138,6 +1217,7 @@ void loop() {
     }
   }
 
+#if ENABLE_SCREENS
   // redraw: one face per tick, alternating, so the loop never stalls long
   static unsigned long lastDraw = 0;
   static int drawSide = 0;
@@ -1147,6 +1227,7 @@ void loop() {
     drawFace(drawSide);
     drawSide = 1 - drawSide;
   }
+#endif
 
   // WiFi self-rescue: while on the fallback AP, keep knocking on the house
   // network every 30s; the moment STA connects, drop the AP and carry on.
@@ -1174,7 +1255,7 @@ void loop() {
                   WiFi.status() == WL_CONNECTED
                       ? WiFi.localIP().toString().c_str()
                       : "no-ip",
-                  screensOk ? "on" : "OFF");
+                  screensOk ? "on" : (ENABLE_SCREENS ? "FAILED" : "bench-off"));
   }
 
   // LED: solid while any pump runs, short heartbeat blink when idle
