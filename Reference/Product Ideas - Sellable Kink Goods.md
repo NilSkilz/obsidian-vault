@@ -36,6 +36,7 @@ Rob's idea, 2026-08-22. Metal lightsaber hilt with a base-lit RGB LED as the han
 - **Sellable angle**: nobody sells this. Impact-toy crowd meets saber crowd; the 3D-printed blade-socket adapter is the proprietary bit, same print+electronics moat as the rest of the line. Sound-reactive hilts add scene theatre for free (swing hum, clash flash on impact).
 - **Watch-outs**: metal hilt is heavier than a normal dragon tail handle (fine, whips like a weighted handle, but check swing fatigue); make sure the adapter grips the PVC hard enough that the tail can't launch mid-swing.
 - **Rolling technique (2026-09-10)**: tail material is soft plasticised PVC fire-curtain sheet, goes pliable around 60-80°C (hot water dunk, not a heat gun, which scorches thin sheet and fire-curtain's flame-retardant additives fume). Cut the taper first, roll from the wide edge under tension while warm, bind snug with cord/self-amalgamating tape to cool. Vinyl/PVC cement between layers does the permanent hold, heat-setting alone relaxes over time. If the curtain is the reinforced type (polyester scrim inside, visible as threads on a cut edge), it won't heat-set well and tension + glue becomes the whole game.
+- **Built and finished (2026-09-12)**: Rob completed the tail and posted it to FetLife with copy Jarvis wrote (red-blade/Sith gag, "elegant weapon for a more civilised age"). Full write-up in Daily/2026-09-12.md. Idea proven out end to end, so this one's no longer speculative.
 
 ## Wildcard: wipe-clean pro kit
 
