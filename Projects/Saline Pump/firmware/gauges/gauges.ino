@@ -276,10 +276,13 @@ const unsigned long KICK_MS = 250;
 #define C565(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
 // Teal, matching the phone page's Tide-derived palette so the glass and the
 // phone read as the same object. Teal is the voice, coral the accent.
-const uint16_t COL_SLATE = C565(0x10, 0x1a, 0x1d);
-const uint16_t COL_DEEP = C565(0x07, 0x44, 0x3f);
-const uint16_t COL_MID = C565(0x0d, 0x94, 0x88);
-const uint16_t COL_SURF = C565(0x2d, 0xd4, 0xbf);
+// The four liquid/ground stops below are the gradient ENDPOINTS. The faces
+// no longer use them directly: buildBgLUT()/buildLiquidLUT() interpolate
+// between these same values per row. Kept as the single source of the palette.
+const uint16_t COL_SLATE __attribute__((unused)) = C565(0x10, 0x1a, 0x1d);
+const uint16_t COL_DEEP __attribute__((unused)) = C565(0x07, 0x44, 0x3f);
+const uint16_t COL_MID __attribute__((unused)) = C565(0x0d, 0x94, 0x88);
+const uint16_t COL_SURF __attribute__((unused)) = C565(0x2d, 0xd4, 0xbf);
 const uint16_t COL_FOAM = C565(0xb6, 0xf5, 0xea);
 const uint16_t COL_RING = C565(0x24, 0x33, 0x3a);
 const uint16_t COL_RUN = C565(0x2d, 0xd4, 0xbf);
@@ -370,11 +373,80 @@ class BandCanvas : public GFXcanvas16 {
     for (int32_t n = (int32_t)240 * bandH; n; n--) *p++ = c;
   }
 
+  // --- gradient helpers. A vertical gradient is one colour per FACE row,
+  // so a 240-entry table indexed by face row costs one lookup per pixel and
+  // keeps the per-column call count at 1. Doing it per-pixel through
+  // drawPixel() would be ~115k virtual calls a face; this is 240.
+  // The table is always indexed by the FACE row, never the band row, so the
+  // gradient stays continuous across a band seam.
+  void drawFastVLineLUT(int16_t x, int16_t y, int16_t h, const uint16_t *lut) {
+    if (x < 0 || x >= 240 || h <= 0) return;
+    int16_t yEnd = y + h;  // face rows [y, yEnd)
+    if (y < y0) y = y0;
+    if (yEnd > y0 + bandH) yEnd = y0 + bandH;
+    if (yEnd <= y) return;
+    uint16_t *p = buffer + (int32_t)(y - y0) * 240 + x;
+    for (int16_t r = y; r < yEnd; r++) { *p = lut[r]; p += 240; }
+  }
+
+  // Whole-band fill from the same kind of table: the ground gradient.
+  void fillScreenLUT(const uint16_t *lut) {
+    uint16_t *p = buffer;
+    for (int16_t r = 0; r < bandH; r++) {
+      uint16_t c = lut[y0 + r];
+      for (int16_t x = 0; x < 240; x++) *p++ = c;
+    }
+  }
+
  private:
   int16_t bandH = 0, y0 = 0;
 };
 
 BandCanvas canvas;
+
+// THE "TEAL IS JUST A STRIP" FIX, 2026-09-12. The mockup and the phone page
+// both paint the liquid with a linear gradient running from 14px above the
+// waterline all the way to the bottom of the face: surf at the surface, mid
+// at 28% of the depth, deep at the floor. The firmware faked that with three
+// FIXED-PIXEL bands (6px surf, 28px mid, flat COL_DEEP for the rest), which
+// at a full reservoir meant 34 rows of teal and 206 rows of near-black. On
+// the glass that reads as a black face with a teal stripe that slides down
+// as the level drops. Same stops as the page now, spread over the real depth.
+uint16_t bgLUT[240];      // ground: slateTop -> slateBot, static
+uint16_t liquidLUT[240];  // liquid: surf -> mid (28%) -> deep, moves with level
+float liquidLUTbase = 1e9;  // baseY the table was built for; rebuild on change
+
+static inline uint16_t lerp565(uint8_t r0, uint8_t g0, uint8_t b0, uint8_t r1,
+                               uint8_t g1, uint8_t b1, float t) {
+  if (t < 0) t = 0;
+  if (t > 1) t = 1;
+  uint8_t r = (uint8_t)(r0 + ((int)r1 - (int)r0) * t);
+  uint8_t g = (uint8_t)(g0 + ((int)g1 - (int)g0) * t);
+  uint8_t b = (uint8_t)(b0 + ((int)b1 - (int)b0) * t);
+  return C565(r, g, b);
+}
+
+void buildBgLUT() {
+  for (int y = 0; y < 240; y++)
+    bgLUT[y] = lerp565(0x10, 0x1a, 0x1d, 0x0a, 0x10, 0x13, y / 239.0f);
+}
+
+// Matches the page's createLinearGradient(0, baseY-14, 0, 240) exactly.
+void buildLiquidLUT(float baseY) {
+  if (fabsf(baseY - liquidLUTbase) < 0.5f) return;  // nothing moved
+  liquidLUTbase = baseY;
+  const float g0 = baseY - 14.0f;
+  float span = 240.0f - g0;
+  if (span < 1.0f) span = 1.0f;
+  for (int y = 0; y < 240; y++) {
+    float t = (y - g0) / span;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    liquidLUT[y] = (t < 0.28f)
+        ? lerp565(0x2d, 0xd4, 0xbf, 0x0d, 0x94, 0x88, t / 0.28f)
+        : lerp565(0x0d, 0x94, 0x88, 0x07, 0x44, 0x3f, (t - 0.28f) / 0.72f);
+  }
+}
 #endif
 // False if even a 24-row band would not allocate. The round screens go dark,
 // everything else (WiFi, phone UI, pumps, knobs) still works. Never a
@@ -749,13 +821,14 @@ void renderFace(int s) {
   Side &S = sides[s];
   const int W = 240, H = 240, cx = 120, cy = 120;
 
-  canvas.fillScreen(COL_SLATE);
+  canvas.fillScreenLUT(bgLUT);
 
   // liquid: per-column waterline from two summed sines, calm when stopped
   float level = S.remain / RES_CAPACITY;
   level = constrain(level, 0.0f, 1.0f);
   float act = (S.running || S.priming) ? 1.0f : 0.35f;
   float baseY = H - level * H;
+  buildLiquidLUT(baseY);
   const float TAU = 6.2831853f;
   for (int x = 0; x < W; x++) {
     float w = 5.5f * act * sinf((x / 240.0f * TAU) * 1.6f + wavePhase * 1.8f)
@@ -764,12 +837,8 @@ void renderFace(int s) {
     if (level >= 0.995f) y = 0;
     if (y < 0) y = 0;
     if (y >= H) continue;
-    // fake the mockup's gradient with three bands: surface, mid, deep
-    int surfEnd = min(y + 6, H);
-    int midEnd = min(y + 34, H);
-    canvas.drawFastVLine(x, y, surfEnd - y, COL_SURF);
-    if (midEnd > surfEnd) canvas.drawFastVLine(x, surfEnd, midEnd - surfEnd, COL_MID);
-    if (H > midEnd) canvas.drawFastVLine(x, midEnd, H - midEnd, COL_DEEP);
+    // the real gradient, surface to floor (see buildLiquidLUT)
+    canvas.drawFastVLineLUT(x, y, H - y, liquidLUT);
     if (level > 0.02f && level < 0.99f)
       canvas.drawFastVLine(x, y, 2, COL_FOAM);  // foam highlight
   }
@@ -850,7 +919,7 @@ void drawFace(int s) {
 #if SCREEN_SPLASH
 void renderSplash(int s) {
   const int cx = 120, cy = 120;
-  canvas.fillScreen(COL_SLATE);
+  canvas.fillScreenLUT(bgLUT);
   arcRing(cx, cy, 111, 3, 0, 6.2831853f, COL_RING);
   drawCentred(s == 0 ? "LEFT" : "RIGHT", cx, cy - 22, &FreeSansBold24pt7b,
               s == 0 ? COL_L_BADGE : COL_R_BADGE);
@@ -1488,6 +1557,7 @@ void setup() {
   // most likely thing on this board to fail an allocation. It is NOT allowed
   // to stop the boot any more.
 #if ENABLE_SCREENS
+  buildBgLUT();  // ground gradient, static for the life of the board
   screenBand = canvas.begin();
   screensOk = (screenBand > 0);
   if (screensOk) {
