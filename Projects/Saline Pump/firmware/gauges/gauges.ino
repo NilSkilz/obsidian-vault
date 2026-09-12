@@ -1,4 +1,25 @@
-// Saline Pump v1 — Stage 7a: physical knobs + wet flow calibration.
+// Saline Pump v1 — Stage 7b: physical knobs + wet flow calibration.
+//
+// ── STAGE 7b: STOP GUESSING, MAKE THE BOARD TALK (2026-09-12) ────────────
+// 7a's floating-pin theory did not fix it: still no LED, still apparently
+// dead. So 7b stops theorising and instruments the boot instead.
+//   * Serial comes up FIRST, before anything that can hang, and prints a
+//     build banner (STAGE 7b + compile timestamp). If that banner is not on
+//     the serial monitor, the board is NOT running this binary and the
+//     problem is the upload, not the code.
+//   * esp_reset_reason() and the heap figures are printed at boot, so a
+//     panic loop or a failed frame-buffer malloc identifies itself.
+//   * Every risky init step prints a numbered checkpoint BEFORE it runs.
+//     Whatever the last line on the monitor is, that is where it died.
+//   * The boot blink is now 3 x 250ms (1.5s), not 3 x 60ms. The old one was
+//     360ms total and genuinely easy to miss.
+//   * THE FRAME BUFFER NO LONGER COSTS A BOOT. 7a halted forever in a
+//     while(true) if the 112KB canvas malloc failed, which looks exactly
+//     like "dead board": no LED, no web server, nothing. Now a failed
+//     allocation just disables the two round screens and says so; WiFi and
+//     the phone UI still come up. Same principle as the knobs: no single
+//     peripheral gets to take the whole rig down.
+// ─────────────────────────────────────────────────────────────────────────
 //
 // ── STAGE 7a BOOT FIX (2026-09-12) ───────────────────────────────────────
 // Stage 7 as first written would not boot: no heartbeat LED, no web server,
@@ -102,6 +123,7 @@
 #include <Fonts/FreeSansBold9pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
 #include <soc/gpio_reg.h>  // REG_READ of the raw input registers, IRAM-safe
+#include <esp_system.h>    // esp_reset_reason(), for the boot diagnostics
 
 // ---- pins (PCB v1, locked) ----
 const int PUMP_L_GATE = 14;
@@ -160,6 +182,9 @@ Adafruit_GC9A01A tftR(TFT_CS_R, TFT_DC, -1);
 // One shared 240x240 frame buffer (112KB). Global so it's allocated at boot
 // before WiFi fragments the heap; draw a face into it, push, reuse.
 GFXcanvas16 canvas(240, 240);
+// False if the 112KB malloc failed. The round screens go dark, everything
+// else (WiFi, phone UI, pumps, knobs) still works. Never a boot-stopper.
+bool screensOk = false;
 
 WebServer server(80);
 Preferences prefs;
@@ -486,6 +511,7 @@ void arcRing(int cx, int cy, int r, int half, float a0, float a1,
 float wavePhase = 0;
 
 void drawFace(int s) {
+  if (!screensOk) return;  // no frame buffer: skip the glass, keep running
   Side &S = sides[s];
   const int W = 240, H = 240, cx = 120, cy = 120;
 
@@ -927,23 +953,44 @@ void setup() {
   pinMode(TFT_CS_R, OUTPUT);
   digitalWrite(TFT_CS_R, HIGH);
   pinMode(LED, OUTPUT);
-  // Three quick blinks = "I reached setup()". Visible before serial, before
-  // WiFi, before the screens. If these don't happen, it never booted at all.
+
+  // Serial before anything that can hang, so a hang has already identified
+  // itself by the time it happens.
+  Serial.begin(115200);
+  delay(400);
+  Serial.println();
+  Serial.println("=====================================================");
+  Serial.printf("Saline Pump  STAGE 7b   built %s %s\n", __DATE__, __TIME__);
+  Serial.println("If you cannot see this line, the board is not running");
+  Serial.println("this binary: the upload did not take.");
+  Serial.printf("reset reason: %d  (1=power-on 3=sw 4=panic 5-7=watchdog)\n",
+                (int)esp_reset_reason());
+  Serial.printf("heap: %u free, %u largest block, %u at boot\n",
+                (unsigned)ESP.getFreeHeap(),
+                (unsigned)ESP.getMaxAllocHeap(),
+                (unsigned)ESP.getHeapSize());
+  Serial.println("Pumps start OFF.");
+  Serial.println("=====================================================");
+
+  // 1.5s of unmissable blinking = "I reached setup()". The old version was
+  // three 60ms flickers and you could blink and miss the lot.
   for (int i = 0; i < 3; i++) {
     digitalWrite(LED, HIGH);
-    delay(60);
+    delay(250);
     digitalWrite(LED, LOW);
-    delay(60);
+    delay(250);
   }
 
-  Serial.begin(115200);
-  delay(300);
-  Serial.println("\nSaline Pump Stage 7: knobs + calibration. Pumps start OFF.");
-  if (!canvas.getBuffer()) {
-    Serial.println("FATAL: frame buffer allocation failed");
-    while (true) delay(1000);
+  // The frame buffer is 112KB in one contiguous lump and it is the single
+  // most likely thing on this board to fail an allocation. It is NOT allowed
+  // to stop the boot any more.
+  screensOk = (canvas.getBuffer() != nullptr);
+  if (!screensOk) {
+    Serial.println("!! frame buffer alloc FAILED: round screens disabled,");
+    Serial.println("!! everything else (WiFi, phone UI, pumps) carries on.");
   }
 
+  Serial.println("[1] PWM");
 #if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
   ledcAttach(PUMP_L_GATE, PWM_FREQ, PWM_RES);
   ledcAttach(PUMP_R_GATE, PWM_FREQ, PWM_RES);
@@ -956,6 +1003,7 @@ void setup() {
   pumpWrite(0, 0);
   pumpWrite(1, 0);
 
+  Serial.println("[2] NVS");
   prefs.begin("pump", false);
   sides[0].minPct = prefs.getInt("minL", 0);  // stall floors from Stage 5
   sides[1].minPct = prefs.getInt("minR", 0);
@@ -965,19 +1013,26 @@ void setup() {
   Serial.printf("Flow: %.1f ml/min at 100%%%s\n", mlPerMin100,
                 prefs.isKey("mlmin") ? "" : "  <-- UNCALIBRATED, guess");
 
+  Serial.println("[3] knobs");
   encBegin();
 
-  SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
-  tftL.begin(27000000);
-  tftR.begin(27000000);
-  drawFace(0);
-  drawFace(1);
+  Serial.println("[4] SPI + screens");
+  if (screensOk) {
+    SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
+    tftL.begin(27000000);
+    tftR.begin(27000000);
+    drawFace(0);
+    drawFace(1);
+  } else {
+    Serial.println("    skipped, no frame buffer");
+  }
 
   // WiFi. The old one-shot 15s window then AP-forever stranded the board
   // after an OTA reboot (2026-09-11): first reconnect after a soft reset
   // can miss the window, and there was no way back without a power cycle.
   // Now: AP_STA fallback, and loop() keeps retrying the house WiFi from
   // AP mode; on success the AP is torn down.
+  Serial.println("[5] WiFi (up to 20s)");
   WiFi.persistent(false);
   WiFi.setAutoReconnect(true);
   WiFi.mode(WIFI_STA);
@@ -996,6 +1051,7 @@ void setup() {
     Serial.println(WiFi.softAPIP());
   }
 
+  Serial.println("[6] OTA");
   ArduinoOTA.setHostname("salinepump");
   ArduinoOTA.setPassword("primefirst");
   ArduinoOTA.onStart([]() {
@@ -1004,6 +1060,7 @@ void setup() {
   });
   ArduinoOTA.begin();
 
+  Serial.println("[7] HTTP");
   server.on("/", []() { server.send_P(200, "text/html", PAGE); });
   server.on("/set", handleSet);
   server.on("/run", handleRun);
@@ -1019,6 +1076,7 @@ void setup() {
   server.on("/enc", handleEnc);
   server.on("/status", handleStatus);
   server.begin();
+  Serial.println("[8] BOOT COMPLETE, entering loop()");
   Serial.println("UI: http://salinepump.local/");
 }
 
@@ -1103,6 +1161,20 @@ void loop() {
       lastStaRetry = now;
       WiFi.begin(WIFI_SSID, WIFI_PASS);
     }
+  }
+
+  // Serial heartbeat: proof loop() is alive, and what the network is doing.
+  // Ten seconds apart so it never drowns anything useful.
+  static unsigned long lastBeat = 0;
+  if (now - lastBeat >= 10000) {
+    lastBeat = now;
+    Serial.printf("alive %lus  heap %u  wifi %s  %s  screens %s\n", now / 1000,
+                  (unsigned)ESP.getFreeHeap(),
+                  WiFi.status() == WL_CONNECTED ? "STA" : (apFallback ? "AP" : "--"),
+                  WiFi.status() == WL_CONNECTED
+                      ? WiFi.localIP().toString().c_str()
+                      : "no-ip",
+                  screensOk ? "on" : "OFF");
   }
 
   // LED: solid while any pump runs, short heartbeat blink when idle
