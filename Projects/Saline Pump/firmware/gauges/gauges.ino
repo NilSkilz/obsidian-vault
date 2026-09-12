@@ -1,4 +1,22 @@
-// Saline Pump v1 - Stage 7d: Tide-themed phone UI, split into Run/Settings.
+// Saline Pump v1 - Stage 7i: blue water, dithered gradient, non-blocking glass.
+//
+// ── STAGE 7i: THE BOARD STOPPED ANSWERING (2026-09-12) ──────────────────
+// Three things off the bench, in the order Rob hit them:
+//
+//   1. BLUE, NOT TEAL. "a little more blue pls". The whole palette moved,
+//      glass and phone page together, back to the gauge-mockup water hues.
+//   2. DITHERED GRADIENT. RGB565 has 32 blue levels; a 240px ramp across
+//      them stairs into visible bars. Both row LUTs are now quantised with
+//      a 2x2 Bayer threshold, so it stipples instead of banding. Free at
+//      run time: the dither is baked into the tables.
+//   3. NO PING WHILE PUMPING. Serial fine, glass fine, knobs fine, network
+//      gone. Not WiFi: a whole face blocks loop() for ~45ms and the old
+//      scheduler started one every 60ms, so the cooperative WebServer and
+//      ArduinoOTA at the bottom of loop() never got enough air for a TCP
+//      handshake. Drawing is now one band per loop() pass (a state
+//      machine, not a call) under a MEASURED 50% duty cap. See the redraw
+//      scheduler in loop() for the full reasoning.
+//
 //
 // ── STAGE 7d: THE PAGE STOPS BEING A COCKPIT (2026-09-12) ──────────────
 // Rob's verdict on 7c's page: confusing, the big number looked low-res, and
@@ -34,7 +52,7 @@
 //   4. THEMING lifted from Tide (mission-control/src/tide/tide.css): dark
 //      ground, one gradient voice, an ambient breathing glow, hairline
 //      sections instead of boxed cards, pill buttons. Tide runs coral/rose;
-//      this rig runs TEAL with coral as the rationed accent. The GC9A01
+//      this rig runs BLUE with coral as the rationed accent. The GC9A01
 //      faces were recoloured to the same palette so the glass and the phone
 //      read as one object.
 // ──────────────────────────────────────────────────────────────────────
@@ -274,23 +292,26 @@ const unsigned long KICK_MS = 250;
 
 // ---- colours (RGB565 versions of the mockup palette) ----
 #define C565(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
-// Teal, matching the phone page's Tide-derived palette so the glass and the
-// phone read as the same object. Teal is the voice, coral the accent.
+// BLUE, 2026-09-12 (Rob: "a little more blue pls, rather than teal"). Back
+// to the water palette from gauge-mockup.html, which was blue all along; the
+// teal was my Tide borrowing. Structure is still Tide's, the hue is the
+// mockup's. Blue is the voice, coral stays the rationed accent, and the page
+// moved with it so the glass and the phone stay the same object.
 // The four liquid/ground stops below are the gradient ENDPOINTS. The faces
 // no longer use them directly: buildBgLUT()/buildLiquidLUT() interpolate
 // between these same values per row. Kept as the single source of the palette.
-const uint16_t COL_SLATE __attribute__((unused)) = C565(0x10, 0x1a, 0x1d);
-const uint16_t COL_DEEP __attribute__((unused)) = C565(0x07, 0x44, 0x3f);
-const uint16_t COL_MID __attribute__((unused)) = C565(0x0d, 0x94, 0x88);
-const uint16_t COL_SURF __attribute__((unused)) = C565(0x2d, 0xd4, 0xbf);
-const uint16_t COL_FOAM = C565(0xb6, 0xf5, 0xea);
-const uint16_t COL_RING = C565(0x24, 0x33, 0x3a);
-const uint16_t COL_RUN = C565(0x2d, 0xd4, 0xbf);
+const uint16_t COL_SLATE __attribute__((unused)) = C565(0x0f, 0x17, 0x20);
+const uint16_t COL_DEEP __attribute__((unused)) = C565(0x0a, 0x3f, 0x74);
+const uint16_t COL_MID __attribute__((unused)) = C565(0x11, 0x6b, 0xb0);
+const uint16_t COL_SURF __attribute__((unused)) = C565(0x33, 0xa6, 0xf0);
+const uint16_t COL_FOAM = C565(0xa9, 0xe2, 0xff);
+const uint16_t COL_RING = C565(0x24, 0x31, 0x3d);
+const uint16_t COL_RUN = C565(0x38, 0xbd, 0xf8);
 const uint16_t COL_STOP = C565(0xff, 0x6b, 0x6b);
 const uint16_t COL_LOW = C565(0xf0, 0xa5, 0x7e);
 const uint16_t COL_INK = C565(0xff, 0xff, 0xff);
-const uint16_t COL_DIM = C565(0xa8, 0xbd, 0xc2);
-const uint16_t COL_L_BADGE = C565(0x5e, 0xea, 0xd4);
+const uint16_t COL_DIM = C565(0xa9, 0xbc, 0xca);
+const uint16_t COL_L_BADGE = C565(0x7d, 0xd3, 0xfc);
 const uint16_t COL_R_BADGE = C565(0xf0, 0xa5, 0x7e);
 
 #if ENABLE_SCREENS
@@ -379,22 +400,24 @@ class BandCanvas : public GFXcanvas16 {
   // drawPixel() would be ~115k virtual calls a face; this is 240.
   // The table is always indexed by the FACE row, never the band row, so the
   // gradient stays continuous across a band seam.
-  void drawFastVLineLUT(int16_t x, int16_t y, int16_t h, const uint16_t *lut) {
+  void drawFastVLineLUT(int16_t x, int16_t y, int16_t h,
+                        const uint16_t (*lut)[240]) {
     if (x < 0 || x >= 240 || h <= 0) return;
+    const uint16_t *col = lut[x & 1];  // 2x2 Bayer, see the LUT comment
     int16_t yEnd = y + h;  // face rows [y, yEnd)
     if (y < y0) y = y0;
     if (yEnd > y0 + bandH) yEnd = y0 + bandH;
     if (yEnd <= y) return;
     uint16_t *p = buffer + (int32_t)(y - y0) * 240 + x;
-    for (int16_t r = y; r < yEnd; r++) { *p = lut[r]; p += 240; }
+    for (int16_t r = y; r < yEnd; r++) { *p = col[r]; p += 240; }
   }
 
   // Whole-band fill from the same kind of table: the ground gradient.
-  void fillScreenLUT(const uint16_t *lut) {
+  void fillScreenLUT(const uint16_t (*lut)[240]) {
     uint16_t *p = buffer;
     for (int16_t r = 0; r < bandH; r++) {
-      uint16_t c = lut[y0 + r];
-      for (int16_t x = 0; x < 240; x++) *p++ = c;
+      const uint16_t a = lut[0][y0 + r], b = lut[1][y0 + r];
+      for (int16_t x = 0; x < 120; x++) { *p++ = a; *p++ = b; }
     }
   }
 
@@ -412,23 +435,46 @@ BandCanvas canvas;
 // at a full reservoir meant 34 rows of teal and 206 rows of near-black. On
 // the glass that reads as a black face with a teal stripe that slides down
 // as the level drops. Same stops as the page now, spread over the real depth.
-uint16_t bgLUT[240];      // ground: slateTop -> slateBot, static
-uint16_t liquidLUT[240];  // liquid: surf -> mid (28%) -> deep, moves with level
-float liquidLUTbase = 1e9;  // baseY the table was built for; rebuild on change
+// DITHERING. A 240px gradient crosses far more shades than RGB565 has levels
+// (blue has 32 in total, so the liquid ramp gets ~16 of them over 240 rows)
+// and a flat table stairs visibly on the glass: eight horizontal bars, not
+// water. So each table is quantised with a 2x2 Bayer threshold instead of a
+// straight round. [0] is the even-column table, [1] the odd-column one, and
+// the row parity is folded INTO each table, so lut[x & 1][y] gives all four
+// Bayer cells with no extra work per pixel. Cost: one extra 480-byte table,
+// zero cycles in the inner loop. Offsetting the sample position instead
+// (the obvious first idea) does nothing here: half a row of travel is 3% of
+// one quantisation step, so it only ever moves the stair edge, never breaks
+// it up.
+uint16_t bgLUT[2][240];      // ground: slateTop -> slateBot, static
+uint16_t liquidLUT[2][240];  // liquid: surf -> mid (28%) -> deep, follows level
+float liquidLUTbase = 1e9;   // baseY the table was built for; rebuild on change
 
+// Bayer 2x2, as a fraction of one quantisation step. Index [x & 1][y & 1].
+const float kBayer[2][2] = {{0.00f, 0.75f}, {0.50f, 0.25f}};
+
+// Interpolate two RGB888 stops at t, then quantise to 565 with the given
+// threshold rather than rounding. thr = 0.5 everywhere is a plain round;
+// varying it per pixel is what turns a hard stair edge into a stipple.
 static inline uint16_t lerp565(uint8_t r0, uint8_t g0, uint8_t b0, uint8_t r1,
-                               uint8_t g1, uint8_t b1, float t) {
+                               uint8_t g1, uint8_t b1, float t, float thr) {
   if (t < 0) t = 0;
   if (t > 1) t = 1;
-  uint8_t r = (uint8_t)(r0 + ((int)r1 - (int)r0) * t);
-  uint8_t g = (uint8_t)(g0 + ((int)g1 - (int)g0) * t);
-  uint8_t b = (uint8_t)(b0 + ((int)b1 - (int)b0) * t);
-  return C565(r, g, b);
+  float r = (r0 + ((int)r1 - (int)r0) * t) * (31.0f / 255.0f) + thr;
+  float g = (g0 + ((int)g1 - (int)g0) * t) * (63.0f / 255.0f) + thr;
+  float b = (b0 + ((int)b1 - (int)b0) * t) * (31.0f / 255.0f) + thr;
+  int ri = (int)r, gi = (int)g, bi = (int)b;
+  if (ri > 31) ri = 31;
+  if (gi > 63) gi = 63;
+  if (bi > 31) bi = 31;
+  return (uint16_t)((ri << 11) | (gi << 5) | bi);
 }
 
 void buildBgLUT() {
-  for (int y = 0; y < 240; y++)
-    bgLUT[y] = lerp565(0x10, 0x1a, 0x1d, 0x0a, 0x10, 0x13, y / 239.0f);
+  for (int d = 0; d < 2; d++)
+    for (int y = 0; y < 240; y++)
+      bgLUT[d][y] = lerp565(0x0f, 0x17, 0x20, 0x09, 0x0f, 0x17, y / 239.0f,
+                            kBayer[d][y & 1]);
 }
 
 // Matches the page's createLinearGradient(0, baseY-14, 0, 240) exactly.
@@ -438,13 +484,16 @@ void buildLiquidLUT(float baseY) {
   const float g0 = baseY - 14.0f;
   float span = 240.0f - g0;
   if (span < 1.0f) span = 1.0f;
-  for (int y = 0; y < 240; y++) {
-    float t = (y - g0) / span;
-    if (t < 0) t = 0;
-    if (t > 1) t = 1;
-    liquidLUT[y] = (t < 0.28f)
-        ? lerp565(0x2d, 0xd4, 0xbf, 0x0d, 0x94, 0x88, t / 0.28f)
-        : lerp565(0x0d, 0x94, 0x88, 0x07, 0x44, 0x3f, (t - 0.28f) / 0.72f);
+  for (int d = 0; d < 2; d++) {
+    for (int y = 0; y < 240; y++) {
+      float t = (y - g0) / span;
+      if (t < 0) t = 0;
+      if (t > 1) t = 1;
+      const float thr = kBayer[d][y & 1];
+      liquidLUT[d][y] = (t < 0.28f)
+          ? lerp565(0x33, 0xa6, 0xf0, 0x11, 0x6b, 0xb0, t / 0.28f, thr)
+          : lerp565(0x11, 0x6b, 0xb0, 0x0a, 0x3f, 0x74, (t - 0.28f) / 0.72f, thr);
+    }
   }
 }
 #endif
@@ -452,7 +501,8 @@ void buildLiquidLUT(float baseY) {
 // everything else (WiFi, phone UI, pumps, knobs) still works. Never a
 // boot-stopper.
 bool screensOk = false;
-int screenBand = 0;  // rows per band, 0 = no glass. Reported in /status.
+int screenBand = 0;      // rows per band, 0 = no glass. Reported in /status.
+unsigned long drawStat = 0;  // ms the last whole face cost, reported in /status
 
 WebServer server(80);
 Preferences prefs;
@@ -848,8 +898,8 @@ void renderFace(int s) {
   frac = constrain(frac, 0.0f, 1.0f);
   const float top = -1.5707963f;
   arcRing(cx, cy, 111, 3, 0, TAU, COL_RING);
-  // coral, not teal: the liquid behind it is teal now and a teal ring on a
-  // teal fill is invisible at a glance across the room.
+  // coral, not blue: the liquid behind it is blue and a blue ring on a blue
+  // fill is invisible at a glance across the room.
   uint16_t ringCol = (S.running || S.done) ? COL_LOW : COL_STOP;
   if (frac > 0.002f) arcRing(cx, cy, 111, 3, top, top + frac * TAU, ringCol);
 
@@ -872,7 +922,7 @@ void renderFace(int s) {
   canvas.setFont(&FreeSansBold9pt7b);
   canvas.getTextBounds(pill, 0, 0, &x1, &y1, &tw, &th);
   canvas.fillRoundRect(cx - tw / 2 - 9, 52, tw + 18, 22, 11, pillCol);
-  drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x06, 0x20, 0x1d));
+  drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x04, 0x1d, 0x2e));
 
   // big number: the duty actually on the gate (or what Start would give)
   int shown = (S.running || S.priming || S.calibrating) ? S.actualDuty
@@ -898,17 +948,25 @@ void renderFace(int s) {
   }
 }
 
-// Render + push, band by band, top to bottom. One address window per band.
-void drawFace(int s) {
-  if (!screensOk) return;  // no frame buffer: skip the glass, keep running
+// ONE band: render it, push it, return. This is the unit of work loop() is
+// allowed to do in a single pass, because a whole face blocks for ~45ms and
+// a blocked loop() is a dead web server (see the redraw scheduler in loop()).
+void drawFaceBand(int s, int y0) {
+  if (!screensOk) return;
   Adafruit_GC9A01A &tft = (s == 0) ? tftL : tftR;
   const int bh = canvas.band();
-  for (int y0 = 0; y0 < 240; y0 += bh) {
-    int h = (240 - y0 < bh) ? 240 - y0 : bh;
-    canvas.setBand(y0);
-    renderFace(s);
-    tft.drawRGBBitmap(0, y0, canvas.getBuffer(), 240, h);
-  }
+  int h = (240 - y0 < bh) ? 240 - y0 : bh;
+  canvas.setBand(y0);
+  renderFace(s);
+  tft.drawRGBBitmap(0, y0, canvas.getBuffer(), 240, h);
+}
+
+// Whole face in one blocking go. Boot only: during setup() there is no web
+// server to starve, and the splash wants to appear all at once.
+void drawFace(int s) {
+  if (!screensOk) return;
+  const int bh = canvas.band();
+  for (int y0 = 0; y0 < 240; y0 += bh) drawFaceBand(s, y0);
 }
 
 // Boot identification splash. Each screen says which side it is, which CS
@@ -961,14 +1019,14 @@ const char PAGE[] PROGMEM = R"HTML(<!doctype html><html><head>
 /* Lifted from Tide's design system (mission-control/src/tide/tide.css):
    one gradient voice, a dark ground, an ambient breathing glow, hairline
    sections instead of cards. Tide's voice is coral/rose; this rig runs
-   teal, with coral kept as the rationed accent. */
+   blue (the gauge-mockup water palette), coral as the rationed accent. */
 :root{
- --grad:linear-gradient(90deg,#5eead4,#0d9488);
- --grad135:linear-gradient(135deg,#2dd4bf,#0d9488);
- --teal:#2dd4bf;--coral:#f0a57e;
- --ground:#0e1417;--ink:#e9eff1;--muted:#8ea3a8;--faint:#6d8189;
+ --grad:linear-gradient(90deg,#7dd3fc,#116bb0);
+ --grad135:linear-gradient(135deg,#38bdf8,#116bb0);
+ --blue:#38bdf8;--coral:#f0a57e;
+ --ground:#0d1219;--ink:#e9eef3;--muted:#93a4b5;--faint:#71828f;
  --hair:rgba(255,255,255,.09);--input:rgba(255,255,255,.06);
- --glow-teal:rgba(45,212,191,.24);--glow-sea:rgba(56,120,160,.22)}
+ --glow-blue:rgba(56,189,248,.24);--glow-sea:rgba(36,90,150,.24)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);
  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -977,7 +1035,7 @@ body{margin:0;background:var(--ground);color:var(--ink);
 .glow::before,.glow::after{content:'';position:absolute;border-radius:50%;
  filter:blur(56px);animation:breathe 14s ease-in-out infinite}
 .glow::before{width:72%;height:52%;left:-16%;top:-14%;
- background:radial-gradient(circle,var(--glow-teal),transparent 70%)}
+ background:radial-gradient(circle,var(--glow-blue),transparent 70%)}
 .glow::after{width:62%;height:52%;right:-12%;bottom:-16%;
  background:radial-gradient(circle,var(--glow-sea),transparent 70%);
  animation-delay:-7s}
@@ -995,7 +1053,7 @@ h1{margin:0;font-size:clamp(23px,7vw,30px);font-weight:800;letter-spacing:-.02em
 nav{display:flex;gap:6px;flex:none}
 .pill{font-size:12.5px;font-weight:650;border-radius:999px;padding:7px 14px;
  background:transparent;border:1px solid var(--hair);color:var(--faint)}
-.pill.on{background:var(--grad135);border-color:transparent;color:#06201d}
+.pill.on{background:var(--grad135);border-color:transparent;color:#041d2e}
 section{padding:20px 0 4px;border-top:1px solid var(--hair);margin-top:16px}
 section:first-of-type{border-top:0}
 .lbl{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
@@ -1018,17 +1076,17 @@ canvas{display:block;width:240px;height:240px}
 .row label{text-align:left;color:var(--muted)}
 .row output{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums;
  font-weight:600}
-input[type=range]{width:100%;height:32px;accent-color:var(--teal);background:none}
+input[type=range]{width:100%;height:32px;accent-color:var(--blue);background:none}
 input[type=number]{width:78px;font-size:16px;background:var(--input);
  color:var(--ink);border:1px solid var(--hair);border-radius:12px;padding:9px 11px;
  text-align:right;outline:none}
-input[type=number]:focus{border-color:var(--teal);
+input[type=number]:focus{border-color:var(--blue);
  box-shadow:0 0 0 3px rgba(45,212,191,.15)}
 button{font-family:inherit;font-weight:600;border-radius:999px;
  border:1px solid var(--hair);background:transparent;color:var(--ink);
  padding:11px 14px;font-size:13px;transition:transform .12s ease}
 button:active{transform:scale(.97)}
-button.go{background:var(--grad135);border-color:transparent;color:#06201d}
+button.go{background:var(--grad135);border-color:transparent;color:#041d2e}
 button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
 .btns{display:flex;gap:7px;margin-top:14px}
 .btns button{flex:1;padding:12px 6px}
@@ -1057,8 +1115,8 @@ button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
  font-size:12px;line-height:1.45}
 #toast{position:fixed;left:16px;right:16px;
  bottom:calc(84px + env(safe-area-inset-bottom));max-width:608px;margin:0 auto;
- background:rgba(13,148,136,.16);border:1px solid rgba(45,212,191,.4);
- color:#bdf4ea;border-radius:14px;padding:11px 13px;font-size:13px;
+ background:rgba(17,107,176,.18);border:1px solid rgba(56,189,248,.4);
+ color:#cbe7fb;border-radius:14px;padding:11px 13px;font-size:13px;
  opacity:0;transition:opacity .25s;pointer-events:none;z-index:6}
 </style></head><body>
 <div class=glow></div>
@@ -1126,10 +1184,10 @@ const TAU=Math.PI*2,SIDES=['L','R'],$=i=>document.getElementById(i);
 // browser is why the big number looked like a fax. Capped at 2x, which is
 // crisp on a 3x phone screen without quadrupling the fill cost.
 const DPR=Math.min(2,window.devicePixelRatio||1);
-const C={slateTop:'#101a1d',slateBot:'#0a1013',deep:'#07443f',mid:'#0d9488',
- surf:'#2dd4bf',foam:'#b6f5ea',ring:'#24333a',run:'#2dd4bf',stop:'#ff6b6b',
+const C={slateTop:'#0f1720',slateBot:'#090f17',deep:'#0a3f74',mid:'#116bb0',
+ surf:'#33a6f0',foam:'#a9e2ff',ring:'#24313d',run:'#38bdf8',stop:'#ff6b6b',
  warn:'#f0a57e',ink:'#fff',dim:'rgba(233,239,241,.7)',
- badgeL:'#5eead4',badgeR:'#f0a57e'};
+ badgeL:'#7dd3fc',badgeR:'#f0a57e'};
 const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
 let editing={},view=0,MLMIN=100,CAP=1000,calDone='',hot=0,timer=0,tt=0;
 
@@ -1366,12 +1424,12 @@ void sendStatus(const char *msg = nullptr, int code = 200) {
   char buf[1200];
   int n = snprintf(buf, sizeof buf,
                    "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,"
-                   "\"screens\":%d,\"scomp\":%d,\"band\":%d,"
+                   "\"screens\":%d,\"scomp\":%d,\"band\":%d,\"draw\":%lu,"
                    "\"heap\":%u,\"maxblk\":%u,\"msg\":\"%s\",",
                    mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
                    screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0, screenBand,
-                   (unsigned)ESP.getFreeHeap(), (unsigned)ESP.getMaxAllocHeap(),
-                   msg ? msg : "");
+                   drawStat, (unsigned)ESP.getFreeHeap(),
+                   (unsigned)ESP.getMaxAllocHeap(), msg ? msg : "");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
@@ -1529,7 +1587,7 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7g   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("Saline Pump  STAGE 7i   built %s %s\n", __DATE__, __TIME__);
   Serial.printf("PERIPHERALS: screens %s, knobs %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
                 ENABLE_KNOBS ? "IN" : "compiled out");
@@ -1775,40 +1833,63 @@ void loop() {
   }
 
 #if ENABLE_SCREENS
-  // Redraw cadence, and why it is not a flat timer any more.
-  // A face costs a 240x240 render (once per band, everything outside the
-  // band clipped) plus a 115KB push, and at 27MHz that push alone blocks
-  // loop() for ~34ms. The old flat 40ms tick meant
-  // the board was drawing essentially all the time, leaving almost nothing
-  // for the web server: exactly the stickiness Stage 7d just took out of
-  // the phone page, and 7d was measured with the glass compiled OUT.
-  // So the glass now earns its loop time:
-  //   something moving -> 60ms alternating, water animating;
-  //   everything idle  -> push only when the face would actually look
-  //                       different, plus a 1s safety refresh. The water
-  //                       holds still when nothing is pumping, which is
-  //                       also a free at-a-glance "is it running?".
-  static unsigned long lastDraw = 0, lastForced[2] = {0, 0};
+  // THE REDRAW SCHEDULER, rewritten 2026-09-12 after the board went dark on
+  // the network while the pumps ran (serial fine, glass fine, screens and
+  // knobs fine, no ping, no OTA, no phone page). Not a WiFi fault at all:
+  //
+  //   a whole face = 2 band renders + 115KB of SPI at 27MHz = ~45ms BLOCKED,
+  //   and the old scheduler started one every 60ms.
+  //
+  // WebServer and ArduinoOTA are cooperative: they only ever run at the
+  // bottom of loop(). Give them 15ms in 60 and a TCP handshake cannot
+  // complete before the client gives up, so the board looks unreachable
+  // exactly when you are using it. Two rules fix it, and neither depends on
+  // guessing how long a push takes:
+  //
+  //   1. ONE BAND PER PASS. A face is now a state machine, not a call. The
+  //      longest loop() can ever be stuck drawing is a single band (~22ms),
+  //      and the network gets serviced between every one.
+  //   2. A 50% DUTY CAP, MEASURED. We time what the face in flight actually
+  //      cost and refuse to start the next one until at least that long has
+  //      passed. Drawing can therefore never take more than half the wall
+  //      clock, whatever the SPI clock, band size or render cost turn out
+  //      to be. Animation degrades; the network does not.
+  //
+  // Idle behaviour is unchanged: push a face only when it would actually
+  // look different, plus a 1s safety refresh. Still water = nothing pumping.
+  static unsigned long lastForced[2] = {0, 0};
   static uint32_t lastSig[2] = {0, 0};
   static int drawSide = 0;
+  static int drawRow = -1;            // >= 0: a face is mid-flight at this row
+  static unsigned long faceStart = 0; // when the face in flight began
+  static unsigned long lastFaceEnd = 0, faceCost = 0;  // the duty cap's inputs
   bool busy = false;
   for (int s = 0; s < 2; s++)
     busy |= sides[s].running || sides[s].priming || sides[s].calibrating;
-  if (now - lastDraw >= (busy ? 60UL : 120UL)) {
-    lastDraw = now;
-    int s = drawSide;
-    drawSide = 1 - drawSide;
+
+  if (drawRow >= 0) {
+    // Continue the face in flight: exactly one band, then straight back out
+    // to ArduinoOTA.handle() / server.handleClient() at the bottom of loop().
+    drawFaceBand(drawSide, drawRow);
+    drawRow += canvas.band();
+    if (drawRow >= 240) {
+      drawRow = -1;
+      lastFaceEnd = millis();
+      faceCost = lastFaceEnd - faceStart;  // measured, not assumed
+      drawStat = faceCost;                 // reported in /status
+    }
+  } else if (now - lastFaceEnd >= max(busy ? 60UL : 120UL, faceCost)) {
+    // Due, and the duty cap says we have earned it. Pick the side.
+    int s = drawSide = 1 - drawSide;
+    bool go = busy;
     if (busy) {
       wavePhase += 0.09f;  // bigger step, slower tick, same apparent speed
-      drawFace(s);
     } else {
       uint32_t sig = faceSig(s);
-      if (sig != lastSig[s] || now - lastForced[s] > 1000) {
-        lastSig[s] = sig;
-        lastForced[s] = now;
-        drawFace(s);
-      }
+      go = (sig != lastSig[s] || now - lastForced[s] > 1000);
+      if (go) { lastSig[s] = sig; lastForced[s] = now; }
     }
+    if (go) { drawRow = 0; faceStart = now; }
   }
 #endif
 
