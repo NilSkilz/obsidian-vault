@@ -190,3 +190,6 @@ Rules taken from it:
 - Blink something in the first few lines of `setup()`. "Did it reach setup at all" is the single most useful bit when a board looks dead, and it costs 200ms.
 - An `IRAM_ATTR` ISR must not touch flash-resident data (`const` tables land in .rodata). Mark them `DRAM_ATTR` or the ISR crashes the one time it fires during an NVS write or an OTA.
 - Input-only pins (34-39 on the ESP32) want **physical** pull-ups fitted at build time, not firmware promises.
+
+## Never let a peripheral halt a boot (2026-09-12, Saline Pump)
+`setup()` had `if (!canvas.getBuffer()) { while(true) delay(1000); }` as a "fail loud" guard for a 112KB display buffer. It fails *silent*: no LED, no web server, no serial past that point, indistinguishable from a bricked board. Two debugging sessions went into hardware theories because of it. Rule: an optional peripheral that fails to initialise gets disabled and reported, never halts. And when a board looks dead, the second guess should not be another theory, it should be instrumentation: serial up first, build-timestamp banner (proves the binary is even running), reset reason, heap figures, and a numbered checkpoint printed *before* each risky init step so the last line printed is the diagnosis.
