@@ -1,45 +1,45 @@
-// Saline Pump v1 — Stage 6: the gauge UI, on real glass.
+// Saline Pump v1 — Stage 6b: gauge UI on the glass AND in the browser.
 //
-// Ports the gauge-mockup.html design (vault: Projects/Saline Pump/) onto the
-// two GC9A01 round displays: reservoir level as a liquid fill with a moving
-// two-sine surface, dose-progress ring around the rim, big live ml/min in the
-// middle, delivered/target and elapsed time below, RUN/STOP/DONE/LOW pill up
-// top. LEFT face cyan-badged, RIGHT orange, matching the bring-up sketch.
+// The GC9A01 faces are unchanged in spirit from Stage 6 (liquid fill with a
+// moving two-sine surface, dose ring, big number, state pill). New in 6b:
 //
-// This stage replaces raw duty control with DOSING:
-//   - set a rate (ml/min) and a target volume (ml) per side, hit Start,
-//     the pump stops itself at the target. Set-and-go, per the overview.
-//   - PRIME button per side: 100% for line purging, 10s auto-off, only
-//     allowed while that side is not running. Prime volume drains the
-//     reservoir estimate but does NOT count toward the dose.
-//   - reservoir level is ESTIMATED by integrating flow (no HX711 yet).
-//     Refill button resets it to full. Load cells replace this in a later
-//     stage.
+//   - The PHONE PAGE now renders the SAME gauges (the gauge-mockup.html
+//     canvas code, live-fed from /status) instead of a plain text readout.
+//   - Control is now SPEED, not ml/min. Rob's pumps stall out around 55%
+//     duty, which put almost the whole old 1..50 ml/min slider below the
+//     stall floor. The speed slider spans 60..100%, so its bottom end
+//     ("0") is 60% duty and the whole travel is usable range (2026-09-11).
+//   - The big number on both the glass and the phone gauge is duty %, the
+//     honest quantity until the wet calibration lands. Delivered/target ml
+//     and the reservoir level still come from the flow model (estimates).
+//
+// Dosing survives: set speed + target ml, hit Start, it stops itself at the
+// target. Prime (100%, 10s cap, doesn't count toward the dose), Refill,
+// Reset run, low-reservoir auto-stop, 90 min timeout: all as Stage 6.
 //
 // ── CALIBRATION, DO THIS BEFORE ANY REAL RUN ─────────────────────────────
 // ML_PER_MIN_AT_100 below is the pump's flow at 100% duty and is currently
 // the datasheet-ish guess (~100 ml/min for a 500-series head at 12V). Wet
 // test: prime the line, run one pump at 100% into a measuring jug for
 // exactly 60s, type the ml you got into ML_PER_MIN_AT_100, reflash. Every
-// rate, dose and level number scales off this one constant.
+// dose and level number scales off this one constant.
 // ─────────────────────────────────────────────────────────────────────────
 //
-// Safety carried over / added:
+// Safety carried over:
 //   - gates forced LOW as the first lines of setup() (GPIO14 boot-twitch).
-//   - stall limits from Stage 5 persist (NVS): a requested rate whose duty
-//     lands below the stall floor is clamped UP and the screen shows the
-//     rate you're actually getting, not the one you asked for.
+//   - stall floors from Stage 5 persist (NVS) as a backstop below the UI's
+//     own 60% minimum: a requested duty under the floor is clamped UP.
 //   - kick-start (250ms at 100%) retained; the kick's extra ml is counted.
-//   - firmware hard caps: MAX_RATE / MAX_TARGET, independent of the UI.
+//   - firmware hard caps: MAX_TARGET, MAX_RUN_MS, independent of the UI.
 //   - low-reservoir auto-stop so a primed line never pumps air.
-//   - 90 min absolute run timeout. OTA forces pumps off. E-stop unchanged.
+//   - OTA forces pumps off. E-stop unchanged.
 //
 // Libraries: Adafruit GC9A01A (+ GFX, BusIO), same as Stage 5.
 // Board: ESP32 DevKitC 30-pin, PCB v1 locked pin map (2026-08-20):
 //   GPIO14 = Pump L gate   GPIO13 = Pump R gate   GPIO2 = onboard LED
 //   Displays (shared SPI): MOSI=23 SCK=18 DC=19 RST=15, CS L=5 / R=4
 // Encoders (27/26/25 + 34/35/32) are wired on the PCB but not read yet;
-// they land in Stage 7 as rate knobs + push-to-stop.
+// they land in Stage 7 as speed knobs + push-to-stop.
 
 #include <WiFi.h>
 #include <WebServer.h>
@@ -65,12 +65,14 @@ const int TFT_CS_R = 4;
 
 // ---- flow model ----
 const float ML_PER_MIN_AT_100 = 100.0;  // CALIBRATE WET (see header)
-const float MAX_RATE = 50.0;            // ml/min, firmware cap
 const float MAX_TARGET = 600.0;         // ml per run, firmware cap
 const float RES_CAPACITY = 1000.0;      // ml, one saline bag/bottle per side
 const float RES_LOW_STOP = 30.0;        // stop before the line sucks air
 const unsigned long MAX_RUN_MS = 90UL * 60UL * 1000UL;
 const unsigned long PRIME_MAX_MS = 10000;
+
+// ---- speed range (pumps stall ~55%, so the UI floor is 60) ----
+const int UI_MIN_DUTY = 60;
 
 // ---- PWM / kick (from Stage 5 bench findings) ----
 const int PWM_FREQ = 1000;
@@ -103,17 +105,22 @@ GFXcanvas16 canvas(240, 240);
 WebServer server(80);
 Preferences prefs;
 
+const char *WIFI_SSID = "PidgeonsNest";
+const char *WIFI_PASS = "3b5794e3e9";
+bool apFallback = false;           // true while stuck on the fallback AP
+unsigned long lastStaRetry = 0;
+
 struct Side {
   bool running = false;
   bool priming = false;
   bool done = false;     // reached target
   bool lowStop = false;  // reservoir guard tripped
-  float rateReq = 17.0;  // what was asked for (ml/min)
+  int dutyReq = 70;      // requested speed, % duty (UI sends 60..100)
   float target = 120.0;  // ml
   float delivered = 0;   // ml, this run
   float remain = RES_CAPACITY;
   float elapsedS = 0;
-  int minPct = 0;              // stall floor from Stage 5 (NVS)
+  int minPct = 0;              // stall floor from Stage 5 (NVS), backstop
   int actualDuty = 0;          // what LEDC is holding right now
   unsigned long kickUntil = 0;
   int kickTarget = 0;
@@ -132,13 +139,11 @@ void pumpWrite(int s, int pct) {
   sides[s].actualDuty = pct;
 }
 
-// The duty a requested rate wants, clamped up to the stall floor. Returns
-// the duty; *effRate gets the rate that duty actually delivers.
-int dutyForRate(int s, float rate, float *effRate) {
-  int duty = (int)ceilf(rate / ML_PER_MIN_AT_100 * 100.0f);
-  duty = constrain(duty, 0, 100);
-  if (duty > 0 && duty < sides[s].minPct) duty = sides[s].minPct;
-  if (effRate) *effRate = duty * ML_PER_MIN_AT_100 / 100.0f;
+// The duty a side will actually run at: the request, clamped up to the
+// stall floor (NVS backstop) and into the UI range.
+int dutyFor(int s) {
+  int duty = constrain(sides[s].dutyReq, UI_MIN_DUTY, 100);
+  if (duty < sides[s].minPct) duty = sides[s].minPct;
   return duty;
 }
 
@@ -155,7 +160,7 @@ void startRun(int s) {
     S.lowStop = true;
     return;
   }
-  int duty = dutyForRate(s, S.rateReq, nullptr);
+  int duty = dutyFor(s);
   S.running = true;
   S.runStartMs = millis();
   if (duty < KICK_PCT_MAX) {
@@ -165,8 +170,8 @@ void startRun(int s) {
   } else {
     pumpWrite(s, duty);
   }
-  Serial.printf("Run %c: %.1f ml/min -> duty %d%%, target %.0f ml\n",
-                s == 0 ? 'L' : 'R', S.rateReq, duty, S.target);
+  Serial.printf("Run %c: duty %d%%, target %.0f ml\n", s == 0 ? 'L' : 'R',
+                duty, S.target);
 }
 
 void stopRun(int s) {
@@ -243,7 +248,7 @@ void drawFace(int s) {
   frac = constrain(frac, 0.0f, 1.0f);
   const float top = -1.5707963f;
   arcRing(cx, cy, 111, 3, 0, TAU, COL_RING);
-  uint16_t ringCol = S.running ? COL_RUN : (S.done ? COL_RUN : COL_STOP);
+  uint16_t ringCol = (S.running || S.done) ? COL_RUN : COL_STOP;
   if (frac > 0.002f) arcRing(cx, cy, 111, 3, top, top + frac * TAU, ringCol);
 
   // side badge (top)
@@ -268,16 +273,12 @@ void drawFace(int s) {
   canvas.fillRoundRect(cx - tw / 2 - 9, 52, tw + 18, 22, 11, pillCol);
   drawCentred(pill, cx, 63, &FreeSansBold9pt7b, C565(0x08, 0x11, 0x0d));
 
-  // big number: the rate actually being delivered (post stall-floor clamp)
-  float effRate;
-  dutyForRate(s, S.rateReq, &effRate);
-  float shown = (S.running || S.priming)
-                    ? S.actualDuty * ML_PER_MIN_AT_100 / 100.0f
-                    : effRate;
+  // big number: the duty actually on the gate (or what Start would give)
+  int shown = (S.running || S.priming) ? S.actualDuty : dutyFor(s);
   char buf[16];
-  snprintf(buf, sizeof buf, "%.0f", shown);
+  snprintf(buf, sizeof buf, "%d", shown);
   drawCentred(buf, cx, cy + 2, &FreeSansBold24pt7b, COL_INK);
-  drawCentred("ml / min", cx, cy + 34, &FreeSans9pt7b, COL_DIM);
+  drawCentred("speed %", cx, cy + 34, &FreeSans9pt7b, COL_DIM);
 
   // dose + time (bottom)
   snprintf(buf, sizeof buf, "%.0f / %.0f ml", S.delivered, S.target);
@@ -291,62 +292,159 @@ void drawFace(int s) {
 }
 
 // ---------------------------------------------------------------- web UI
+// The gauge-mockup.html canvas gauges, live-fed from /status. Slider spans
+// 60..100% duty: bottom of travel = 60%, everything on it is usable range.
 
 const char PAGE[] PROGMEM = R"HTML(<!doctype html><html><head>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>Saline Pump</title><style>
-body{background:#0c0f14;color:#e7edf3;font-family:-apple-system,sans-serif;margin:14px;text-align:center}
-h1{font-size:1.1em;color:#8aa0b3;font-weight:600}
-.pump{border:1px solid #202a35;background:#141a22;border-radius:14px;padding:12px;margin:12px 0}
-.pump h2{margin:2px 0 8px;font-size:1.05em}
-.L h2{color:#0ff}.R h2{color:#f90}
-.big{font-size:1.7em;font-weight:700;margin:4px 0}
-.sub{color:#8aa0b3;font-size:.85em;margin:2px 0 8px}
-.row{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:.9em}
-.row label{width:52px;text-align:left;color:#8aa0b3}
-.row output{width:74px;text-align:right;font-variant-numeric:tabular-nums}
-input[type=range]{flex:1;height:30px}
-input[type=number]{width:70px;font-size:1em;background:#1d2732;color:#e7edf3;border:1px solid #2c3948;border-radius:8px;padding:6px}
-button{font-size:.95em;padding:10px 12px;margin:3px;border:0;border-radius:10px;background:#1d2732;color:#e7edf3;border:1px solid #2c3948}
+:root{--bg:#0c0f14;--panel:#141a22;--ink:#e7edf3;--muted:#8aa0b3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ padding:14px 12px 90px;text-align:center}
+h1{font-size:17px;font-weight:650;color:var(--muted);margin:2px 0 14px}
+.gauges{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.unit{background:var(--panel);border:1px solid #202a35;border-radius:16px;
+ padding:16px 14px 12px;width:290px;max-width:100%}
+.glass{width:240px;height:240px;border-radius:50%;margin:0 auto;
+ box-shadow:0 0 0 6px #05070a,0 0 0 8px #262f3a,0 10px 26px rgba(0,0,0,.55);
+ overflow:hidden;background:#12181f}
+canvas{display:block;width:240px;height:240px}
+.row{display:grid;grid-template-columns:52px 1fr 56px;gap:10px;align-items:center;
+ margin:12px 0 4px;font-size:13px}
+.row label{text-align:left;color:var(--muted)}
+.row output{text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;height:34px;accent-color:#33a6f0}
+input[type=number]{width:64px;font-size:15px;background:#1d2732;color:var(--ink);
+ border:1px solid #2c3948;border-radius:8px;padding:6px;text-align:right}
+.btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+button{background:#1d2732;color:var(--ink);border:1px solid #2c3948;
+ border-radius:10px;padding:10px 12px;font-size:13px}
 button.go{background:#1d5c46;border-color:#2a8666}
 button.warn{background:#5c4a1d;border-color:#866f2a}
-.stop{background:#a00;border:0;color:#fff;font-size:1.25em;width:100%;padding:16px;margin-top:6px;border-radius:12px}
-small{color:#667}
+.stopall{position:fixed;left:12px;right:12px;bottom:12px;background:#a00;
+ border:0;color:#fff;font-size:19px;font-weight:700;padding:16px;border-radius:14px;
+ box-shadow:0 6px 18px rgba(0,0,0,.5)}
+small{display:block;color:#667;margin-top:14px;line-height:1.5}
 </style></head><body>
-<h1>Saline Pump</h1>
-<div id=cards></div>
-<button class=stop onclick="fetch('/stop')">STOP ALL</button>
-<p><small>Rates/volumes are estimates until the flow calibration is done
-(ML_PER_MIN_AT_100). Prime auto-stops after 10s. A rate below the stall
-floor is bumped up to it and the real rate is shown. E-stop kills pumps
-regardless of anything on this page.</small></p>
+<h1>SALINE PUMP</h1>
+<div class=gauges id=g></div>
+<small>Slider bottom = 60% power (pumps stall below ~55%). Volumes are
+estimates until the flow calibration is done. Prime auto-stops after 10s.
+E-stop kills pumps regardless of anything on this page.</small>
+<button class=stopall onclick="fetch('/stop')">STOP ALL</button>
 <script>
-const SIDES=['L','R'];let editing={};
-function card(s){return `<div class="pump ${s}"><h2>${s=='L'?'LEFT':'RIGHT'}</h2>
-<div class=big id=b${s}>--</div><div class=sub id=u${s}></div>
-<div class=row><label>Rate</label><input type=range min=1 max=50 step=1 value=17 id=r${s}
- onpointerdown="editing['r${s}']=1" onchange="editing['r${s}']=0;send('${s}')"
- oninput="o${s}.value=this.value+' ml/min'"><output id=o${s}>17 ml/min</output></div>
-<div class=row><label>Target</label><input type=number min=10 max=600 step=10 value=120 id=t${s}
- onfocus="editing['t${s}']=1" onchange="editing['t${s}']=0;send('${s}')"><span>ml</span></div>
-<div><button class=go onclick="fetch('/run?side=${s}&on=1')">Start</button>
+const TAU=Math.PI*2,SIDES=['L','R'];
+const C={slateTop:'#141b23',slateBot:'#0e141b',deep:'#0a3f74',mid:'#116bb0',
+ surf:'#33a6f0',foam:'#a9e2ff',ring:'#26323f',run:'#38d39f',stop:'#ff5a5a',
+ warn:'#ffb84d',ink:'#fff',dim:'rgba(255,255,255,.72)',
+ badgeL:'#0ff',badgeR:'#ffa520'};
+let editing={};
+function card(s){return `<div class=unit>
+<div class=glass><canvas id=c${s} width=240 height=240></canvas></div>
+<div class=row><label>Speed</label>
+<input type=range min=60 max=100 step=1 value=70 id=s${s}
+ onpointerdown="editing['s${s}']=1"
+ oninput="o${s}.textContent=this.value+'%'"
+ onpointerup="editing['s${s}']=0;send('${s}')"
+ onchange="editing['s${s}']=0;send('${s}')"><output id=o${s}>70%</output></div>
+<div class=row><label>Target</label>
+<input type=number min=10 max=600 step=10 value=120 id=t${s}
+ onfocus="editing['t${s}']=1" onblur="editing['t${s}']=0"
+ onchange="send('${s}')"
+ style=justify-self:start><output>ml</output></div>
+<div class=btns>
+<button class=go onclick="fetch('/run?side=${s}&on=1')">Start</button>
 <button onclick="fetch('/run?side=${s}&on=0')">Stop</button>
 <button class=warn onclick="fetch('/prime?side=${s}')">Prime</button>
-<button onclick="fetch('/reset?side=${s}')">Reset run</button>
-<button onclick="fetch('/refill?side=${s}')">Refilled</button></div></div>`}
-cards.innerHTML=card('L')+card('R');
-function send(s){fetch('/set?side='+s+'&rate='+document.getElementById('r'+s).value
+<button onclick="fetch('/reset?side=${s}')">Reset</button>
+<button onclick="fetch('/refill?side=${s}')">Refilled</button>
+</div></div>`}
+g.innerHTML=card('L')+card('R');
+function roundRect(x,y,w,h,r,ctx){ctx.beginPath();ctx.moveTo(x+r,y);
+ ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+ ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function fmtT(s){const m=Math.floor(s/60),ss=Math.floor(s%60);
+ return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+function gauge(side){
+ const ctx=document.getElementById('c'+side).getContext('2d');
+ const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,del:0,tgt:120,el:0};
+ let t=0;
+ function draw(){
+  const W=240,H=240,cx=120,cy=120,R=120;
+  ctx.clearRect(0,0,W,H);
+  ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.clip();
+  let bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,C.slateTop);bg.addColorStop(1,C.slateBot);
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const lvl=Math.max(0,Math.min(1,st.lvl)),baseY=H-lvl*H;
+  const act=(st.run||st.prime)?1:.35,a1=5.5,a2=3;
+  let lg=ctx.createLinearGradient(0,baseY-14,0,H);
+  lg.addColorStop(0,C.surf);lg.addColorStop(.28,C.mid);lg.addColorStop(1,C.deep);
+  ctx.beginPath();ctx.moveTo(0,H);
+  for(let x=0;x<=W;x+=2){
+   const w=a1*act*Math.sin((x/W*TAU)*1.6+t*1.8)
+        +a2*act*Math.sin((x/W*TAU)*2.7-t*2.6+1.3);
+   ctx.lineTo(x,baseY+w)}
+  ctx.lineTo(W,H);ctx.closePath();ctx.fillStyle=lg;ctx.fill();
+  if(lvl>.02&&lvl<.99){ctx.beginPath();
+   for(let x=0;x<=W;x+=2){
+    const w=a1*act*Math.sin((x/W*TAU)*1.6+t*1.8)
+         +a2*act*Math.sin((x/W*TAU)*2.7-t*2.6+1.3);
+    x===0?ctx.moveTo(x,baseY+w):ctx.lineTo(x,baseY+w)}
+   ctx.strokeStyle=C.foam;ctx.globalAlpha=.55;ctx.lineWidth=2;ctx.stroke();
+   ctx.globalAlpha=1}
+  ctx.restore();
+  const rr=R-9,frac=Math.max(0,Math.min(1,st.tgt>0?st.del/st.tgt:0));
+  ctx.lineWidth=7;ctx.lineCap='round';
+  ctx.strokeStyle=C.ring;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.stroke();
+  if(frac>.002){ctx.strokeStyle=(st.run||st.done)?C.run:C.stop;
+   ctx.beginPath();ctx.arc(cx,cy,rr,-Math.PI/2,-Math.PI/2+frac*TAU);ctx.stroke()}
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;
+  ctx.font='700 14px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillStyle=side==='L'?C.badgeL:C.badgeR;
+  ctx.fillText(side==='L'?'LEFT':'RIGHT',cx,40);
+  const pill=st.prime?'PRIME':st.run?'RUN':st.low?'LOW':st.done?'DONE':'STOP';
+  const pcol=(st.prime||st.low)?C.warn:(st.run||st.done)?C.run:C.stop;
+  ctx.font='700 12px -apple-system,Segoe UI,Roboto,sans-serif';
+  const pw=ctx.measureText(pill).width+18;
+  ctx.shadowBlur=0;ctx.fillStyle=pcol;
+  roundRect(cx-pw/2,52,pw,20,10,ctx);ctx.fill();
+  ctx.fillStyle='#08110d';ctx.fillText(pill,cx,62.5);
+  ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=6;
+  ctx.fillStyle=C.ink;
+  ctx.font='800 52px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillText(String(Math.round(st.duty)),cx,cy+2);
+  ctx.font='600 15px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillStyle=C.dim;ctx.fillText('speed %',cx,cy+34);
+  ctx.font='700 16px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillStyle=C.ink;
+  ctx.fillText(Math.round(st.del)+' / '+Math.round(st.tgt)+' ml',cx,cy+64);
+  ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillStyle=C.dim;ctx.fillText(fmtT(st.el),cx,cy+84);
+  ctx.shadowBlur=0}
+ return {st,tick:dt=>{t+=dt;draw()}}}
+const G={L:gauge('L'),R:gauge('R')};
+function send(s){fetch('/set?side='+s
+ +'&duty='+document.getElementById('s'+s).value
  +'&target='+document.getElementById('t'+s).value)}
-setInterval(async()=>{try{const j=await(await fetch('/status')).json();
-for(const s of SIDES){const d=j[s];
-document.getElementById('b'+s).textContent=
- d.run?d.eff.toFixed(0)+' ml/min':(d.done?'DONE':(d.low?'LOW RES':'stopped'));
-document.getElementById('u'+s).textContent=
- d.del.toFixed(0)+' / '+d.tgt.toFixed(0)+' ml · '+Math.floor(d.el/60)+'m'+Math.floor(d.el%60)
- +'s · bag '+(d.lvl*100).toFixed(0)+'%';
-if(!editing['r'+s]){document.getElementById('r'+s).value=d.rate;
- document.getElementById('o'+s).value=d.rate.toFixed(0)+' ml/min';}
-if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt;}}catch(e){}},1000);
+async function poll(){try{
+ const j=await(await fetch('/status')).json();
+ for(const s of SIDES){const d=j[s],g=G[s].st;
+  g.lvl=d.lvl;g.run=d.run;g.prime=d.prime;g.done=d.done;g.low=d.low;
+  g.del=d.del;g.tgt=d.tgt;g.el=d.el;
+  g.duty=(d.run||d.prime)?d.duty:d.req;
+  if(!editing['s'+s]){const sl=document.getElementById('s'+s);
+   sl.value=d.req;document.getElementById('o'+s).textContent=d.req+'%'}
+  if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt}
+}catch(e){}}
+setInterval(poll,700);poll();
+let last=performance.now();
+(function loop(){const now=performance.now();
+ const dt=Math.min(.05,(now-last)/1000);last=now;
+ G.L.tick(dt);G.R.tick(dt);requestAnimationFrame(loop)})();
 </script></body></html>)HTML";
 
 int sideArg() { return (server.arg("side") == "R") ? 1 : 0; }
@@ -354,12 +452,12 @@ int sideArg() { return (server.arg("side") == "R") ? 1 : 0; }
 void handleSet() {
   int s = sideArg();
   Side &S = sides[s];
-  if (server.hasArg("rate"))
-    S.rateReq = constrain(server.arg("rate").toFloat(), 1.0f, MAX_RATE);
+  if (server.hasArg("duty"))
+    S.dutyReq = constrain(server.arg("duty").toInt(), UI_MIN_DUTY, 100);
   if (server.hasArg("target"))
     S.target = constrain(server.arg("target").toFloat(), 10.0f, MAX_TARGET);
-  if (S.running) {  // live rate change, no kick (already moving)
-    int duty = dutyForRate(s, S.rateReq, nullptr);
+  if (S.running) {  // live speed change, no kick (already moving)
+    int duty = dutyFor(s);
     if (!S.kickUntil) pumpWrite(s, duty);
     else S.kickTarget = duty;
   }
@@ -409,19 +507,16 @@ void handleRefill() {
 }
 
 void handleStatus() {
-  char buf[360];
+  char buf[400];
   int n = snprintf(buf, sizeof buf, "{");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
-    float eff;
-    dutyForRate(s, S.rateReq, &eff);
-    if (S.running || S.priming) eff = S.actualDuty * ML_PER_MIN_AT_100 / 100.0f;
     n += snprintf(buf + n, sizeof buf - n,
                   "\"%c\":{\"run\":%d,\"prime\":%d,\"done\":%d,\"low\":%d,"
-                  "\"rate\":%.1f,\"eff\":%.1f,\"tgt\":%.0f,\"del\":%.1f,"
+                  "\"req\":%d,\"duty\":%d,\"tgt\":%.0f,\"del\":%.1f,"
                   "\"el\":%.0f,\"lvl\":%.3f}%s",
                   s == 0 ? 'L' : 'R', S.running, S.priming, S.done, S.lowStop,
-                  S.rateReq, eff, S.target, S.delivered, S.elapsedS,
+                  dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
                   S.remain / RES_CAPACITY, s == 0 ? "," : "}");
   }
   server.send(200, "application/json", buf);
@@ -444,7 +539,7 @@ void setup() {
 
   Serial.begin(115200);
   delay(300);
-  Serial.println("\nSaline Pump Stage 6: gauges + dosing. Pumps start OFF.");
+  Serial.println("\nSaline Pump Stage 6b: gauges + speed control. Pumps start OFF.");
   if (!canvas.getBuffer()) {
     Serial.println("FATAL: frame buffer allocation failed");
     while (true) delay(1000);
@@ -465,8 +560,8 @@ void setup() {
   prefs.begin("pump", false);
   sides[0].minPct = prefs.getInt("minL", 0);  // stall floors from Stage 5
   sides[1].minPct = prefs.getInt("minR", 0);
-  Serial.printf("Stall floors: L=%d%% R=%d%%\n", sides[0].minPct,
-                sides[1].minPct);
+  Serial.printf("Stall floors: L=%d%% R=%d%% (UI floor %d%%)\n",
+                sides[0].minPct, sides[1].minPct, UI_MIN_DUTY);
 
   SPI.begin(TFT_SCK, -1, TFT_MOSI, -1);
   tftL.begin(27000000);
@@ -474,17 +569,26 @@ void setup() {
   drawFace(0);
   drawFace(1);
 
+  // WiFi. The old one-shot 15s window then AP-forever stranded the board
+  // after an OTA reboot (2026-09-11): first reconnect after a soft reset
+  // can miss the window, and there was no way back without a power cycle.
+  // Now: AP_STA fallback, and loop() keeps retrying the house WiFi from
+  // AP mode; on success the AP is torn down.
+  WiFi.persistent(false);
+  WiFi.setAutoReconnect(true);
   WiFi.mode(WIFI_STA);
-  WiFi.begin("PidgeonsNest", "3b5794e3e9");
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
   unsigned long t0 = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 15000) delay(250);
+  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 20000) delay(250);
   if (WiFi.status() == WL_CONNECTED) {
     Serial.print("WiFi up, IP: ");
     Serial.println(WiFi.localIP());
   } else {
-    WiFi.mode(WIFI_AP);
+    apFallback = true;
+    WiFi.mode(WIFI_AP_STA);
     WiFi.softAP("SalinePump-Test", "primefirst");
-    Serial.print("Fallback AP up, IP: ");
+    WiFi.begin(WIFI_SSID, WIFI_PASS);  // keeps trying underneath the AP
+    Serial.print("Fallback AP up (still retrying STA), AP IP: ");
     Serial.println(WiFi.softAPIP());
   }
 
@@ -565,6 +669,21 @@ void loop() {
     wavePhase += 0.06f;
     drawFace(drawSide);
     drawSide = 1 - drawSide;
+  }
+
+  // WiFi self-rescue: while on the fallback AP, keep knocking on the house
+  // network every 30s; the moment STA connects, drop the AP and carry on.
+  if (apFallback) {
+    if (WiFi.status() == WL_CONNECTED) {
+      apFallback = false;
+      WiFi.softAPdisconnect(true);
+      WiFi.mode(WIFI_STA);
+      Serial.print("STA recovered, IP: ");
+      Serial.println(WiFi.localIP());
+    } else if (now - lastStaRetry > 30000) {
+      lastStaRetry = now;
+      WiFi.begin(WIFI_SSID, WIFI_PASS);
+    }
   }
 
   // LED: solid while any pump runs, short heartbeat blink when idle
