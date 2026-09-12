@@ -282,6 +282,8 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 - Enc L (KY-040 #1): GND→GND, +→3V3, CLK/DT/SW → **27 / 26 / 25** (Control1 header pins 1-3). All three are pull-up-capable GPIOs, so the CLK/DT/SW order across them is a free choice.
 - Enc R (KY-040 #2): GND→GND, +→3V3, wired to **34 / 35 / 32** (Control2 header pins 1-3). **34 and 35 are input-only (no internal pull-up)** → put CLK and DT there (the KY-040's onboard 10k pull-ups cover them), and **SW on 32** (SW has no onboard pull-up, needs the ESP32 internal pull-up, which only a normal GPIO provides). Do NOT land SW on 34/35 or the switch floats.
 
+**Do fit 10k pull-ups to 3V3 on 34 and 35 (2026-09-12, learned the hard way).** With no KY-040 plugged into the Control2 header those two input-only pins float and chatter. Stage 7 firmware armed edge interrupts on them at boot and the interrupt storm starved the main loop: the board booted but never blinked, never served the page, looked bricked. Firmware now defends itself three ways (opt-in per knob, a steadiness probe, a runaway-edge guard), but two resistors make the pins electrically safe no matter what the firmware does. Enc L on 27/26 needs nothing, its internal pull-ups cover it.
+
 **(Pin move 2026-08-20:** Rob redrew the netlist to route more easily on the PCB. Encoders, pumps and HX711 all moved; displays unchanged. Full new map in the locked-pinout list below.)
 
 **⚑ ORDERED AS PCB v1 (2026-08-20).** Rob ordered the board on exactly the netlist below — pins are now fixed in copper, no more moving them. The two open advisories (GPIO14 boot-twitch, e-stop sense not drawn) were reviewed and **accepted as-is for v1**: the boot-twitch is handled in firmware, and the e-stop sense is deferred. **This means the firmware pinout must match this table exactly** — code to these GPIOs, not to any earlier proposal. Netlist traced end-to-end against the board spec 2026-08-20: topology sound, all the earlier fixes present (R2/R3 = 150Ω, C1 = 470µF/25V bulk on the pump rail, C2/C3 = 100nF pump snubbers, R1/R4 = 10k gate pulldowns, U1/U2 = 1N5822 flyback), the old D22 stub is gone, and every part now carries its value.
@@ -295,8 +297,8 @@ Jarvis's generated schematic (`pcb/` — gen_schematic.py + .kicad_sch) **didn't
 | **27** (D27) | Enc L CLK | pull-up-capable |
 | **26** (D26) | Enc L DT | pull-up-capable |
 | **25** (D25) | Enc L SW | internal pull-up in firmware |
-| **34** (D34) | Enc R CLK | input-only, no internal PU (KY-040 onboard PU covers it) |
-| **35** (D35) | Enc R DT | input-only, no internal PU (KY-040 onboard PU covers it) |
+| **34** (D34) | Enc R CLK | input-only, no internal PU (KY-040 onboard PU covers it). **Add a 10k to 3V3** |
+| **35** (D35) | Enc R DT | input-only, no internal PU (KY-040 onboard PU covers it). **Add a 10k to 3V3** |
 | **32** (D32) | Enc R SW | pull-up-capable — internal PU in firmware |
 | **23** (D23) | Display MOSI (SDA) | SPI, shared both screens |
 | **18** (D18) | Display SCK (SCL) | SPI, shared |

@@ -178,3 +178,15 @@
 - [[Tethered]] - Community building and TypeScript practices
 - [[Home Assistant]] - Thread/Matter commissioning
 - [[Reddit Engagement]] - Community strategy insights
+
+## Never arm an interrupt on a pin you haven't proved is connected (2026-09-12)
+
+Saline pump Stage 7 booted to a dead-looking board: no heartbeat LED, no web server. Cause was two lines of `attachInterruptArg` in `setup()`. The encoders weren't wired yet, and Enc R's CLK/DT sit on ESP32 **GPIO34/35, which are input-only and have no internal pull-up**, so they floated, chattered, and the edge-interrupt storm starved `loop()`. Nothing was wrong with the hardware, and nothing in the symptom pointed at the firmware.
+
+Rules taken from it:
+- Peripheral inputs get armed **only when the peripheral is declared present** (per-device opt-in, persisted), not unconditionally at boot.
+- Probe before arming: watch the pins for a few tens of ms. A wired part with pull-ups is rock steady, a floating pin flickers.
+- Always carry a runaway guard: count ISR entries per second and disarm anything firing orders of magnitude above what a human input can produce.
+- Blink something in the first few lines of `setup()`. "Did it reach setup at all" is the single most useful bit when a board looks dead, and it costs 200ms.
+- An `IRAM_ATTR` ISR must not touch flash-resident data (`const` tables land in .rodata). Mark them `DRAM_ATTR` or the ISR crashes the one time it fires during an NVS write or an OTA.
+- Input-only pins (34-39 on the ESP32) want **physical** pull-ups fitted at build time, not firmware promises.

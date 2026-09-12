@@ -1,7 +1,33 @@
-// Saline Pump v1 — Stage 7: physical knobs + wet flow calibration.
+// Saline Pump v1 — Stage 7a: physical knobs + wet flow calibration.
+//
+// ── STAGE 7a BOOT FIX (2026-09-12) ───────────────────────────────────────
+// Stage 7 as first written would not boot: no heartbeat LED, no web server,
+// a board that looked dead. Cause was in this file, not on the bench.
+// setup() armed CHANGE interrupts on all four encoder lines whether or not
+// an encoder was plugged in. Enc R's CLK/DT are GPIO34/35, which are
+// INPUT-ONLY and have no internal pull-up, so with the KY-040s not yet
+// wired (they mount to an enclosure still on the printer) both pins floated
+// and chattered. Two floating pins firing edge interrupts flat out starve
+// loop(): no LED, no HTTP, nothing. Enc L on 27/26 was innocent, its
+// internal pull-ups hold it quiet when unwired.
+// Fixed three ways, because a knob must never cost a boot:
+//   1. Knobs are OFF until declared wired, per side, on the phone page
+//      ("KNOBS" panel). The choice sticks in NVS.
+//   2. Before any interrupt is armed, the pair is watched for 40ms; a
+//      floating pin flickers and is refused.
+//   3. A guard in loop() counts ISR entries per second and disarms any pin
+//      firing like a floating input (>4000/s), clearing the opt-in so the
+//      next boot is clean.
+// Also: QTAB moved to DRAM (an IRAM ISR reading a flash table crashes if it
+// fires during an NVS write or an OTA), and setup() now blinks the LED three
+// times on entry, so "did it boot at all" is answerable without serial.
+// Worth doing in hardware anyway: 10k pull-ups to 3V3 on 34 and 35 make
+// those pins safe even with nothing plugged in.
+// ─────────────────────────────────────────────────────────────────────────
 //
 // New in Stage 7 (2026-09-12):
-//   - The two KY-040 rotary encoders are LIVE. Turning a knob nudges that
+//   - The two KY-040 rotary encoders are supported (armed per side once
+//     enabled on the page, see the boot fix above). Turning a knob nudges that
 //     side's speed by 1% per detent (clamped to the same 60..100 range as
 //     the slider), applied instantly if the pump is already running. The
 //     knob and the phone slider edit the SAME variable, so they can never
@@ -244,19 +270,33 @@ void stopAll() {
 // digitalRead(): register reads are safe to do from IRAM, a call into a
 // flash-resident core function is not.
 
-const int8_t QTAB[16] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+// In DRAM, not flash: an IRAM ISR that reads a flash-resident table crashes
+// the moment it fires while flash is busy (an NVS write, an OTA).
+static const DRAM_ATTR int8_t QTAB[16] = {0, -1, 1, 0, 1, 0, 0, -1,
+                                          -1, 0, 0, 1, 0, 1, -1, 0};
+
+// Per-side knob state, reported to the phone page.
+enum { ENC_OFF = 0, ENC_LIVE = 1, ENC_NOISY = 2, ENC_STORM = 3 };
+// A brisk human turn is a couple of hundred edges a second. Four thousand is
+// not a knob, it is a floating pin, and it means the interrupt is eating the
+// main loop.
+const uint32_t ENC_STORM_EDGES = 4000;
 
 struct Enc {
   uint8_t pinA, pinB, pinSW;
   volatile uint8_t prev;      // last AB state, 2 bits
   volatile int8_t quarters;   // quarter-steps banked toward a detent
   volatile int16_t detents;   // signed clicks waiting for loop() to spend
+  volatile uint32_t edges;    // ISR entries this storm-guard window
+  bool attached;              // interrupts actually armed on this pair
+  uint8_t state;              // ENC_* above, what the page shows
   bool swDown;                // debounced switch state
   bool holdFired;             // the 1.2s hold already started this side
   unsigned long swSince;
 };
-Enc encs[2] = {{ENC_L_A, ENC_L_B, ENC_L_SW, 0, 0, 0, false, false, 0},
-               {ENC_R_A, ENC_R_B, ENC_R_SW, 0, 0, 0, false, false, 0}};
+Enc encs[2] = {
+    {ENC_L_A, ENC_L_B, ENC_L_SW, 0, 0, 0, 0, false, ENC_OFF, false, false, 0},
+    {ENC_R_A, ENC_R_B, ENC_R_SW, 0, 0, 0, 0, false, ENC_OFF, false, false, 0}};
 
 static inline int IRAM_ATTR pinLevel(uint8_t pin) {
   return (pin < 32) ? ((REG_READ(GPIO_IN_REG) >> pin) & 1)
@@ -265,6 +305,7 @@ static inline int IRAM_ATTR pinLevel(uint8_t pin) {
 
 void IRAM_ATTR encISR(void *arg) {
   Enc *e = (Enc *)arg;
+  e->edges++;  // the storm guard in loop() reads and clears this
   uint8_t now = (uint8_t)((pinLevel(e->pinA) << 1) | pinLevel(e->pinB));
   int8_t d = QTAB[(e->prev << 2) | now];
   e->prev = now;
@@ -279,6 +320,72 @@ void IRAM_ATTR encISR(void *arg) {
   }
 }
 
+// WHY THIS IS OPT-IN (2026-09-12, the build that would not boot):
+// Stage 7 armed CHANGE interrupts on all four encoder lines at boot. Enc R's
+// CLK/DT sit on GPIO34/35, which are input-only and have NO internal pull-up,
+// so with no KY-040 plugged in they float and chatter. Two floating pins
+// firing edge interrupts flat out starved loop(): no heartbeat LED, no web
+// server, a dead-looking board. (Enc L on 27/26 was never the problem: its
+// internal pull-ups hold it quiet when unwired.)
+// So: knobs are DARK until declared wired, per side, and it sticks in NVS.
+// Three layers of defence now, because a knob must never cost us a boot:
+//   1. the NVS opt-in below,
+//   2. a steadiness probe before the interrupts go anywhere near a pin,
+//   3. a runaway-edge guard in loop() that disarms a chattering pin.
+// Hardware fix worth doing anyway: a 10k pull-up to 3V3 on 34 and 35 makes
+// those pins safe even with nothing plugged in.
+
+const char *ENC_KEY[2] = {"encL", "encR"};
+
+// A wired KY-040 holds CLK/DT at a steady level (its own 10k pull-ups; both
+// HIGH at a detent). A floating pin flickers. 40ms of watching separates them.
+// Takes an index, not an Enc&: the .ino preprocessor hoists prototypes above
+// the struct definition, so a struct-typed parameter won't compile here.
+bool encPinsSteady(int s) {
+  Enc &e = encs[s];
+  int a0 = digitalRead(e.pinA), b0 = digitalRead(e.pinB);
+  for (int i = 0; i < 200; i++) {
+    if (digitalRead(e.pinA) != a0 || digitalRead(e.pinB) != b0) return false;
+    delayMicroseconds(200);
+  }
+  return true;
+}
+
+void encDisarm(int s, uint8_t why) {
+  Enc &e = encs[s];
+  if (e.attached) {
+    detachInterrupt(digitalPinToInterrupt(e.pinA));
+    detachInterrupt(digitalPinToInterrupt(e.pinB));
+    e.attached = false;
+  }
+  e.detents = 0;
+  e.quarters = 0;
+  e.state = why;
+}
+
+bool encArm(int s) {
+  Enc &e = encs[s];
+  if (e.attached) return true;
+  if (!encPinsSteady(s)) {  // nothing plugged in, or a bad joint
+    e.state = ENC_NOISY;
+    Serial.printf("Knob %c NOT armed: pins unsteady (unwired?)\n",
+                  s == 0 ? 'L' : 'R');
+    return false;
+  }
+  e.prev = (uint8_t)((digitalRead(e.pinA) << 1) | digitalRead(e.pinB));
+  e.quarters = 0;
+  e.detents = 0;
+  e.edges = 0;
+  attachInterruptArg(digitalPinToInterrupt(e.pinA), encISR, &e, CHANGE);
+  attachInterruptArg(digitalPinToInterrupt(e.pinB), encISR, &e, CHANGE);
+  e.attached = true;
+  e.state = ENC_LIVE;
+  Serial.printf("Knob %c armed\n", s == 0 ? 'L' : 'R');
+  return true;
+}
+
+// Pin modes only. Safe with nothing wired: no interrupts are armed here
+// unless NVS says that side's knob exists.
 void encBegin() {
   pinMode(ENC_L_A, INPUT_PULLUP);
   pinMode(ENC_L_B, INPUT_PULLUP);
@@ -287,10 +394,35 @@ void encBegin() {
   pinMode(ENC_R_B, INPUT);  // the KY-040 module's own 10k resistors do it
   pinMode(ENC_R_SW, INPUT_PULLUP);
   for (int i = 0; i < 2; i++) {
-    Enc &e = encs[i];
-    e.prev = (uint8_t)((digitalRead(e.pinA) << 1) | digitalRead(e.pinB));
-    attachInterruptArg(digitalPinToInterrupt(e.pinA), encISR, &e, CHANGE);
-    attachInterruptArg(digitalPinToInterrupt(e.pinB), encISR, &e, CHANGE);
+    if (!prefs.getBool(ENC_KEY[i], false)) {
+      encs[i].state = ENC_OFF;
+      Serial.printf("Knob %c off (enable it on the page once it is wired)\n",
+                    i == 0 ? 'L' : 'R');
+      continue;
+    }
+    encArm(i);
+  }
+}
+
+// Once a second: any pin firing like a floating input gets disarmed, and the
+// opt-in is cleared so the next boot comes up clean rather than crippled.
+void encStormGuard(unsigned long now) {
+  static unsigned long win = 0;
+  if (now - win < 1000) return;
+  win = now;
+  for (int s = 0; s < 2; s++) {
+    Enc &e = encs[s];
+    if (!e.attached) continue;
+    noInterrupts();
+    uint32_t ed = e.edges;
+    e.edges = 0;
+    interrupts();
+    if (ed > ENC_STORM_EDGES) {
+      encDisarm(s, ENC_STORM);
+      prefs.putBool(ENC_KEY[s], false);
+      Serial.printf("Knob %c DISARMED: %lu edges in 1s. Check its wiring.\n",
+                    s == 0 ? 'L' : 'R', (unsigned long)ed);
+    }
   }
 }
 
@@ -298,6 +430,7 @@ void encBegin() {
 void encService(int s, unsigned long now) {
   Enc &e = encs[s];
   Side &S = sides[s];
+  if (!e.attached) return;  // knob not declared wired: ignore it entirely
 
   noInterrupts();
   int16_t clicks = e.detents;
@@ -496,6 +629,14 @@ small{display:block;color:#667;margin-top:14px;line-height:1.5}
 <button class=go onclick=saveCal()>Save</button>
 </div>
 <div class=calnow id=cnow>using <b>?</b> ml/min at 100%</div></div>
+<div class=cal><h2>KNOBS</h2>
+<div class=calrow>
+<button id=kL onclick=knob('L')>L knob: ?</button>
+<button id=kR onclick=knob('R')>R knob: ?</button>
+</div>
+<div class=calnow>Turn one on only once its KY-040 is actually wired.
+Enc R sits on GPIO34/35, which have no pull-ups: unwired, they chatter and
+the interrupts starve the board. It disarms itself if that happens.</div></div>
 <small>Slider bottom = 60% power (pumps stall below ~55%). Volumes are
 estimates until the flow calibration above is done. Prime auto-stops after
 10s. Knobs: turn = speed, short press = stop that side, hold 1.2s = start.
@@ -604,6 +745,12 @@ async function saveCal(){const v=document.getElementById('cm').value;
  const r=await fetch('/calsave?ml='+v);
  document.getElementById('cnow').style.color=r.ok?'#38d39f':'#ff5a5a';
  if(r.ok)document.getElementById('cm').value='';poll()}
+const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
+async function knob(s){const b=document.getElementById('k'+s);
+ const r=await fetch('/enc?side='+s+'&on='+(b.dataset.on=='1'?0:1));
+ const t=await r.text();poll();
+ if(t=='unsteady')alert(s+' knob: those pins are floating. Check the KY-040 '
+  +'wiring (GND, 3V3, CLK, DT, SW) before enabling it.')}
 function send(s){fetch('/set?side='+s
  +'&duty='+document.getElementById('s'+s).value
  +'&target='+document.getElementById('t'+s).value)}
@@ -616,7 +763,11 @@ async function poll(){try{
   g.duty=(d.run||d.prime||d.cal)?d.duty:d.req;
   if(!editing['s'+s]){const sl=document.getElementById('s'+s);
    sl.value=d.req;document.getElementById('o'+s).textContent=d.req+'%'}
-  if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt}
+  if(!editing['t'+s])document.getElementById('t'+s).value=d.tgt;
+  const kb=document.getElementById('k'+s);
+  kb.dataset.on=(d.enc==1)?'1':'0';
+  kb.textContent=s+' knob: '+KST[d.enc];
+  kb.className=(d.enc==1)?'go':(d.enc?'warn':'')}
  document.getElementById('cnow').innerHTML=
   'using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
 }catch(e){}}
@@ -725,18 +876,37 @@ void handleCalSave() {
   server.send(200, "text/plain", "ok");
 }
 
+// Declare a side's knob wired (or not). Persisted, so it survives reboots.
+void handleEnc() {
+  int s = sideArg();
+  bool on = (server.arg("on") == "1");
+  if (!on) {
+    encDisarm(s, ENC_OFF);
+    prefs.putBool(ENC_KEY[s], false);
+    server.send(200, "text/plain", "off");
+    return;
+  }
+  if (!encArm(s)) {  // refuse rather than arm an interrupt on a floating pin
+    prefs.putBool(ENC_KEY[s], false);
+    server.send(200, "text/plain", "unsteady");
+    return;
+  }
+  prefs.putBool(ENC_KEY[s], true);
+  server.send(200, "text/plain", "ok");
+}
+
 void handleStatus() {
-  char buf[600];
+  char buf[760];
   int n = snprintf(buf, sizeof buf, "{\"mlmin\":%.1f,", mlPerMin100);
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
     n += snprintf(buf + n, sizeof buf - n,
                   "\"%c\":{\"run\":%d,\"prime\":%d,\"done\":%d,\"low\":%d,"
-                  "\"cal\":%d,\"calleft\":%ld,"
+                  "\"cal\":%d,\"calleft\":%ld,\"enc\":%d,"
                   "\"req\":%d,\"duty\":%d,\"tgt\":%.0f,\"del\":%.1f,"
                   "\"el\":%.0f,\"lvl\":%.3f}%s",
                   s == 0 ? 'L' : 'R', S.running, S.priming, S.done, S.lowStop,
-                  S.calibrating, calLeft(s),
+                  S.calibrating, calLeft(s), encs[s].state,
                   dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
                   S.remain / RES_CAPACITY, s == 0 ? "," : "}");
   }
@@ -757,6 +927,14 @@ void setup() {
   pinMode(TFT_CS_R, OUTPUT);
   digitalWrite(TFT_CS_R, HIGH);
   pinMode(LED, OUTPUT);
+  // Three quick blinks = "I reached setup()". Visible before serial, before
+  // WiFi, before the screens. If these don't happen, it never booted at all.
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(LED, HIGH);
+    delay(60);
+    digitalWrite(LED, LOW);
+    delay(60);
+  }
 
   Serial.begin(115200);
   delay(300);
@@ -838,6 +1016,7 @@ void setup() {
   });
   server.on("/cal", handleCal);
   server.on("/calsave", handleCalSave);
+  server.on("/enc", handleEnc);
   server.on("/status", handleStatus);
   server.begin();
   Serial.println("UI: http://salinepump.local/");
@@ -868,6 +1047,7 @@ void loop() {
     }
     encService(s, now);
   }
+  encStormGuard(now);
 
   // flow integration: dt against the duty the gate is REALLY holding
   // (kick bursts and stall-floor clamps included, so the count is honest)
