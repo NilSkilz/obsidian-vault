@@ -187,6 +187,20 @@
 //   ENABLE_KNOBS   0 -> encoder pins are never even set to INPUT, so
 //                       nothing can attach an interrupt to a floating
 //                       GPIO34/35 and starve the loop.
+// 2026-09-12, Stage 7f: THE GLASS ACTUALLY LIGHTS UP. 7e booted clean on
+//   the bench and reported "screens FAILED": the single 115200-byte frame
+//   buffer will not allocate on this board. ~210KB free, but the largest
+//   contiguous block is smaller than a whole face, and no amount of freeing
+//   heap fixes a fragmentation problem. bringup.ino always worked because it
+//   draws straight to the panels and never asks for a buffer.
+//   The canvas now renders in horizontal bands (biggest the heap will take,
+//   picked at boot from 240/120/80/60/48/40/30/24 rows) and pushes one
+//   address window per band. Same pixels, same SPI bytes, a fraction of the
+//   peak allocation, and NOT ONE LINE of the drawing code changed: the
+//   canvas still presents itself to Adafruit_GFX as a full 240x240 surface.
+//   /status now reports band height, free heap and largest block, so this
+//   class of fault is diagnosable from the phone instead of the serial port.
+//
 // 2026-09-12, Stage 7e: board back in the socket, screens and KY-040s
 // plugged in, running on USB only (no 12V, so the pumps cannot turn).
 // Screens ON, knobs still OFF **deliberately**: bring one subsystem up at
@@ -259,13 +273,94 @@ const uint16_t COL_R_BADGE = C565(0xf0, 0xa5, 0x7e);
 #if ENABLE_SCREENS
 Adafruit_GC9A01A tftL(TFT_CS_L, TFT_DC, TFT_RST);  // RST on L resets both
 Adafruit_GC9A01A tftR(TFT_CS_R, TFT_DC, -1);
-// One shared 240x240 frame buffer (112KB). Global so it's allocated at boot
-// before WiFi fragments the heap; draw a face into it, push, reuse.
-GFXcanvas16 canvas(240, 240);
+// THE FRAME BUFFER, 2026-09-12. A whole 240x240x16 face is 115200 bytes in
+// ONE contiguous lump, and on this ESP32 that malloc simply never succeeds:
+// the board reports ~210KB free but its largest single block is smaller than
+// 115KB, because DRAM comes in separate regions and WiFi has already taken
+// its cut. That is why the glass was dead while bringup.ino (which draws
+// straight to the panels, no buffer) worked perfectly.
+//
+// Fix: render in horizontal BANDS. The canvas still behaves like a full
+// 240x240 surface as far as Adafruit_GFX is concerned (so not one line of
+// the drawing code changes), but it only owns `bandH` rows at a time. Draw
+// the face once per band with everything outside that band clipped away,
+// push each band to its own address window. Total SPI bytes are identical;
+// the peak allocation drops by the number of bands.
+//
+// Every Adafruit_GFX primitive funnels through drawPixel / drawFastVLine /
+// drawFastHLine / fillScreen, so overriding those four is the whole trick.
+class BandCanvas : public GFXcanvas16 {
+ public:
+  // 240x240 to GFX, no buffer of its own yet: begin() decides how tall a
+  // band the heap can actually afford.
+  BandCanvas() : GFXcanvas16(240, 240, false) {}
+
+  // Tallest band this heap will give us, biggest first. All divide 240, so
+  // bands are always whole. 240 = the old single-buffer behaviour, kept as
+  // the first choice in case a future board has the room.
+  int begin() {
+    static const int16_t kBands[] = {240, 120, 80, 60, 48, 40, 30, 24};
+    for (uint8_t i = 0; i < sizeof kBands / sizeof kBands[0]; i++) {
+      buffer = (uint16_t *)malloc((size_t)240 * kBands[i] * 2);
+      if (buffer) {
+        bandH = kBands[i];
+        return bandH;
+      }
+    }
+    return 0;  // not even 24 rows: caller disables the glass and carries on
+  }
+
+  void setBand(int16_t y) { y0 = y; }
+  int16_t band() const { return bandH; }
+
+  // --- the four overrides. y is a FACE coordinate; y - y0 is the row in
+  // the buffer we actually own. Anything outside is silently dropped.
+  void drawPixel(int16_t x, int16_t y, uint16_t c) {
+    y -= y0;
+    if (x < 0 || x >= 240 || y < 0 || y >= bandH) return;
+    buffer[(int32_t)y * 240 + x] = c;
+  }
+
+  void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t c) {
+    if (h < 0) { y += h + 1; h = -h; }
+    y -= y0;
+    if (x < 0 || x >= 240) return;
+    if (y < 0) { h += y; y = 0; }
+    if (y + h > bandH) h = bandH - y;
+    if (h <= 0) return;
+    uint16_t *p = buffer + (int32_t)y * 240 + x;
+    while (h--) { *p = c; p += 240; }
+  }
+
+  void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t c) {
+    if (w < 0) { x += w + 1; w = -w; }
+    y -= y0;
+    if (y < 0 || y >= bandH) return;
+    if (x < 0) { w += x; x = 0; }
+    if (x + w > 240) w = 240 - x;
+    if (w <= 0) return;
+    uint16_t *p = buffer + (int32_t)y * 240 + x;
+    while (w--) *p++ = c;
+  }
+
+  // Clears the current band only, which is exactly what a per-band render
+  // of a full-screen fill means.
+  void fillScreen(uint16_t c) {
+    uint16_t *p = buffer;
+    for (int32_t n = (int32_t)240 * bandH; n; n--) *p++ = c;
+  }
+
+ private:
+  int16_t bandH = 0, y0 = 0;
+};
+
+BandCanvas canvas;
 #endif
-// False if the 112KB malloc failed. The round screens go dark, everything
-// else (WiFi, phone UI, pumps, knobs) still works. Never a boot-stopper.
+// False if even a 24-row band would not allocate. The round screens go dark,
+// everything else (WiFi, phone UI, pumps, knobs) still works. Never a
+// boot-stopper.
 bool screensOk = false;
+int screenBand = 0;  // rows per band, 0 = no glass. Reported in /status.
 
 WebServer server(80);
 Preferences prefs;
@@ -600,8 +695,9 @@ void arcRing(int cx, int cy, int r, int half, float a0, float a1,
                       colour);
 }
 
-void drawFace(int s) {
-  if (!screensOk) return;  // no frame buffer: skip the glass, keep running
+// Draws the face for the CURRENT band. Coordinates are full-face 0..239
+// throughout: the canvas throws away whatever falls outside the band.
+void renderFace(int s) {
   Side &S = sides[s];
   const int W = 240, H = 240, cx = 120, cy = 120;
 
@@ -683,9 +779,19 @@ void drawFace(int s) {
     snprintf(buf, sizeof buf, "%02d:%02d", m, sec);
     drawCentred(buf, cx, cy + 84, &FreeSans9pt7b, COL_DIM);
   }
+}
 
+// Render + push, band by band, top to bottom. One address window per band.
+void drawFace(int s) {
+  if (!screensOk) return;  // no frame buffer: skip the glass, keep running
   Adafruit_GC9A01A &tft = (s == 0) ? tftL : tftR;
-  tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
+  const int bh = canvas.band();
+  for (int y0 = 0; y0 < 240; y0 += bh) {
+    int h = (240 - y0 < bh) ? 240 - y0 : bh;
+    canvas.setBand(y0);
+    renderFace(s);
+    tft.drawRGBBitmap(0, y0, canvas.getBuffer(), 240, h);
+  }
 }
 
 // Boot identification splash. Each screen says which side it is, which CS
@@ -694,8 +800,7 @@ void drawFace(int s) {
 // header (LEFT appears on the right-hand glass), and both CS lines shorted
 // or tied (both panels show the same word, the second one to be drawn).
 #if SCREEN_SPLASH
-void bootSplash(int s) {
-  if (!screensOk) return;
+void renderSplash(int s) {
   const int cx = 120, cy = 120;
   canvas.fillScreen(COL_SLATE);
   arcRing(cx, cy, 111, 3, 0, 6.2831853f, COL_RING);
@@ -704,8 +809,18 @@ void bootSplash(int s) {
   drawCentred("screen ok", cx, cy + 26, &FreeSansBold9pt7b, COL_RUN);
   drawCentred(s == 0 ? "CS GPIO5" : "CS GPIO4", cx, cy + 50, &FreeSans9pt7b,
               COL_DIM);
+}
+
+void bootSplash(int s) {
+  if (!screensOk) return;
   Adafruit_GC9A01A &tft = (s == 0) ? tftL : tftR;
-  tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 240, 240);
+  const int bh = canvas.band();
+  for (int y0 = 0; y0 < 240; y0 += bh) {
+    int h = (240 - y0 < bh) ? 240 - y0 : bh;
+    canvas.setBand(y0);
+    renderSplash(s);
+    tft.drawRGBBitmap(0, y0, canvas.getBuffer(), 240, h);
+  }
 }
 #else
 void bootSplash(int s) { (void)s; }
@@ -1071,8 +1186,9 @@ function apply(j){
  if(off.length)t='Not in this build: '+off.join(' and ')
   +' compiled out. Both pumps, the firmware caps and the E-stop are live.';
  if(j.scomp&&!j.screens)t=(t?t+' ':'')
-  +'The round screens are compiled in but their frame buffer would not'
-  +' allocate, so the glass is dark. Everything else is unaffected.';
+  +'The round screens are compiled in but no frame buffer would allocate'
+  +' (largest free block '+(j.maxblk||0)+' bytes), so the glass is dark.'
+  +' Everything else is unaffected.';
  bm.style.display=t?'flex':'none';
  bm.textContent=t;
  $('cnow').innerHTML='using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
@@ -1130,12 +1246,14 @@ long calLeft(int s) {
 // source of the UI feeling laggy. One request in, fresh truth out.
 // msg, if given, is shown as a toast on the page: keep it quote-free.
 void sendStatus(const char *msg = nullptr, int code = 200) {
-  char buf[1100];
+  char buf[1200];
   int n = snprintf(buf, sizeof buf,
                    "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,"
-                   "\"screens\":%d,\"scomp\":%d,\"msg\":\"%s\",",
+                   "\"screens\":%d,\"scomp\":%d,\"band\":%d,"
+                   "\"heap\":%u,\"maxblk\":%u,\"msg\":\"%s\",",
                    mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
-                   screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0,
+                   screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0, screenBand,
+                   (unsigned)ESP.getFreeHeap(), (unsigned)ESP.getMaxAllocHeap(),
                    msg ? msg : "");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
@@ -1294,7 +1412,7 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7e   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("Saline Pump  STAGE 7f   built %s %s\n", __DATE__, __TIME__);
   Serial.printf("PERIPHERALS: screens %s, knobs %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
                 ENABLE_KNOBS ? "IN" : "compiled out");
@@ -1322,13 +1440,22 @@ void setup() {
   // most likely thing on this board to fail an allocation. It is NOT allowed
   // to stop the boot any more.
 #if ENABLE_SCREENS
-  screensOk = (canvas.getBuffer() != nullptr);
-  if (!screensOk) {
-    Serial.println("!! frame buffer alloc FAILED: round screens disabled,");
-    Serial.println("!! everything else (WiFi, phone UI, pumps) carries on.");
+  screenBand = canvas.begin();
+  screensOk = (screenBand > 0);
+  if (screensOk) {
+    Serial.printf("Frame buffer: %d-row band, %u bytes, %d bands per face\n",
+                  screenBand, (unsigned)(240 * screenBand * 2),
+                  240 / screenBand);
+    if (screenBand < 240)
+      Serial.println("(a whole 240x240 face will not fit in one block on "
+                     "this heap: banding, not a fault)");
+  } else {
+    Serial.println("!! frame buffer alloc FAILED even at 24 rows: round");
+    Serial.println("!! screens disabled, everything else carries on.");
   }
 #else
   screensOk = false;
+  screenBand = 0;
   Serial.println("Screens compiled out: no 112KB frame buffer, ~112KB more");
   Serial.println("heap, and loop() does no drawing at all.");
 #endif
@@ -1531,8 +1658,9 @@ void loop() {
 
 #if ENABLE_SCREENS
   // Redraw cadence, and why it is not a flat timer any more.
-  // A face costs a 240x240 canvas render plus a 115KB push, and at 27MHz
-  // that push alone blocks loop() for ~34ms. The old flat 40ms tick meant
+  // A face costs a 240x240 render (once per band, everything outside the
+  // band clipped) plus a 115KB push, and at 27MHz that push alone blocks
+  // loop() for ~34ms. The old flat 40ms tick meant
   // the board was drawing essentially all the time, leaving almost nothing
   // for the web server: exactly the stickiness Stage 7d just took out of
   // the phone page, and 7d was measured with the glass compiled OUT.
@@ -1586,13 +1714,15 @@ void loop() {
   static unsigned long lastBeat = 0;
   if (now - lastBeat >= 10000) {
     lastBeat = now;
-    Serial.printf("alive %lus  heap %u  wifi %s  %s  screens %s\n", now / 1000,
-                  (unsigned)ESP.getFreeHeap(),
+    Serial.printf("alive %lus  heap %u/%u  wifi %s  %s  screens %s\n",
+                  now / 1000, (unsigned)ESP.getFreeHeap(),
+                  (unsigned)ESP.getMaxAllocHeap(),
                   WiFi.status() == WL_CONNECTED ? "STA" : (apFallback ? "AP" : "--"),
                   WiFi.status() == WL_CONNECTED
                       ? WiFi.localIP().toString().c_str()
                       : "no-ip",
-                  screensOk ? "on" : (ENABLE_SCREENS ? "FAILED" : "bench-off"));
+                  !ENABLE_SCREENS ? "bench-off"
+                                  : (screensOk ? "on" : "FAILED"));
   }
 
   // LED: solid while any pump runs, short heartbeat blink when idle

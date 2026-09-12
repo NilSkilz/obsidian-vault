@@ -193,3 +193,13 @@ Rules taken from it:
 
 ## Never let a peripheral halt a boot (2026-09-12, Saline Pump)
 `setup()` had `if (!canvas.getBuffer()) { while(true) delay(1000); }` as a "fail loud" guard for a 112KB display buffer. It fails *silent*: no LED, no web server, no serial past that point, indistinguishable from a bricked board. Two debugging sessions went into hardware theories because of it. Rule: an optional peripheral that fails to initialise gets disabled and reported, never halts. And when a board looks dead, the second guess should not be another theory, it should be instrumentation: serial up first, build-timestamp banner (proves the binary is even running), reset reason, heap figures, and a numbered checkpoint printed *before* each risky init step so the last line printed is the diagnosis.
+
+## Free heap is not the number that matters, largest contiguous block is (2026-09-12, Saline Pump)
+The ESP32 booted clean, WiFi up, phone UI fine, and reported `screens FAILED`: the 240x240x16 frame buffer (115200 bytes, one lump) would not allocate. The heartbeat said **211640 bytes free**, which sent two sessions looking for a memory leak that did not exist. The real figure is `ESP.getMaxAllocHeap()`: **98292**. ESP32 DRAM comes in separate regions and WiFi has already taken its cut, so a board can be two thirds empty and still refuse a 115KB request. Freeing heap does not fix a fragmentation problem.
+
+Rules taken from it:
+- Print **both** numbers, always: `free / largest block`. A lone "free heap" figure actively misleads on any allocation bigger than ~64KB.
+- Big single buffers are a design smell on this chip. Render in **bands**: a canvas that presents itself to the graphics library as the full surface but only owns N rows, drawn once per band with everything outside clipped. Same pixels, same SPI bytes, a fraction of the peak allocation, and not one line of the drawing code changes.
+- Pick the band size **at runtime**, biggest first (240/120/80/60/48/40/30/24 rows here). The firmware then adapts to whatever heap it finds instead of being tuned to one board on one day.
+- Expose diagnostics on the network interface, not just the serial port. `/status` now carries band height, free heap and largest block, so the fault was confirmed and the fix verified over WiFi without anyone at the bench.
+- A working reference sketch is a hypothesis test, not just a relic: `bringup.ino` drove the same panels perfectly because it draws straight to the glass and never asks for a buffer. That one fact isolated the fault to the allocation, not the wiring.
