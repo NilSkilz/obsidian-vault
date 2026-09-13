@@ -16,6 +16,10 @@ A running record of what Rob has actually communicated to Aimee, day by day. Rob
 
 -->
 
+## 2026-09-13 (Sunday)
+- Rob and Aimee have settled the shape of the Mary date: a **hotel room in Exeter on Monday 28 September as a venue to play in**, daytime, home that night. **Aimee is happy with it.** Important nuance for the record: this is not an overnight, and it does not cut across the 7 Sep agreement or the written /us rule (which is about not sleeping in the same bed overnight). The 9 Sep row was about a twin room to sleep in, which is a different proposal.
+- Rob's framing: "Aimee's happy so it's just a logistics thing." Mary goes back to Oxford on Mon 5 Oct, so the 28th is the last clear window.
+
 ## 2026-09-08 (Tuesday)
 - 09:30: Rob texted Aimee "Have a good day baby. I love you." No reply until teatime.
 - 17:55: Aimee messaged: "Hey, I don't know what to say other than I love you and I'm sorry I'm not okay." First contact since the Monday-night row; first person, no blame, no asks.
