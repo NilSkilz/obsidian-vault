@@ -105,3 +105,8 @@
   5. **Do the booking today.** Flex room + the leave. It's the only action available that actually reduces the waiting rather than spending it.
   6. **Name it as the silence thing.** Per [[feedback_silence_dont_stack_evidence]], he doesn't need the evidence recited (it bounces); he needs to recognise the shape: unanswered message → old wound → early verdict. Naming the mechanism is the intervention, not the counter-argument.
 - **2026-09-11**: Public transport option to Exeter without driving, for the 28th or any future Monday date, checked in case the car isn't free: bus 95 Crackington Haven → Bude 08:04-08:37, bus 6 Bude → Okehampton 09:10-10:16, GWR Dartmoor Line Okehampton → Exeter 10:24, arriving St Davids 11:04. ~3hrs door to door, about £9.60 one way / £14 return. Last safe return leg is the ~16:35 train/bus chain back, arriving Crackington Haven 18:26; miss it and the next bus 95 is much later. Worth a 24h recheck before relying on it, timetables dated Feb/Jan 2026.
+
+### 2026-09-13 (Sun, 21:13)
+Still no reply to Saturday morning's message (~3 days, read receipt never landed). Rob flat about it and starting to generalise: said the joy from doing scenes "seems like it's not worth it". Nothing has actually come from Mary either way — no decline, no unmatch, no change.
+
+Standing plan (agreed 12 Sep): don't send a "did you get my message?" chase. Send new information plus a concrete choice, e.g. *"Need to get a day booked off work before the calendar fills up. Are you better placed for the 26th or the 30th?"* Timing was set for Monday evening (14 Sep) if nothing has landed — i.e. after his office day. Real deadline behind it: she's back to Oxford around the start of October.
