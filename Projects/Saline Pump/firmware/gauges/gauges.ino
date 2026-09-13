@@ -1,4 +1,39 @@
-// Saline Pump v1 - Stage 7i: blue water, dithered gradient, non-blocking glass.
+// Saline Pump v1 - Stage 8: the load cells report for duty.
+//
+// -- STAGE 8: REAL WEIGHT ON THE PAGE (2026-09-13) ------------------------
+// The rig is assembled and running, so the two HX711 reservoir bases are
+// now read and shown. This stage DISPLAYS them and nothing more: the dosing
+// model still runs off time x calibrated flow, exactly as before, because a
+// cell you have not watched for an hour has no business stopping a pump
+// that is attached to Aimee. Close the loop once the numbers have been
+// boring for a while.
+//
+//   * Bit-banged HX711, not a library. The chip powers itself DOWN if SCK
+//     is ever held HIGH for more than 60us, so a clock pulse interrupted
+//     mid-flight silently resets it and you get nonsense with no error. The
+//     24-bit shift therefore runs inside a critical section: ~55us with
+//     interrupts off, at most once per side per 40ms, which the encoder
+//     ISRs never notice.
+//   * Nothing here ever waits. A side is only clocked when its DT line says
+//     a conversion is ready, and the attempt is rate-limited to 40ms, so an
+//     unplugged (floating) DT pin cannot turn into a busy-loop. Same rule
+//     as the screens and the knobs: no peripheral gets to cost a boot or
+//     starve the web server.
+//   * WHAT THE PAGE SHOWS, and why each bit earns its place: raw counts
+//     (the honest number, works before any calibration), grams (only once
+//     a known weight has been taught), peak-to-peak noise over the last
+//     0.8s (mounting and cable quality, live: a cell that wanders is a
+//     cell that is touching something it should not), and a state word
+//     that separates "no signal" from "rails", because those two have
+//     completely different causes.
+//   * Tare and a known-weight calibration are buttons, both persisted to
+//     NVS, same as the flow calibration. 1 ml of saline is 1 g, so once
+//     counts/gram is taught, grams ARE millilitres.
+//
+// Pins are the locked PCB v1 netlist: SCK shared on 33, DT_L on 36 (VP),
+// DT_R on 39 (VN). The bases are powered from 3V3, not 5V, so DT is safe
+// into the input-only pins.
+// ------------------------------------------------------------------------
 //
 // ── STAGE 7i: THE BOARD STOPPED ANSWERING (2026-09-12) ──────────────────
 // Three things off the bench, in the order Rob hit them:
@@ -254,6 +289,10 @@
 // Set to 0 once the rig is trusted.
 #define SCREEN_SPLASH 1
 
+// The HX711 reservoir bases. Same opt-out shape as the screens and the
+// knobs: set to 0 and the pins are never touched at all.
+#define ENABLE_CELLS 1
+
 // ---- pins (PCB v1, locked) ----
 const int PUMP_L_GATE = 14;
 const int PUMP_R_GATE = 13;
@@ -267,6 +306,11 @@ const int TFT_CS_R = 4;
 // KY-040 encoders. 34/35 are input-only, so Enc R's switch must be on 32.
 const int ENC_L_A = 27, ENC_L_B = 26, ENC_L_SW = 25;
 const int ENC_R_A = 34, ENC_R_B = 35, ENC_R_SW = 32;
+// HX711 bases: one clock for both, a data line each. 36/39 are input-only
+// and need no pull-up, the HX711 drives DT hard in both directions.
+const int HX_SCK = 33;
+const int HX_DT_L = 36;   // VP
+const int HX_DT_R = 39;   // VN
 
 // ---- flow model ----
 float mlPerMin100 = 100.0;      // CALIBRATE WET (see header). NVS key "mlmin"
@@ -603,6 +647,139 @@ void stopAll() {
   stopRun(0);
   stopRun(1);
 }
+
+// -------------------------------------------------------------- load cells
+// One HX711 per reservoir, living in the printed base next to its cell, so
+// the millivolt wires never travel (hardware.md). Only the digital side
+// comes back up the cable: shared SCK, one DT each.
+//
+// Read protocol: DT idles HIGH and drops LOW when a conversion is ready.
+// Clock out 24 bits MSB first, then one extra pulse to select channel A at
+// gain 128 for the next conversion. Modules ship strapped to 10 samples a
+// second, so there is a fresh value every 100ms and no reason to hurry.
+#if ENABLE_CELLS
+static portMUX_TYPE hxMux = portMUX_INITIALIZER_UNLOCKED;
+
+const int HX_N = 8;                    // ring of 8 = 0.8s of history at 10SPS
+const long HX_SAT = 0x7FFFF0;          // within a hair of the rails
+const unsigned long HX_STALE_MS = 800; // no conversion in this long = absent
+const unsigned long HX_TRY_MS = 40;    // floor between read attempts
+
+struct Cell {
+  bool seen = false;    // a conversion arrived recently
+  bool sat = false;     // pinned at the rails: cell unplugged or miswired
+  long raw = 0;         // mean of the ring, the number the page shows
+  long pp = 0;          // peak-to-peak of the ring: the live noise figure
+  long offset = 0;      // tare, NVS
+  float cpg = 0;        // counts per gram, NVS. 0 = never calibrated
+  long buf[HX_N];
+  int n = 0, idx = 0;
+  unsigned long lastRead = 0, lastTry = 0;
+  unsigned long reads = 0;
+};
+Cell cells[2];
+
+inline int hxDT(int s) { return s == 0 ? HX_DT_L : HX_DT_R; }
+
+// The 24-bit shift, interrupts off. See the header: a clock pulse stretched
+// past 60us by an encoder ISR would put the chip to sleep, and it would not
+// tell us. 55us is a price worth paying 25 times a second.
+long hxShiftIn(int s) {
+  int dt = hxDT(s);
+  uint32_t v = 0;
+  portENTER_CRITICAL(&hxMux);
+  for (int i = 0; i < 24; i++) {
+    digitalWrite(HX_SCK, HIGH);
+    delayMicroseconds(1);
+    v = (v << 1) | (uint32_t)digitalRead(dt);
+    digitalWrite(HX_SCK, LOW);
+    delayMicroseconds(1);
+  }
+  digitalWrite(HX_SCK, HIGH);   // 25th pulse: channel A, gain 128, next time
+  delayMicroseconds(1);
+  digitalWrite(HX_SCK, LOW);
+  portEXIT_CRITICAL(&hxMux);
+  if (v & 0x800000) v |= 0xFF000000;  // sign-extend 24 bits into 32
+  return (long)(int32_t)v;
+}
+
+void hxPush(int s, long v) {
+  Cell &c = cells[s];
+  c.buf[c.idx] = v;
+  c.idx = (c.idx + 1) % HX_N;
+  if (c.n < HX_N) c.n++;
+  long mn = c.buf[0], mx = c.buf[0];
+  long long sum = 0;
+  for (int i = 0; i < c.n; i++) {
+    long x = c.buf[i];
+    sum += x;
+    if (x < mn) mn = x;
+    if (x > mx) mx = x;
+  }
+  c.raw = (long)(sum / c.n);
+  c.pp = mx - mn;
+}
+
+void hxService(unsigned long now) {
+  for (int s = 0; s < 2; s++) {
+    Cell &c = cells[s];
+    if (now - c.lastTry >= HX_TRY_MS) {
+      c.lastTry = now;
+      if (digitalRead(hxDT(s)) == LOW) {  // DT low = a conversion is waiting
+        long v = hxShiftIn(s);
+        c.lastRead = now;
+        c.reads++;
+        c.sat = (v >= HX_SAT || v <= -HX_SAT);
+        hxPush(s, v);
+      }
+    }
+    c.seen = c.lastRead && (now - c.lastRead < HX_STALE_MS);
+  }
+}
+
+// 0 = no signal, 1 = live, 2 = pinned at the rails. Three different faults,
+// and telling them apart on the page saves an hour with a multimeter.
+int hxState(int s) {
+  if (!cells[s].seen) return 0;
+  return cells[s].sat ? 2 : 1;
+}
+
+// Grams, which for saline are millilitres. 0 until a weight has been taught.
+float hxGrams(int s) {
+  Cell &c = cells[s];
+  if (c.cpg == 0 || !c.seen) return 0;
+  return (float)(c.raw - c.offset) / c.cpg;
+}
+
+void hxBegin() {
+  pinMode(HX_SCK, OUTPUT);
+  digitalWrite(HX_SCK, LOW);   // SCK must idle LOW or the chip powers down
+  pinMode(HX_DT_L, INPUT);
+  pinMode(HX_DT_R, INPUT);
+  cells[0].offset = prefs.getLong("tL", 0);
+  cells[1].offset = prefs.getLong("tR", 0);
+  cells[0].cpg = prefs.getFloat("cpgL", 0.0f);
+  cells[1].cpg = prefs.getFloat("cpgR", 0.0f);
+  Serial.printf("Cells: SCK %d, DT L=%d R=%d\n", HX_SCK, HX_DT_L, HX_DT_R);
+  for (int s = 0; s < 2; s++)
+    Serial.printf("  %c tare %ld, %s\n", s == 0 ? 'L' : 'R', cells[s].offset,
+                  cells[s].cpg ? "calibrated" : "UNCALIBRATED (raw counts only)");
+  // Give them a moment to produce something, so the boot log can say
+  // whether a base is actually plugged in.
+  unsigned long t0 = millis();
+  while (millis() - t0 < 500) { hxService(millis()); delay(5); }
+  for (int s = 0; s < 2; s++)
+    Serial.printf("  %c %s (raw %ld)\n", s == 0 ? 'L' : 'R',
+                  hxState(s) == 1 ? "live" : hxState(s) == 2 ? "AT THE RAILS"
+                                                             : "no signal",
+                  cells[s].raw);
+}
+#else
+void hxService(unsigned long now) { (void)now; }
+void hxBegin() { Serial.println("Cells compiled out, pins never touched."); }
+int hxState(int s) { (void)s; return 0; }
+float hxGrams(int s) { (void)s; return 0; }
+#endif
 
 // ---------------------------------------------------------------- encoders
 // Table-driven quadrature, decoded in an interrupt. The draw loop spends
@@ -1104,6 +1281,11 @@ button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
 #cnow{font-size:12.5px;color:var(--muted);margin-top:12px;text-align:left}
 #cnow b,#lvls b{color:var(--ink);font-variant-numeric:tabular-nums}
 #lvls{font-size:12.5px;color:var(--muted);margin-top:12px;text-align:left}
+#cells,#cpg,.hxr{font-size:12.5px;color:var(--muted);text-align:left;
+ margin-top:10px;font-variant-numeric:tabular-nums}
+#cells b,#cpg b,.hxr b{color:var(--ink);font-variant-numeric:tabular-nums}
+.hxr .bad{color:var(--coral)}
+.hxr .side{display:inline-block;width:14px;font-weight:700;color:var(--ink)}
 #calstate{text-align:left;font-size:12.5px;color:var(--muted);margin-bottom:14px}
 #calstate .big{display:block;font-size:38px;font-weight:800;letter-spacing:-.02em;
  color:var(--coral);font-variant-numeric:tabular-nums;line-height:1.1}
@@ -1127,9 +1309,11 @@ button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
 <div id=bench></div>
 <div id=v0>
 <section><div class=gauges id=g></div>
+<div id=cells>load cells: &mdash;</div>
 <div class=hint>Speed runs 60-100%: the heads stall below about 55%, so the
 bottom of the slider is the slowest they will actually turn. Delivered volume
-is an estimate until the flow calibration is done, over in Settings.</div>
+is an estimate from time &times; flow, not from the cells: they are read and
+shown, but nothing stops a pump on their say-so yet.</div>
 </section></div>
 <div id=v1 style=display:none>
 <section><div class=lbl>Flow calibration</div>
@@ -1145,6 +1329,25 @@ is an estimate until the flow calibration is done, over in Settings.</div>
 Calibrate. That head runs wide open for exactly 60 seconds and counts down
 above. Type the ml you caught and Save: it is stored on the board and
 survives a reboot or an OTA push. Tap Calibrate again mid-run to abandon it.</div>
+</section>
+<section id=cellcard><div class=lbl>Load cells</div>
+<div class=hxr id=hxL><span class=side>L</span> &mdash;</div>
+<div class=hxr id=hxR><span class=side>R</span> &mdash;</div>
+<div class=duo style=margin-top:14px>
+<button onclick="act('/tare?side=L')">Zero L</button>
+<button onclick="act('/tare?side=R')">Zero R</button></div>
+<div class=calrow><span>known weight</span>
+<input type=number id=kw min=5 max=5000 step=1 placeholder=g>
+<button class=go onclick="hxcal('L')">Cal L</button>
+<button class=go onclick="hxcal('R')">Cal R</button></div>
+<div id=cpg>counts/gram: L <b>?</b> &middot; R <b>?</b></div>
+<div class=hint>Raw counts work straight away and are the honest number.
+For grams: take everything off the platform, hit Zero, put a known weight on
+(a 500 g bag of sugar is fine), type its grams and hit Cal for that side.
+Saline is 1 g per ml, so grams are millilitres. The &plusmn; figure is
+peak-to-peak noise over the last second: a few hundred counts is normal, a
+figure that wanders means the bar is touching something it should not, or
+the cable is picking up the pump rail. Both are stored on the board.</div>
 </section>
 <section><div class=lbl>Reservoir &amp; run</div>
 <div class=duo>
@@ -1189,6 +1392,7 @@ const C={slateTop:'#0f1720',slateBot:'#090f17',deep:'#0a3f74',mid:'#116bb0',
  warn:'#f0a57e',ink:'#fff',dim:'rgba(233,239,241,.7)',
  badgeL:'#7dd3fc',badgeR:'#f0a57e'};
 const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
+const HXS={0:'no signal',1:'live',2:'at the rails &mdash; check wiring'};
 let editing={},view=0,MLMIN=100,CAP=1000,calDone='',hot=0,timer=0,tt=0;
 
 function card(s){return `<div class=unit>
@@ -1311,7 +1515,9 @@ async function drain(){if(busy||!q.length)return;busy=true;
 function active(){return SIDES.some(s=>{const d=G[s].st;
  return d.run||d.prime||d.cal})}
 function schedule(){clearTimeout(timer);
- let ms=active()?400:1500;
+ // Settings is where the cells are watched, and a load cell you are poking
+ // at 1.5s intervals feels broken. Cheap: /status is ~700 bytes.
+ let ms=active()?400:(view==1?600:1500);
  if(Date.now()<hot)ms=250;
  timer=setTimeout(poll,ms)}
 async function poll(){clearTimeout(timer);
@@ -1352,11 +1558,17 @@ function apply(j){
   if(!editing['t'+s])$('t'+s).value=Math.round(d.tgt);
   const kb=$('k'+s);kb.dataset.on=(d.enc==1)?'1':'0';
   kb.textContent=s+' knob: '+KST[d.enc];
-  kb.className=(d.enc==1)?'go':(d.enc?'warn':'')}
+  kb.className=(d.enc==1)?'go':(d.enc?'warn':'');
+  const hx=$('hx'+s);
+  hx.innerHTML='<span class=side>'+s+'</span>'+(d.hx==1
+   ?'raw <b>'+d.hxraw+'</b> &middot; &plusmn;'+d.hxpp
+     +(d.cpg?' &middot; <b>'+d.hxg.toFixed(1)+' g</b>':' &middot; not calibrated')
+   :'<span class=bad>'+HXS[d.hx]+'</span>')}
  $('knobcard').style.display=j.knobs?'':'none';
  const bm=$('bench'),off=[];
  if(!j.knobs)off.push('knobs');
  if(!j.scomp)off.push('screens');
+ if(!j.cells)off.push('load cells');
  let t='';
  if(off.length)t='Not in this build: '+off.join(' and ')
   +' compiled out. Both pumps, the firmware caps and the E-stop are live.';
@@ -1366,6 +1578,11 @@ function apply(j){
   +' Everything else is unaffected.';
  bm.style.display=t?'flex':'none';
  bm.textContent=t;
+ $('cellcard').style.display=j.cells?'':'none';
+ $('cells').innerHTML='load cells: L <b>'+cellTxt(j.L)+'</b> &middot; R <b>'
+  +cellTxt(j.R)+'</b>';
+ $('cpg').innerHTML='counts/gram: L <b>'+(j.L.cpg?j.L.cpg.toFixed(2):'?')
+  +'</b> &middot; R <b>'+(j.R.cpg?j.R.cpg.toFixed(2):'?')+'</b>';
  $('cnow').innerHTML='using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
  $('lvls').innerHTML='reservoirs: L <b>'+Math.round(j.L.lvl*100)
   +'%</b> &middot; R <b>'+Math.round(j.R.lvl*100)+'%</b>';
@@ -1389,6 +1606,13 @@ async function saveCal(){const v=$('cm').value;
  if(j&&Math.abs(j.mlmin-parseFloat(v))<.05){$('cm').value='';calDone='';calText()}}
 async function knob(s){const b=$('k'+s);
  await act('/enc?side='+s+'&on='+(b.dataset.on=='1'?0:1))}
+async function hxcal(s){const v=$('kw').value;
+ if(!v){toast('Type the weight you put on, in grams.');return}
+ const j=await act('/hxcal?side='+s+'&g='+encodeURIComponent(v));
+ if(j&&j[s].cpg)$('kw').value=''}
+// Grams once taught, raw counts before that: never show a made-up gram.
+function cellTxt(d){return d.hx!=1?HXS[d.hx]
+ :(d.cpg?d.hxg.toFixed(1)+' g':d.hxraw+' raw')}
 
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden){hot=Date.now()+1200;poll()}});
@@ -1408,6 +1632,17 @@ calText();poll();
 
 int sideArg() { return (server.arg("side") == "R") ? 1 : 0; }
 
+// Shorthands so /status reads the same whether the cells are compiled in.
+#if ENABLE_CELLS
+#define CELL_RAW(s) cells[s].raw
+#define CELL_PP(s) cells[s].pp
+#define CELL_CPG(s) cells[s].cpg
+#else
+#define CELL_RAW(s) 0L
+#define CELL_PP(s) 0L
+#define CELL_CPG(s) 0.0f
+#endif
+
 // Whole seconds left on a calibration run, 0 when there isn't one.
 long calLeft(int s) {
   if (!sides[s].calibrating) return 0;
@@ -1421,26 +1656,33 @@ long calLeft(int s) {
 // source of the UI feeling laggy. One request in, fresh truth out.
 // msg, if given, is shown as a toast on the page: keep it quote-free.
 void sendStatus(const char *msg = nullptr, int code = 200) {
-  char buf[1200];
+  char buf[1700];
   int n = snprintf(buf, sizeof buf,
                    "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,"
                    "\"screens\":%d,\"scomp\":%d,\"band\":%d,\"draw\":%lu,"
+                   "\"cells\":%d,"
                    "\"heap\":%u,\"maxblk\":%u,\"msg\":\"%s\",",
                    mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
                    screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0, screenBand,
-                   drawStat, (unsigned)ESP.getFreeHeap(),
+                   drawStat, ENABLE_CELLS ? 1 : 0, (unsigned)ESP.getFreeHeap(),
                    (unsigned)ESP.getMaxAllocHeap(), msg ? msg : "");
   for (int s = 0; s < 2; s++) {
     Side &S = sides[s];
-    n += snprintf(buf + n, sizeof buf - n,
+    int rem = (int)sizeof buf - n;      // snprintf returns would-be length
+    if (rem < 2) break;                 // so n can outrun the buffer
+    n += snprintf(buf + n, rem,
                   "\"%c\":{\"run\":%d,\"prime\":%d,\"done\":%d,\"low\":%d,"
                   "\"cal\":%d,\"calleft\":%ld,\"enc\":%d,"
                   "\"req\":%d,\"duty\":%d,\"tgt\":%.0f,\"del\":%.1f,"
-                  "\"el\":%.0f,\"lvl\":%.3f}%s",
+                  "\"el\":%.0f,\"lvl\":%.3f,"
+                  "\"hx\":%d,\"hxraw\":%ld,\"hxpp\":%ld,\"hxg\":%.1f,"
+                  "\"cpg\":%.3f}%s",
                   s == 0 ? 'L' : 'R', S.running, S.priming, S.done, S.lowStop,
                   S.calibrating, calLeft(s), encs[s].state,
                   dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
-                  S.remain / RES_CAPACITY, s == 0 ? "," : "}");
+                  S.remain / RES_CAPACITY,
+                  hxState(s), CELL_RAW(s), CELL_PP(s), hxGrams(s),
+                  CELL_CPG(s), s == 0 ? "," : "}");
   }
   server.send(code, "application/json", buf);
 }
@@ -1539,6 +1781,58 @@ void handleCalSave() {
   sendStatus("Calibrated. Every volume now scales off that.");
 }
 
+// Zero the cell with the reservoir off it (or empty, if you want the number
+// to read delivered volume rather than bag weight). Persisted.
+void handleTare() {
+#if !ENABLE_CELLS
+  sendStatus("Load cells are compiled out of this build.", 409);
+#else
+  int s = sideArg();
+  Cell &c = cells[s];
+  if (hxState(s) != 1) {
+    sendStatus("No usable signal from that cell. Check the base cable, and "
+               "that its HX711 has 3V3.", 409);
+    return;
+  }
+  c.offset = c.raw;
+  prefs.putLong(s == 0 ? "tL" : "tR", c.offset);
+  sendStatus(s == 0 ? "Left cell zeroed." : "Right cell zeroed.");
+#endif
+}
+
+// Teach a side how many counts a gram is worth: tare empty, put a known
+// weight on, type its grams. 1 ml of saline is 1 g, so this is the whole
+// bridge from counts to millilitres.
+void handleHxCal() {
+#if !ENABLE_CELLS
+  sendStatus("Load cells are compiled out of this build.", 409);
+#else
+  int s = sideArg();
+  Cell &c = cells[s];
+  float g = server.arg("g").toFloat();
+  if (g < 5.0f || g > 5000.0f) {
+    sendStatus("Known weight has to be 5-5000 g.", 400);
+    return;
+  }
+  if (hxState(s) != 1) {
+    sendStatus("No usable signal from that cell.", 409);
+    return;
+  }
+  long d = c.raw - c.offset;
+  if (labs(d) < 1000) {
+    sendStatus("The reading barely moved. Zero it empty FIRST, then put the "
+               "weight on, then Cal.", 409);
+    return;
+  }
+  c.cpg = (float)d / g;   // sign kept: a cell can read down under load
+  prefs.putFloat(s == 0 ? "cpgL" : "cpgR", c.cpg);
+  Serial.printf("Cell %c calibrated: %.3f counts/gram\n", s == 0 ? 'L' : 'R',
+                c.cpg);
+  sendStatus(s == 0 ? "Left cell calibrated, grams are live."
+                    : "Right cell calibrated, grams are live.");
+#endif
+}
+
 // Declare a side's knob wired (or not). Persisted, so it survives reboots.
 void handleEnc() {
 #if !ENABLE_KNOBS
@@ -1587,10 +1881,11 @@ void setup() {
   delay(400);
   Serial.println();
   Serial.println("=====================================================");
-  Serial.printf("Saline Pump  STAGE 7i   built %s %s\n", __DATE__, __TIME__);
-  Serial.printf("PERIPHERALS: screens %s, knobs %s\n",
+  Serial.printf("Saline Pump  STAGE 8   built %s %s\n", __DATE__, __TIME__);
+  Serial.printf("PERIPHERALS: screens %s, knobs %s, cells %s\n",
                 ENABLE_SCREENS ? "IN" : "compiled out",
-                ENABLE_KNOBS ? "IN" : "compiled out");
+                ENABLE_KNOBS ? "IN" : "compiled out",
+                ENABLE_CELLS ? "IN" : "compiled out");
   Serial.println("If you cannot see this line, the board is not running");
   Serial.println("this binary: the upload did not take.");
   Serial.printf("reset reason: %d  (1=power-on 3=sw 4=panic 5-7=watchdog)\n",
@@ -1661,6 +1956,9 @@ void setup() {
 
   Serial.println("[3] knobs");
   encBegin();
+
+  Serial.println("[3b] load cells");
+  hxBegin();
 
   // Broken into lettered sub-steps on purpose: "it stopped at [4]" was too
   // coarse once two panels, a shared bus and a shared RST are all in play.
@@ -1747,6 +2045,8 @@ void setup() {
   server.on("/cal", handleCal);
   server.on("/calsave", handleCalSave);
   server.on("/enc", handleEnc);
+  server.on("/tare", handleTare);
+  server.on("/hxcal", handleHxCal);
   server.on("/status", handleStatus);
   server.begin();
   Serial.println("[8] BOOT COMPLETE, entering loop()");
@@ -1800,6 +2100,7 @@ void loop() {
     encService(s, now);
   }
   encStormGuard(now);
+  hxService(now);
 
   // flow integration: dt against the duty the gate is REALLY holding
   // (kick bursts and stall-floor clamps included, so the count is honest)
@@ -1922,6 +2223,15 @@ void loop() {
                       : "no-ip",
                   !ENABLE_SCREENS ? "bench-off"
                                   : (screensOk ? "on" : "FAILED"));
+#if ENABLE_CELLS
+    // On the same beat, because when a cell misbehaves the serial monitor is
+    // where you will be looking.
+    Serial.printf("cells  L %s raw %ld pp %ld %.1fg   R %s raw %ld pp %ld %.1fg\n",
+                  hxState(0) == 1 ? "ok" : hxState(0) == 2 ? "RAILS" : "--",
+                  cells[0].raw, cells[0].pp, hxGrams(0),
+                  hxState(1) == 1 ? "ok" : hxState(1) == 2 ? "RAILS" : "--",
+                  cells[1].raw, cells[1].pp, hxGrams(1));
+#endif
   }
 
   // LED: solid while any pump runs, short heartbeat blink when idle
