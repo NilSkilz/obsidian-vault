@@ -159,6 +159,50 @@ Verified sources (prices checked 2026-09-13):
 
 **Sterility note:** the barb adapter is a non-sterile part sitting in the fluid path upstream of the needle. Boil it (10 min) or IPA-flush then flush through with sterile saline before each run, same rule as the pump tube.
 
+## Butterfly sets: exactly what to order (2026-09-13)
+
+Rob asked what "butterfly things" he actually needs. Full spec and sourcing, checked 2026-09-13.
+
+**The one line item:** sterile single-use **21G (green) winged infusion set, 19mm needle, 30cm tube, female luer tail**. That is the whole part. The needle, wings and flex tube come bonded together in one sealed EO-sterilised pouch. Nothing to assemble.
+
+**The four specs that matter, and why:**
+
+| Spec | Value | Why |
+|---|---|---|
+| Gauge | **21G, green** (ISO 6009 colour code) | Decided above. ~5-6 psi back-pressure at our 50 ml/min ceiling, so the pump loafs. 23G blue is the fallback if Aimee wants finer; never 25G |
+| Needle length | **19mm** (3/4") | The standard. 19mm is what the Poiseuille numbers assumed |
+| Tube length | **30cm** (12") | This is the strain relief. It is the entire reason we use a winged set rather than a bare needle on the pump line |
+| Tail | **Female luer** | Mates with the male luer lock barb adapter. Rob's barb screws or pushes straight in |
+
+**The variant to avoid: "safety blood collection set".** Looks identical in photos, same wings, same green. The difference is the tail: a blood collection set ends in a **multi-sample needle inside a Vacutainer holder**, meant to punch into a vacuum tube, not a luer. No usable connector for our line. If a listing says "blood collection", "multi-sample" or shows a plastic barrel on the tail, it is the wrong one. Want "infusion set" or "scalp vein set".
+
+**On luer lock vs slip at the butterfly end:** every set checked terminates in a female luer hub, and the male luer LOCK barb we specced engages it correctly. Standard-grade sets (the £18/50 ones) have a plain female luer taper, so the lock collar just does not grip and it becomes a friction fit. Terumo Surflo hubs take the thread properly. **At our working pressure (~6 psi) a plain taper luer will not pop**, so this is not a blocker, but a cable tie or a wrap of tape over the joint is free insurance either way. If Rob wants the belt-and-braces version, pay up for Terumo.
+
+**Corroboration of the flow maths:** MidMeds rates a 21G/30cm set at **20 ml/min gravity flow**. Gravity head from a hung bag is roughly 1m of water, about 1.4 psi. Scale that to our 50 ml/min ceiling and it wants ~3.5 psi, which sits comfortably under the ~5-6 psi the Poiseuille estimate gave. Two independent routes to the same answer: 21G is not a restriction on this rig. Priming volume is 0.45 ml per set, which is noise against a 1L dose.
+
+**Quantity:** two sets per session, one per side, single-use, never reuse. A box of 50 is 25 sessions.
+
+**Sources, prices checked 2026-09-13:**
+
+| Option | Price | Notes |
+|---|---|---|
+| **[FirstAid4Less FL2837, 21G box of 50](https://www.firstaid4less.co.uk/Medical-Disposables/Needles-Syringes/Infusion-Needles-Blood-taking/Winged-Butterfly-Infusion-Set)** | **£18.00 ex VAT (£21.60 inc)** | **Best buy.** Cheapest verified, no trade gate, also sells **singles at £0.55** (code FL2836) if he wants to test-fit the barb first |
+| [CLH Healthcare, 21G 19mm x 30cm, box 50](https://clhgroup.co.uk/medical/suction-infusion-sets/winged-infusion-sets-butterfly) | £21.50 ex VAT (£25.80 inc) | Was the BOM line. "Available to order", not stocked |
+| [MidMeds MD03809, box 50](https://www.midmeds.co.uk/shop/md03809-butterfly-infusion-set-green-21g-x-50-67548) | £24.91 ex VAT (£29.89 inc) | Currently unavailable. Best-documented spec sheet of the lot |
+| [Barrier Healthcare, 10-pack](https://www.barrierhealthcare.co.uk/butterfly-winged-infusion-set-21g-4751) | £4.35 ex VAT (£5.22 inc) | **Backordered as of 2026-09-13.** Was the small-pack line in the BOM |
+| [Terumo Surflo via CLH](https://clhgroup.co.uk/medical/suction-infusion-sets/winged-infusion-sets-terumo) | dearer | The quality option. Proper luer lock thread, 3-degree wing bond, non-DEHP tube |
+
+**No prescription or professional credentials needed.** Butterfly sets are not POM, unlike the IV bags. FirstAid4Less sells to anyone.
+
+### The bits that go with them (previously missing from the BOM)
+
+- **Sharps bin, 1L yellow.** Non-negotiable and it was not on the list. 50 used needles cannot go in household waste. [Oxford Online Pharmacy, £1.99](https://www.oxfordonlinepharmacy.co.uk/weight-loss/yellow-sharps-box-nominal-capacity-1-litre). Single use, seals shut permanently. When full, a GP surgery or the council's clinical waste collection takes it.
+- **Tape for the wings.** Micropore or Transpore surgical tape, or better, a **Tegaderm/IV3000 transparent film dressing** per site. Film wins because the site stays visible through it, so a swelling or a leak is obvious without peeling anything off mid-scene. A couple of quid.
+- **Skin prep:** already on the list (Clinell 2% chlorhex in 70% alcohol). Use it, not a plain alcohol wipe, for anything breaking skin.
+- **Gauze + a plaster** for withdrawal. Pressure on the site for a minute after the needle comes out.
+
+**BOM impact:** butterfly line drops from £25.80 to £21.60 inc VAT, plus ~£2 sharps bin and ~£3 film dressings. Bucket C effectively unchanged at ~£77.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
@@ -240,8 +284,10 @@ The into-body chain has to be genuine sterile single-use CE-marked kit. These ar
 | Item | Buy | £ | Source |
 |---|---|---|---|
 | Sterile 0.9% saline, 1L irrigation pour bottle, **pack of 6** | 1 pack (6L) | 28.72 | venacava.co.uk/products/sodium-chloride-0-9-for-irrigation-pour-bottle-1000ml-pack-of-6 |
-| 21G winged (butterfly) infusion set, luer-lock tail, **box of 50** | 1 box | 25.80 | clhgroup.co.uk/medical/suction-infusion-sets/winged-infusion-sets-butterfly |
-| — or small **10-pack** if you don't want 50 | (alt) | 5.22 | barrierhealthcare.co.uk/butterfly-winged-infusion-set-21g-4751 |
+| 21G winged (butterfly) infusion set, 19mm needle / 30cm tube, female luer tail, **box of 50** | 1 box | 21.60 | firstaid4less.co.uk (FL2837) — **re-sourced 2026-09-13, cheapest verified**. Singles FL2836 at £0.66 inc if test-fitting first |
+| — alts: CLH box/50 £25.80 (order-in), MidMeds £29.89 (out of stock), Barrier 10-pack £5.22 (**backordered 2026-09-13**) | (alt) | — | see "Butterfly sets: exactly what to order" above |
+| **Sharps bin, 1L yellow** (was missing; 50 used needles can't go in household waste) | 1 | 1.99 | oxfordonlinepharmacy.co.uk/weight-loss/yellow-sharps-box-nominal-capacity-1-litre |
+| Transparent film dressing (Tegaderm / IV3000) to fix the wings, site stays visible | 1 pack | ~3.00 | any UK pharmacy / Amazon |
 | Barbed-to-male-luer-lock adapters, sized to pump tube ID (1/8" barb ≈ 3mm, 3/16" ≈ 4–5mm), pack of 5 | 1 pack | 7.20 | adhesivedispensing.co.uk/male-luer-lock-to-barb-160-c.asp |
 | Alcohol pre-injection wipes (70% IPA), box of 100 | 1 box | 1.57 | medicaldressings.co.uk/alcohol-pre-injection-wipes-3cmx3cm-2ply-box-of-100/ |
 | Clinell 2% chlorhexidine + 70% alcohol skin wipes, box 200 (**recommended upgrade** for a skin-penetration site) | 1 box | ~14.00 | premierhh.co.uk/products/clinell-2-chlorhexidine-in-70-alcohol-skin-wipes-200 |
