@@ -137,6 +137,28 @@ Back-pressure at 50 ml/min (Poiseuille, saline ≈ water, ~19mm metal cannula + 
 
 Buy: sterile single-use 21G butterfly sets (box), plus **barbed-to-male-luer-lock adapters** sized to the pump's silicone tube OD, one per side. Needle + tubing are the disposable sterile path — new set every run.
 
+## Connecting a needle to the 3×5mm tube (answered 2026-09-13)
+
+Rob has 3×5mm silicone tube and a box of assorted **luer-slip (push-fit)** needles. The joining part is a **male luer to 1/8" hose barb adapter**.
+
+**Why male:** a hypodermic needle's hub is a *female* luer (it's designed to swallow a syringe's male taper). So the adapter that faces it must be male. Barb into the tube, male luer out to the needle.
+
+**Buy male luer LOCK, not male luer slip**, even though Rob's needles are slip. The taper is identical, so a slip needle still pushes straight on; the lock collar costs nothing extra and means the 21G butterfly sets (luer-lock tail, decided above) screw on properly when they arrive. One adapter covers both.
+
+**Barb size: 1/8" (3.175mm).** Our tube is 3mm ID, so a 1/8" barb stretches it very slightly — that's the correct interference fit. 3/32" (2.38mm) is undersized and will weep or blow off. Material **polypropylene**, not acetal, because polypro is autoclavable (121°C/20min) so it can be boiled between sessions.
+
+Verified sources (prices checked 2026-09-13):
+- [Adhesive Dispensing Ltd, TSD931-17AB, male luer to 1/8" OD barb, polypro, pk/5 — £7.20](https://www.adhesivedispensing.co.uk/male-luer-lock-to-barb-160-c.asp) (already the BOM line)
+- [Amazon UK B07W5S4728 — RSN Lab 25× male luer lock to 1/8" 3.2mm PP barb](https://www.amazon.co.uk/RSN-Male-luer-Lock-Adapter/dp/B07W5S4728) (price not verifiable, listing blocks fetch)
+
+**Fitting it:** dunk the tube end in just-boiled water for ~20s to soften, then push it onto the barb past *both* ridges with a twisting motion. Silicone at our ~6 psi working pressure won't go anywhere, but a small cable tie or 5mm hose clip over the joint costs nothing and removes the question.
+
+**Do not push the needle hub straight into the tube.** The hub's taper is roughly 4mm at the base so it will grip 3mm silicone and it *feels* secure — but it's an unsupported friction fit on a tapered cone, wet, warm, with a needle in someone at the other end. It weeps at the shoulder and it can walk off under a tug. Not the failure mode we want.
+
+**Bare needle vs butterfly:** use the loose needles for bench work (calibration into a jug, prime testing, back-pressure checks). For anything going into Aimee, keep the decided chain: pump tube → barb adapter → **21G butterfly set** → body. The wings tape down and the butterfly's flex tail absorbs any tug on the main line; a rigid needle bolted to a stiff pump tube transmits every pull straight into the tissue. That is the entire reason winged sets exist.
+
+**Sterility note:** the barb adapter is a non-sterile part sitting in the fluid path upstream of the needle. Boil it (10 min) or IPA-flush then flush through with sterile saline before each run, same rule as the pump tube.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
