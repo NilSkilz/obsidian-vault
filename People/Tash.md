@@ -49,6 +49,7 @@
 - When **Rob is marked "away"** on the calendar, that usually means he's at work, and roughly **50/50** he's also seeing Tash. Combines work travel with partner time.
 
 ## Status
+- **Overnight arrangement:** Rob stays over on Tash's **sofa** (used to be a spare room until she moved and gave it up). Established practice, mirrored by Aimee staying in Sean's spare room — both always separate rooms, never sharing a bed/room overnight.
 - **2026-09-07:** Rob said (in conversation with Aimee) he'll probably stop seeing Tash, by simply not arranging new play dates rather than a formal ending. Soft intent, not a hard decision yet.
 - **2026-09-07 (later):** No contact from Tash since their last date. She's very independent; Rob suspects she may have someone else filling the kink void. If so, the wind-down may be quietly mutual rather than one-sided.
 
