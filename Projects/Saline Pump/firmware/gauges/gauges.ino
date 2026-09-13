@@ -1,4 +1,41 @@
-// Saline Pump v1 - Stage 8: the load cells report for duty.
+// Saline Pump v1 - Stage 9: the flow line gets a second point, and the
+// load cells start stopping pumps.
+//
+// Two things landed on 2026-09-13, both from one real run on the bench:
+// Rob calibrated at 100% and caught 140 ml in 60s, then asked for 200 ml at
+// 60%. The rig ran for 2:23 (exactly what 84 ml/min predicts) and put out
+// about 140 ml. 43% high, and the reason is not a bug, it is physics.
+//
+//   1. FLOW IS NOT PROPORTIONAL TO DUTY. A PWM'd DC head has to beat its own
+//      friction before the tube moves at all, so flow vs duty is a straight
+//      line that crosses zero WELL above zero duty, not one through the
+//      origin. Stage 8 scaled the single 100% figure by duty, which is only
+//      ever right at 100%. Stage 9 keeps TWO measured points (100% and the
+//      UI floor) and interpolates. Rob's line: 140 at 100%, 58.7 at 60%, so
+//      ~2.03 ml/min per point of duty. Calibrating both ends is two buttons
+//      on the phone page now, and both persist to NVS.
+//
+//      The 58.7 figure is DERIVED from that run (140 ml in 143s), not caught
+//      in a jug. It is shipped as the default so the rig is honest out of
+//      the box, and it should be re-measured properly with the 60% button.
+//
+//   2. DOSES ARE NOW WEIGHED, not timed, whenever the reservoir's base can
+//      be trusted. The bag on the load cell is the honest witness: what left
+//      it IS what went in, and no flow model can drift away from that. The
+//      clock keeps running alongside as a backstop:
+//        - weighing only arms if the cell is live, taught counts/gram, and
+//          its peak-to-peak noise is under 3 g AND under 5% of the target
+//          (a base reading +-4 g is fine for 200 ml, useless for 20 ml);
+//        - a knock on the bench cannot finish a dose: delivered is capped at
+//          1.6x what the clock says plus 15 ml;
+//        - if the clock passes 2x target while the cell says we are nowhere
+//          near, one of them is broken, so it stops and says so;
+//        - if the cell goes quiet mid-run it falls back to the clock with no
+//          jump in the number.
+//      The gauge says "weighed" or "timed" under the elapsed time, so which
+//      one you are getting is never a guess.
+//
+// ---- Stage 8: the load cells report for duty.
 //
 // -- STAGE 8: REAL WEIGHT ON THE PAGE (2026-09-13) ------------------------
 // The rig is assembled and running, so the two HX711 reservoir bases are
@@ -313,7 +350,17 @@ const int HX_DT_L = 36;   // VP
 const int HX_DT_R = 39;   // VN
 
 // ---- flow model ----
-float mlPerMin100 = 100.0;      // CALIBRATE WET (see header). NVS key "mlmin"
+// TWO points, not one. A PWM'd DC peristaltic head is not proportional: the
+// motor has to beat its own friction before the tube moves at all, so flow
+// vs duty is a straight line that hits zero WELL ABOVE zero duty, not one
+// through the origin. Rob's rig, measured 2026-09-13: 140 ml/min at 100%,
+// 58.7 ml/min at 60%. Scaling the 100% figure by duty predicts 84 ml/min at
+// 60% — 43% high, which is exactly the miss he saw (a "200 ml" dose ran its
+// full 2:23 and put out 140 ml). Two points, one straight line, honest ml.
+float mlPerMin100 = 140.0;      // flow at 100% duty.  NVS key "mlmin"
+float mlPerMinLow = 58.7;       // flow at calLowDuty. NVS key "mllow"
+int calLowDuty = 60;            // the duty the low point was caught at
+int lastCalDuty = 100;          // what the last cal run ran at, for /calsave
 const float CAL_MIN = 5.0;      // sanity bounds on a typed calibration
 const float CAL_MAX = 400.0;
 const float MAX_TARGET = 600.0;         // ml per run, firmware cap
@@ -561,6 +608,7 @@ struct Side {
   bool priming = false;
   bool done = false;     // reached target
   bool lowStop = false;  // reservoir guard tripped
+  bool fault = false;    // cell and clock disagreed: a human needs to look
   int dutyReq = 70;      // requested speed, % duty (UI sends 60..100)
   float target = 120.0;  // ml
   float delivered = 0;   // ml, this run
@@ -572,8 +620,13 @@ struct Side {
   int kickTarget = 0;
   unsigned long primeUntil = 0;
   unsigned long runStartMs = 0;
-  bool calibrating = false;      // 60s wide-open run into a jug
+  bool calibrating = false;      // 60s run into a jug, at calRunDuty
+  int calRunDuty = 100;
   unsigned long calUntil = 0;
+  // Stage 9 closed loop: delivered read off the reservoir's load cell.
+  bool wLive = false;    // this run is being weighed, not just timed
+  float wStart = 0;      // grams on the base when the run started
+  float modelDel = 0;    // what time x flow SAYS, kept as the backstop
 };
 Side sides[2];  // 0 = L, 1 = R
 
@@ -585,6 +638,19 @@ void pumpWrite(int s, int pct) {
   ledcWrite(s, (255 * pct) / 100);
 #endif
   sides[s].actualDuty = pct;
+}
+
+// Flow at a given duty, off the two-point line. Extrapolating below the low
+// point would be a lie (the head stalls, it does not slow smoothly), but the
+// UI floor IS the low point so we never go there. Falls back to the old
+// proportional guess if the low point has somehow been cleared.
+float flowAt(int duty) {
+  if (duty <= 0) return 0;
+  if (mlPerMinLow <= 0 || calLowDuty < 1 || calLowDuty >= 100)
+    return mlPerMin100 * duty / 100.0f;
+  float m = (mlPerMin100 - mlPerMinLow) / (float)(100 - calLowDuty);
+  float f = mlPerMinLow + m * (duty - calLowDuty);
+  return f > 0 ? f : 0;
 }
 
 // The duty a side will actually run at: the request, clamped up to the
@@ -605,6 +671,8 @@ void applyDuty(int s) {
   else pumpWrite(s, duty);
 }
 
+void armWeighing(int s);   // defined with the load cells, below
+
 void startRun(int s) {
   Side &S = sides[s];
   if (S.priming || S.calibrating) return;  // one job at a time per side
@@ -613,7 +681,10 @@ void startRun(int s) {
     S.elapsedS = 0;
     S.done = false;
   }
+  S.modelDel = S.delivered;
+  armWeighing(s);
   S.lowStop = false;
+  S.fault = false;
   if (S.remain <= RES_LOW_STOP) {  // don't start into an empty bag
     S.lowStop = true;
     return;
@@ -628,8 +699,9 @@ void startRun(int s) {
   } else {
     pumpWrite(s, duty);
   }
-  Serial.printf("Run %c: duty %d%%, target %.0f ml\n", s == 0 ? 'L' : 'R',
-                duty, S.target);
+  Serial.printf("Run %c: duty %d%%, %.1f ml/min, target %.0f ml, %s\n",
+                s == 0 ? 'L' : 'R', duty, flowAt(duty), S.target,
+                S.wLive ? "WEIGHED (closed loop)" : "timed (open loop)");
 }
 
 void stopRun(int s) {
@@ -780,6 +852,29 @@ void hxBegin() { Serial.println("Cells compiled out, pins never touched."); }
 int hxState(int s) { (void)s; return 0; }
 float hxGrams(int s) { (void)s; return 0; }
 #endif
+
+// Decide whether this run can be weighed. Three things have to be true: the
+// cell is live, it has been taught counts/gram, and its noise is small next
+// to the dose. That last one matters — a base reading +-4 g is fine for a
+// 200 ml dose and useless for a 20 ml one, and a dose that finishes on noise
+// is worse than no closed loop at all.
+void armWeighing(int s) {
+  Side &S = sides[s];
+  S.wLive = false;
+  S.wStart = 0;
+#if ENABLE_CELLS
+  Cell &c = cells[s];
+  if (hxState(s) != 1 || c.cpg == 0) return;
+  float noiseG = (float)c.pp / fabsf(c.cpg);       // p-p noise in grams
+  if (noiseG > 3.0f || noiseG > S.target * 0.05f) {
+    Serial.printf("Weighing OFF %c: cell noise %.2f g vs %.0f ml target\n",
+                  s == 0 ? 'L' : 'R', noiseG, S.target);
+    return;
+  }
+  S.wStart = hxGrams(s);
+  S.wLive = true;
+#endif
+}
 
 // ---------------------------------------------------------------- encoders
 // Table-driven quadrature, decoded in an interrupt. The draw loop spends
@@ -1088,10 +1183,12 @@ void renderFace(int s) {
   const char *pill = S.calibrating ? "CAL"
                    : S.priming     ? "PRIME"
                    : S.running     ? "RUN"
+                   : S.fault       ? "CHECK"
                    : S.lowStop     ? "LOW"
                    : S.done        ? "DONE"
                                    : "STOP";
-  uint16_t pillCol = (S.calibrating || S.priming || S.lowStop) ? COL_LOW
+  uint16_t pillCol = (S.calibrating || S.priming || S.lowStop || S.fault)
+                                                               ? COL_LOW
                    : (S.running || S.done)                     ? COL_RUN
                                                                : COL_STOP;
   int16_t x1, y1;
@@ -1311,24 +1408,33 @@ button.warn{border-color:rgba(240,165,126,.45);color:var(--coral)}
 <section><div class=gauges id=g></div>
 <div id=cells>load cells: &mdash;</div>
 <div class=hint>Speed runs 60-100%: the heads stall below about 55%, so the
-bottom of the slider is the slowest they will actually turn. Delivered volume
-is an estimate from time &times; flow, not from the cells: they are read and
-shown, but nothing stops a pump on their say-so yet.</div>
+bottom of the slider is the slowest they will actually turn. When a side's
+base is calibrated and quiet, its dose is <b>weighed</b>: delivered ml is
+what has actually left the bag, and that is what stops the pump. Otherwise
+it falls back to time &times; flow off the two-point line, which is an
+estimate. The gauge says which one you are getting.</div>
 </section></div>
 <div id=v1 style=display:none>
 <section><div class=lbl>Flow calibration</div>
 <div id=calstate>Not running.</div>
 <div class=duo>
-<button class=warn onclick="act('/cal?side=L',{L:{cal:1,calEnd:Date.now()+60000}})">Calibrate L</button>
-<button class=warn onclick="act('/cal?side=R',{R:{cal:1,calEnd:Date.now()+60000}})">Calibrate R</button></div>
+<button class=warn onclick=calRun('L',100)>L at 100%</button>
+<button class=warn onclick=calRun('R',100)>R at 100%</button></div>
+<div class=duo>
+<button class=warn onclick=calRun('L',60)>L at 60%</button>
+<button class=warn onclick=calRun('R',60)>R at 60%</button></div>
 <div class=calrow><span>ml caught in 60s</span>
 <input type=number id=cm min=5 max=400 step=.1 placeholder=ml>
 <button class=go onclick=saveCal()>Save</button></div>
-<div id=cnow>using <b>?</b> ml/min at 100%</div>
-<div class=hint>Prime the line, put the outlet in a measuring jug, hit
-Calibrate. That head runs wide open for exactly 60 seconds and counts down
-above. Type the ml you caught and Save: it is stored on the board and
-survives a reboot or an OTA push. Tap Calibrate again mid-run to abandon it.</div>
+<div id=cnow>flow line: <b>?</b></div>
+<div class=hint>Two points, not one. These heads are not proportional: at 60%
+duty they give well under 60% of their flow, because the motor has to beat
+its own friction before the tube moves at all. So calibrate BOTH ends. Prime
+the line, outlet in a measuring jug, hit a button: that head runs for exactly
+60 seconds at that duty and counts down above. Type the ml you caught and
+Save, and it lands on whichever end of the line you just ran. Both are stored
+on the board and survive a reboot or an OTA push. Tap the same button again
+mid-run to abandon it.</div>
 </section>
 <section id=cellcard><div class=lbl>Load cells</div>
 <div class=hxr id=hxL><span class=side>L</span> &mdash;</div>
@@ -1393,7 +1499,13 @@ const C={slateTop:'#0f1720',slateBot:'#090f17',deep:'#0a3f74',mid:'#116bb0',
  badgeL:'#7dd3fc',badgeR:'#f0a57e'};
 const KST={0:'off',1:'ON',2:'no signal',3:'disarmed (noise)'};
 const HXS={0:'no signal',1:'live',2:'at the rails &mdash; check wiring'};
-let editing={},view=0,MLMIN=100,CAP=1000,calDone='',hot=0,timer=0,tt=0;
+let editing={},view=0,MLMIN=140,MLLOW=58.7,LOWD=60,CAP=1000;
+let calDone='',calDoneD=100,hot=0,timer=0,tt=0;
+// Same two-point line the firmware runs, so the between-poll tween and the
+// board never disagree about what a duty is worth.
+function flowAt(d){if(d<=0)return 0;
+ if(!(MLLOW>0)||LOWD<1||LOWD>=100)return MLMIN*d/100;
+ return Math.max(0,MLLOW+(MLMIN-MLLOW)/(100-LOWD)*(d-LOWD))}
 
 function card(s){return `<div class=unit>
 <div class=glass><canvas id=c${s}></canvas></div>
@@ -1426,7 +1538,7 @@ function gauge(side){
  const cv=$('c'+side);cv.width=Math.round(240*DPR);cv.height=Math.round(240*DPR);
  const ctx=cv.getContext('2d');ctx.scale(DPR,DPR);
  const st={lvl:1,duty:70,run:0,prime:0,done:0,low:0,cal:0,calEnd:0,
-  del:0,tgt:120,el:0};
+  del:0,tgt:120,el:0,wl:0,cald:100,flt:0};
  let t=0;
  function draw(){
   const W=240,H=240,cx=120,cy=120,R=120;
@@ -1463,9 +1575,10 @@ function gauge(side){
   ctx.font='700 13px -apple-system,Segoe UI,Roboto,sans-serif';
   ctx.fillStyle=side==='L'?C.badgeL:C.badgeR;
   ctx.fillText(side==='L'?'LEFT':'RIGHT',cx,40);
-  const pill=st.cal?'CAL':st.prime?'PRIME':st.run?'RUN':st.low?'LOW'
-   :st.done?'DONE':'STOP';
-  const pcol=(st.cal||st.prime||st.low)?C.warn:(st.run||st.done)?C.run:C.stop;
+  const pill=st.cal?'CAL':st.prime?'PRIME':st.run?'RUN':st.flt?'CHECK'
+   :st.low?'LOW':st.done?'DONE':'STOP';
+  const pcol=(st.cal||st.prime||st.low||st.flt)?C.warn
+   :(st.run||st.done)?C.run:C.stop;
   ctx.font='700 11px -apple-system,Segoe UI,Roboto,sans-serif';
   const pw=ctx.measureText(pill).width+18;
   ctx.shadowBlur=0;ctx.fillStyle=pcol;
@@ -1485,15 +1598,16 @@ function gauge(side){
   else{ctx.fillStyle=C.ink;
    ctx.fillText(Math.round(st.del)+' / '+Math.round(st.tgt)+' ml',cx,cy+64);
    ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
-   ctx.fillStyle=C.dim;ctx.fillText(fmtT(st.el),cx,cy+84)}
+   ctx.fillStyle=C.dim;
+   ctx.fillText(fmtT(st.el)+(st.wl?'  ·  weighed':'  ·  timed'),cx,cy+84)}
   ctx.shadowBlur=0}
  // Between polls the numbers keep moving locally off the known flow rate, so
  // nothing sits frozen waiting for the next /status. The poll corrects it.
  return {st,tick:dt=>{t+=dt;
   if(st.run||st.prime||st.cal){
-   const ml=MLMIN*(st.duty/100)*(dt/60);
+   const ml=flowAt(st.duty)*(dt/60);
    st.lvl=Math.max(0,st.lvl-ml/CAP);
-   if(st.run){st.del+=ml;st.el+=dt}}
+   if(st.run){if(!st.wl)st.del+=ml;st.el+=dt}}
   draw()}}}
 const G={L:gauge('L'),R:gauge('R')};
 
@@ -1536,23 +1650,23 @@ function toast(m){const e=$('toast');e.textContent=m;e.style.opacity=1;
 
 function calText(){const el=$('calstate'),s=SIDES.find(x=>G[x].st.cal);
  if(s){el.className='';
-  el.innerHTML='<b class=big>'+calLeft(s)+'s</b>Side '+s
-   +' is running wide open. Catch it in the jug.'}
+  el.innerHTML='<b class=big>'+calLeft(s)+'s</b>Side '+s+' is running at '
+   +(G[s].st.cald||100)+'%. Catch it in the jug.'}
  else if(calDone){el.className='ready';
-  el.innerHTML='<b class=big>Done</b>Side '+calDone
-   +' finished. Measure the jug and type the ml below.'}
+  el.innerHTML='<b class=big>Done</b>Side '+calDone+' finished its '+calDoneD
+   +'% run. Measure the jug and type the ml below.'}
  else{el.className='';
-  el.textContent='Not running. Calibrate a side to measure its real flow.'}}
+  el.textContent='Not running. Do both ends: 100% and 60%.'}}
 
 function apply(j){
- MLMIN=j.mlmin;CAP=j.cap||1000;
+ MLMIN=j.mlmin;MLLOW=j.mllow;LOWD=j.lowd;CAP=j.cap||1000;
  for(const s of SIDES){const d=j[s],g=G[s].st;
-  if(g.cal&&!d.cal){calDone=s;
+  if(g.cal&&!d.cal){calDone=s;calDoneD=d.cald;
    if(view==0)toast('Side '+s+' calibration done, enter the ml in Settings.')}
   if(d.cal)calDone='';
-  g.lvl=d.lvl;g.run=d.run;g.prime=d.prime;g.done=d.done;g.low=d.low;
-  g.cal=d.cal;g.calEnd=d.cal?Date.now()+d.calleft*1000:0;
-  g.del=d.del;g.tgt=d.tgt;g.el=d.el;
+  g.lvl=d.lvl;g.run=d.run;g.prime=d.prime;g.done=d.done;g.low=d.low;g.flt=d.flt;
+  g.cal=d.cal;g.cald=d.cald;g.calEnd=d.cal?Date.now()+d.calleft*1000:0;
+  g.del=d.del;g.tgt=d.tgt;g.el=d.el;g.wl=d.wl;
   g.duty=(d.run||d.prime||d.cal)?d.duty:d.req;
   if(!editing['s'+s]){$('s'+s).value=d.req;$('o'+s).textContent=d.req+'%'}
   if(!editing['t'+s])$('t'+s).value=Math.round(d.tgt);
@@ -1580,17 +1694,23 @@ function apply(j){
  bm.textContent=t;
  $('cellcard').style.display=j.cells?'':'none';
  $('cells').innerHTML='load cells: L <b>'+cellTxt(j.L)+'</b> &middot; R <b>'
-  +cellTxt(j.R)+'</b>';
+  +cellTxt(j.R)+'</b>'+(j.L.flt||j.R.flt
+   ?'<br><b class=bad>A side stopped on CHECK: the base and the clock'
+    +' disagreed by more than 2x. Something knocked the bag, or a cell is'
+    +' stuck. Look before you run it again.</b>':'');
  $('cpg').innerHTML='counts/gram: L <b>'+(j.L.cpg?j.L.cpg.toFixed(2):'?')
   +'</b> &middot; R <b>'+(j.R.cpg?j.R.cpg.toFixed(2):'?')+'</b>';
- $('cnow').innerHTML='using <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%';
+ $('cnow').innerHTML='flow line: <b>'+j.mlmin.toFixed(1)+'</b> ml/min at 100%'
+  +' &middot; <b>'+j.mllow.toFixed(1)+'</b> at '+j.lowd+'%'
+  +'<br>so 80% is <b>'+flowAt(80).toFixed(1)+'</b> ml/min'
+  +(j.L.wl||j.R.wl?' &middot; <b>weighing live</b>':'');
  $('lvls').innerHTML='reservoirs: L <b>'+Math.round(j.L.lvl*100)
   +'%</b> &middot; R <b>'+Math.round(j.R.lvl*100)+'%</b>';
  const bits=SIDES.map(s=>{const d=j[s];
   return s+' '+(d.cal?'calibrating':d.prime?'priming':d.run?'running'
-   :d.low?'low':d.done?'done':'idle')});
+   :d.flt?'CHECK IT':d.low?'low':d.done?'done':'idle')});
  $('sub').textContent=bits.join('  ·  ')+'  ·  '
-  +j.mlmin.toFixed(0)+' ml/min';
+  +j.mlmin.toFixed(0)+'/'+j.mllow.toFixed(0)+' ml/min';
  calText();
  if(j.msg)toast(j.msg)}
 
@@ -1600,10 +1720,14 @@ function show(v){view=v;
  window.scrollTo(0,0);hot=Date.now()+1200;poll()}
 function send(s){act('/set?side='+s+'&duty='+$('s'+s).value
  +'&target='+$('t'+s).value)}
+function calRun(s,d){calDoneD=d;
+ act('/cal?side='+s+'&duty='+d,{[s]:{cal:1,cald:d,calEnd:Date.now()+60000}})}
 async function saveCal(){const v=$('cm').value;
  if(!v){toast('Type the ml you caught first.');return}
- const j=await act('/calsave?ml='+encodeURIComponent(v));
- if(j&&Math.abs(j.mlmin-parseFloat(v))<.05){$('cm').value='';calDone='';calText()}}
+ const n=parseFloat(v);
+ const j=await act('/calsave?ml='+encodeURIComponent(v)+'&duty='+calDoneD);
+ if(j&&Math.abs((calDoneD>=100?j.mlmin:j.mllow)-n)<.05){
+  $('cm').value='';calDone='';calText()}}
 async function knob(s){const b=$('k'+s);
  await act('/enc?side='+s+'&on='+(b.dataset.on=='1'?0:1))}
 async function hxcal(s){const v=$('kw').value;
@@ -1656,13 +1780,15 @@ long calLeft(int s) {
 // source of the UI feeling laggy. One request in, fresh truth out.
 // msg, if given, is shown as a toast on the page: keep it quote-free.
 void sendStatus(const char *msg = nullptr, int code = 200) {
-  char buf[1700];
+  char buf[1900];
   int n = snprintf(buf, sizeof buf,
-                   "{\"mlmin\":%.1f,\"cap\":%.0f,\"knobs\":%d,"
+                   "{\"mlmin\":%.1f,\"mllow\":%.1f,\"lowd\":%d,"
+                   "\"cap\":%.0f,\"knobs\":%d,"
                    "\"screens\":%d,\"scomp\":%d,\"band\":%d,\"draw\":%lu,"
                    "\"cells\":%d,"
                    "\"heap\":%u,\"maxblk\":%u,\"msg\":\"%s\",",
-                   mlPerMin100, RES_CAPACITY, ENABLE_KNOBS ? 1 : 0,
+                   mlPerMin100, mlPerMinLow, calLowDuty, RES_CAPACITY,
+                   ENABLE_KNOBS ? 1 : 0,
                    screensOk ? 1 : 0, ENABLE_SCREENS ? 1 : 0, screenBand,
                    drawStat, ENABLE_CELLS ? 1 : 0, (unsigned)ESP.getFreeHeap(),
                    (unsigned)ESP.getMaxAllocHeap(), msg ? msg : "");
@@ -1672,13 +1798,16 @@ void sendStatus(const char *msg = nullptr, int code = 200) {
     if (rem < 2) break;                 // so n can outrun the buffer
     n += snprintf(buf + n, rem,
                   "\"%c\":{\"run\":%d,\"prime\":%d,\"done\":%d,\"low\":%d,"
-                  "\"cal\":%d,\"calleft\":%ld,\"enc\":%d,"
+                  "\"cal\":%d,\"calleft\":%ld,\"cald\":%d,\"enc\":%d,\"flt\":%d,"
+                  "\"wl\":%d,\"mdel\":%.1f,"
                   "\"req\":%d,\"duty\":%d,\"tgt\":%.0f,\"del\":%.1f,"
                   "\"el\":%.0f,\"lvl\":%.3f,"
                   "\"hx\":%d,\"hxraw\":%ld,\"hxpp\":%ld,\"hxg\":%.1f,"
                   "\"cpg\":%.3f}%s",
                   s == 0 ? 'L' : 'R', S.running, S.priming, S.done, S.lowStop,
-                  S.calibrating, calLeft(s), encs[s].state,
+                  S.calibrating, calLeft(s), S.calRunDuty, encs[s].state,
+                  S.fault ? 1 : 0,
+                  S.wLive ? 1 : 0, S.modelDel,
                   dutyFor(s), S.actualDuty, S.target, S.delivered, S.elapsedS,
                   S.remain / RES_CAPACITY,
                   hxState(s), CELL_RAW(s), CELL_PP(s), hxGrams(s),
@@ -1745,11 +1874,14 @@ void handleRefill() {
   sendStatus(s == 0 ? "Left reservoir marked full." : "Right reservoir marked full.");
 }
 
-// Start the 60s wide-open run into a measuring jug. Refuses if that side
-// is doing anything else, so a cal can never be layered over a real dose.
+// Start a 60s calibration run into a measuring jug, at 100% or at the UI
+// floor. Refuses if that side is doing anything else, so a cal can never be
+// layered over a real dose.
 void handleCal() {
   int s = sideArg();
   Side &S = sides[s];
+  int d = server.hasArg("duty") ? server.arg("duty").toInt() : 100;
+  d = constrain(d, UI_MIN_DUTY, 100);
   if (S.calibrating) {  // second tap = abandon it
     stopRun(s);
     sendStatus("Calibration abandoned.");
@@ -1760,25 +1892,49 @@ void handleCal() {
     return;
   }
   S.calibrating = true;
+  S.calRunDuty = d;
+  lastCalDuty = d;
   S.lowStop = false;
   S.calUntil = millis() + CAL_MS;
-  pumpWrite(s, 100);
-  Serial.printf("Calibration run %c: 60s at 100%%\n", s == 0 ? 'L' : 'R');
+  pumpWrite(s, d);
+  Serial.printf("Calibration run %c: 60s at %d%%\n", s == 0 ? 'L' : 'R', d);
   sendStatus();
 }
 
-// The measured ml caught in 60s IS the ml/min figure. Persisted to NVS so
-// it survives a reboot or an OTA push.
+// The measured ml caught in 60s IS the ml/min figure at whatever duty that
+// run used. It lands on the top point or the bottom point of the flow line
+// accordingly. Persisted to NVS so it survives a reboot or an OTA push.
 void handleCalSave() {
   float ml = server.arg("ml").toFloat();
   if (ml < CAL_MIN || ml > CAL_MAX) {
     sendStatus("That is outside 5-400 ml, check what you typed.", 400);
     return;
   }
-  mlPerMin100 = ml;
-  prefs.putFloat("mlmin", mlPerMin100);
-  Serial.printf("Calibrated: %.1f ml/min at 100%%\n", mlPerMin100);
-  sendStatus("Calibrated. Every volume now scales off that.");
+  int d = server.hasArg("duty") ? constrain(server.arg("duty").toInt(),
+                                            UI_MIN_DUTY, 100)
+                                : lastCalDuty;
+  if (d >= 100) {
+    if (ml <= mlPerMinLow && calLowDuty < 100) {
+      sendStatus("100% can't flow less than the low point. Check the duty.",
+                 400);
+      return;
+    }
+    mlPerMin100 = ml;
+    prefs.putFloat("mlmin", mlPerMin100);
+    Serial.printf("Calibrated: %.1f ml/min at 100%%\n", mlPerMin100);
+    sendStatus("Top of the flow line set. Every volume scales off it.");
+  } else {
+    if (ml >= mlPerMin100) {
+      sendStatus("That is more than the 100% figure. Check the duty.", 400);
+      return;
+    }
+    mlPerMinLow = ml;
+    calLowDuty = d;
+    prefs.putFloat("mllow", mlPerMinLow);
+    prefs.putInt("mllowd", calLowDuty);
+    Serial.printf("Calibrated: %.1f ml/min at %d%%\n", mlPerMinLow, d);
+    sendStatus("Bottom of the flow line set. The curve is honest now.");
+  }
 }
 
 // Zero the cell with the reservoir off it (or empty, if you want the number
@@ -1948,11 +2104,16 @@ void setup() {
   prefs.begin("pump", false);
   sides[0].minPct = prefs.getInt("minL", 0);  // stall floors from Stage 5
   sides[1].minPct = prefs.getInt("minR", 0);
-  mlPerMin100 = prefs.getFloat("mlmin", 100.0f);
+  mlPerMin100 = prefs.getFloat("mlmin", 140.0f);
+  mlPerMinLow = prefs.getFloat("mllow", 58.7f);
+  calLowDuty = prefs.getInt("mllowd", 60);
   Serial.printf("Stall floors: L=%d%% R=%d%% (UI floor %d%%)\n",
                 sides[0].minPct, sides[1].minPct, UI_MIN_DUTY);
-  Serial.printf("Flow: %.1f ml/min at 100%%%s\n", mlPerMin100,
-                prefs.isKey("mlmin") ? "" : "  <-- UNCALIBRATED, guess");
+  Serial.printf("Flow line: %.1f ml/min at 100%%, %.1f at %d%%%s\n",
+                mlPerMin100, mlPerMinLow, calLowDuty,
+                prefs.isKey("mlmin") ? "" : "  <-- defaults, not measured");
+  for (int d = UI_MIN_DUTY; d <= 100; d += 10)
+    Serial.printf("  %d%% -> %.1f ml/min\n", d, flowAt(d));
 
   Serial.println("[3] knobs");
   encBegin();
@@ -2111,16 +2272,41 @@ void loop() {
     lastInteg = now;
     for (int s = 0; s < 2; s++) {
       Side &S = sides[s];
-      float flow = mlPerMin100 * S.actualDuty / 100.0f * dtMin;
+      float flow = flowAt(S.actualDuty) * dtMin;
       if (flow > 0) S.remain = max(0.0f, S.remain - flow);
       if (S.running) {
-        S.delivered += flow;
+        S.modelDel += flow;
+        // The bag on the base is the honest witness: what left it IS what
+        // went in. The clock is only the backstop now.
+        if (S.wLive && hxState(s) == 1) {
+          float drop = S.wStart - hxGrams(s);
+          if (drop < 0) drop = 0;
+          // A knock on the bench must not finish a dose. The clock can't say
+          // how much went in, but it can say how much CAN'T have.
+          float clockCeil = S.modelDel * 1.6f + 15.0f;
+          S.delivered = drop < clockCeil ? drop : clockCeil;
+        } else {
+          if (S.wLive) {   // cell went quiet mid-run: carry on, no jump
+            S.wLive = false;
+            Serial.printf("Cell %c lost mid-run, back on the clock\n",
+                          s == 0 ? 'L' : 'R');
+          }
+          S.delivered += flow;
+        }
         S.elapsedS += dtMin * 60.0f;
         if (S.delivered >= S.target) {  // dose complete
           stopRun(s);
           S.done = true;
-          Serial.printf("Dose done %c: %.0f ml\n", s == 0 ? 'L' : 'R',
-                        S.delivered);
+          Serial.printf("Dose done %c: %.0f ml (%s, clock said %.0f)\n",
+                        s == 0 ? 'L' : 'R', S.delivered,
+                        S.wLive ? "weighed" : "timed", S.modelDel);
+        } else if (S.wLive && S.modelDel > S.target * 2.0f + 20.0f) {
+          // Weighing says we're nowhere near; the clock says we're double.
+          // One of them is broken, so stop and let a human look.
+          stopRun(s);
+          S.fault = true;
+          Serial.printf("STOP %c: cell says %.0f ml, clock says %.0f\n",
+                        s == 0 ? 'L' : 'R', S.delivered, S.modelDel);
         } else if (S.remain <= RES_LOW_STOP) {  // never pump air
           stopRun(s);
           S.lowStop = true;

@@ -216,3 +216,18 @@ Rules:
 - A dead-man's switch beats a poll. "X has not happened for N seconds" is detectable from a lower level; "something is wrong" usually is not.
 - From an ISR, touch registers only. `detachInterrupt()` and the `gpio_*` driver calls are flash-resident and are not safe to reach from an interrupt; a single `REG_WRITE` to `GPIO_PINn_REG` does the same job. (Same reason a lookup table used by an IRAM ISR must be `DRAM_ATTR`.)
 - Set the trip point from measured normal behaviour, not a guess: a brisk human turn is ~240 encoder edges/s, the ceiling is 4000, so a real thumb can never trip it while a floating pin reaches it in milliseconds.
+
+## A one-point calibration is a slope you assumed, not a slope you measured (2026-09-13, saline pump)
+
+The rig was calibrated properly: 140 ml caught in 60 seconds at 100% duty, stored in NVS, no guesswork. Then a 200 ml dose at 60% duty ran for 2 minutes 23 seconds and put out about 140 ml.
+
+2:23 is *exactly* what 200 ml at 84 ml/min (140 x 0.6) predicts. The firmware was flawless. The model was 43% optimistic, because scaling one measured point by the control input quietly assumes the response goes through the origin.
+
+It usually doesn't. A PWM'd DC motor has to beat its own friction before anything moves at all, so flow vs duty is a straight line that crosses zero *well above* zero input. One point pins the height of that line and says nothing about its slope.
+
+Rules:
+- **Calibrate at both ends of the range you actually use**, then interpolate. Two points cost one more jug and one more minute.
+- A single-point calibration is only ever correct *at that point*. The further you work from it, the more you are reading back your own assumption.
+- Don't extrapolate the fit past the measured points. The saline line hits zero flow around 31% duty while the heads really stall near 55%: near stall the curve falls off a cliff. The fit is honest inside 60-100 and fiction below it, which is why the UI floor is 60.
+- **Better still, measure the thing you actually care about.** No flow model, however well fitted, can beat weighing the bag: what left it *is* what went in. A model is what you use when you have no witness.
+- When a number is wrong but the *timing* is exactly right, suspect the model, not the code. Perfect agreement with the prediction is evidence the software did its job.
