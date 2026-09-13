@@ -40,7 +40,20 @@ The job is light lubrication of the fibres so they flex instead of cracking, wit
 - **Soda ash is not optional.** It's the fixer; without it the dye won't bond. Some Jacquard sets include a sachet, the plain colour sets often don't. ~£5 separately.
 - **Teal** = Turquoise, plus a pinch of navy or black if it needs deepening. Turquoise is the slowest-reacting colour in the set, so give it the full time and keep the bath warm.
 - Follow **Jacquard's "Immersion Dyeing Cellulose Fibers, Method One"**. Ignore the tie-dye/batik/protein sections entirely.
-- **Lesson from testing (30 Aug-2 Sept):** jute's natural yellow sits under the dye, so turquoise-on-jute reads green, not teal, and judging it wet makes it look worse (turquoise strikes slowly, black/dark colour strikes fast, so mid-bath is falsely dark/green). Two test hanks (turquoise+black, and turquoise alone) both dried green. **Fix is adding a red-shade blue, not more turquoise or black** — cancel the yellow, don't deepen it. Rob's on-hand dye is **Cerulean = Blue MX-G** (Jacquard 070, verified via Paula Burch/Jacquard charts) — a green-shade blue, so blunter than ideal but still workable since it's much redder than turquoise. Next test ratio: per 100g rope, **~2.5g turquoise + ~0.8-1g cerulean** (cerulean at ~25-30% of dye weight). If that still dries green, next buy is **Mixing Blue MX-R** or a pinch of violet (10-15% would suffice with MX-R, since it's a true red-shade blue).
+- **Lesson from testing (30 Aug-2 Sept):** jute's natural yellow sits under the dye, so turquoise-on-jute reads green, not teal, and judging it wet makes it look worse (turquoise strikes slowly, black/dark colour strikes fast, so mid-bath is falsely dark/green). Two test hanks (turquoise+black, and turquoise alone) both dried green. **Fix is adding a red-shade blue, not more turquoise or black** — cancel the yellow, don't deepen it.
+
+#### The green problem: settled 11 Sep 2026
+
+Two things were tried and the answer is now proven, so don't re-derive any of it:
+
+- **Cerulean is retired from the recipe.** It is **Blue MX-G**, a *green*-shade blue (Paula Burch's pure-MX chart calls it "slightly greenish blue"). A 100% cerulean bath on 9 Sep still dried green. No ratio of turquoise and cerulean can ever fix this, because both dyes lean green and the fibre is already yellow. Mixing it back in reintroduces the green and mutes the shade.
+- **"Aquamarine" was considered and rejected.** It is a mixture, not a pure MX dye, and aqua is by definition the green side of blue: lighter AND greener than cerulean.
+- **The fix is Royal Blue = Blue MX-R**, a red-shade blue whose red lean cancels the fibre's yellow. Rob bought one off Amazon (listed as "Royal Navy", turned out to be the same MX-R product) and the **1g pure test bath dried clean blue, no hint of yellow or green.** Diagnosis confirmed end to end.
+- **UK source if another pot is needed:** **Kemtex** (dye house in Chorley) sell Procion **Royal Blue MX-R, pot 1012**, 25g £4.80 / 50g £9, and turquoise as pot 1004. Roughly half of George Weil's £17.90 delivered, and Amazon is a dead end for verifying MX codes (Jacquard don't publish them on their blues).
+
+**Standard single-hank test bath** (the protocol every result above was measured on, use it for any new colour question): **1L water, 1m of rope (~28-30g), 1.00g total dye, 28g salt dissolved first, 5g soda ash dissolved separately and added after 15 min, hold ~40°C for the hour, keep it moving, rinse, and judge the colour DRY.** Weigh the dye (Rob has 0.01g scales); at these doses spoon measures are too sloppy to tell two ratios apart, which is the whole point of the test. Wet rope always reads darker and greener than the finished colour.
+
+Live question as of 13 Sep: turquoise/royal mix ratio, 80/20 (0.80g + 0.20g) vs 65/35 (0.65g + 0.35g), both run 12 Sep and awaiting the dry verdict. Pure royal is a legitimate third option if the plain hank already looks right, and it is much easier to reproduce at 20L scale. Full-set scaling for Aimee's birthday rope lives in the private project file.
 
 ### Quantities
 

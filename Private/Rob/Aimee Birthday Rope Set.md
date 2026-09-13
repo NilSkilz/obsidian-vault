@@ -1,6 +1,8 @@
 # Aimee birthday rope set (gift, 11 Oct 2026)
 
-Teal hemp rope set for Aimee's birthday, dyed and conditioned by Rob. Process reference (shared, no gift mention): `Reference/Rope - conditioning and dyeing.md`. Gift framing moved here 8 Sep 2026 because the Reference file is Aimee-visible.
+Teal rope set for Aimee's birthday, dyed and conditioned by Rob. Process reference (shared, no gift mention): `Reference/Rope - conditioning and dyeing.md`. Gift framing moved here 8 Sep 2026 because the Reference file is Aimee-visible.
+
+**Material correction (9 Sep 2026, Rob pulled me up on it):** the reel and every test hank below are **JUTE, not hemp.** Entries dated before this say "hemp" and "hemp's yellow base"; read jute throughout. The chemistry and every number below are unaffected (both are bast/cellulose fibre), but stop calling it hemp, it is the second time it has needed correcting. See [[Rope - conditioning and dyeing]].
 
 - **8 Sep 2026:** the Rope Locker 220m hemp reel arrived. Rob cut 3m test lengths and put them to soak. Test dye baths today: 50/50 and 75/25 turquoise/cerulean, 1L each, **1m of rope (~28-30g) per bath** (corrected from an initial 3m assumption).
 - Per-1L bath numbers (corrected for 1m/~28g): total dye ~1g, salt ~28g (2 flat tbsp), soda ash ~5g (1 flat tsp). Salt and soda follow the water volume, dye follows fibre weight. Depth-of-shade target ~3.5% (same as the 1 tsp per 85g recipe), so scale dye linearly with rope weight for the full set.
