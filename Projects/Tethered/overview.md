@@ -67,8 +67,9 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - Create branches off `develop`, push, create PRs
 - Don't merge - [[Rob]] handles releases
 - For Amplify deployments, ask Rob to link branch first
-- **sitemap.xml/robots.txt/llms.txt are real files in `dist`, not routes** — Amplify's rewrite config can swallow them same as any other static file; confirm the rewrite rule when one of these 404s post-deploy instead of assuming the content is wrong
-- The 6 new blog posts referenced in the rewritten llms.txt 404 until the seed script is run and the site redeployed — open item, not yet done as of 2026-09-14
+- **sitemap.xml/robots.txt/llms.txt are real files in `dist`, not routes** — Amplify's rewrite config can swallow them same as any other static file; confirm the rewrite rule when one of these 404s post-deploy instead of assuming the content is wrong. As of 2026-09-14 `xml` still needs adding to the exclusion list alongside `txt` (sitemap.xml was 404ing).
+- **SEO/crawler infra shipped 2026-09-14:** `scripts/generate-sitemap.ts` (build-time sitemap.xml + robots.txt, 6deb539) and `scripts/prerender.ts` (build-time static HTML per blog post — title/meta/OG/JSON-LD, react-markdown server-side, fails soft if API unreachable, 4010fc8). Both need the Amplify rewrite to be **404-fallback style** (serve real files first, SPA catch-all only as last resort) or the generated files never get served over index.html.
+- The 6 new D/s-management blog posts (task ideas, rules, rewards/punishments, contract template, comparison, long-distance) are written and pushed (e29557c) but not live until Rob runs the seed script (now upserts by slug, see [[Technical Lessons Learned]]) and redeploys — open item as of 2026-09-14.
 
 ## Current Focus
 **User acquisition** through munch organizer outreach strategy

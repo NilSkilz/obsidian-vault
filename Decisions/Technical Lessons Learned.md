@@ -231,3 +231,7 @@ Rules:
 - Don't extrapolate the fit past the measured points. The saline line hits zero flow around 31% duty while the heads really stall near 55%: near stall the curve falls off a cliff. The fit is honest inside 60-100 and fiction below it, which is why the UI floor is 60.
 - **Better still, measure the thing you actually care about.** No flow model, however well fitted, can beat weighing the bag: what left it *is* what went in. A model is what you use when you have no witness.
 - When a number is wrong but the *timing* is exactly right, suspect the model, not the code. Perfect agreement with the prediction is evidence the software did its job.
+
+## A seed script that inserts is a seed script that duplicates on rerun (2026-09-14, Tethered)
+
+Tethered's blog seed script did a blind insert with a fresh random UUID every run. Rob re-ran it (his checkout didn't even have the new posts yet, so it re-uploaded the old ones) and got duplicates. Fix: scan the table first, delete rows sharing a slug (keep the oldest, so ids/publish dates survive), then upsert by slug. Rule: any script that publishes content by slug/key must upsert, never blind-insert, so running it twice is harmless. Check this before handing Rob a "just run this" command.
