@@ -100,6 +100,18 @@ else
     fi
   fi
 
+  # Car Hunt receipt (Projects/Car Hunt.md): what the AutoTrader poll found.
+  # Strong finds (8+) were pinged live; this is the tally plus anything mid.
+  CARDIGEST="$HOME/.local/state/jarvis-car-hunt-digest.log"
+  if [ -f "$CARDIGEST" ]; then
+    CARSUM="$(awk -v d="$TODAY" '$1==d { n++; s=$3+0; if (s>=8) hi++ }
+      END { if (n>0) printf "%d new EV listings scanned, %d strong", n, hi+0 }' "$CARDIGEST" 2>/dev/null)" || CARSUM=""
+    if [ -n "$CARSUM" ]; then
+      CARBEST="$(awk -v d="$TODAY" '$1==d && $3+0>=8' "$CARDIGEST" | cut -d' ' -f4- | head -4 | paste -sd '; ' -)"
+      ASK="${ASK} Also one short line on the car hunt (used EV search, ~£14.5k ceiling, Model 3 preferred), from this data, no tools: ${CARSUM}.${CARBEST:+ Worth a mention: ${CARBEST}. Strong ones were already pinged so just reference them.} If nothing strong turned up, one clause is enough, and if nothing new at all, say nothing."
+    fi
+  fi
+
   # Ambient signal from the junk-mail traffic (Rob, 2026-08-24: be intuitive,
   # don't make him define per-site rules). No sender filter: hand the model a
   # week of everything swept/binned and let its own judgment decide what, if
