@@ -31,7 +31,7 @@ CLAUDE_BIN="$(command -v claude || echo "$HOME/.local/bin/claude")"
 DRYRUN="${DRYRUN:-0}"
 SKIP_SCRAPE="${SKIP_SCRAPE:-0}"
 
-SEARCHES=("typescript" "react contract" "node aws" "next.js" "full stack javascript" "test automation playwright" "react native")
+SEARCHES=("typescript" "react contract" "node aws" "next.js" "full stack javascript" "test automation playwright" "react native" "ai engineer" "agentic ai" "llm engineer" "ai consultant")
 
 mkdir -p "$STATE"; touch "$SEEN"
 exec >>"$LOG" 2>&1
@@ -103,7 +103,7 @@ if [ "${NEW:-0}" -eq 0 ] && [ -z "$MAIL_UIDS" ]; then echo "nothing new"; exit 0
 
 PROMPT='You are Jarvis triaging freshly scraped UK contract job ads for Rob (unattended cron, not a chat). One JSON object per line below.
 
-ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, prefers FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid up to 2 days/week onsite in a major city (London, Manchester etc) is acceptable if the stack fits and the rate covers travel (Rob, 2 Sept 2026: he will hotel it for the right money); score those 6 when stack and rate fit, never 7+. Mostly/fully onsite (3+ days/week) = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
+ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/SNS/DynamoDB), 13+ years. Wants OUTSIDE IR35 contract work via his own Ltd, prefers FULLY REMOTE (UK), target £400-450/day, will look at £350+ if the fit is strong. EQUALLY A TARGET (Rob, 14 Sept 2026): AI / agentic-systems roles (AI engineer, LLM engineer, agentic AI developer, AI automation/integration consultant). Rob has designed, built and operated a production agentic AI system continuously for over a year (LLM agents with persistent memory, tool use, scheduled autonomy, email/calendar/chat integrations) plus multi-agent Claude Code work; score these like core-stack roles. TS/Node-flavoured agent work can hit 8-9; Python-first roles are fine up to 7 when the substance is agent/LLM system design, RAG or LLM integration rather than deep ML. Model training / research-level ML / data-science-first roles = wrong fit, reject. This runs alongside a full-time job he is not disclosing, so prefer async/flexible/deliverable-based work; heavy-meeting or rigid-hours gigs score lower. Hybrid up to 2 days/week onsite in a major city (London, Manchester etc) is acceptable if the stack fits and the rate covers travel (Rob, 2 Sept 2026: he will hotel it for the right money); score those 6 when stack and rate fit, never 7+. Mostly/fully onsite (3+ days/week) = reject. Inside IR35 or umbrella-only = reject (note it, do not ping). Wrong stack (Java, .NET, Dynamics, PHP etc where TS/React is incidental) = reject.
 
 Duplicate roles (same job via several agencies) count once; mention the duplicate agencies on one line.
 
