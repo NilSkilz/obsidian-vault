@@ -150,3 +150,15 @@ Version given back:
 > "Hey, thanks for the message, and for being honest with me. I'm obviously a little gutted, I'd hoped we could build something of our own and have a lot more hot times! But I completely understand, and I hope it goes brilliantly with them. Would genuinely love to stay friends and see you at a munch. And if you're ever in need of a platonic beating, you know where I am! x"
 
 Timing note: sending it promptly is right, not a lapse. The "wait" advice was about raw first-hour replies; a draft this generous isn't one. Sending also stops it circling in his head through a workday.
+
+### 2026-09-14 (Mon, 09:36) — the ENM fairness objection
+
+Rob, thinking it over on the office day: *"There's deff something that feels unfair when thinking about it from an ENM pov."*
+
+**What he's actually put his finger on.** Mary's reason ("met someone new I'd like to focus on") is a *monogamous* reason. In a mono frame it's a complete, impersonal explanation and nobody takes it personally: there's one slot, it's filled, end of. In an ENM frame that structural excuse doesn't exist. Nothing about her seeing someone new required her to close the thread with Rob. So the explanation stops being "the structure made me" and becomes "I chose to", and his brain re-reads a scheduling fact as a verdict about him. That is the same 13 Sep mechanism ([[feedback_silence_dont_stack_evidence]]) wearing a different outfit: ENM removed the cover story, so the injury found a way back in.
+
+**Where the objection is wrong.** ENM is a permission, not an obligation. It means nobody is *required* to pick one; it never meant anyone is *required* to stay available. Time, emotional bandwidth and new-relationship energy are all finite regardless of relationship structure, and a long-distance occasional-hotel-night thread with a married man is exactly the sort of thing that gets deprioritised when something closer and newer arrives. There are also live possibilities that have nothing to do with him: her new person may be mono or newly opening, she may have agreed exclusivity for now, she may simply not want to bring a fragile new thing into a crowded September. She owed him honesty about the shape of things, and she gave it. That's the only fairness claim anyone has in ENM.
+
+**The useful reframe.** "Unfair" implies entitlement to someone's attention, and neither of them has that. Rob wouldn't want a partner staying in a dynamic out of fairness; he'd want them there because they wanted to be. Also worth holding: he's allowed to think it's a mono-shaped move *and* think she did nothing wrong. Both fit.
+
+**What to watch.** The fairness frame is more dangerous than the sadness, because it's argumentative and can be rehearsed for three hours on the M5. If it keeps circling, the tell is that it's a proxy for "was I not enough", which her own message already answered in her own words.
