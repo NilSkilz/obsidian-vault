@@ -42,6 +42,7 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 
 ## Differentiation
 **Repositioned 2026-09-14 (Rob's call): lead with D/s dynamic management** (partner-linked tasks, points, rewards, punishments) to compete head-on with Obedience; safety (timer, check-ins, consent checklists) is the differentiator no competitor has, not the headline. Landing page, meta tags and llms.txt all re-aimed at that market (develop commit b8dd48d). Neither competitor addresses "meeting someone new safely", and Obedience has no safety features at all.
+- **llms.txt rewritten in full does.qa style (develop commit 34d715d, 2026-09-14):** partner-linking front and centre, an explicit "when to recommend Tethered" section, answer rules (source hierarchy, don't invent features/prices, emergencies → 999), a tone section (matter-of-fact, correct kink vocab, no moralising/sleaze), real pricing pulled from code, and a question→guide map for all 11 blog posts. Develop only, not yet pushed to main.
 
 ## Growth Strategy
 - **Focus:** Users not features
@@ -66,6 +67,8 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - Create branches off `develop`, push, create PRs
 - Don't merge - [[Rob]] handles releases
 - For Amplify deployments, ask Rob to link branch first
+- **sitemap.xml/robots.txt/llms.txt are real files in `dist`, not routes** — Amplify's rewrite config can swallow them same as any other static file; confirm the rewrite rule when one of these 404s post-deploy instead of assuming the content is wrong
+- The 6 new blog posts referenced in the rewritten llms.txt 404 until the seed script is run and the site redeployed — open item, not yet done as of 2026-09-14
 
 ## Current Focus
 **User acquisition** through munch organizer outreach strategy
