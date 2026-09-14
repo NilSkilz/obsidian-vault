@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Car Hunt: watch for a second-hand EV inside the household budget
-# (Projects/Car Hunt.md). Rob's brief, 14 Sep 2026: ~£2k cash deposit plus a
-# ~4 year loan at ~£300/month, so about £14.5k all in. Tesla Model 3 preferred,
-# strong alternatives watched too. Within 100 miles of home (Crackington Haven).
+# Car Hunt: watch for a second-hand EV or plug-in hybrid inside the household
+# budget (Projects/Car Hunt.md). Rob's brief, 14 Sep 2026: ~£2k cash deposit
+# plus a ~4 year loan at ~£300/month, so about £14.5k all in. Tesla Model 3
+# preferred, strong alternatives watched too. PHEVs added later the same day:
+# they have to be PLUG-IN (the home charger is the whole point), so ordinary
+# self-charging hybrids are deliberately not watched.
+# Within 100 miles of home (Crackington Haven).
 #
 # 1. Scrapes public AutoTrader search pages (headless Chrome) for each watch.
 # 2. Dedupes against listings seen on previous runs.
@@ -28,16 +31,24 @@ POSTCODE="${POSTCODE:-EX230JG}"   # Crackington Haven
 RADIUS="${RADIUS:-100}"
 BUDGET="${BUDGET:-14700}"         # £2k deposit + ~£12.7k borrowed (Tesco 6.4% APR, 48mo)
 PING_SCORE="${PING_SCORE:-8}"
+# There are far more PHEVs than EVs in this budget, so they need a higher bar
+# to earn an interruption. Rob's stated preference is still a full EV.
+PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 
-# make | model | max price | max mileage   (empty make/model = any EV)
+# make | model | max price | max mileage | fuel | pages
+# Empty make/model = catch-all for that fuel type.
+# AutoTrader's fuel wording is fussy: "Petrol Plug-in Hybrid" works,
+# a bare "Plug-in Hybrid" silently returns nothing.
 WATCHES=(
-  "Tesla|Model 3|15500|110000"
-  "Hyundai|Kona Electric|15000|90000"
-  "Kia|e-Niro|15000|90000"
-  "Polestar|2|15000|90000"
-  "Volkswagen|ID.3|14500|90000"
-  "MG|MG4|14500|70000"
-  "||14500|60000"
+  "Tesla|Model 3|15500|110000|Electric|2"
+  "Hyundai|Kona Electric|15000|90000|Electric|2"
+  "Kia|e-Niro|15000|90000|Electric|2"
+  "Polestar|2|15000|90000|Electric|2"
+  "Volkswagen|ID.3|14500|90000|Electric|2"
+  "MG|MG4|14500|70000|Electric|2"
+  "||14500|60000|Electric|2"
+  "||14700|90000|Petrol Plug-in Hybrid|3"
+  "||14700|90000|Diesel Plug-in Hybrid|2"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -48,14 +59,18 @@ RAW="$(mktemp)"; NEW="$(mktemp)"
 trap 'rm -f "$RAW" "$NEW"' EXIT
 
 for w in "${WATCHES[@]}"; do
-  IFS='|' read -r mk md pmax mmax <<<"$w"
-  args=(--postcode "$POSTCODE" --radius "$RADIUS" --price-to "$pmax" --pages 2 --fuel Electric)
+  IFS='|' read -r mk md pmax mmax fuel npages <<<"$w"
+  args=(--postcode "$POSTCODE" --radius "$RADIUS" --price-to "$pmax" \
+        --pages "${npages:-2}" --fuel "$fuel")
   [ -n "$mk" ] && args+=(--make "$mk")
   [ -n "$md" ] && args+=(--model "$md")
   [ -n "$mmax" ] && args+=(--max-mileage "$mmax")
-  [ -z "$mk" ] && args+=(--label "any EV")
-  timeout 300 node "$TOOLS/scrape-autotrader.js" "${args[@]}" >>"$RAW" 2>>"$LOG.scrape" \
-    || echo "scrape failed for '${mk:-any} ${md:-EV}' (continuing)"
+  case "$fuel" in
+    Electric) [ -z "$mk" ] && args+=(--label "any EV") ;;
+    *Plug-in*) args+=(--label "${mk:-any} ${md:-$fuel}") ;;
+  esac
+  timeout 400 node "$TOOLS/scrape-autotrader.js" "${args[@]}" >>"$RAW" 2>>"$LOG.scrape" \
+    || echo "scrape failed for '${mk:-any} ${md:-$fuel}' (continuing)"
 done
 echo "scraped $(grep -c . "$RAW" || echo 0) listing rows"
 
@@ -91,12 +106,31 @@ for line in open(raw):
     if dist is not None and dist <= 60: s += 1; why.append(f"{dist} miles away")
     if (j.get('make') or '') == 'Tesla': s += 2
     if 'Long Range' in (j.get('spec') or ''): s += 1; why.append('long range')
-    # Battery size matters more than usual out here: Crackington to Cheltenham
-    # is 120 miles each way, so anything under ~45kWh is a second car at best.
     import re as _re
     kwh = _re.search(r'([\d.]+)\s*kWh', j.get('spec') or '')
-    if kwh:
-        k = float(kwh.group(1))
+    k = float(kwh.group(1)) if kwh else None
+    phev = 'Plug-in' in (j.get('fuel') or '')
+    j['phev'] = phev
+    if phev:
+        # A PHEV's battery is small by design, so the EV yardstick below would
+        # bin every one of them. What matters instead is whether the electric
+        # range is big enough that the home charger actually does the local
+        # driving: ~12kWh and up is 30+ real miles, under 8kWh is barely worth
+        # plugging in.
+        if k is not None:
+            if k >= 12: s += 1; why.append(f'{k:g}kWh usable EV range')
+            elif k < 8: s -= 2; why.append(f'only {k:g}kWh, ~20 EV miles')
+        # Most PHEVs in this budget score well (they're cheap and dealers rate
+        # them a "good price"), so score alone would ping constantly. To earn
+        # an interruption a PHEV also has to be worth the home charger:
+        # 12kWh+ of battery and 2020 or newer. Everything else still lands in
+        # the digest for the evening brief.
+        j['ping_ok'] = k is not None and k >= 12 and (j.get('year') or 0) >= 2020
+    else:
+        j['ping_ok'] = True
+    if k is not None and not phev:
+        # Battery size matters more than usual out here: Crackington to
+        # Cheltenham is 120 miles each way, so under ~45kWh is a second car.
         if k < 45: s -= 3; why.append(f'only {k:g}kWh')
         elif k >= 60: s += 1; why.append(f'{k:g}kWh')
 
@@ -124,14 +158,18 @@ for line in open(sys.argv[1]):
 PY
 
 # Strong new finds only. Good used EVs sell in days, so this one is worth a ping.
-MSG="$(python3 - "$NEW" "$PING_SCORE" <<'PY'
+MSG="$(python3 - "$NEW" "$PING_SCORE" "$PHEV_PING_SCORE" <<'PY'
 import json, sys
+ev_bar, phev_bar = int(sys.argv[2]), int(sys.argv[3])
 hits = [json.loads(l) for l in open(sys.argv[1])]
-hits = [h for h in hits if h['score'] >= int(sys.argv[2]) and not h.get('writeoff')][:5]
+hits = [h for h in hits
+        if h['score'] >= (phev_bar if h.get('phev') else ev_bar)
+        and h.get('ping_ok') and not h.get('writeoff')][:5]
 for h in hits:
     loc = h.get('location') or '?'
     if h.get('distance') is not None: loc += f" ({h['distance']} mi)"
-    print(f"• {h.get('year','?')} {h.get('title','')} {h.get('spec') or ''}".rstrip())
+    tag = ' [PHEV]' if h.get('phev') else ''
+    print(f"• {h.get('year','?')} {h.get('title','')} {h.get('spec') or ''}".rstrip() + tag)
     print(f"  £{(h.get('price') or 0):,} | {(h.get('mileage') or 0):,} miles | {loc}"
           + (f" | {h['rating']}" if h.get('rating') else ""))
     print(f"  {h['url']}")
