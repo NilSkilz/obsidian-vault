@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 # Car Hunt: watch for a second-hand EV or plug-in hybrid inside the household
-# budget (Projects/Car Hunt.md). Rob's brief, 14 Sep 2026: ~£2k cash deposit
-# plus a ~4 year loan at ~£300/month, so about £14.5k all in. Tesla Model 3
+# budget (Projects/Car Hunt.md). Rob's brief, 14 Sep 2026: originally ~£2k cash
+# deposit plus a ~4 year loan at ~£300/month (~£14.7k). REVISED same day, 12:25:
+# the deposit may go on a heat pump for the house instead, so the ceiling is
+# £12,500 (all borrowed, 48mo, ~£295/month at 6.4%). The car has to last the
+# 4-year loan at ~20k miles/year, i.e. it gains ~80k miles: starting mileage
+# headroom now matters as much as price. Tesla Model 3
 # preferred, strong alternatives watched too. PHEVs added later the same day:
 # they have to be PLUG-IN (the home charger is the whole point), so ordinary
 # self-charging hybrids are deliberately not watched. Confirmed 14 Sep: the
@@ -33,7 +37,7 @@ SEED="${SEED:-0}"
 
 POSTCODE="${POSTCODE:-EX230JG}"   # Crackington Haven
 RADIUS="${RADIUS:-100}"
-BUDGET="${BUDGET:-14700}"         # £2k deposit + ~£12.7k borrowed (Tesco 6.4% APR, 48mo)
+BUDGET="${BUDGET:-12500}"         # all borrowed, no deposit (heat pump takes it); Tesco 6.4% APR 48mo ≈ £295/mo
 PING_SCORE="${PING_SCORE:-8}"
 # There are far more PHEVs than EVs in this budget, so they need a higher bar
 # to earn an interruption. Rob's stated preference is still a full EV.
@@ -43,16 +47,19 @@ PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 # Empty make/model = catch-all for that fuel type.
 # AutoTrader's fuel wording is fussy: "Petrol Plug-in Hybrid" works,
 # a bare "Plug-in Hybrid" silently returns nothing.
+# Named-model caps sit ~£500 over budget: a £13k sticker is a £12.5k car after
+# a haggle. Mileage caps tightened 14 Sep: at 20k/yr the car gains 80k miles
+# over the loan, so a 90k starter would finish at 170k.
 WATCHES=(
-  "Tesla|Model 3|15500|110000|Electric|2"
-  "Hyundai|Kona Electric|15000|90000|Electric|2"
-  "Kia|e-Niro|15000|90000|Electric|2"
-  "Polestar|2|15000|90000|Electric|2"
-  "Volkswagen|ID.3|14500|90000|Electric|2"
-  "MG|MG4|14500|70000|Electric|2"
-  "||14500|60000|Electric|2"
-  "||14700|90000|Petrol Plug-in Hybrid|3"
-  "||14700|90000|Diesel Plug-in Hybrid|2"
+  "Tesla|Model 3|13000|80000|Electric|2"
+  "Hyundai|Kona Electric|13000|70000|Electric|2"
+  "Kia|e-Niro|13000|70000|Electric|2"
+  "Polestar|2|13000|70000|Electric|2"
+  "Volkswagen|ID.3|13000|70000|Electric|2"
+  "MG|MG4|13000|60000|Electric|2"
+  "||12500|60000|Electric|2"
+  "||12500|70000|Petrol Plug-in Hybrid|3"
+  "||12500|70000|Diesel Plug-in Hybrid|2"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -105,8 +112,12 @@ for line in open(raw):
         s += 2; why.append(j['rating'].lower())
     elif j.get('rating') == 'Higher price':
         s -= 1
-    if miles and miles < 60000: s += 1; why.append(f"{miles//1000}k miles")
-    elif miles and miles > 90000: s -= 2; why.append(f"{miles//1000}k miles")
+    # Rob does ~20k miles/year and the car has to last the 4-year loan, so it
+    # finishes ~80k up on where it starts. Starting mileage is headroom, not
+    # just condition: a 40k car ends at 120k, a 90k car ends at 170k.
+    if miles and miles < 40000: s += 2; why.append(f"{miles//1000}k miles, ends ~{(miles+80000)//1000}k")
+    elif miles and miles < 60000: s += 1; why.append(f"{miles//1000}k miles")
+    elif miles and miles > 70000: s -= 2; why.append(f"{miles//1000}k now = ~{(miles+80000)//1000}k by loan end")
     if dist is not None and dist <= 60: s += 1; why.append(f"{dist} miles away")
     if (j.get('make') or '') == 'Tesla': s += 2
     if 'Long Range' in (j.get('spec') or ''): s += 1; why.append('long range')

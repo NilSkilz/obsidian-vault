@@ -5,10 +5,32 @@ Started 14 Sep 2026, after the flat tyre on the M5 made the case for itself. Rep
 ## The brief (Rob, 14 Sep 2026)
 
 - **Preference:** Tesla Model 3. Open to alternatives if the numbers are better.
-- **Cash:** about £2,000 deposit.
+- **Cash:** about £2,000 deposit. ~~(superseded, see budget revision below)~~
 - **Rest on finance:** a personal loan (Tesco or similar), around 4 years.
 - **Monthly ceiling:** about £300.
 - **Search area:** within 100 miles of home (Crackington Haven, anchored on EX23 0JG).
+
+## Budget revision (Rob, 14 Sep 2026, 12:25)
+
+The household may put a **heat pump on the house**, and that eats the £2k cash
+deposit. New shape of the deal:
+
+- **Ceiling: £12,500**, all borrowed. £12,500 over 48 months at Tesco's 6.4%
+  representative is **~£296/month**, still inside the £300 ceiling. Total paid
+  ~£14,200, so ~£1,700 of interest.
+- **The car has to last the full 4-year loan.** No trading out early.
+- **Mileage: ~20,000 a year**, so the car gains **~80,000 miles** over the
+  loan. Two consequences:
+  1. **Starting mileage is headroom, not just condition.** A 40k car finishes
+     at 120k, an 80k car finishes at 160k. Every battery/drivetrain warranty's
+     mileage cap evaporates within 1-2 years at this rate, so what matters is
+     buying a healthy pack, not chasing paper cover.
+  2. **20k/year is where a full EV demolishes everything else on running
+     cost.** Home-charged on an off-peak EV tariff that's roughly £400-800 a
+     year in electricity; the same miles on petrol at 45mpg is ~£2,800. Call it
+     **£2,000+ a year saved, £8-10k over the loan**, which is most of a heat
+     pump paid for by the car. It also guts the PHEV case: at this mileage the
+     bulk of the miles are the long runs, and a PHEV does those on petrol.
 
 ## Charging: settled (Rob, 14 Sep 2026)
 
@@ -86,13 +108,18 @@ Tesco Bank's representative APR is **6.4%** on £7,500-£25,000 over 1-5 years (
 
 **Working ceiling: £14,700**, with £15,500 as the stretch on a car worth haggling over. Going to 5 years buys ~£2,600 more car for ~£3,600 more interest and payments.
 
+**Superseded 14 Sep 12:25 by the budget revision above: the working ceiling is
+now £12,500 (no deposit), with £13,000 stickers watched as haggle targets.**
+
 A personal loan (not PCP/HP) is the right shape here: he owns the car outright from day one, no mileage limits, no balloon, and a used EV's residual risk stays his problem either way. Budget separately for the insurance change, an EV on a Cornwall postcode is not a like-for-like swap for the Fiesta.
 
 ## Rules the hunt applies
 
 - Hard exclude: **Cat N/S/C/D** write-offs (scored down to nothing, never pinged).
 - **Battery size matters more than usual here.** Crackington to the Cheltenham office is ~120 miles each way, and the Torquay test above sets the floor. Under ~45kWh (Mazda MX-30, e-Golf, Mini SE, 40kWh Leaf) is a second car at best and heavily penalised; 45-55kWh is marked "tight for the Torquay run in winter"; 58kWh+ gets a bonus. Tesla "Standard Range" trims are demoted (added 14 Sep after the Torquay requirement).
-- Under 60k miles is a plus, over 90k a minus.
+- Mileage scoring rebuilt 14 Sep for the 20k/year reality: under 40k is a big
+  plus (finishes ~120k), under 60k a plus, over 70k a firm minus (finishes
+  150k+ before the loan is paid off).
 - Within 60 miles is a plus (viewable without a day out).
 - Tesla gets a thumb on the scale, per Rob's preference.
 - **Plug-in only.** Self-charging hybrids and mild hybrids are not watched: the point is to use the home charger.
@@ -210,6 +237,39 @@ Ranked:
 20-inch tyres and Performance running costs are not a £300/month car), and the
 £11,199 Cat N in Cardiff.
 
+## The £12,500 shortlist (14 Sep 2026, post budget revision)
+
+Filter: under £12,500, passes the Torquay test (58kWh+), enough mileage
+headroom for +80k, no write-offs. From the 104-listing seed:
+
+| Price | Year | Car | Battery | Miles | At loan end | Where |
+|---|---|---|---|---|---|---|
+| £12,499 | 2023 | **MG4 SE Long Range** | 64kWh | 42,303 | ~122k | Plymouth (36 mi) |
+| £11,999 | 2023 | MG4 SE Long Range | 64kWh | 52,559 | ~133k | Plymouth (35 mi) |
+| £12,499 | 2020 | **Kia e-Niro First Edition** | 64kWh | 55,034 | ~135k | Plymouth (35 mi), great price |
+| £12,195 | 2023 | MG ZS EV SE Long Range | 72.6kWh | 57,567 | ~138k | Radstock (98 mi) |
+| £12,395 | 2022 | Nissan Leaf e+ Tekna | 59kWh | 39,357 | ~119k | Radstock (98 mi) |
+| £12,490 | 2021 | VW ID.3 Pro S Tour | 77kWh | 80,124 | ~160k | Newport (94 mi) |
+
+Read:
+
+- **The 2023 MG4 64kWh SE Long Range at £12,499 (42k, Plymouth) is the pick.**
+  Newest car, most headroom, ~270 WLTP / ~200 real winter miles so Torquay is
+  trivial and Cheltenham is doable. NMC pack (the 64 is not the LFP 51).
+- **The 2020 e-Niro First Edition is the durability pick.** Taxi drivers run
+  these past 200k, heat pump standard, ~230 real miles. Kia's 7yr/100k runs to
+  2027 but the mileage cap goes inside two years at Rob's rate, so buy it on
+  pack health, not warranty.
+- The Leaf e+ is cheap for the battery size but **no active battery cooling and
+  CHAdeMO rapid charging** (a shrinking network). Fine as a home-charged car,
+  wrong car for regular Cheltenham runs. The ID.3 Pro S has the biggest battery
+  of all but starts at 80k, so it finishes at 160k.
+- **There is no viable Model 3 at £12,500.** The only one in budget is the
+  Barry Long Range at 101k miles, which would pass 180k before the loan is paid
+  off, with the battery warranty (120k) gone within the first year. At this
+  ceiling the badge is out of reach; the £14,999 Plymouth LR only comes back if
+  the heat pump doesn't happen or the Fiesta sale funds the gap.
+
 ## Things to check before buying a used PHEV
 
 - **How was it actually used?** A PHEV that was never plugged in (fleet/company
@@ -235,7 +295,7 @@ Ranked:
 `Jarvis/bin/car-hunt.sh`, cron **40 8,12,16,20 daily**.
 
 - Scrapes public AutoTrader search pages with headless Chrome (`/home/jarvis/tools/car-hunt/scrape-autotrader.js`), two pages per watch.
-- Watches: Tesla Model 3, Hyundai Kona Electric, Kia e-Niro, Polestar 2, VW ID.3, MG4, a catch-all "any EV under £14.5k with under 60k miles", plus (from 14 Sep) catch-alls for **any petrol plug-in hybrid** and **any diesel plug-in hybrid** under £14.7k / 90k miles.
+- Watches: Tesla Model 3, Hyundai Kona Electric, Kia e-Niro, Polestar 2, VW ID.3, MG4 (named models capped at £13k stickers, i.e. haggle-to-£12.5k), a catch-all "any EV under £12.5k with under 60k miles", plus catch-alls for **any petrol plug-in hybrid** and **any diesel plug-in hybrid** under £12.5k / 70k miles. Caps cut from the £14.7k originals on 14 Sep when the budget dropped to £12.5k.
 - AutoTrader's fuel wording is fussy: `Petrol Plug-in Hybrid` works, a bare `Plug-in Hybrid` silently returns nothing.
 - PHEVs need a **higher bar to interrupt** (score 9, plus 12kWh+ battery and 2020 or newer), because there are far more of them in this budget and dealers rate nearly all of them a "good price". Everything else still lands in the digest.
 - Dedupes against `~/.local/state/jarvis-car-hunt-seen.txt`, so a listing is only ever considered once.
@@ -247,6 +307,11 @@ Seeded 14 Sep 2026 with the 104 listings already on the market, so from here he 
 
 ## Open threads
 
-- Rob and Aimee to agree whether this **replaces the Fiesta** (MOT 22 Sep, coolant and handbrake both open) or the Dacia, or is a third car. That changes the deposit: selling the Fiesta adds to the £2k.
+- **Heat pump vs deposit is not final.** The £12,500 ceiling assumes the heat
+  pump takes the whole £2k. If it doesn't happen, or the Fiesta sale funds it,
+  the ceiling goes back up and the Plymouth Long Range Model 3 comes back into
+  play. Worth also noting: an EV at 20k miles/year saves £8-10k in fuel over
+  the loan vs petrol, which is heat-pump money in its own right.
+- Rob and Aimee to agree whether this **replaces the Fiesta** (MOT 22 Sep, coolant and handbrake both open) or the Dacia, or is a third car. That changes the deposit: selling the Fiesta adds cash back to whichever pot needs it.
 - Loan: get an actual rate quote (soft search) before committing to a price ceiling. 6.4% is the advertised best case, not a promise.
 - ~~Which spec was Timmy?~~ Answered 14 Sep: pre-facelift Standard Range, "basic model". See the Torquay test section. Nothing in budget is a downgrade; the target is Long Range or 58kWh+.
