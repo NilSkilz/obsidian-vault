@@ -110,3 +110,22 @@
 Still no reply to Saturday morning's message (~3 days, read receipt never landed). Rob flat about it and starting to generalise: said the joy from doing scenes "seems like it's not worth it". Nothing has actually come from Mary either way — no decline, no unmatch, no change.
 
 Standing plan (agreed 12 Sep): don't send a "did you get my message?" chase. Send new information plus a concrete choice, e.g. *"Need to get a day booked off work before the calendar fills up. Are you better placed for the 26th or the 30th?"* Timing was set for Monday evening (14 Sep) if nothing has landed — i.e. after his office day. Real deadline behind it: she's back to Oxford around the start of October.
+
+### 2026-09-14 (Mon, 06:58) — Mary's reply landed: she's ending the play thread
+
+After ~3 days of silence, Mary replied. Verbatim (forwarded by Rob):
+
+> "Hey Rob I'm so sorry I've taken another age to reply! I'm all good, I hope you are too, and that you've had a lovely weekend! I absolutely loved getting to share that event with you, it was such a pleasure to get to know you, thank you for such an incredibly hot time. However I've recently met someone new who I'd like to focus on pursuing things with, though that's not a reflection of how great our time was. I'd really like to stay in touch as friends and see you at a munch or event hopefully! x"
+
+**What it settles.**
+- **The 28 Sep Exeter date is off.** So is the day off work, unless Rob wants to keep it for himself. If the Premier Inn room was booked on Flex, it cancels free up to 1pm on the arrival day. Check whether it was actually booked.
+- **The silence was never about Rob.** She opens with an apology for the delay, framed as her own pattern ("another age"), and the content is a difficult message to write, which is exactly the kind that sits unanswered. The 13 Sep structural read (three-decision message left for later) was half right; the fuller reason is she had news to deliver and no easy way to deliver it.
+- **The fear was specifically disproved.** His 13 Sep 00:07 fear was "she doesn't like me, why wouldn't she". Her message says the opposite in her own words: loved it, pleasure to get to know him, incredibly hot, explicitly "not a reflection of how great our time was", wants to stay in touch. The verdict he pre-delivered to himself was the wrong one. Worth noting for the next silence: the early verdict was not just premature, it was inaccurate.
+- **The loss is still real.** She IS ending the play thread. This is a genuine disappointment, not a false alarm that evaporated, and it should not be talked about as a win because the anxiety was wrong. Both things are true at once.
+
+**Standing offer kept open:** friendship, munches and events. In scene terms that's usually a real offer rather than a brush-off, given she'll be in Oxford from 5 Oct anyway. No decision needed from Rob on it now.
+
+**Threads this reopens:**
+- [[Partner Search]] — Mary was the replace-Tash prospect off the local scene. That premise is back to square one.
+- Aimee needs telling, and the shape of that conversation matters: full disclosure has been Rob's half of the 16 Jul 2025 deal throughout, and this is the easy end of it. See `Private/Rob/Aimee Comms Log.md`.
+- Watch for the low-mood accounting from 13 Sep ("scenes aren't worth it") coming back with actual evidence behind it now. The scene was still good. The ending doesn't retroactively price it down.
