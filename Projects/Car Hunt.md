@@ -26,6 +26,31 @@ stripped 3 Jul). So:
   (charging etiquette, range planning, the app, Supercharging) are not
   unknowns. Weight his preference for one accordingly.
 
+## Range requirement: the Torquay test (Rob, 14 Sep 2026)
+
+> "Would wanna do home to Torquay and back on one charge."
+
+Crackington to Torquay is roughly 75 miles by road, so the bar is a **~150 mile
+round trip, year-round, no charging at the far end**. On a 6-year-old pack with
+no heat pump, that means:
+
+- **Tesla SR/SR+ fails the test in winter.** 170-190 real miles in mixed summer
+  use, 140-160 in January. Rob already lived this: Timmy was a Standard Range
+  and he says himself it "could have done with longer range". Buying another
+  SR+ would be paying £14k to re-learn a known lesson.
+- **Long Range passes comfortably**, ~240-260 real, ~200 in winter.
+- For the non-Teslas, ~**58kWh is the practical floor** (ID.3 Pro 58, Kona
+  Electric 64, e-Niro 64, Polestar 2). The 64kWh Kona and e-Niro are the
+  quiet range champions at this money, ~230 real miles with a heat pump.
+- **51kWh MG4 SE is now marginal**: fine in summer, tight in January. The MG4
+  Trophy Long Range (64kWh) is the one to want instead if one appears.
+
+**Timmy's spec, answered:** Rob recalls a "2018 SR, basic model" (UK RHD
+deliveries actually began mid-2019, so it was almost certainly a 2019-reg SR).
+Either way it was a pre-facelift Standard Range, so nothing in this budget is a
+downgrade in kit, and the open question about the refresh is closed. The
+upgrade path is purely range: **Long Range or a 58kWh+ alternative.**
+
 ## Plug-in hybrids added (Rob, 14 Sep 2026)
 
 > "It has to be plug-in hybrid to make use of our at-home charger."
@@ -66,7 +91,7 @@ A personal loan (not PCP/HP) is the right shape here: he owns the car outright f
 ## Rules the hunt applies
 
 - Hard exclude: **Cat N/S/C/D** write-offs (scored down to nothing, never pinged).
-- **Battery size matters more than usual here.** Crackington to the Cheltenham office is ~120 miles each way. Anything under ~45kWh (Mazda MX-30, e-Golf, Mini SE, 40kWh Leaf) is a second car at best, and gets penalised.
+- **Battery size matters more than usual here.** Crackington to the Cheltenham office is ~120 miles each way, and the Torquay test above sets the floor. Under ~45kWh (Mazda MX-30, e-Golf, Mini SE, 40kWh Leaf) is a second car at best and heavily penalised; 45-55kWh is marked "tight for the Torquay run in winter"; 58kWh+ gets a bonus. Tesla "Standard Range" trims are demoted (added 14 Sep after the Torquay requirement).
 - Under 60k miles is a plus, over 90k a minus.
 - Within 60 miles is a plus (viewable without a day out).
 - Tesla gets a thumb on the scale, per Rob's preference.
@@ -138,7 +163,12 @@ and 330e, Mini Countryman Cooper SE, Golf GTE, Hyundai Ioniq PHEV, Kia Niro/
 XCeed PHEV). They are cheap for a reason: ~20 electric miles when new, less now,
 and you're carrying the weight of two powertrains to get it.
 
-## Model 3 verdict, 14 Sep 2026
+## Model 3 verdict, 14 Sep 2026 (revised same day for the Torquay test)
+
+**With the 150-mile round trip as a hard requirement, only the two Long Range
+cars are really in the game.** The SR+ cars below stay listed for completeness,
+but each one reproduces exactly the range complaint Rob had about Timmy, on an
+older battery.
 
 Ten within 100 miles under £15.5k, one excluded as a Cat N. Every single one is
 a **pre-facelift 2019-2020 car**: no heat pump (resistive cabin heating, so a
@@ -218,5 +248,5 @@ Seeded 14 Sep 2026 with the 104 listings already on the market, so from here he 
 ## Open threads
 
 - Rob and Aimee to agree whether this **replaces the Fiesta** (MOT 22 Sep, coolant and handbrake both open) or the Dacia, or is a third car. That changes the deposit: selling the Fiesta adds to the £2k.
-- **Which spec was Timmy?** If the old family Tesla was a 2021+ refreshed car (heat pump, double glazing, powered boot), every Model 3 in this budget will feel like a step back and he should hear that before viewing. If it was a 2019-2020 car, these are like-for-like.
 - Loan: get an actual rate quote (soft search) before committing to a price ceiling. 6.4% is the advertised best case, not a promise.
+- ~~Which spec was Timmy?~~ Answered 14 Sep: pre-facelift Standard Range, "basic model". See the Torquay test section. Nothing in budget is a downgrade; the target is Long Range or 58kWh+.

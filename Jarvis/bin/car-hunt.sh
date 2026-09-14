@@ -7,6 +7,8 @@
 # self-charging hybrids are deliberately not watched. Confirmed 14 Sep: the
 # house already has a 7kW wallbox (from "Timmy", the Model 3 they used to own),
 # so charging is solved and a full EV remains the preferred outcome.
+# Range floor (Rob, 14 Sep): home to Torquay and back on one charge, ~150 mi
+# round trip, year-round. That rules out small packs and demotes Tesla SR trims.
 # Within 100 miles of home (Crackington Haven).
 #
 # 1. Scrapes public AutoTrader search pages (headless Chrome) for each watch.
@@ -130,11 +132,19 @@ for line in open(raw):
         j['ping_ok'] = k is not None and k >= 12 and (j.get('year') or 0) >= 2020
     else:
         j['ping_ok'] = True
-    if k is not None and not phev:
-        # Battery size matters more than usual out here: Crackington to
-        # Cheltenham is 120 miles each way, so under ~45kWh is a second car.
-        if k < 45: s -= 3; why.append(f'only {k:g}kWh')
-        elif k >= 60: s += 1; why.append(f'{k:g}kWh')
+    if not phev:
+        # Range floor (Rob, 14 Sep): home to Torquay and back on one charge,
+        # ~150 miles round trip, in winter, on a degraded pack. Under ~45kWh
+        # is a second car; 45-55kWh (MG4 SE, e-2008) is tight in January;
+        # 58kWh+ does it without thinking.
+        if k is not None:
+            if k < 45: s -= 3; why.append(f'only {k:g}kWh')
+            elif k < 55: s -= 1; why.append(f'{k:g}kWh, tight for the Torquay run in winter')
+            elif k >= 58: s += 1; why.append(f'{k:g}kWh')
+        # Tesla listings rarely quote kWh; the trim string carries the same
+        # information. Timmy was a Standard Range and Rob found it short.
+        if 'Standard Range' in (j.get('spec') or ''):
+            s -= 1; why.append('SR: Torquay round trip tight in winter')
 
     j['score'] = max(0, min(10, s))
     j['why'] = ', '.join(why)
