@@ -41,7 +41,7 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - **Gap:** No safety timer functionality
 
 ## Differentiation
-**Tethered owns "safety-first" positioning** - neither competitor addresses "meeting someone new safely" use case
+**Repositioned 2026-09-14 (Rob's call): lead with D/s dynamic management** (partner-linked tasks, points, rewards, punishments) to compete head-on with Obedience; safety (timer, check-ins, consent checklists) is the differentiator no competitor has, not the headline. Landing page, meta tags and llms.txt all re-aimed at that market (develop commit b8dd48d). Neither competitor addresses "meeting someone new safely", and Obedience has no safety features at all.
 
 ## Growth Strategy
 - **Focus:** Users not features
