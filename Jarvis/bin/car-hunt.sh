@@ -4,7 +4,9 @@
 # plus a ~4 year loan at ~£300/month, so about £14.5k all in. Tesla Model 3
 # preferred, strong alternatives watched too. PHEVs added later the same day:
 # they have to be PLUG-IN (the home charger is the whole point), so ordinary
-# self-charging hybrids are deliberately not watched.
+# self-charging hybrids are deliberately not watched. Confirmed 14 Sep: the
+# house already has a 7kW wallbox (from "Timmy", the Model 3 they used to own),
+# so charging is solved and a full EV remains the preferred outcome.
 # Within 100 miles of home (Crackington Haven).
 #
 # 1. Scrapes public AutoTrader search pages (headless Chrome) for each watch.

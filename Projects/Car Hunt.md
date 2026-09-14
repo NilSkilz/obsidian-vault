@@ -10,6 +10,22 @@ Started 14 Sep 2026, after the flat tyre on the M5 made the case for itself. Rep
 - **Monthly ceiling:** about £300.
 - **Search area:** within 100 miles of home (Crackington Haven, anchored on EX23 0JG).
 
+## Charging: settled (Rob, 14 Sep 2026)
+
+**There is already a 7kW wallbox at the house**, installed for "Timmy", the
+family Tesla Model 3 they used to own (gone by July 2026, HA integration
+stripped 3 Jul). So:
+
+- Home charging is a solved problem, not a £1,000 line item. Overnight on a
+  cheap EV tariff a 7kW box puts roughly 200 miles into a car in 7 hours.
+- **This tilts the whole hunt back towards a full EV.** The PHEV case was
+  partly a hedge against slow charging, and that hedge is no longer needed.
+  PHEVs stay in the hunt (they are younger and cheaper for the money) but a
+  full EV is now the better fit for how this household is actually set up.
+- Rob has owned and lived with a Model 3, so the usual used-EV unknowns
+  (charging etiquette, range planning, the app, Supercharging) are not
+  unknowns. Weight his preference for one accordingly.
+
 ## Plug-in hybrids added (Rob, 14 Sep 2026)
 
 > "It has to be plug-in hybrid to make use of our at-home charger."
@@ -122,6 +138,48 @@ and 330e, Mini Countryman Cooper SE, Golf GTE, Hyundai Ioniq PHEV, Kia Niro/
 XCeed PHEV). They are cheap for a reason: ~20 electric miles when new, less now,
 and you're carrying the weight of two powertrains to get it.
 
+## Model 3 verdict, 14 Sep 2026
+
+Ten within 100 miles under £15.5k, one excluded as a Cat N. Every single one is
+a **pre-facelift 2019-2020 car**: no heat pump (resistive cabin heating, so a
+real winter range hit), single-glazed glass, chrome trim. The heat pump only
+arrived with the late-2020/2021 refresh, and nothing refreshed is close to this
+budget.
+
+What to expect from the batteries: typical degradation at 6 years is 10-15%, so
+a 2019 SR+ rated at 240 miles new is realistically **200-210 rated, 170-190 in
+real mixed use**, less in January. A Long Range is 75kWh, so **240-260** on the
+same maths.
+
+**The warranty is the whole argument.** Battery and drive unit: 8 years /
+100,000 miles on Standard Range, 8 years / **120,000** on Long Range and
+Performance, 70% capacity guaranteed, and it transfers to a new owner. A 2019
+car runs out in 2027 either way, so the mileage headroom is what varies.
+
+Ranked:
+
+1. **£14,999 — 2019 Long Range AWD, 67,798 miles, Plymouth (36 mi), dealer,
+   "good price".** The pick. Long Range means 75kWh and the 120k-mile warranty,
+   so ~52k miles of battery cover left instead of ~32k. Does Cheltenham on one
+   charge. £300 over the notional ceiling, which is noise.
+2. **£12,280 — 2020 Long Range AWD, 101,176 miles, Barry (77 mi), dealer.** The
+   value play. Same big battery, £2,700 cheaper, and still ~19k miles of
+   warranty left, which is enough to find out if the pack is sick. But 101k
+   miles means tyres, control arms and bushings are all due, and it is 77 miles
+   away. Budget £1k of the saving for wear items.
+3. **£14,200 — 2019 SR+, 54,000 miles, Saltash (30 mi), private.** Lowest-mile
+   local car and the easiest to go and see. Private sale, so no trade cover.
+4. **£13,000 — 2020 SR+, 54,054 miles, Swansea (68 mi), private.** Same car as
+   the Saltash one, a year newer, £1,200 cheaper, but 68 miles and a private
+   seller.
+5. **£14,700 — 2020 SR+, 55,000 miles, delivery, advertising 87.8% battery
+   health.** The only one publishing a number, and 87.8% is healthy.
+
+**Skip:** the £14,299 2019 SR+ in Plymouth (68k miles and AutoTrader rates it
+"higher price"), the £14,640 2019 Performance (great fun, 85,600 miles, and
+20-inch tyres and Performance running costs are not a £300/month car), and the
+£11,199 Cat N in Cardiff.
+
 ## Things to check before buying a used PHEV
 
 - **How was it actually used?** A PHEV that was never plugged in (fleet/company
@@ -140,7 +198,7 @@ and you're carrying the weight of two powertrains to get it.
 - **Battery/drive warranty is 8 years / 100,000 miles.** A 2019 car runs out in 2027, and a 101k-mile car is already out.
 - **Autopilot hardware** (HW2.5 vs HW3) and whether any paid FSD/EAP transfers. Usually it doesn't.
 - MOT history, and whether it's had the **12V battery** and **upper control arms** done, both are known age items.
-- Home charging: a 7kW wallbox is £800-£1,200 installed, and it's the difference between an EV being cheap and being annoying.
+- Home charging is already sorted: the 7kW wallbox from Timmy is on the house.
 
 ## The automation
 
@@ -160,5 +218,5 @@ Seeded 14 Sep 2026 with the 104 listings already on the market, so from here he 
 ## Open threads
 
 - Rob and Aimee to agree whether this **replaces the Fiesta** (MOT 22 Sep, coolant and handbrake both open) or the Dacia, or is a third car. That changes the deposit: selling the Fiesta adds to the £2k.
-- **Wallbox: Rob referred to "our at-home charger" on 14 Sep.** Confirm whether that means an installed 7kW wallbox, a 3-pin granny lead, or a plan. It matters: a granny lead puts ~8 miles an hour into a PHEV, which still covers a 30-mile battery overnight, but would make a 60kWh EV painful.
+- **Which spec was Timmy?** If the old family Tesla was a 2021+ refreshed car (heat pump, double glazing, powered boot), every Model 3 in this budget will feel like a step back and he should hear that before viewing. If it was a 2019-2020 car, these are like-for-like.
 - Loan: get an actual rate quote (soft search) before committing to a price ceiling. 6.4% is the advertised best case, not a promise.
