@@ -235,3 +235,7 @@ Rules:
 ## A seed script that inserts is a seed script that duplicates on rerun (2026-09-14, Tethered)
 
 Tethered's blog seed script did a blind insert with a fresh random UUID every run. Rob re-ran it (his checkout didn't even have the new posts yet, so it re-uploaded the old ones) and got duplicates. Fix: scan the table first, delete rows sharing a slug (keep the oldest, so ids/publish dates survive), then upsert by slug. Rule: any script that publishes content by slug/key must upsert, never blind-insert, so running it twice is harmless. Check this before handing Rob a "just run this" command.
+
+## A hardcoded authMode is a page that breaks for exactly the users who are signed in (2026-09-15, Tethered)
+
+Tethered's public blog pages hardcoded `authMode: "identityPool"` on their Amplify data client. Logged-out visitors and crawlers get the guest IAM role and see everything fine. Signed-in users get the authenticated identity-pool role instead, which `allow.guest()` doesn't cover, so AppSync silently returned zero rows — the prerendered HTML painted first, then React refetched and wiped it. Nasty to diagnose because it works for the developer's headless checks (logged out) and for Rob's own bug report ("shows on Mac and phone" was actually "shows when signed in", not a browser issue). Rule: any page meant to be publicly readable must pick its auth mode dynamically (guest when logged out, userPool when signed in) rather than hardcoding one — check for an existing helper (`getPublicReadClient` in `AmplifyAdapter.ts`) before hand-rolling it.
