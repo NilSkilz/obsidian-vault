@@ -53,6 +53,9 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - **Geographic:** Cornwall/Devon → Bristol → expand
 - **B2B Pivot:** Rejected - dungeon/venue market is low-tech with privacy concerns
 
+## Backlog
+**Trello board (created 2026-09-15): https://trello.com/b/975X6DxZ** — the working list of site/product changes. Notable open items: support@tethered.me.uk bounces (Google Workspace MX, no support@ user; alias fix is Rob's, card has options), Amplify file-first rewrite (blocks prerendered pages from serving), GSC/Bing registration, www 301, paywall pivot.
+
 ## Recent Work
 ### Admin Improvements (COMPLETED)
 - Fixed white table styling on admin dashboard
