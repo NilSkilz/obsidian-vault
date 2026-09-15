@@ -58,6 +58,11 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - **Blog topics still unwritten (from the 2026-09-14 SEO gap analysis):** beginner's guide to D/s, safewords + aftercare guide. The other 6 identified topics (task ideas, rules, rewards/punishments, contracts, comparison vs Obedience, long-distance) are all written and live.
 
 ## Recent Work
+### Google Ads groundwork (2026-09-15)
+- Rob is building a Google Ads leads/conversions campaign. **Conversion URL: `https://tethered.me.uk/welcome`** — a new post-signup page (develop commit b1572e6) that fresh accounts hit exactly once after email verification. Returning logins never see it; invite-flow signups are exempt so the AcceptInvite funnel is untouched. Excluded from robots/sitemap/prerender.
+- Ads setup: final URL `https://tethered.me.uk/`, conversion action = page load where URL contains `/welcome`.
+- **Blocker for tracking to actually fire: the Google tag (gtag.js, AW- ID) is not installed on the site.** Rob gets the AW- ID from the conversion-action screen in Google Ads; Jarvis wires it sitewide once provided. Trello card exists.
+
 ### Admin Improvements (COMPLETED)
 - Fixed white table styling on admin dashboard
 - Added gift subscription functionality for admin users
