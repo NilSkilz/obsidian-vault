@@ -62,6 +62,7 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - Rob is building a Google Ads leads/conversions campaign. **Conversion URL: `https://tethered.me.uk/welcome`** — a new post-signup page (develop commit b1572e6) that fresh accounts hit exactly once after email verification. Returning logins never see it; invite-flow signups are exempt so the AcceptInvite funnel is untouched. Excluded from robots/sitemap/prerender.
 - Ads setup: final URL `https://tethered.me.uk/`, conversion action = page load where URL contains `/welcome`.
 - **Blocker for tracking to actually fire: the Google tag (gtag.js, AW- ID) is not installed on the site.** Rob gets the AW- ID from the conversion-action screen in Google Ads; Jarvis wires it sitewide once provided. Trello card exists.
+- USP ad copy + keyword list drafted for the campaign (positioning: D/s management first, safety features as the differentiator nobody else has). Keywords grouped into ad groups by intent (core, task/rules, safety, competitor comparison, broad lifestyle), phrase match not broad, with negatives (porn, dating, hookup, etc.) from day one. Full text not stored here, ask Rob or check Telegram history if needed.
 
 ### Admin Improvements (COMPLETED)
 - Fixed white table styling on admin dashboard
