@@ -30,6 +30,8 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - **Reddit-by-hand is the lowest-leverage lever** and Rob can't use bots to post — his instinct that it's a PITA is correct. Distribution (munch organizers) comes *after* the paywall re-aim, not before.
 
 ## Competition Analysis
+**Search visibility baseline (2026-09-15):** zero appearances across 5 customer-style queries ("BDSM safety check-in app", "kink safe call app", "D/s tasks points rewards app", brand searches) on two engines, tested ~12h after the SEO push went live. Space is owned by Obedience, Obey, SubTasks, Kneel, Collared, Ever Collar and KINX — a wider field than the two competitors detailed below. Monday SEO cron tracks movement from this zero baseline.
+
 ### [[Obedience]]
 - **Price:** $60/yr
 - **Focus:** Habit/task tracking, rewards/punishments, point system
@@ -63,6 +65,8 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - **Content:** Safety-focused blog posts, fire play guide completed
 
 ## Technical Notes
+- **ChatGPT's browsing tool refuses to open the site ("Not safe to open"), diagnosed 2026-09-15:** not a blocklist issue (Google Safe Browsing, Norton, Spamhaus, Cloudflare Family DNS all clean; GPTBot/ChatGPT-User get 200s from CloudFront; Claude opens the site fine). The 2026-09-14 prerender deploy gave the homepage real D/s copy for the first time, and OpenAI's content classifier now has something to bin as adult content. **Decision (Rob): don't soften the copy to appease it** — that would undo the SEO/LLM-legibility work just shipped. Cost of the niche.
+- **Outstanding SEO ops as of 2026-09-15 (Rob only, needs AWS/webmaster access this box doesn't have):** register Google Search Console + Bing Webmaster and submit the sitemap; use Bing's URL removal on stale indexed `www.../dashboard/*` zombie URLs (robots.txt now blocks recrawl so they won't self-heal); add a www→apex 301 in CloudFront to stop duplicate-host serving.
 - **Always run** `npx tsc --noEmit` before committing
 - Create branches off `develop`, push, create PRs
 - Don't merge - [[Rob]] handles releases
