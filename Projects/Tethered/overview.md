@@ -63,6 +63,7 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 - Ads setup: final URL `https://tethered.me.uk/`, conversion action = page load where URL contains `/welcome`.
 - **Blocker for tracking to actually fire: the Google tag (gtag.js, AW- ID) is not installed on the site.** Rob gets the AW- ID from the conversion-action screen in Google Ads; Jarvis wires it sitewide once provided. Trello card exists.
 - USP ad copy + keyword list drafted for the campaign (positioning: D/s management first, safety features as the differentiator nobody else has). Keywords grouped into ad groups by intent (core, task/rules, safety, competitor comparison, broad lifestyle), phrase match not broad, with negatives (porn, dating, hookup, etc.) from day one. Full text not stored here, ask Rob or check Telegram history if needed.
+- **RSA headlines (2026-09-15, all under 30 chars):** Manage Your D/s Dynamic / The D/s Relationship App / Tasks, Rules & Rewards / Points, Rewards, Punishments / For Dominants & Submissives / Structure Your Dynamic / Built-In Safety Features / Safety Timer for Every Scene / Consent, Clearly Agreed / Obedience, But Safer / More Than a Task Tracker / Link With Your Partner / Free to Use, Upgrade Anytime / Tethered: D/s Done Right / Try Tethered Today. Plus 4 descriptions (Telegram, 15 Sep). Pin nothing; expect "limited serving" flags on the D/s ones, the neutral headlines are the fallback.
 
 ### Admin Improvements (COMPLETED)
 - Fixed white table styling on admin dashboard
