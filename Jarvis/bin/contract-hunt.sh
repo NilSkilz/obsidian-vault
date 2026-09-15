@@ -141,10 +141,13 @@ while IFS= read -r line; do
   [ -n "$link" ] || continue
   job="$(grep -F "$link" "$NEWJOBS" | head -1)"
   [ -n "$job" ] || { echo "auto-apply: no scraped job for $link (email-only role, nothing to submit)"; continue; }
+  # </dev/null is load-bearing: claude -p inside auto-apply.sh slurps inherited
+  # stdin, which is this loop's DIGEST list, so a second 6+ role never got read
+  # (caught 2026-09-15: 7-scored role silently skipped after the first apply).
   if [ "$DRYRUN" = "1" ]; then
-    echo "DRYRUN: would auto-apply to $link"; DRYRUN=1 "$HOME/contract-hunt/auto-apply.sh" "$job"; continue
+    echo "DRYRUN: would auto-apply to $link"; DRYRUN=1 "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; continue
   fi
-  if "$HOME/contract-hunt/auto-apply.sh" "$job"; then
+  if "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; then
     APPLIED_N=$((APPLIED_N+1)); SENT_MSG="${SENT_MSG}${line#DIGEST: }
 "
   else FAILED_N=$((FAILED_N+1)); FAILED_MSG="${FAILED_MSG}${line#DIGEST: }
