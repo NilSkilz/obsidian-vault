@@ -90,8 +90,15 @@ for i in ids:
     if i not in fresh:
         text = text.replace(f"  https://www.linkedin.com/jobs/view/{i}\n",
                             f"  https://www.linkedin.com/jobs/view/{i}  (ALREADY TRIAGED, skip)\n")
+tw = list(dict.fromkeys(re.findall(r"twine\.net/(projects/[a-z0-9-]+|ari/job/\d+)", text)))
+freshtw = [i for i in tw if "tw-" + i.replace("/", "_") not in seen]
+for i in tw:
+    if i not in freshtw:
+        text = text.replace(f"  https://www.twine.net/{i}\n",
+                            f"  https://www.twine.net/{i}  (ALREADY TRIAGED, skip)\n")
 with open(seenf, "a") as f:
     for i in fresh: f.write("li-" + i + "\n")
+    for i in freshtw: f.write("tw-" + i.replace("/", "_") + "\n")
 print(text)
 PYIN
   JOBMAIL="$(cat "$JOBMAIL_TXT")"
@@ -107,7 +114,7 @@ ROB PROFILE: senior full-stack dev, TypeScript/React/Node/AWS (serverless, SQS/S
 
 Duplicate roles (same job via several agencies) count once; mention the duplicate agencies on one line.
 
-Two sources may follow. "JobServe jobs" are scraped ads with full text. "Job-alert emails" (LinkedIn Job Alerts etc) list several roles per email with only title, company and a link; the Links section lists them in the same order as the job cards. Triage each listed role as best you can from title + company; where the email gives too little to judge, score 5 and say "needs a look" rather than rejecting. Links marked ALREADY TRIAGED were scored in a previous run: skip them entirely. Ignore the alert boilerplate (it is not a role).
+Two sources may follow. "JobServe jobs" are scraped ads with full text. "Job-alert emails" (LinkedIn Job Alerts etc) list several roles per email with only title, company and a link; the Links section lists them in the same order as the job cards. Triage each listed role as best you can from title + company; where the email gives too little to judge, score 5 and say "needs a look" rather than rejecting. Links marked ALREADY TRIAGED were scored in a previous run: skip them entirely. Ignore the alert boilerplate (it is not a role). Twine digest emails (twine.net links) carry real descriptions, so triage those on the merits, not as "email-only, score 5". Twine is a freelance gig marketplace: most posts are small low-budget gigs, so hold Twine to the same rate bar (reject anything clearly under ~£350/day equivalent; tiny fixed budgets like $30-250 = reject). A 6+ Twine role does NOT trigger an automatic application (no way to apply programmatically); it pings Rob to apply himself, so 6+ still means "genuinely worth his time".
 
 Reply in EXACTLY this format:
 First a line per NEW job/role: "DIGEST: <score 0-9> | <title> | <rate or n/a> | <location/remote> | <agency/company> | <permalink or url>". Score 6-9 = apply-now fit (triggers an automatic application sent as Rob, standing approval "apply to them all if near suitable", 4 Sept), 5 = plausible but too thin or too ambiguous to apply blind, 0-4 = reject.
@@ -163,6 +170,28 @@ if [ "$APPLIED_N" -gt 0 ] && [ "$DRYRUN" != "1" ]; then
     --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
     --data-urlencode "text=💼 Applied on your behalf just now:
 ${SENT_MSG}Full detail in tonight's brief as usual." >/dev/null || echo "telegram send failed"
+fi
+
+# Twine matches can't be auto-applied (no API; applying needs Rob's login and
+# free tier is 1 pitch/day), so a 6+ Twine role pings Rob to spend the pitch.
+TWINE_MSG=""
+while IFS= read -r line; do
+  score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
+  [ -n "$score" ] && [ "$score" -ge 6 ] || continue
+  printf '%s' "$line" | grep -q 'twine\.net' || continue
+  TWINE_MSG="${TWINE_MSG}${line#DIGEST: }
+"
+done < <(printf '%s\n' "$OUT" | grep -i '^DIGEST:')
+if [ -n "$TWINE_MSG" ]; then
+  if [ "$DRYRUN" = "1" ]; then
+    echo "DRYRUN: would ping Twine matches:"; printf '%s' "$TWINE_MSG"
+  else
+    set -a; source "$TCONF"; set +a
+    curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+      --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+      --data-urlencode "text=💼 Twine match worth a look (I can't apply there, free tier = 1 pitch/day, needs your login):
+${TWINE_MSG}" >/dev/null || echo "telegram send failed"
+  fi
 fi
 
 # Only a failed application is worth interrupting Rob for.

@@ -177,6 +177,15 @@ def jobmail(m):
                     clean = f"https://www.linkedin.com/jobs/view/{mm.group(1)}"
                 elif re.search(r"jobserve\.com/", href) and "unsubscribe" not in href.lower():
                     clean = href.split("?")[0]
+                elif "redirect.twinehq.com" in href:
+                    # Twine wraps the target percent-encoded in the path
+                    # (ari links are double-encoded, hence unquote twice).
+                    from urllib.parse import unquote
+                    target = unquote(unquote(href))
+                    tm = re.search(r"twine\.net/(projects/[a-z0-9-]+|ari/job/\d+)", target)
+                    if not tm:
+                        continue
+                    clean = "https://www.twine.net/" + tm.group(1)
                 else:
                     continue
                 if clean not in links:
