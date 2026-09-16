@@ -194,6 +194,15 @@ Rob asked what "butterfly things" he actually needs. Full spec and sourcing, che
 
 **No prescription or professional credentials needed.** Butterfly sets are not POM, unlike the IV bags. FirstAid4Less sells to anyone.
 
+### Amazon next-day route, verified 2026-09-16 (Rob's find + the gender fix)
+
+Rob found an Amazon next-day combo. Checked both listings in a real browser, images included:
+
+- **[Butterflies: 100pk 23G 3/4" scalp vein sets, £32.99, B0H9LHZ79P](https://www.amazon.co.uk/dp/B0H9LHZ79P)** — title says "Blood Collection Set" (normally our avoid-word) but the pouch photos show plain **SCALP VEIN SET** pouches, sterile EO, CE 0123, ISO 13485, and the tail is a standard capped **female luer hub**, no Vacutainer barrel. So it IS the right type despite the title. 23G not 21G (our fallback gauge, fine to ~50 ml/min with less margin). Marketed veterinary; pouch print is standard human-style kit. 33p/needle.
+- **His adapter pick [AIEX 30pc female luer lock to 1/8" barb, B0BMFJSJP1](https://www.amazon.co.uk/dp/B0BMFJSJP1) is the WRONG GENDER**: female-to-barb mates with a syringe's male tip, not with the butterfly's female tail. Two sockets, no joint.
+- **The fix, same product family: [SAVITA 30pc MALE luer lock to 5/32" (4mm) barb, £6.99 next-day, B0C1FTFRXD](https://www.amazon.co.uk/dp/B0C1FTFRXD)** — male luer screws into the butterfly's female hub. 4mm barb on our 3mm-ID silicone is a deliberate stretch fit (hot-water dunk to fit); tighter than the ideal 1/8" but seals hard. PP, non-sterile, boil before use.
+- Confirmed again: **no 1/8" male-to-barb exists on Amazon UK with next-day** (Hynec B0FVWVRKLR, MEETOOT B09PTX6M2Z etc. all 24 Sep+). The exact-size part remains Adhesive Dispensing TSD931-17AB.
+
 ### The bits that go with them (previously missing from the BOM)
 
 - **Sharps bin, 1L yellow.** Non-negotiable and it was not on the list. 50 used needles cannot go in household waste. [Oxford Online Pharmacy, £1.99](https://www.oxfordonlinepharmacy.co.uk/weight-loss/yellow-sharps-box-nominal-capacity-1-litre). Single use, seals shut permanently. When full, a GP surgery or the council's clinical waste collection takes it.
