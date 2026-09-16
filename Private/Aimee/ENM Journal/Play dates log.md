@@ -20,6 +20,7 @@ Quick-reference list of who went where and when. Facts only, one line each. Feel
 | 25 Aug 2026 | Rob | Played with Tash | Fourth entry with Tash |
 | 4-6 Sep 2026 | Aimee | Andover, weekend away | |
 | 5 Sep 2026 | Rob | Mary, NoMercyManor (NMM), their first play date | Home late, past his self-set 2am; see journal entry 2026-09-05 |
+| 11 Sep 2026 (eve) | Rob + Aimee together | Play date with Alex and Jaxx | Cube night. Really great. All Aimee's boundaries respected; see journal entry 2026-09-11 |
 | 2-4 Oct 2026 | Aimee | Andover, play weekend | Upcoming |
 
 ## How to add to it
