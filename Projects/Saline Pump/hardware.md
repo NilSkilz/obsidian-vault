@@ -202,6 +202,7 @@ Rob found an Amazon next-day combo. Checked both listings in a real browser, ima
 - **His adapter pick [AIEX 30pc female luer lock to 1/8" barb, B0BMFJSJP1](https://www.amazon.co.uk/dp/B0BMFJSJP1) is the WRONG GENDER**: female-to-barb mates with a syringe's male tip, not with the butterfly's female tail. Two sockets, no joint.
 - **The fix, same product family: [SAVITA 30pc MALE luer lock to 5/32" (4mm) barb, £6.99 next-day, B0C1FTFRXD](https://www.amazon.co.uk/dp/B0C1FTFRXD)** — male luer screws into the butterfly's female hub. 4mm barb on our 3mm-ID silicone is a deliberate stretch fit (hot-water dunk to fit); tighter than the ideal 1/8" but seals hard. PP, non-sterile, boil before use.
 - Confirmed again: **no 1/8" male-to-barb exists on Amazon UK with next-day** (Hynec B0FVWVRKLR, MEETOOT B09PTX6M2Z etc. all 24 Sep+). The exact-size part remains Adhesive Dispensing TSD931-17AB.
+- **Confidence on the 4mm-barb-on-3mm-tube stretch fit: 8/10, not certain.** Fine if the tube is silicone (routine stretch); a real fight, possibly won't-seat, if it's actually PVC. Check by feel before trusting it: silicone is rubbery/matte, PVC is harder/glossier. If it's PVC, fall back to the true-size Adhesive Dispensing 1/8" adapter instead. Either way, **bench-test the joint before a real session**: run the pump with the outlet pinched for a few seconds and check the barb joint doesn't weep. Holds under that, holds in use.
 
 ### The bits that go with them (previously missing from the BOM)
 
