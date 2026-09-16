@@ -32,6 +32,31 @@ deposit. New shape of the deal:
      pump paid for by the car. It also guts the PHEV case: at this mileage the
      bulk of the miles are the long runs, and a PHEV does those on petrol.
 
+## Budget revision 2 (Rob, 16 Sep 2026)
+
+**Ceiling back up to £15,000 total.** Rob's words: "we can push the bracket to
+£15k total now", focus on Model 3s. For reference, £15k all-borrowed at Tesco's
+6.4% over 48 months is **~£355/month** (over the old £300 ceiling); £13k
+borrowed plus £2k cash is ~£308/month. How it's funded is Rob's side; the hunt
+just watches to £15k (named-model stickers to £15.5k as haggle targets).
+
+**Battery planning assumption, set 16 Sep:** Timmy (2019 SR+) was barely doing
+100 real miles by the end, even Exeter and back was marginal. So the hunt now
+plans on **~80% pack capacity** for any 2019-2020 car, not the optimistic
+10-12% degradation. At 80%:
+
+- **SR+ (55kWh):** ~150 real summer miles, ~120-130 winter. **Fails the
+  Torquay test outright.** SR penalty in the scoring raised accordingly.
+- **Long Range (75kWh):** ~185-200 real summer, ~165-180 winter. Torquay passes
+  in summer with room, winter with modest margin. (80% is the worst-case
+  planning number; LR packs typically sit at 88-92% at this age, and the
+  warranty guarantees 70%, below that is a claim.)
+
+Note on Timmy's 100 miles: that's ~55-60% of his original real range, which is
+worse than normal degradation alone. Winter + motorway + the resistive heater
+explains most of the gap, but it's also possible his pack was genuinely below
+average. Either way the 80% assumption is the sane conservative basis.
+
 ## Charging: settled (Rob, 14 Sep 2026)
 
 **There is already a 7kW wallbox at the house**, installed for "Timmy", the
@@ -237,7 +262,38 @@ Ranked:
 20-inch tyres and Performance running costs are not a £300/month car), and the
 £11,199 Cat N in Cardiff.
 
-## The £12,500 shortlist (14 Sep 2026, post budget revision)
+## Model 3 fresh sweep, 16 Sep 2026 (£15k ceiling, 80% pack assumption)
+
+Twelve Model 3s under £15.5k within 100 miles. **The £14,999 Plymouth Long
+Range (67,798 mi) from the 14 Sep sweep is no longer listed, almost certainly
+sold.** Good used LRs at this money move in days.
+
+Ranked under the new rules (LR or nothing, per the 80% assumption):
+
+1. **£14,000 — 2019 Long Range AWD, 79,000 mi, delivery only, "good price".**
+   The new pick. Same 75kWh pack and 120k battery warranty (~41k miles of cover
+   left), £1k under the old Plymouth car. Delivery-only means a bigger dealer
+   group; get the battery health report before committing.
+   https://www.autotrader.co.uk/car-details/202609095896379
+2. **£15,197 — 2019 Long Range AWD, 73,494 mi, delivery only, "fair price".**
+   6k fewer miles for £1.2k more; a haggle candidate back to £14.5k.
+   https://www.autotrader.co.uk/car-details/202609025629137
+3. **£12,280 — 2020 Long Range AWD, 101,176 mi, Barry (77 mi), "lower price".**
+   Still the value play: £2.7k of headroom for wear items, but warranty nearly
+   out and it finishes ~180k. https://www.autotrader.co.uk/car-details/202607214360675
+4. **Wildcard: £15,197 — 2021 SR+, 65,570 mi, delivery only, "good price".**
+   The only 2021 in reach. If it's a Made-in-China refresh car (LRW VIN) it has
+   the **heat pump and an LFP pack**, which changes the SR maths: LFP charges
+   to 100% daily by design and the heat pump cuts the winter hit, so real
+   winter range is ~160-170 even aged. Torquay is then a pass, barely. Worth a
+   VIN check before dismissing; not the pick over an LR.
+   https://www.autotrader.co.uk/car-details/202609095849885
+
+**Skip:** all the 2019-2020 SR+ cars (£13,000-£14,890, six of them). Under the
+80% assumption every one is Timmy with less range than Timmy had. Also the
+£14,495 2019 Performance (85.6k, running costs) and the Cardiff Cat N.
+
+## The £12,500 shortlist (14 Sep 2026, post budget revision, superseded 16 Sep)
 
 Filter: under £12,500, passes the Torquay test (58kWh+), enough mileage
 headroom for +80k, no write-offs. From the 104-listing seed:
@@ -295,7 +351,7 @@ Read:
 `Jarvis/bin/car-hunt.sh`, cron **40 8,12,16,20 daily**.
 
 - Scrapes public AutoTrader search pages with headless Chrome (`/home/jarvis/tools/car-hunt/scrape-autotrader.js`), two pages per watch.
-- Watches: Tesla Model 3, Hyundai Kona Electric, Kia e-Niro, Polestar 2, VW ID.3, MG4 (named models capped at £13k stickers, i.e. haggle-to-£12.5k), a catch-all "any EV under £12.5k with under 60k miles", plus catch-alls for **any petrol plug-in hybrid** and **any diesel plug-in hybrid** under £12.5k / 70k miles. Caps cut from the £14.7k originals on 14 Sep when the budget dropped to £12.5k.
+- Watches: Tesla Model 3, Hyundai Kona Electric, Kia e-Niro, Polestar 2, VW ID.3, MG4 (named models capped at £15.5k stickers, i.e. haggle-to-£15k), a catch-all "any EV under £15k with under 60k miles", plus catch-alls for **any petrol plug-in hybrid** and **any diesel plug-in hybrid** under £15k / 70k miles. Caps raised 16 Sep when the budget went back up to £15k; SR penalty raised to -2 the same day (80% pack assumption).
 - AutoTrader's fuel wording is fussy: `Petrol Plug-in Hybrid` works, a bare `Plug-in Hybrid` silently returns nothing.
 - PHEVs need a **higher bar to interrupt** (score 9, plus 12kWh+ battery and 2020 or newer), because there are far more of them in this budget and dealers rate nearly all of them a "good price". Everything else still lands in the digest.
 - Dedupes against `~/.local/state/jarvis-car-hunt-seen.txt`, so a listing is only ever considered once.

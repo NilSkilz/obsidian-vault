@@ -37,7 +37,7 @@ SEED="${SEED:-0}"
 
 POSTCODE="${POSTCODE:-EX230JG}"   # Crackington Haven
 RADIUS="${RADIUS:-100}"
-BUDGET="${BUDGET:-12500}"         # all borrowed, no deposit (heat pump takes it); Tesco 6.4% APR 48mo ≈ £295/mo
+BUDGET="${BUDGET:-15000}"         # raised from £12.5k, Rob 16 Sep 2026: bracket is £15k total again
 PING_SCORE="${PING_SCORE:-8}"
 # There are far more PHEVs than EVs in this budget, so they need a higher bar
 # to earn an interruption. Rob's stated preference is still a full EV.
@@ -51,15 +51,15 @@ PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 # a haggle. Mileage caps tightened 14 Sep: at 20k/yr the car gains 80k miles
 # over the loan, so a 90k starter would finish at 170k.
 WATCHES=(
-  "Tesla|Model 3|13000|80000|Electric|2"
-  "Hyundai|Kona Electric|13000|70000|Electric|2"
-  "Kia|e-Niro|13000|70000|Electric|2"
-  "Polestar|2|13000|70000|Electric|2"
-  "Volkswagen|ID.3|13000|70000|Electric|2"
-  "MG|MG4|13000|60000|Electric|2"
-  "||12500|60000|Electric|2"
-  "||12500|70000|Petrol Plug-in Hybrid|3"
-  "||12500|70000|Diesel Plug-in Hybrid|2"
+  "Tesla|Model 3|15500|80000|Electric|3"
+  "Hyundai|Kona Electric|15500|70000|Electric|2"
+  "Kia|e-Niro|15500|70000|Electric|2"
+  "Polestar|2|15500|70000|Electric|2"
+  "Volkswagen|ID.3|15500|70000|Electric|2"
+  "MG|MG4|15500|60000|Electric|2"
+  "||15000|60000|Electric|2"
+  "||15000|70000|Petrol Plug-in Hybrid|3"
+  "||15000|70000|Diesel Plug-in Hybrid|2"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -154,8 +154,11 @@ for line in open(raw):
             elif k >= 58: s += 1; why.append(f'{k:g}kWh')
         # Tesla listings rarely quote kWh; the trim string carries the same
         # information. Timmy was a Standard Range and Rob found it short.
+        # 16 Sep: Rob says Timmy was barely doing 100 real miles by the end,
+        # so plan on ~80% pack capacity at this age. An SR+ at 80% is ~140
+        # real summer miles and fails the Torquay run outright; penalty raised.
         if 'Standard Range' in (j.get('spec') or ''):
-            s -= 1; why.append('SR: Torquay round trip tight in winter')
+            s -= 2; why.append('SR at ~80% pack fails the Torquay test')
 
     j['score'] = max(0, min(10, s))
     j['why'] = ', '.join(why)
