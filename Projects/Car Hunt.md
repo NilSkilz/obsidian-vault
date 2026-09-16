@@ -73,6 +73,16 @@ stripped 3 Jul). So:
   (charging etiquette, range planning, the app, Supercharging) are not
   unknowns. Weight his preference for one accordingly.
 
+**20-80% charging, clarified 16 Sep 2026.** Rob asked if the "don't charge
+above 80% / below 20%" advice still holds given it caps daily usable range at
+60%. Answer: it's a *daily habit* rule, not a hard fence. Occasional dips to
+5-10% do no measurable harm, it's parking the car flat or full for days that
+hurts; Tesla's own guidance is to charge to 100% before a long trip. So a
+Torquay day is charge to 100% overnight, arrive home at 10%, that's 90% of the
+pack used, fine. The 80% cap is for ordinary Tuesday school-run weeks.
+**LFP packs (2021+ Chinese-built SR+ Model 3s) are exempt entirely** — Tesla
+tells owners to charge those to 100% at least weekly, no daily-habit caveat.
+
 ## Range requirement: the Torquay test (Rob, 14 Sep 2026)
 
 > "Would wanna do home to Torquay and back on one charge."
