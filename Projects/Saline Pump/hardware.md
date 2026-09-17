@@ -213,6 +213,17 @@ Rob found an Amazon next-day combo. Checked both listings in a real browser, ima
 
 **BOM impact:** butterfly line drops from £25.80 to £21.60 inc VAT, plus ~£2 sharps bin and ~£3 film dressings. Bucket C effectively unchanged at ~£77.
 
+## Stall under needle load, and what a stall means under skin (2026-09-17)
+
+Bench observation (Rob): with a needle on the outlet the pump stalls out much more easily. He asked what happens when the needle is under skin. The physics, worked through:
+
+- **The needle IS the load, not the flesh.** Poiseuille: back-pressure scales linearly with flow and with 1/r⁴ of the bore. Subcutaneous tissue is a compliant open space that adds only ~1-2 psi on top of whatever the needle bore already costs. Bench-with-needle into open air is therefore ~90-95% of the real under-skin load. No skin required to characterise it.
+- **The 23G Amazon sets are marginal on this head.** 23G ≈ 12-13 psi at 50 ml/min (table above); a 500-series dosing head is only good for roughly 0.1 MPa (~15 psi). At 100% duty the head demands 140 ml/min ≈ ~35 psi through a 23G: stalling there is arithmetic, not a fault. Even the 60% floor (~59 ml/min) puts a 23G near the head's pressure ceiling. **21G at the same flow is ~5x less pressure and the pump loafs. This is exactly why 21G was the original pick; the 23G sets were always the lower-margin fallback.** Also check what's actually fitted on the bench: the loose slip needles are assorted gauges and a 25G is ~5x worse again than 23G.
+- **The right test, no body involved:** needle into a chicken breast / pork joint / orange, run at the speed a session would actually use, and read the true delivered rate off the load cell (weight leaving the reservoir doesn't lie). Watch for stall and for weeping at the barb joint while at it (the pinch test from the barb section covers the joint too).
+- **What a stall mid-scene actually does: the boring failure.** Flow stops. No jet, no burst; line pressure is capped at the head's stall pressure and mostly dropped across the needle, so the tissue end sees nothing dramatic. The two real costs: (1) delivered volume goes wrong if running timed, which weighed dosing already covers, and guard 3's CHECK state trips on clock/cell divergence when a target is set; (2) the motor sits at stall current and heats, and **nothing currently covers this in free-run speed mode** (no target set).
+- **Firmware to-do: stall detect.** Side commanded running but reservoir weight not falling for ~10s → stop that side, STALL state on glass + page. Cheap, the cells are already live. Candidate for Stage 10.
+- **Related design tension, now visible:** the 60% stall floor means the slowest continuous rate is ~59 ml/min, 3.5x the 17 ml/min design pace (and ~7x Aimee's old gravity pace). Pulse dosing (short bursts at a healthy duty, off-gaps between, averaging any rate you like) would buy both slow rates and stall margin in one move. Also a Stage 10 candidate.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
