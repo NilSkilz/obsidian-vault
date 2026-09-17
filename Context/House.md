@@ -8,6 +8,12 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - Has **solar PV** installed.
 - Village is in an **AONB**, not a conservation area, not listed. Confirmed via GPDO Class G that AONB carries no extra permitted-development restriction for ground-mounted heat pump units (only conservation areas/World Heritage Sites do) — front garden by the garage is PD-legal, pending the surveyor's noise calc and no Article 4 direction on the village.
 
+## Energy monitoring & solar (17 Sep 2026)
+- **Shelly EM** on the incoming supply at `192.168.1.100` (UniFi name "Shelly Electricity Monitor"), feeding HA as `sensor.shellyem_34945470ed50_*`.
+- **Channel 1 = grid.** Lifetime at 17 Sep 2026: 18,339 kWh imported, 8,049 kWh exported. The export figure proves the PV exports plenty (battery-relevant).
+- **Channel 2 = unidentified circuit.** 14,692 kWh lifetime, zero "returned", and read 0 W at 13:00 BST on a September day. Either it clamps the solar feed (in which case the inverter was off that day, check it) or it's the old Tesla charger circuit, dead since Timmy was sold. Rob to confirm which.
+- **Battery feasibility questions open with Rob (asked 17 Sep):** inverter make/model (hybrid vs string decides DC vs AC coupling), array kWp + install year, FIT vs SEG, consumer unit spare ways + space near the inverter, current tariff. Sizing/payback maths to follow once answered.
+
 ## Heat pump decision (open, as of 10 Sep 2026)
 - Octopus quote: **£2,749 fully installed** after £9,000 BUS grant, includes new cylinder, assumes existing radiators kept (extras £250/radiator fitted). Survey lead time 2-6 months.
 - Value case: UK data puts a heat-pump premium at ~1.7-3% of house value, but the bigger driver is removing the oil tank — oil-heated homes take ~40% longer to sell, and losing it should also lift the EPC band.
