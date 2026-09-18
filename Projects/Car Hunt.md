@@ -57,6 +57,20 @@ worse than normal degradation alone. Winter + motorway + the resistive heater
 explains most of the gap, but it's also possible his pack was genuinely below
 average. Either way the 80% assumption is the sane conservative basis.
 
+## Narrowed: Model 3 Long Range only (Rob, 18 Sep 2026)
+
+Rob's call: "limit the car search to just Model 3s. Long range ones." So:
+
+- **Only watch:** Tesla Model 3, stickers to £15.5k, mileage cap 80k.
+- **Long Range trim only.** AutoTrader has no reliable trim filter, so the
+  scrape pulls all Model 3s and the hunt drops anything whose spec/title
+  doesn't say "Long Range" (dropped outright, not digested). This also retires
+  the 2021 SR+/LFP wildcard, and as written it excludes **Performance** trim
+  too (same 75kWh pack; flag to Rob if a cheap one appears, he can widen).
+- All alternative-EV watches (Kona, e-Niro, Polestar 2, ID.3, MG4, catch-all
+  EV) and both PHEV watches are retired.
+- Seen-listing state kept, so only genuinely new LR cars ping.
+
 ## Charging: settled (Rob, 14 Sep 2026)
 
 **There is already a 7kW wallbox at the house**, installed for "Timmy", the

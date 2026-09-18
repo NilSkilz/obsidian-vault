@@ -11,6 +11,8 @@
 # self-charging hybrids are deliberately not watched. Confirmed 14 Sep: the
 # house already has a 7kW wallbox (from "Timmy", the Model 3 they used to own),
 # so charging is solved and a full EV remains the preferred outcome.
+# 18 Sep 2026: narrowed to Tesla Model 3 Long Range ONLY (Rob's call); the
+# alternative EVs and all PHEV watches are retired, see WATCHES below.
 # Range floor (Rob, 14 Sep): home to Torquay and back on one charge, ~150 mi
 # round trip, year-round. That rules out small packs and demotes Tesla SR trims.
 # Within 100 miles of home (Crackington Haven).
@@ -50,16 +52,12 @@ PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 # Named-model caps sit ~£500 over budget: a £13k sticker is a £12.5k car after
 # a haggle. Mileage caps tightened 14 Sep: at 20k/yr the car gains 80k miles
 # over the loan, so a 90k starter would finish at 170k.
+# 18 Sep 2026: Rob narrowed the hunt to Model 3 Long Range ONLY. All the
+# alternative-EV and PHEV watches are retired; AutoTrader has no reliable trim
+# filter, so the scrape stays "Model 3" and the Long Range cut happens in the
+# scoring step below (non-LR cars are dropped entirely, not even digested).
 WATCHES=(
   "Tesla|Model 3|15500|80000|Electric|3"
-  "Hyundai|Kona Electric|15500|70000|Electric|2"
-  "Kia|e-Niro|15500|70000|Electric|2"
-  "Polestar|2|15500|70000|Electric|2"
-  "Volkswagen|ID.3|15500|70000|Electric|2"
-  "MG|MG4|15500|60000|Electric|2"
-  "||15000|60000|Electric|2"
-  "||15000|70000|Petrol Plug-in Hybrid|3"
-  "||15000|70000|Diesel Plug-in Hybrid|2"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -83,7 +81,7 @@ for w in "${WATCHES[@]}"; do
   timeout 400 node "$TOOLS/scrape-autotrader.js" "${args[@]}" >>"$RAW" 2>>"$LOG.scrape" \
     || echo "scrape failed for '${mk:-any} ${md:-$fuel}' (continuing)"
 done
-echo "scraped $(grep -c . "$RAW" || echo 0) listing rows"
+echo "scraped $(grep -c . "$RAW" || true) listing rows"
 
 # Dedupe + score. Score drives whether Rob gets interrupted.
 python3 - "$RAW" "$SEEN" "$BUDGET" >"$NEW" <<'PY'
@@ -99,6 +97,13 @@ for line in open(raw):
     jid = j.get('id')
     if not jid or jid in seen or jid in batch: continue
     batch.add(jid)
+
+    # Long Range only (Rob, 18 Sep 2026). Tesla listings carry the trim in the
+    # spec or title text; anything that doesn't say Long Range is dropped here,
+    # after being marked seen, so it never resurfaces. This also bins the
+    # SR+/LFP wildcard: Rob has decided.
+    if 'long range' not in f"{j.get('spec') or ''} {j.get('title') or ''}".lower():
+        continue
 
     price = j.get('price') or 0
     miles = j.get('mileage') or 0
@@ -168,7 +173,7 @@ with open(seenf, 'a') as f:
     for jid in batch: f.write(jid + '\n')
 PY
 
-COUNT="$(grep -c . "$NEW" || echo 0)"
+COUNT="$(grep -c . "$NEW" || true)"
 echo "$COUNT new listings"
 [ "$COUNT" -eq 0 ] && { echo "nothing new"; exit 0; }
 
