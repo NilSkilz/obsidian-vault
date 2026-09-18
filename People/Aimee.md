@@ -12,6 +12,7 @@
 - **Employer:** EQ
 - **Schedule:** Rota varies - mix of earlies (8-5) and lates (9-6)
 - **Flexibility:** Variable schedule affects family planning
+- **Bullying situation (flagged 18 Sep 2026):** Office manager swearing at her and blaming her for the manager's own mistakes. Plan: evidence diary first, then formal written grievance (not an informal HR chat). Constructive dismissal held back as last resort (needs 2 yrs service until Jan 2027, then 6 months, and means resigning first). Jarvis briefed Rob on the playbook 18 Sep.
 
 ## Communication Preferences
 - **Alexa announcements** preferred over phone notifications
