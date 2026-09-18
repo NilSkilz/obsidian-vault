@@ -162,3 +162,7 @@ Rob, thinking it over on the office day: *"There's deff something that feels unf
 **The useful reframe.** "Unfair" implies entitlement to someone's attention, and neither of them has that. Rob wouldn't want a partner staying in a dynamic out of fairness; he'd want them there because they wanted to be. Also worth holding: he's allowed to think it's a mono-shaped move *and* think she did nothing wrong. Both fit.
 
 **What to watch.** The fairness frame is more dangerous than the sadness, because it's argumentative and can be rehearsed for three hours on the M5. If it keeps circling, the tell is that it's a proxy for "was I not enough", which her own message already answered in her own words.
+
+### 2026-09-18 (Fri) — 28 Sep logistics wound down
+
+Rob confirmed the Mon 28 Sep annual leave is cancelled (Todoist task deleted, was never booked with work). Reminder given to cancel the Premier Inn Exeter room too if it was ever actually booked (Flex rate cancels free); booking status was never confirmed either way. This closes the practical tail of the 28 Sep plan.

@@ -13,3 +13,5 @@ Nobody goes in the air on this hoist until it starts cleanly from cold, consiste
 
 ## Open
 Waiting on Rob to open it up and report hum vs spin (and ideally a photo of the capacitor label) before a fix is confirmed.
+
+**18 Sept 2026:** fix on hold for a few days, the hoist is currently doing duty tensioning the freshly dyed rope while it dries. Diagnosis resumes once the rope comes off it. Safety rule above still stands in the meantime.
