@@ -59,17 +59,25 @@ average. Either way the 80% assumption is the sane conservative basis.
 
 ## Narrowed: Model 3 Long Range only (Rob, 18 Sep 2026)
 
-Rob's call: "limit the car search to just Model 3s. Long range ones." So:
+Rob's call: "limit the car search to just Model 3s. Long range ones." Later the
+same morning: Performance trim allowed too (Rob OK'd it when flagged), and the
+mileage cap tightened to 60k. So:
 
-- **Only watch:** Tesla Model 3, stickers to £15.5k, mileage cap 80k.
-- **Long Range trim only.** AutoTrader has no reliable trim filter, so the
-  scrape pulls all Model 3s and the hunt drops anything whose spec/title
-  doesn't say "Long Range" (dropped outright, not digested). This also retires
-  the 2021 SR+/LFP wildcard, and as written it excludes **Performance** trim
-  too (same 75kWh pack; flag to Rob if a cheap one appears, he can widen).
+- **Only watch:** Tesla Model 3, stickers to £15.5k, **mileage cap 60k**
+  (was 80k; at 20k/yr a 60k car finishes the loan at ~140k, and it keeps a
+  slice of the 120k battery warranty alive for the first year or two).
+- **Long Range or Performance trim only.** AutoTrader has no reliable trim
+  filter, so the scrape pulls all Model 3s and the hunt drops anything whose
+  spec/title says neither (dropped outright, not digested). This also retires
+  the 2021 SR+/LFP wildcard.
 - All alternative-EV watches (Kona, e-Niro, Polestar 2, ID.3, MG4, catch-all
   EV) and both PHEV watches are retired.
-- Seen-listing state kept, so only genuinely new LR cars ping.
+- Seen-listing state kept, so only genuinely new LR/Performance cars ping.
+- **State of the market at the change (18 Sep, live scrape): the net is
+  empty.** Only five Model 3s under £15.5k / 60k miles within 100 miles, and
+  every one is an SR+. All known LRs are 73k+ miles (the £14k 2019 LR pick from
+  16 Sep is at 79k, so it's now outside the cap). This is now a waiting game
+  for a sub-60k LR to appear, and they're rare at this money; expect quiet.
 
 ## Charging: settled (Rob, 14 Sep 2026)
 
@@ -374,8 +382,11 @@ Read:
 
 `Jarvis/bin/car-hunt.sh`, cron **40 8,12,16,20 daily**.
 
-- Scrapes public AutoTrader search pages with headless Chrome (`/home/jarvis/tools/car-hunt/scrape-autotrader.js`), two pages per watch.
-- Watches: Tesla Model 3, Hyundai Kona Electric, Kia e-Niro, Polestar 2, VW ID.3, MG4 (named models capped at £15.5k stickers, i.e. haggle-to-£15k), a catch-all "any EV under £15k with under 60k miles", plus catch-alls for **any petrol plug-in hybrid** and **any diesel plug-in hybrid** under £15k / 70k miles. Caps raised 16 Sep when the budget went back up to £15k; SR penalty raised to -2 the same day (80% pack assumption).
+- Scrapes public AutoTrader search pages with headless Chrome (`/home/jarvis/tools/car-hunt/scrape-autotrader.js`).
+- Watches (since 18 Sep 2026): **Tesla Model 3 only**, stickers to £15.5k,
+  **60k mile cap**, Long Range or Performance trim enforced in the scoring
+  step (AutoTrader has no trim filter). All earlier watches (Kona, e-Niro,
+  Polestar 2, ID.3, MG4, catch-all EV, both PHEV sweeps) retired.
 - AutoTrader's fuel wording is fussy: `Petrol Plug-in Hybrid` works, a bare `Plug-in Hybrid` silently returns nothing.
 - PHEVs need a **higher bar to interrupt** (score 9, plus 12kWh+ battery and 2020 or newer), because there are far more of them in this budget and dealers rate nearly all of them a "good price". Everything else still lands in the digest.
 - Dedupes against `~/.local/state/jarvis-car-hunt-seen.txt`, so a listing is only ever considered once.

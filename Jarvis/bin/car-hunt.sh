@@ -13,6 +13,9 @@
 # so charging is solved and a full EV remains the preferred outcome.
 # 18 Sep 2026: narrowed to Tesla Model 3 Long Range ONLY (Rob's call); the
 # alternative EVs and all PHEV watches are retired, see WATCHES below.
+# Later same morning: Performance trim allowed too (same 75kWh pack, same
+# range), and the mileage cap tightened 80k -> 60k so the car finishes the
+# loan at ~140k rather than ~160k.
 # Range floor (Rob, 14 Sep): home to Torquay and back on one charge, ~150 mi
 # round trip, year-round. That rules out small packs and demotes Tesla SR trims.
 # Within 100 miles of home (Crackington Haven).
@@ -57,7 +60,7 @@ PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 # filter, so the scrape stays "Model 3" and the Long Range cut happens in the
 # scoring step below (non-LR cars are dropped entirely, not even digested).
 WATCHES=(
-  "Tesla|Model 3|15500|80000|Electric|3"
+  "Tesla|Model 3|15500|60000|Electric|3"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -98,11 +101,13 @@ for line in open(raw):
     if not jid or jid in seen or jid in batch: continue
     batch.add(jid)
 
-    # Long Range only (Rob, 18 Sep 2026). Tesla listings carry the trim in the
-    # spec or title text; anything that doesn't say Long Range is dropped here,
-    # after being marked seen, so it never resurfaces. This also bins the
-    # SR+/LFP wildcard: Rob has decided.
-    if 'long range' not in f"{j.get('spec') or ''} {j.get('title') or ''}".lower():
+    # Long Range or Performance only (Rob, 18 Sep 2026; Performance OK'd the
+    # same morning, it carries the same 75kWh pack). Tesla listings carry the
+    # trim in the spec or title text; anything else is dropped here, after
+    # being marked seen, so it never resurfaces. This also bins the SR+/LFP
+    # wildcard: Rob has decided.
+    trim_text = f"{j.get('spec') or ''} {j.get('title') or ''}".lower()
+    if 'long range' not in trim_text and 'performance' not in trim_text:
         continue
 
     price = j.get('price') or 0
@@ -125,7 +130,10 @@ for line in open(raw):
     elif miles and miles > 70000: s -= 2; why.append(f"{miles//1000}k now = ~{(miles+80000)//1000}k by loan end")
     if dist is not None and dist <= 60: s += 1; why.append(f"{dist} miles away")
     if (j.get('make') or '') == 'Tesla': s += 2
-    if 'Long Range' in (j.get('spec') or ''): s += 1; why.append('long range')
+    # LR and Performance share the 75kWh pack, so both earn the trim bonus.
+    spec_l = (j.get('spec') or '').lower()
+    if 'long range' in spec_l: s += 1; why.append('long range')
+    elif 'performance' in spec_l: s += 1; why.append('performance, same 75kWh pack')
     import re as _re
     kwh = _re.search(r'([\d.]+)\s*kWh', j.get('spec') or '')
     k = float(kwh.group(1)) if kwh else None
