@@ -1,6 +1,6 @@
 # Fuck-io
 
-**Status:** design phase as of 9 Sept 2026. Soft deadline: [[Mary]] back in Oxford in October.
+**Status:** parked as of 18 Sept 2026. Rob wants a hands-on/physical distraction, not a software weekend, so the headless Edge-o-Matic firmware+web-app route (fully speccable at £0, see below) was pitched and turned down ("can't see the point"). Revisit when he wants a keyboard project again; the £0 software-first path still stands ready. Soft deadline otherwise: [[Mary]] back in Oxford in October.
 
 ## Decisions (9 Sept 2026, Rob via Telegram)
 
