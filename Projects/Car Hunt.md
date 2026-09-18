@@ -358,6 +358,17 @@ Read:
   ceiling the badge is out of reach; the £14,999 Plymouth LR only comes back if
   the heat pump doesn't happen or the Fiesta sale funds the gap.
 
+## Market value curve, 18 Sep 2026
+
+Rob asked what budget a 30-40k mile Model 3 LR needs, so the hunt scraped
+nationwide (not just the 100-mile/60k-cap search) to answer it: **£22k-£24k**
+for 30-40k miles (e.g. £22,999 2022 LR AWD at 31k mi, £23,250 2023 LR RWD at
+36k mi). The mileage/price relationship is roughly linear: **~£1k per 5k
+miles** (70-80k miles = £13-15k, 30-40k miles = £22-24k). Cheaper doors into
+the same 75kWh pack at that mileage: a 2019 Performance at £18-19.5k/35-36k
+miles (same battery, older shell), or splitting the difference at 50-60k miles
+for roughly £16-19k. Useful if the £15.5k ceiling ever flexes again.
+
 ## Things to check before buying a used PHEV
 
 - **How was it actually used?** A PHEV that was never plugged in (fleet/company
