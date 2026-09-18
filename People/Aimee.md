@@ -9,10 +9,10 @@
 - **Telegram:** @GrumpyPiskie (ID: 221989621)
 
 ## Work
-- **Employer:** EQ
+- **Employer:** Penbode Equine Vets (Penbode Vets Ltd, Holsworthy area). **Owned by VetPartners since July 2018** (Companies House PSC, company 06313481), so there is a group People/HR function above the local directors.
 - **Schedule:** Rota varies - mix of earlies (8-5) and lates (9-6)
 - **Flexibility:** Variable schedule affects family planning
-- **Bullying situation (flagged 18 Sep 2026):** Office manager swearing at her and blaming her for the manager's own mistakes. Plan: evidence diary first, then formal written grievance (not an informal HR chat). Constructive dismissal held back as last resort (needs 2 yrs service until Jan 2027, then 6 months, and means resigning first). Jarvis briefed Rob on the playbook 18 Sep.
+- **Bullying situation (flagged 18 Sep 2026):** Office manager swearing at her and blaming her for the manager's own mistakes. Aimee has **months of diary evidence** already. Office is all female; Aimee is the eldest there (possible age-related harassment angle under the Equality Act if the treatment ties to age, worth exploring, no service requirement and uncapped awards). She has already raised it **informally** with HR and the directors; everyone is aware and nothing has changed, which is exactly what makes a formal written grievance land ("raised informally on [dates], no action, behaviour continued"). Next step: formal written grievance, escalatable to VetPartners group HR if local management sits on it. Constructive dismissal held back as last resort (needs 2 yrs service until Jan 2027, then 6 months, and means resigning first). Draft letter skeleton: [[Aimee Work Grievance]]. Jarvis briefed Rob on the playbook 18 Sep.
 
 ## Communication Preferences
 - **Alexa announcements** preferred over phone notifications
