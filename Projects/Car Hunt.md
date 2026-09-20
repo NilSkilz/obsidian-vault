@@ -369,6 +369,36 @@ the same 75kWh pack at that mileage: a 2019 Performance at £18-19.5k/35-36k
 miles (same battery, older shell), or splitting the difference at 50-60k miles
 for roughly £16-19k. Useful if the £15.5k ceiling ever flexes again.
 
+## Other Teslas + MG4 revisit, 20 Sep 2026
+
+Rob asked whether other Tesla models undercut the Model 3, and whether the MGs
+carry the kit he wants (adaptive cruise, sat nav, parking sensors, camera).
+Fresh nationwide/local scrapes, 20 Sep:
+
+- **Model S is the only cheaper Tesla**: £10k-£15.5k buys a 2016-2018 75D/90D,
+  but nearly all are 80k-130k+ miles, 200+ miles away, and the 8-year battery
+  warranty is expired or expiring. Old MCU screens, air suspension and Tesla
+  repair rates make it a poor 20k-miles/year commuter. Not recommended.
+- **Model Y under £16k is only 110k-165k-mile cars or Cat S write-offs.**
+  Clean sensible-mileage Ys start ~£17.5k and climb. No cheaper door there.
+- **MG4 is the value story.** 40 in the local net under £15.5k/60k. The trim
+  that matches Rob's feature list is **Trophy Long Range** (64kWh): adaptive
+  cruise (MG Pilot, all trims), built-in sat nav, 360 camera, rear sensors,
+  heated seats/wheel, wireless charging, blind spot. **SE has NO camera and
+  no built-in nav** (CarPlay only), so SE fails Rob's spec.
+  Standouts: £12,499 2023 Trophy LR 51k mi Plymouth (great price);
+  £12,999 2023 Trophy LR 38k Plymouth; £13,699 2022 Trophy LR 29.5k Plymouth
+  (great price); £13,999 2023 Trophy LR 31.6k Plymouth (great price);
+  £14,799 2023 Trophy LR 20k Plymouth (great price).
+  So ~£13-15k = a 2023 Trophy LR at 20-38k miles, where the same-mileage
+  Model 3 LR costs £22-24k.
+- **MG4 caveats**: no heat pump on any 2022-2024 UK MG4, so winter range on
+  the 64kWh pack is ~170-190 real miles (Torquay round trip OK, less margin
+  than a Model 3 LR). MG warranty is 7 years / 80,000 miles including battery,
+  so a 2023/30k car carries cover to 2030 or 80k, ~2.5 years at Rob's mileage.
+- Hunt watches unchanged (still Model 3 LR/Performance only); re-adding an
+  MG4 Trophy LR watch is a one-line change if Rob wants it.
+
 ## Things to check before buying a used PHEV
 
 - **How was it actually used?** A PHEV that was never plugged in (fleet/company
