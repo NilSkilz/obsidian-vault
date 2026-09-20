@@ -243,3 +243,15 @@ Tethered's public blog pages hardcoded `authMode: "identityPool"` on their Ampli
 ## A while-read loop that runs claude -p only processes its first match (2026-09-15, Contract Hunt)
 
 The auto-apply loop in `contract-hunt.sh` fed triage DIGEST lines to `while IFS= read -r line` and called `auto-apply.sh` inside it. That script runs `claude -p`, which slurps any inherited stdin when it isn't a TTY, and the loop's stdin *is* the remaining DIGEST lines. Result: the first 6+ role applied fine, then `read` hit EOF and every later 6+ role was silently skipped, with `sent=1 failed=0` looking perfectly healthy. Cost a real application (a 7-scored fully-remote part-time Node role) until Rob noticed the count didn't add up. Rule: any command inside a `while read` loop that might read stdin (`claude -p`, `ssh`, `ffmpeg`, anything curl-piped) gets an explicit `</dev/null`. And a summary line like `sent=N` should be cross-checked against the number of qualifying inputs, since this failure mode produces no error at all.
+
+## A status code is not a symptom: check what the user actually sees before raising the alarm (2026-09-17, Tethered)
+
+The `404-200` Amplify rewrite made every SPA deep link return HTTP **404** with the full app-shell body. I read the status codes off a curl sweep and told Rob, in bold, that "every emailed partner invite is dead" and "any bookmark or refresh inside the app" was 404ing, with "I'd do it soon, invite links being dead is the one that actually costs you users". Rob opened the site: everything worked. Browsers ignore the status code, React boots off the body, users were never affected. The real damage was confined to Cypress (`cy.visit()` fails on non-2xx, which was the actual 12 e2e failures) and to crawlers.
+
+I had the evidence to catch it in the same command: the response body was right there and I never looked past the status line.
+
+Rules:
+- **An alarm about production is a claim about users, so it has to be verified at the user's level.** Fetch the page and read what comes back, or drive it in a real browser, before saying anything is "dead". A machine signal (status code, exit code, red check, alert) is a lead, not a finding.
+- Scale the language to the evidence. "Deep links return 404 status, body looks intact, checking user impact" would have been both true and useful; "every invite link is dead" was neither.
+- Ask who is actually harmed before escalating. Here the answer was "the test runner and Googlebot", which is a tidy-up, not a drop-everything. Getting that wrong spends Rob's attention and costs credibility on the next real alarm.
+- Corollary for SPA hosting specifically: a rewrite that serves files first must still return **200** for app routes. The working Amplify rule is a plain 200 rewrite to `/index.html` gated by an extension-exclusion regex, not a 404-fallback. Full rule in [[Tethered]] overview.

@@ -50,6 +50,17 @@ The mirror image of the re-entry panic, and now clearly a pattern rather than an
 - Worth naming the pattern with her in a **cold moment**, as a pattern, never mid-row.
 - Watch for her worries being anxiety rather than a coherent objection: on 31 Aug her two fears (that Mary is local and that it might be a one-off) could not both land, since a one-off dissolves the local-visibility problem. That is a tell that reassurance is wanted, not rebuttal. Point it out to Rob so he does not argue the logic *at* her.
 
+### The declined yes, the mirror-image failure (surfaced 2026-09-17, [[Fen]])
+
+Same machinery, opposite direction, and it will recur with the next prospect. Over Fen, Aimee gave a **conditional yes**: explore it, Fen speaks to me first, and promise you won't be angry with me if her chaos lands on me at BB. She also said explicitly that she refuses to be the one who says no ("it would make me feel like the villain") and that she has never been comfortable with anyone straight away, trust comes after, not before.
+
+Rob could read the reluctance underneath the yes, so he declined **and named her discomfort as the reason**: "I can't see a way of playing with Fen that you'd be comfortable with." Her reply read as defensive/aggressive to him and he was baffled that the considerate move backfired ("this is fuckin stupid").
+
+- **The decision was fine. Three words of phrasing were the whole problem.** "I won't play, the friction isn't worth it to me" and "I can't see a way you'd be comfortable" are built on the same fact, but one carries his name and one carries hers. She has now said twice, in her own words, that being the named reason is the thing she cannot carry.
+- **The deeper collision, and the durable bit:** Rob trusts his read of Aimee's feelings over her stated words; Aimee wants her stated terms taken at face value. Both are acts of love and they meet head-on every time. The cost of his version is that she can never give him a usable yes: any yes gets x-rayed for reluctance, reluctance is always findable, so the only acceptable yes is an enthusiastic one, which puts her under pressure to perform enthusiasm or be the blocker. That is worse than the position she built for herself, which was: I do the work, I set fair terms, my discomfort is mine to manage while trust grows.
+- **What to say when it happens again:** he is completely entitled to decline. Just decline in his own name. "I've thought about it and I don't want it enough to be worth the friction, my call" closes it cleanly. And when he has already fumbled it, the exit is two sentences, not another essay: "that came out like I was putting it on you, that wasn't fair, it's my call and it isn't because you failed to be okay enough."
+- **My own lesson from this thread:** I made the point well once and then made it four more times in different clothes while he got more frustrated. See [[feedback_land_it_once]]. Once he is defending rather than absorbing, the useful move is the exit line, not a better argument.
+
 ## Self-insight Rob reached along the way
 
 - His compulsive **phone-checking** and habit of **making things to "show off"** trace back to a long-standing pattern of **outsourcing stability/validation to others**. He did real work on this (e.g. a phone-airplane-mode exercise, deliberately doing a project just for himself, not to post).
