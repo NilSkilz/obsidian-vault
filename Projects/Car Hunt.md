@@ -447,3 +447,19 @@ Seeded 14 Sep 2026 with the 104 listings already on the market, so from here he 
 - Rob and Aimee to agree whether this **replaces the Fiesta** (MOT 22 Sep, coolant and handbrake both open) or the Dacia, or is a third car. That changes the deposit: selling the Fiesta adds cash back to whichever pot needs it.
 - Loan: get an actual rate quote (soft search) before committing to a price ceiling. 6.4% is the advertised best case, not a promise.
 - ~~Which spec was Timmy?~~ Answered 14 Sep: pre-facelift Standard Range, "basic model". See the Torquay test section. Nothing in budget is a downgrade; the target is Long Range or 58kWh+.
+
+## MG4 test-drive scouting (20 Sep 2026)
+
+Rob asked where to actually sit in an MG4 Trophy Long Range (the cheap ones online are nearly all Cinch, delivery-only). Verified seller-by-seller on 20 Sep:
+
+**Local physical stock (Trophy LR, verified not Cinch):**
+- **Bateman & Lynch Cars, Tavistock (26 mi):** 2025 Trophy LR, 17k mi, £15,995. Small 5.0-rated indie, 01822 367071. Balance of MG 7yr/80k warranty to ~2032. autotrader.co.uk/car-details/202606103175444
+- **Tracks Suzuki, Marsh Barton, Exeter (49 mi):** 2022 Trophy LR, 28.6k mi, £13,999, battery SOH 92.3% on the listing. 01392 976576. autotrader.co.uk/car-details/202605272731218
+
+Everything in the £12.5-15k Trophy LR cluster that lists as "Plymouth" is **Cinch** (physical cars sit in Derby/Corby, test drive by appointment only up there; home delivery £225, 14-day money-back).
+
+**New-car test drive (franchises):** Vospers MG St Austell (~32 mi, closest), also Vospers Plymouth/Truro/Exeter and Hendy MG Exeter. Useful because the new MG4 is the same generation underneath, so a franchise test drive answers "do I like this car" without buying blind from Cinch.
+
+**Heat pump fact, settled:** UK Trophy Long Range never got a heat pump in any model year (EU Trophy did, UK only got it on Extended Range 77kWh and XPower). So the winter-range caveat (~170-190 mi real) applies to the 2025 car too.
+
+Hunt itself still Model 3 LR/Performance only, untouched.
