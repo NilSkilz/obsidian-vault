@@ -55,6 +55,10 @@ Two things were tried and the answer is now proven, so don't re-derive any of it
 
 Live question as of 13 Sep: turquoise/royal mix ratio, 80/20 (0.80g + 0.20g) vs 65/35 (0.65g + 0.35g), both run 12 Sep and awaiting the dry verdict. Pure royal is a legitimate third option if the plain hank already looks right, and it is much easier to reproduce at 20L scale. Full-set scaling for Aimee's birthday rope lives in the private project file.
 
+**Real rope weight correction (16-19 Sep):** the Rope Locker jute reel runs **~18.5g/m** (weighed twice: 720g/41m and 740g/40m), not the ~28-30g/m the standard test protocol assumed. So the old 1.00g/1m test hanks were dyed at ~5.4% depth of shade while the full sets are run at 3.5% on real weight, i.e. finished sets dry slightly paler than their test hanks. For a test that predicts a full run, dose **0.65g of dye per 1m** (3.5% on 18.5g); keep 1.00g only if comparing against the old blue/turquoise hanks.
+
+**20 Sep 2026: red test queued.** 1m jute, pure **Fuchsia** from the Jacquard set (Red MX-8B, a blue-shade magenta). Prediction: jute's tan/yellow base warms it, magenta + yellow = red, so it should dry toward raspberry/true red rather than pink. Bath: 1L at ~40°C, 28g salt first, **0.65g fuchsia** (pasted with warm water, weighed on the 0.01g scales), rope in 15 min, 5g soda ash (dissolved separately) after 15 min, 60 min total. Fuchsia strikes FAST (opposite of turquoise), so wet it will look alarming; judge dry as always. Fuchsia is also the worst crocker in the MX range: expect extra rinse cycles and do not skip the crocking test.
+
 ### Quantities
 
 Jacquard's sheet is written for ~11L. Scaled for a 4L ice-cream tub at **3L** (what Rob actually uses for two 10m sample hanks):
