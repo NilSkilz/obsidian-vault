@@ -7,6 +7,7 @@
 - **Role:** Software developer
 - **Location:** Remote from Cornwall; contract says the Cheltenham office is the workplace
 - **Schedule:** Written exemption (Rob + a couple of others) to 1 day/week or 2 days/fortnight in office, vs the standard 3 days/week RTO mandate. Originally a gentleman's agreement at hire (Cornwall), formalised in writing post-COVID. Keep a personal copy of that exemption off work systems.
+- **The exemption evidence (found 21 Sep 2026):** Slack DM from Ryan Williams (manager), 16 Oct 2024 09:12: "the business have accepted that for you they are happy to accept on average one working day a week, this can be split however you'd like so if you wanted to do 2 days a fortnight, or 4 days in a single week and not come back for another 3 weeks, that's fine too... It was exactly what you'd proposed before so I'm glad the business have accepted it." Rob accepted in writing 17 Oct 2024 08:48 ("That is much more achievable and a huge relief"). Permalink: https://superdry-it.slack.com/archives/D02NR4FHMFD/p1729066330453019 . Negotiation trail also in that DM, 19-20 Sep 2024 (Ryan discussed with Mark). Rob still needs to screenshot/export a personal copy off work systems.
 - **Work style:** Prefers remote work from home in Crackington Haven
 
 ## Communication Preferences
