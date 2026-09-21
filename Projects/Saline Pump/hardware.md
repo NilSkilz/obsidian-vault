@@ -252,6 +252,13 @@ Rob's plan is to run this at a kink event, where boiling immediately beforehand 
 
 Regardless of method, the **20-30 ml saline flush-to-waste at the event is the non-negotiable last step**, and the rest of the session rules don't travel-discount: gloves/clean hands, chlorhex wipe on the site, fresh sealed saline bottle, sterile butterfly from the pouch.
 
+**Trace IPA left after a saline rinse: quantified non-issue (2026-09-21).** Rob asked whether a residual trace of alcohol in an IPA-cleaned, saline-rinsed container matters. It doesn't, and the margin is enormous:
+
+- Worst realistic residue after draining plus one saline rinse is a wetted film, well under 0.5 ml of 70% IPA, so under ~0.3 g of isopropanol. Diluted into a 500 ml reservoir that is under 0.07% v/v.
+- Benchmark: licensed injectable medicines routinely carry alcohol excipients far above that (benzyl alcohol to ~1-2%, ethanol to ~10% in some IV drugs), given straight into veins. A subcut trace two orders of magnitude below that is metabolised (isopropanol → acetone, exhaled/renally cleared) without the body noticing. A concerning systemic dose of isopropanol is tens of grams, ~100x away.
+- The failure mode isn't toxicity, it's **sting**: a strong pocket of alcohol in the first ml through the needle nips locally. Rinsing fixes comfort, not safety.
+- Practical acceptance test: **smell the container after rinsing.** Nose detects IPA far below any level that matters; noticeable smell = rinse again, faint or nothing = done. One proper rinse-and-slosh with sterile saline, dumped to waste, passes every time.
+
 ### How much saline is safe? (the kidney question)
 
 - **Medical benchmark: hypodermoclysis**, subcutaneous fluid therapy used routinely on frail elderly patients, runs up to **~1.5 L per site per 24 h, ~3 L/day across two sites**, of exactly this fluid (sterile 0.9% saline). Play volumes (a few hundred ml per side) sit far inside an envelope medicine considers safe for people in much worse shape than Aimee.
