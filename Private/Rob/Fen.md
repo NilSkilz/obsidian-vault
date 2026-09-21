@@ -2,6 +2,12 @@
 
 Kinky friend from the Plymouth scene. Good night out together 4 Jul 2026 (Rob's mood log). Rob hadn't spoken to her in a while as of early Sep; now back in the frame as a play prospect.
 
+## Reopened (21 Sep 2026)
+
+- Fen asked Rob directly whether he's spoken to Aimee about them playing. Rob really wants to, but is stuck on how to approach Aimee (having declined on her behalf on 17 Sep) and what to tell Fen meanwhile.
+- Context: the Tash date planned for w/c 22 Sep looks like it's falling through, so the timing of the renewed want is worth being honest about.
+- My steer: no new pitch needed with Aimee. Own the 17 Sep overreach ("I answered for you, that wasn't fair"), take her two stated conditions at face value (Fen talks to Aimee first; Rob pre-commits to never being angry at Aimee over Fen fallout), and answer her open question about whether Fen is different from her online persona before reopening. Holding line to Fen: "we've talked, she's not against it, but her condition is you two talk first and it goes better than last time." Nothing promised to Fen until that conversation happens.
+
 ## Where things stand (17 Sep 2026)
 
 - Aimee suggested Rose's birthday party as a venue if Rob is "actually gonna play with Fen" ("all the Plymouth children anyway").
