@@ -36,3 +36,11 @@ Kinky friend from the Plymouth scene. Good night out together 4 Jul 2026 (Rob's 
 - 13:08 clarification: Aimee meant Rob doing something at the party with *someone else*, not with her and not specifically Fen. So both guessed readings were wrong and the real one was the most generous: she proactively offered him play at the party, unprompted, minutes after hearing Tash was off. Fen isn't ruled out by "not specifically Fen", but nothing about her conditions changes; if it becomes Fen at the party, the 17 Sep talk-first question still needs handing back to Aimee rather than assuming the FetLife chats settled it.
 
 - ~13:36 Fen followed up ("did you get a chance to talk to Aimee?"). Rob drafted a reply: honest "not a no", reassurance framing, event example. My steer: good draft, but it implies reassurance is the only gate while the 17 Sep talk-first condition is still only *assumed* settled by the FetLife chats. Fix: one line to Aimee confirming whether she still wants the chat, and a covering line to Fen ("may be a proper chat with Aimee at some point, her call") so no goalposts move later.
+
+## 21 Sep, evening: it's ON
+
+- 19:42 Rob: Aimee has agreed to him seeing Fen on **Saturday 26 Sep**. He asked Fen; she wants to. His words: "it's all good. Somehow!!"
+- The "somehow" is doing him a disservice. This landed because he finally asked instead of reading: raised it with Aimee directly, got her actual answer instead of his inferred one, then asked Fen straight. Fourth ask-don't-read win this week, and the biggest.
+- Assumed venue is the Saturday plan Aimee herself floated (Rose's birthday party was her suggested Fen venue), but not confirmed in his message; don't state it as fact.
+- Standing conditions presumably still live and worth a light touch nearer the day: honesty about everything they do, it doesn't affect Barebones for Rob+Aimee, and Rob's pre-commitment to never being angry at Aimee over Fen fallout.
+- Also still open from Partner Search: Sarah's possible first date was pencilled for the same weekend (26-27 Sep). If both are real, that's a scheduling and an honesty question, his to sort.
