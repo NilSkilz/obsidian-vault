@@ -296,6 +296,27 @@ Caveats (none fatal, all worth knowing):
 
 Added to the sterile-path shopping list. Verify luer-LOCK and a sealed sterile pouch on whatever listing is actually ordered, same rule as the butterflies.
 
+### Thinner pump tube = slower pump? Yes, but it's a head swap, not a tube swap (2026-09-21)
+
+Rob asked whether a thinner tube in the pump would also slow the fill. **The physics says yes, and it's the one *mechanical* fix that lowers the rate floor itself.** Peristaltic flow per revolution = lumen cross-section × roller sweep, so flow scales with **ID²**. The 500-series variant list proves it: 1×3mm head → 0–23 ml/min, 2×4mm → 0–65, 3×5mm (ours) → 0–150, which is exactly the 1:4:9 ratio of the bores. The ~60% duty stall floor is a *motor* floor (rpm), so ml/min at the floor rescales with the tube too:
+
+| Head/tube | Top rate | ~Floor (60% duty) | 250 ml side takes |
+|---|---|---|---|
+| 3×5mm (current) | ~150 ml/min | ~59 ml/min | ~4 min |
+| 2×4mm (Type B) | ~65 ml/min | ~26 ml/min | ~10 min |
+| 1×3mm (Type A) | ~23 ml/min | ~9–14 ml/min | ~20–25 min |
+
+Bonus: lower flow = proportionally lower needle back-pressure (Poiseuille), so stall margin *improves* at the same time. No trade-off on that axis.
+
+**The catch: you can't just poke a thinner tube into the existing head.** The head's roller occlusion is cut for one specific tube geometry (5mm OD, 1mm wall):
+
+- **2×4mm tube in the 3×5 head = under-occluded.** Rollers never fully pinch it → backflow, lost prime, erratic or zero flow. This is the same reason the Type B head wouldn't seat our silicone (noted 2026-08-14), in reverse.
+- **2×5mm tube (same OD, 1.5mm wall) = over-squeezed.** OD fits the track, but the rollers now crush 3mm of wall into a gap cut for 2mm: big friction, hotter motor, *higher* stall duty (eating the gain), fast tube wear. Tempting, wrong.
+
+**So the real move is swapping the head (or whole pump, they're £9).** The same AliExpress family sells all three variants; the pending "2nd matching pump" line in the shopping list is the natural vehicle: buy the 2nd unit as a **2×4 (Type B)** instead of matching, keep the 3×5 as the fast head, and let per-side two-point calibration absorb the L/R mismatch (it exists for exactly this). Needs 2×4mm food-grade silicone for the re-tube instead of a second run of the 3×5 iMeistek. 1×3 (Type A) gets genuinely drip-adjacent but tops out at 23 ml/min, so a 1L side takes 45+ min flat out with zero headroom; B is the sane middle.
+
+**Verdict vs pulse dosing:** pulse dosing is free (firmware, OTA) and reaches *any* average rate today; the thinner head is a purchase + recal but gives genuinely smooth continuous flow instead of boluses, plus permanent stall margin. Not competitors: pulse dosing first (it also works on the B head), thinner second head when the next order goes in.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
