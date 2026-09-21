@@ -44,6 +44,8 @@ He sent her a clear message on 25 Aug naming what he wants (ongoing rather than 
 
 Chatting as of 21 Sep 2026; a first date is possibly on for the weekend of 26-27 Sep. Never met, nothing negotiated, a long way from playing. Complication: Rob senses Aimee is pleased he's "moved on" from Fen to Sarah, which isn't true (the Fen want is live, see `Fen.md`), and Aimee's own condition on Fen is full honesty. Watch that Sarah doesn't become the polite cover story for not having the Fen conversation.
 
+Update 21 Sep evening: still no reply from Sarah, so nothing is booked. Saturday 26 Sep is now Fen's (Aimee agreed, Fen keen); Rob's plan is Sunday 27 for Sarah if she ever surfaces, which cleanly resolves the potential clash. If Sunday firms up, the Aimee honesty condition applies to Sarah too: she needs to hear it from Rob before it happens.
+
 ### Grace (late July 2026) — cooling / likely off
 
 A prospective new partner Rob was talking to; a Tuesday meet was planned. She pulled back citing a **"bad gut feeling"** because his negotiation style differed from hers (**opt-out vs opt-in**), framed around **consent** (her highest-priority thing). She slept on it; the meet went wobbly. **Second time she's reacted OTT to something innocuous.** Rob was sad + annoyed + went into "I don't know what I'm doing anymore" spiral (that last part is his own wobble, not really about her — see [[Rob Mood Log]]).
