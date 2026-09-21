@@ -5,8 +5,8 @@
 ## Current Employment
 - **Employer:** Superdry
 - **Role:** Software developer
-- **Location:** Remote from Cornwall, with office in Cheltenham
-- **Schedule:** Supposed to be 2 days/fortnight in office (but flexible)
+- **Location:** Remote from Cornwall; contract says the Cheltenham office is the workplace
+- **Schedule:** Written exemption (Rob + a couple of others) to 1 day/week or 2 days/fortnight in office, vs the standard 3 days/week RTO mandate. Originally a gentleman's agreement at hire (Cornwall), formalised in writing post-COVID. Keep a personal copy of that exemption off work systems.
 - **Work style:** Prefers remote work from home in Crackington Haven
 
 ## Communication Preferences
