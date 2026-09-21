@@ -240,6 +240,18 @@ Rob asked two questions: how long boiled tubing stays sterile, and whether there
 - **The residue worry is real but trivially fixed:** IPA is fully water-miscible, so the same 20-30 ml saline flush-to-waste that ends the boil routine removes it completely. Trace IPA at that level is a non-issue subcutaneously. It's not a reason to avoid IPA; boiling just wins anyway.
 - Verdict: **boil the tube, IPA the barb adapter and fittings if the pot is a faff, saline-flush everything last.** The flush is the non-negotiable final step either way, and it doubles as the prime.
 
+### Field protocol: doing this at an event, no kettle (2026-09-21)
+
+Rob's plan is to run this at a kink event, where boiling immediately beforehand is impossible. Options assessed:
+
+- **Winner: transport the tube FILLED with 70% IPA, capped.** At home: boil or clean the tube as normal, then fill the lumen completely with 70% IPA (syringe/pump it through until it runs bubble-free), cap both ends (luer caps, or clingfilm + band over the ends). This flips IPA's one weakness: the reason it's mediocre for a long lumen is guaranteeing contact, and a lumen that travels *full* has 100% contact for hours. Nothing grows in 70% alcohol, so the tube is held in a disinfected state for the whole journey — hours or days, doesn't matter. At the event: uncap, flush 20-30 ml sterile saline to waste (removes every trace of IPA, doubles as the prime), fit the butterfly, go. **Critical detail: filled, not rinsed-and-drained.** A drained tube evaporates dry in transit and is just an open tube again by the evening.
+- **Thermos: physics works, logistics don't.** Pre-heat the flask with boiling water, boil the tube 10 min, tong it into the flask topped with fresh just-boiled water, seal. A decent flask holds >60°C for many hours, and above ~60°C nothing recolonises (same principle as legionella control in hot water systems). But it adds two open-air transfer steps, means fishing a hot tube out with clean tongs in a play space, and if the event runs long and the water sags below ~50°C it turns into a warm-wet incubator, the worst storage there is. Acceptable backup, not the plan.
+- **Or buy the problem away for £1-2:** sterile single-use **luer extension lines** (10-200cm, EO-sterile in a pouch, same UK suppliers as the butterflies). Use one for most of the run to the needle and the only reusable fluid path left is the short pump-head loop + barb, which the IPA-fill covers. Least faff per event of all; worth adding to the next consumables order.
+
+**Barb adapters: soak, not dip.** A quick dip is theatre — alcohol disinfection needs *wet contact time*, minutes not seconds. Routine: clean them first (alcohol won't penetrate gunk), then fully submerge in 70% IPA for **10 minutes**, then saline-flush or air-dry. Easy event version: drop them into a small screw-top jar of IPA when you start setting up; they're done before the rest of the rig is. Same 70%-not-99% rule as always.
+
+Regardless of method, the **20-30 ml saline flush-to-waste at the event is the non-negotiable last step**, and the rest of the session rules don't travel-discount: gloves/clean hands, chlorhex wipe on the site, fresh sealed saline bottle, sterile butterfly from the pouch.
+
 ### How much saline is safe? (the kidney question)
 
 - **Medical benchmark: hypodermoclysis**, subcutaneous fluid therapy used routinely on frail elderly patients, runs up to **~1.5 L per site per 24 h, ~3 L/day across two sites**, of exactly this fluid (sterile 0.9% saline). Play volumes (a few hundred ml per side) sit far inside an envelope medicine considers safe for people in much worse shape than Aimee.
