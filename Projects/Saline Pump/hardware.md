@@ -224,6 +224,30 @@ Bench observation (Rob): with a needle on the outlet the pump stalls out much mo
 - **Firmware to-do: stall detect.** Side commanded running but reservoir weight not falling for ~10s → stop that side, STALL state on glass + page. Cheap, the cells are already live. Candidate for Stage 10.
 - **Related design tension, now visible:** the 60% stall floor means the slowest continuous rate is ~59 ml/min, 3.5x the 17 ml/min design pace (and ~7x Aimee's old gravity pace). Pulse dosing (short bursts at a healthy duty, off-gaps between, averaging any rate you like) would buy both slow rates and stall margin in one move. Also a Stage 10 candidate.
 
+## Sterility of the reusable path + saline dose limits (2026-09-21)
+
+Rob asked two questions: how long boiled tubing stays sterile, and whether there's a limit on infused saline (kidneys). Both answered, the first one has a trick in it.
+
+### Boiling: what it actually buys, and its shelf life
+
+- **Boiling is high-level disinfection, not sterilisation.** 10 minutes at a rolling boil kills essentially all vegetative bacteria, viruses and fungi, but not hardy bacterial spores; true sterilisation needs an autoclave (121°C under pressure) or EO gas, which is how the butterfly sets arrive. For a reusable upstream path feeding a *sterile single-use* needle into subcutaneous tissue, boil-then-saline-flush is the accepted harm-reduction standard. Just don't call the tube "sterile", call it "as clean as we can get it".
+- **Shelf life: effectively zero.** Sterility isn't a property the material holds, it's a chain of custody. The moment the tube comes out of the pot into room air, recolonisation starts; a *wet* lumen is worse than a dry surface (Pseudomonas and biofilm love warm damp tubing within a day or two). So the rule is: **boil in the same session it's used, ideally within the hour.** Drain, keep the ends off the counter (rest them on a fresh kitchen-roll sheet or cap them), fit the line, then flush 20-30 ml of the sterile saline itself through to waste before the butterfly goes on. Never boil ahead and store as "done"; stored tube is "clean, re-disinfect before use".
+- Silicone tube shrugs off 100°C indefinitely. (PVC wouldn't; it softens and leaches plasticiser. One more reason the fluid path is silicone.)
+
+### IPA instead?
+
+- 70% IPA (the 70 matters, pure 99% actually kills worse) is fine for fittings and surfaces but mediocre for a long lumen: hard to guarantee full contact, and it doesn't touch spores either, so it buys nothing over boiling.
+- **The residue worry is real but trivially fixed:** IPA is fully water-miscible, so the same 20-30 ml saline flush-to-waste that ends the boil routine removes it completely. Trace IPA at that level is a non-issue subcutaneously. It's not a reason to avoid IPA; boiling just wins anyway.
+- Verdict: **boil the tube, IPA the barb adapter and fittings if the pot is a faff, saline-flush everything last.** The flush is the non-negotiable final step either way, and it doubles as the prime.
+
+### How much saline is safe? (the kidney question)
+
+- **Medical benchmark: hypodermoclysis**, subcutaneous fluid therapy used routinely on frail elderly patients, runs up to **~1.5 L per site per 24 h, ~3 L/day across two sites**, of exactly this fluid (sterile 0.9% saline). Play volumes (a few hundred ml per side) sit far inside an envelope medicine considers safe for people in much worse shape than Aimee.
+- **What the body does with it:** the pooled saline absorbs into circulation over several hours, then the kidneys excrete the water and salt, functionally the same as having drunk it. 1 L of 0.9% saline = 9 g of salt, a very salty day's worth: expect thirst and extra peeing that evening, nothing more, in a healthy adult.
+- **Kidneys are not the limiting factor for a healthy person.** The systemic cautions are pre-existing kidney disease, heart failure, or fluid/BP medication, where fluid overload is a real risk. None apply here, but it's the screening question if this rig ever touches anyone else.
+- **The actual limits are local, not systemic:** skin tension. Overfill one site fast and you get hard shiny blanched skin, real pain, and blister/necrosis risk at the extreme. Stop signals for a site: skin going white, going shiny-tight, or disproportionate pain. Splitting the volume across two sites (the whole twin-pump design) and the ~17 ml/min pace are already the right mitigations. Sensible working ceiling: **the planned 250-500 ml/side is comfortably fine; keep any single site under ~1 L** and let comfort, not the reservoir, set the stop.
+- Standing rules regardless of volume: **0.9% isotonic sterile saline only** (never tap water, never mixed-at-home), and fresh sealed bottle/bag per session.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
