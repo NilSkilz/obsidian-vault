@@ -267,6 +267,35 @@ Regardless of method, the **20-30 ml saline flush-to-waste at the event is the n
 - **The actual limits are local, not systemic:** skin tension. Overfill one site fast and you get hard shiny blanched skin, real pain, and blister/necrosis risk at the extreme. Stop signals for a site: skin going white, going shiny-tight, or disproportionate pain. Splitting the volume across two sites (the whole twin-pump design) and the ~17 ml/min pace are already the right mitigations. Sensible working ceiling: **the planned 250-500 ml/side is comfortably fine; keep any single site under ~1 L** and let comfort, not the reservoir, set the stop.
 - Standing rules regardless of volume: **0.9% isotonic sterile saline only** (never tap water, never mixed-at-home), and fresh sealed bottle/bag per session.
 
+## First live session + one pump into two needles (2026-09-21)
+
+**First real session on Aimee, and it worked.** Two debrief points and one design question answered.
+
+### Debrief: it filled in minutes, and that's the thing to change
+
+- Her old gravity drip took *hours*; the pump's continuous floor is ~59 ml/min, so a 250 ml side lands in ~4 minutes. That's 30-60x the drip pace. Nothing about that breaks the systemic safety maths above, but the **local** picture is different at speed: rapid distension stings, stretches tissue harder, bruises/aches more the next day, and compresses the stop-signal window (skin tension arrives in seconds rather than creeping up while you watch). Slow is the luxury this rig can afford.
+- The first-fill sting was probably the IPA pocket (see acceptance-test note above: sniff the container, rinse until faint), but **rate itself stings too**, so don't fully write it off until a slow, well-rinsed run feels fine.
+- Practical fixes, in order: run at the 60% floor and pause between phases (poor man's rate control, works today); **pulse dosing (Stage 10)** remains the proper answer, short bursts with off-gaps averaging any rate down to true drip pace, and this session is the argument for building it.
+
+### Y-splitter: yes, it exists, and it's the right instinct
+
+Rob asked whether one pump can feed two needles to cut pressure and spread the fill. The part is a **sterile Y-type bifurcated extension set** (luer lock, EO-sterile in a pouch, single-use, a few pounds each; ~£5/unit on UK medical eBay, also stocked by medical suppliers as "Y-type extension set"). Chain per pump: pump tube → barb adapter → Y → two butterflies, two sites in the same breast.
+
+Why it genuinely helps (both of Rob's goals check out):
+
+- **Pressure:** per-needle flow halves, and needle back-pressure is linear in flow (Poiseuille), so each needle costs ~half. The marginal-23G/stall problem from 2026-09-17 roughly doubles its margin; the head loafs.
+- **Tissue:** per-site fill rate halves and volume spreads across two pockets, exactly the hypodermoclysis multi-site playbook. Gentler distension, later skin-tension ceiling.
+
+Caveats (none fatal, all worth knowing):
+
+1. **The split is never guaranteed 50/50.** Same-gauge, same-length branches into similar tissue splits roughly evenly, but a kink, a partial occlusion or a tighter pocket skews it. The load cell only knows the *total*; per-site symmetry is judged by eye.
+2. **Failure modes get quieter.** One branch occludes → the other silently takes double rate into one site. One needle dislodges → part of the "delivered" weight is actually on the towel. Neither is dangerous, both corrupt dosing: eyeball both sites every couple of minutes.
+3. **Branches must be identical.** Same gauge, same tube length. Mix a 21G with a 23G and the 21G takes nearly everything (r⁴ again).
+4. **It must be a sterile single-use Y**, downstream of the flush in the sterile chain. Not a barbed AliExpress Y, not reused, not boiled-and-hoped.
+5. **It does not slow the overall fill.** The pump sets total rate; the Y only spreads it. If "a few minutes" felt too quick, the fix is pump speed / pulse dosing, not plumbing.
+
+Added to the sterile-path shopping list. Verify luer-LOCK and a sealed sterile pouch on whatever listing is actually ordered, same rule as the butterflies.
+
 ## Warming the saline (how it'd actually work)
 
 Rob's interested, so here's the shape. Body-temp saline (~37°C) is far more comfortable than cold going in. Three ways to do it, cheapest first:
@@ -354,6 +383,7 @@ The into-body chain has to be genuine sterile single-use CE-marked kit. These ar
 | Transparent film dressing (Tegaderm / IV3000) to fix the wings, site stays visible | 1 pack | ~3.00 | any UK pharmacy / Amazon |
 | Barbed-to-male-luer-lock adapters, sized to pump tube ID (1/8" barb ≈ 3mm, 3/16" ≈ 4–5mm), pack of 5 | 1 pack | 7.20 | adhesivedispensing.co.uk/male-luer-lock-to-barb-160-c.asp |
 | Alcohol pre-injection wipes (70% IPA), box of 100 | 1 box | 1.57 | medicaldressings.co.uk/alcohol-pre-injection-wipes-3cmx3cm-2ply-box-of-100/ |
+| Y-type bifurcated extension set, luer lock, sterile single-use (one pump → two needles; added 2026-09-21) | 2-4 | ~5.00 ea | UK medical eBay / medical suppliers, search "Y-type extension set luer lock sterile"; **verify luer-lock + sealed sterile pouch before ordering** |
 | Clinell 2% chlorhexidine + 70% alcohol skin wipes, box 200 (**recommended upgrade** for a skin-penetration site) | 1 box | ~14.00 | premierhh.co.uk/products/clinell-2-chlorhexidine-in-70-alcohol-skin-wipes-200 |
 
 **Sterile subtotal: ~£63 (plain wipes) / ~£77 (with chlorhexidine)**
