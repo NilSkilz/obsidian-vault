@@ -104,3 +104,23 @@ Fifth theme added same day: "maybe add ENM stuff to that list? Like software for
 5. **UK testing-chain coordinator.** Cadence per the network's protocol, reminders around new-partner events, per-edge private attestations, "risk picture changed upstream" alerts without naming names. Highest trust burden, hence last.
 
 **Meta-lesson from the graveyard:** poly *calendars* die (Google wins at calendaring). What survives is poly-native *data models*: consent (PYE), agreements-as-profiles (Nymph), analytics (DaterGraph), events (Plura). Model the things Google structurally cannot: agreements, audiences, edges, history.
+
+## 2026-09-22 (addendum 2: FOC-Stim v4 cost estimate, Rob's request)
+
+Sources: repo BOM docs (`docs/focstim-v4-BOM.md`) + production files (`schematics/V4/BOM_FOC-Stim-v4.3_mainboard.csv`, which carries LCSC unit prices).
+
+**What v4 buys over v1:** 4 outputs (v1 has 3), battery (7h on a 2000mAh), WiFi (ESP32-S3), OLED + volume knob, accelerometer, 3D-printed case. Flashing is all USB (webflasher for the ESP32, Restim's firmware updater for the STM32G473), no programmer needed.
+
+**Cost breakdown for one working unit:**
+
+| Chunk | Est (landed, GBP) | Notes |
+|---|---|---|
+| JLCPCB mainboard PCBA | £110-145 | Parts on the board sum to ~$28.50/board at LCSC prices (STM32G473 $3.66, ESP32-S3-MINI $4.63, 4x DRV8231A $6.35, fuel gauge + charger + boost ~$4.2). Min assembly qty is 2, plus setup ~$8, extended-part loading fees (~15+ types x $3 = the silent killer), 5 bare PCBs, shipping + 20% VAT. You end up with a spare assembled board. |
+| Frontpanel PCB | £5-15 | Bare from JLC in the same order, hand-solder the SMD nuts/headers (or pay JLC another setup fee to assemble). |
+| 4x Xicon 42TL004-RC transformers | £20-30 Mouser, £10-15 eBay knockoff | Hand-soldered, not part of the PCBA. Retroamplis has them at EUR 6.95 each as a sanity check; couldn't get a live Mouser quote (JS-walled). |
+| Aliexpress basket | £30-40 | OLED display ~£2.50, 4x Amass 2mm banana jacks, encoder (~£1 LCSC), knob, heatset inserts, feet, JST battery connector, 103450 3-pin JST-PH battery ~£8-12, 2mm banana cables + 2mm-to-4mm adapters. |
+| Case | ~£0-20 | 3D printed (STLs in repo). Pennies in filament on our own printer, ~£15-20 printed by a service. |
+
+**Total: realistically £170-230 landed**, frugal floor ~£150 (eBay transformers, no battery, bare frontpanel), and the JLC minimums mean a spare assembled mainboard + 3 spare bare boards fall out of it. Second unit would cost ~£60-80 in bits.
+
+**Context:** v1 route (B-G431B-ESC1 dev board + transformer output stage) is ~£50-70 all-in but 3 outputs, mains-tethered, no display/battery/WiFi. The v4 is roughly 3x the money for the actual-product experience. A commercial 4-channel current-controlled box does not exist to compare against; the nearest (ET312 clones, Coyote 3) are neither current-controlled nor spatially steerable.
