@@ -44,3 +44,9 @@ Kinky friend from the Plymouth scene. Good night out together 4 Jul 2026 (Rob's 
 - Assumed venue is the Saturday plan Aimee herself floated (Rose's birthday party was her suggested Fen venue), but not confirmed in his message; don't state it as fact.
 - Standing conditions presumably still live and worth a light touch nearer the day: honesty about everything they do, it doesn't affect Barebones for Rob+Aimee, and Rob's pre-commitment to never being angry at Aimee over Fen fallout.
 - Also still open from Partner Search: Sarah's possible first date was pencilled for the same weekend (26-27 Sep). If both are real, that's a scheduling and an honesty question, his to sort.
+
+## 22 Sep, evening: honesty condition met up front
+
+- ~22:00 Rob told Aimee that Fen accepted his invite to go out, and that they might do **needle play**. That's Aimee's "honest about everything" condition being met in advance of the scene, not confessed after. Fifth ask/tell-don't-read win in six days.
+- Aimee's reaction not yet reported; worth hearing before Saturday counts as fully squared.
+- Needle play note for Saturday prep if he asks: fresh single-use sterile needles, gloves, sharps disposal, skin prep, and Fen's actual experience level are the questions that matter. He has adjacent experience (saline rig, e-stim) but play piercing on/with a new partner deserves the checklist treatment.
