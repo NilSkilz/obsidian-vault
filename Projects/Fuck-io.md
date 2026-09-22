@@ -1,6 +1,14 @@
 # Fuck-io
 
-**Status:** parked as of 18 Sept 2026, and on 22 Sept Rob named the real reason: it was mainly for [[Mary]], and since that closed (14 Sep 2026) he's not sure he wants to invest in it right now. The Mary-back-in-October soft deadline no longer applies. Rob wants a hands-on/physical distraction, not a software weekend, so the headless Edge-o-Matic firmware+web-app route (fully speccable at £0, see below) was pitched and turned down ("can't see the point"). Revisit when he wants a keyboard project again; the £0 software-first path still stands ready.
+**Status:** LIVE, revived 22 Sept 2026. After a day of hunting for "the project", Rob picked this one on the fun-first framing: build it because it's motors + firmware + signal processing and every layer is a skill worth levelling, money/audience irrelevant. The Mary motivation is gone (that closed 14 Sep); the users are the household, the demo audience is people like [[Fen]]. This supersedes the 18 Sept parking.
+
+## Phase 1: first steps (22 Sept 2026)
+
+1. **Measure the v1 rail.** Length, carriage type, does the carriage take a GT2 belt clamp. This is the only thing gating the mechanical shopping list (belt length, pulleys, stroke). Tape measure + photo, ten minutes. In Todoist.
+2. **Order the motor.** iHSV57-class closed-loop integrated servo + 36V PSU, £90-130 (see Motor recommendation below). Independent of the rail measurement, and it's the long-lead item, so order early. On the Wishlist.
+3. **While parts ship:** design the mounting saddle for the 33.7mm scaffold tube (or dig out spare key-clamp fittings), and get StrokeEngine compiling on a bare ESP32 on the bench, no motor needed to start reading the code.
+
+The plug (headless Edge-o-Matic, see [[Fuck-io Edge-o-Matic Build]]) is Phase 2; don't buy plug parts until the machine moves under its own power.
 
 ## Decisions (9 Sept 2026, Rob via Telegram)
 
