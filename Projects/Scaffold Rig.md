@@ -114,6 +114,9 @@ The tube is **non-galvanised** 33.7 x 3mm mild steel and Rob wants the dark gunm
 
 **Not for chrome.** The 25mm chrome whip-handle tube needs nothing: chrome plating *is* the finish, and oil just leaves a film that never cures. Only the bare cut end wants treating (deburr, IPA, thin smear of BLO or just cap it). Degrease chrome with IPA before any grip wrap or the adhesive won't stick.
 
+## Upholstery attachment (massage chair cushions on wooden bases)
+Decided 2026-09-20 (full detail in that daily log): half couplers bolted through the wooden base for load-bearing pads, U-bolts with wing nuts for quick-swap pieces, velcro straps for comfort-only padding, old inner tube wrapped under everything to stop slip and protect the BLO finish. **Open: half couplers offered for the shopping list, Rob hasn't confirmed go** (asked again 2026-09-22, still unconfirmed).
+
 ## Cutting the tube
 33.7 OD / 3mm wall / plain mild steel: **Faithfull 6-42mm manual steel pipe cutter, Screwfix £20.99, code 161YL** (5mm wall clearance, rated for steel, retractable deburrer). A dozen turns per cut, quarter-turn tighter each pass, don't rush or the wheel wanders. It rolls a lip into the bore, so deburrer inside and a file on the outside so fittings slide on.
 - Fallback if it's hard work: **Erbauer 750W 115mm angle grinder £32.99** + 1mm cutting discs + a flap disc. 15 seconds a cut.
