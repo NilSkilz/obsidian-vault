@@ -93,6 +93,7 @@ Two things shifted in the 25 Aug conversation, both worth carrying forward.
 
 - **Aimee "away"** on the calendar usually = she's seeing Sean. Rob's okay with it but runs a **short fuse** those days and things get to him fast. Keep his plate light, no piled-on decisions, be around if the evening turns rough.
 - **Rob "away"** on the calendar usually = he's at work, and roughly 50/50 he's also seeing [[Tash]]. Assume work unless something says otherwise, don't read into a quiet day, keep the boring stuff handled.
+- **ENM calendar privacy idea (parked, 22 Sep 2026):** Rob wants a way to keep the real ENM detail visible to him and Aimee while DAKboard and the kids' calendar view only ever see the cover story. Proposed shape: family iCloud calendar stays the sanitised cover-story feed the kids/DAKboard sync to; a second iCloud calendar, shared only between Rob and Aimee, holds the real detail; Tide (which already does per-person CalDAV logins) merges the two for parent logins only, kids/logged-out views stay on the family feed only. Manual habit needed either way: drop a cover event on the family calendar whenever a private event would otherwise leave an unexplained gap. Rob said "drop it for now" — not built, no commitment yet, revisit if he brings it back up.
 
 ## Wellbeing thread (worth holding gently)
 
