@@ -68,3 +68,39 @@ Wild ideas hunted from the internet, curated for us. Fed by the weekly inspirati
 3. **Tethered platform play**: a Chaster-style extensions/webhook API, positioned by the rigging-log and aftercare gaps nobody else is touching.
 4. **Tide life-admin layer**: DVLA sensors + Warracker-style expiry model + ICS-subscription reminders.
 5. **House with a face**: LLM Vision narrating the cameras + a GLaDOS-style local voice persona. The homelab already has the brain; this gives it eyes and a mouth.
+
+## 2026-09-22 (addendum: ENM / poly software, Rob's request)
+
+Fifth theme added same day: "maybe add ENM stuff to that list? Like software for ENM people?" Now in the weekly rotation too.
+
+### What actually exists
+
+- **PYE**: launched 2025, the most serious current attempt at polyam logistics. Per-partner granular calendar privacy, consent/boundary attachments on date bookings (partners confirm before an event is final), metamour info-sharing per agreement. Canadian-hosted, free tier + premium. https://www.lovepye.com/
+- **Weel Planner**: indie circular-clockface calendar aimed at polyam + neurodivergent users, multi-timezone dots for long-distance polycules. UI-first rather than polyam-native data model. https://www.weelplanner.app/calendar-for-polyamory
+- **DaterGraph**: relationship diary + analytics (dates, venues, outcomes, first-date conversion charts). The only product doing analytics on relationship data. https://datergraph.me/
+- **Safely**: verified STI status sharing via US lab/insurer integrations. Nothing equivalent exists for the UK/NHS. https://safely.me/
+- **Polaris**: pre-launch waitlist promising boundary mapping, dynamic agreements, emotional tracking, E2EE. Vaporware until proven, but its feature list is the community wishlist written down. https://polaris-enm.com/
+- **Notion "Polyamory Dashboard" templates**: people pay $15-35 for skinned spreadsheets (Amorgnze on Gumroad/Notion Marketplace). The market talking. https://www.notion.com/templates/polyamory-couple-s-dashboard
+- **Multiamory RADAR**: the community's dominant monthly check-in framework (Review, Agree agenda, Discuss, Action points, Reconnect)... distributed as a PDF. Massively popular, zero tooling. https://www.multiamory.com/radar
+- **Polycule graph tools**: polycul.es (the classic, open source, unmaintained), PolyMap (polished), deniz-blue/polycules (active Aug 2026, even models plural systems), alifeee/polycule-visualiser. Every one of them is a static picture connected to nothing. https://polycul.es/ https://github.com/deniz-blue/polycules
+- **Dating side, briefly**: Feeld is huge but drowning in complaints (buggy redesign, Trustpilot bloodbath); #open appears dead (gone from both stores); PolyFinda rebranded to helloPOLY; **Nymph** is the interesting one, the first dating app where the profile unit is the polycule and its agreements, not the individual. https://www.nymph.so/ Plura owns events.
+- **Open source graveyard**: mihaeu/smorgasbord (digital Relationship Anarchy Smorgasbord, abandoned 2024), polycal (hobby-grade scheduling), polyamory-compass (self-reflection prompts). There is no "Nextcloud of polyamory".
+
+### The gaps (what the community actually says)
+
+1. The incumbent is **Google Calendar plus a Google Doc**. The doc holds the agreements (no history, no sign-off, no notifications), the calendar holds the dates (all-or-nothing sharing). Both wrong for the job.
+2. **Scheduling is named the #1 pain, above jealousy** (a Sept 2025 podcast is literally titled "Polyamory's Biggest Struggle Isn't Jealousy, It's Scheduling"). Yet pure calendars keep dying because Google is good enough at calendaring. The Poly Life (2014) is the canonical corpse; the community now *satirises* the category (Just Poly Everything was an April Fools app whose punchline was AI polycule scheduling).
+3. **Agreements are "living documents" in every essay and static docs in every real polycule.** No versioning, no "who agreed to what, when", no review reminders. Nothing exists.
+4. **Sexual-health coordination is spreadsheets and trust-chain disclosure.** Nobody models the network (metamour's test lapses = your risk picture changed).
+5. **NRE / jealousy / feelings tracking: zero tooling** despite endless essays.
+6. **Privacy is existential** (outing risk: custody, jobs). Self-hosted or E2EE is a real differentiator for the tech-literate slice, which is a big slice.
+
+### Rob-could-build-this, ranked
+
+1. **Git for relationship agreements.** Structured agreements with full history, diffs, per-person sign-off on every change, expiry/reaffirmation dates, RADAR-style check-ins that produce commits. Nobody has built it, and it's Tethered's DNA (consent, accountability between intimate partners) pointed at ENM.
+2. **The operational polycule graph.** Make polycul.es DO something: nodes carry testing dates and agreement links, edges carry relationship type and cadence; the graph drives calendar-sharing scopes and propagates safer-sex status changes along edges. Every existing tool is a static picture.
+3. **Calendar fairness analytics.** A layer over existing calendars (CalDAV/Google), not another calendar: time distribution per partner, NRE skew detection ("new connection is eating 70% of your free evenings"), "you haven't had a solo night in 3 weeks". Tide's mood/journal plumbing is half of this already.
+4. **Audience-scoped household calendar.** The same evening renders differently to kids ("Dad's out"), nesting partner (full detail), metamour (busy/free). PYE does per-partner privacy but has no concept of a household or kids. Haven/Tide already solve per-person visibility walls; this is the problem nobody else even sees, and it is literally this household's lived problem.
+5. **UK testing-chain coordinator.** Cadence per the network's protocol, reminders around new-partner events, per-edge private attestations, "risk picture changed upstream" alerts without naming names. Highest trust burden, hence last.
+
+**Meta-lesson from the graveyard:** poly *calendars* die (Google wins at calendaring). What survives is poly-native *data models*: consent (PYE), agreements-as-profiles (Nymph), analytics (DaterGraph), events (Plura). Model the things Google structurally cannot: agreements, audiences, edges, history.

@@ -2,8 +2,8 @@
 # Weekly inspiration scout (Rob, 22 Sep 2026: "go out into the world, research
 # some cool ideas... this could be a weekly job").
 # Every Sunday ~09:30: hunt the internet for genuinely inspiring ideas across
-# rotating themes (AI assistants, kink software + DIY kink hardware, household
-# apps, mad-scientist maker projects), log the good ones durably in
+# rotating themes (AI assistants, kink software + DIY kink hardware, ENM/poly
+# software, household apps, mad-scientist maker projects), log the good ones in
 # Ideas/Inspiration Log.md, and send Rob a short Telegram drop of the best 3-5.
 # IDEAS ONLY. Never builds, buys or signs up for anything.
 #
@@ -41,6 +41,7 @@ Your job:
    - Creative AI-assistant / agent setups people are actually running
    - Kink software nobody's heard of (D/s apps, buttplug.io / XToys / Intiface ecosystem, e-stim software, open-source kink projects) + gaps Tethered could fill
    - DIY / mad-scientist kink hardware (OSSM ecosystem, biofeedback, predicament engineering, KinkyMakers-style builds) feasible for an ESP32-level builder
+   - Software for ENM / polyamorous people (polycule scheduling, agreement trackers, metamour tools, check-in / feelings apps, polycule graph visualisers) + gaps nobody has built
    - Household / family / self-hosted apps with a genuinely clever idea at the core
    - Wildcard: any maker/art/tech project that would make Rob go "oh that's COOL"
 
