@@ -1,6 +1,6 @@
 # Fuck-io
 
-**Status:** parked as of 18 Sept 2026. Rob wants a hands-on/physical distraction, not a software weekend, so the headless Edge-o-Matic firmware+web-app route (fully speccable at £0, see below) was pitched and turned down ("can't see the point"). Revisit when he wants a keyboard project again; the £0 software-first path still stands ready. Soft deadline otherwise: [[Mary]] back in Oxford in October.
+**Status:** parked as of 18 Sept 2026, and on 22 Sept Rob named the real reason: it was mainly for [[Mary]], and since that closed (14 Sep 2026) he's not sure he wants to invest in it right now. The Mary-back-in-October soft deadline no longer applies. Rob wants a hands-on/physical distraction, not a software weekend, so the headless Edge-o-Matic firmware+web-app route (fully speccable at £0, see below) was pitched and turned down ("can't see the point"). Revisit when he wants a keyboard project again; the £0 software-first path still stands ready.
 
 ## Decisions (9 Sept 2026, Rob via Telegram)
 
