@@ -1,5 +1,7 @@
 # Car Hunt (used EV or plug-in hybrid)
 
+**Current state (23 Sep 2026): the hunt is MG EVs.** Rob's call, in his words: "I've pivoted to the MG's. I don't think we'll find a Model 3 with few miles that will do the range that we need." The Model 3 chapter is closed; see the pivot section near the bottom for the live brief.
+
 Started 14 Sep 2026, after the flat tyre on the M5 made the case for itself. Replace/supplement the household fleet with a second-hand electric car, or a plug-in hybrid (added the same day, see below).
 
 ## The brief (Rob, 14 Sep 2026)
@@ -424,14 +426,23 @@ Fresh nationwide/local scrapes, 20 Sep:
 `Jarvis/bin/car-hunt.sh`, cron **40 8,12,16,20 daily**.
 
 - Scrapes public AutoTrader search pages with headless Chrome (`/home/jarvis/tools/car-hunt/scrape-autotrader.js`).
-- Watches (since 18 Sep 2026): **Tesla Model 3 only**, stickers to £15.5k,
-  **60k mile cap**, Long Range or Performance trim enforced in the scoring
-  step (AutoTrader has no trim filter). All earlier watches (Kona, e-Niro,
-  Polestar 2, ID.3, MG4, catch-all EV, both PHEV sweeps) retired.
+- Watches (since 23 Sep 2026): **MG4, MG5 and ZS, Electric only**, stickers to
+  £15.5k, **60k mile cap**. The `Electric` fuel filter keeps the petrol ZS/HS
+  out. The Tesla Model 3 watch (18-23 Sep) is retired, as are all earlier
+  watches (Kona, e-Niro, Polestar 2, ID.3, catch-all EV, both PHEV sweeps).
+- MG listings often skip the kWh figure, so the scorer infers pack size from
+  the trim string (MG4 Trophy/SE LR = 64, plain SE = 51; MG5 LR = 61, early
+  = 52.5; ZS EV LR = 72.6, 2022+ standard = 51, 2019-21 = 44.5) and applies
+  the usual Torquay range floor. MG4 SE is marked "fails the kit spec" (no
+  360 camera, no built-in nav, per the 20 Sep scouting) and never pings.
 - AutoTrader's fuel wording is fussy: `Petrol Plug-in Hybrid` works, a bare `Plug-in Hybrid` silently returns nothing.
-- PHEVs need a **higher bar to interrupt** (score 9, plus 12kWh+ battery and 2020 or newer), because there are far more of them in this budget and dealers rate nearly all of them a "good price". Everything else still lands in the digest.
+- PHEVs need a **higher bar to interrupt** (score 9, plus 12kWh+ battery and 2020 or newer), because there are far more of them in this budget and dealers rate nearly all of them a "good price". Everything else still lands in the digest. (No PHEV watches are live since 18 Sep; the machinery stays.)
 - Dedupes against `~/.local/state/jarvis-car-hunt-seen.txt`, so a listing is only ever considered once.
-- Scores each new listing and **pings Telegram only for 8+**. Everything else goes to the digest and surfaces as a line in the evening briefing.
+- Scores each new listing and **pings Telegram only for 9+** (raised from 8 at
+  the MG pivot: the MG market is fat, 31 cars in the net on day one, most
+  scoring 9-10, so score alone would ping constantly). To ping, an EV also
+  needs a 58kWh+ (or trim-inferred equivalent) pack and a kit-spec pass.
+  Everything else goes to the digest and surfaces in the evening briefing.
 - State: `jarvis-car-hunt-listings.jsonl` (everything seen, with scores), `jarvis-car-hunt-digest.log` (for the brief), `jarvis-car-hunt.log`.
 - `SEED=1` scrapes without pinging, `DRYRUN=1` prints instead of sending.
 
@@ -475,3 +486,41 @@ Rob asked for MG electrics on FB Marketplace within 20-30 miles of home, to go t
 - 2022 MG ZS EV, Seaton, East Devon (~65 mi), £11,000, 47,750 mi, MOT May 2027, warranty to 2029. facebook.com/marketplace/item/1586427146196252
 
 **Filtered out:** 2018 ZS St Austell and 2018 ZS Plymouth (petrol, ZS EV didn't exist until 2019), 2022 "Rover MG ZS" £9,995 (petrol manual), a £199 Exeter "ZS EV" that's a car-finance spam ad. No MG4s on Marketplace within radius; the nearest real MG4 stock is still the AutoTrader/dealer list above (20 Sep section).
+
+## PIVOT: the hunt is MG EVs (Rob, 23 Sep 2026)
+
+Straight after the Marketplace sweep, Rob: "I've pivoted to the MG's. I don't
+think we'll find a Model 3 with few miles that will do the range that we need."
+He's right on the numbers: the 18 Sep snapshot showed zero sub-60k-mile Model 3
+LRs under £15.5k within 100 miles, and the value curve says a 30-40k-mile LR is
+a £22-24k car. The MG4 Trophy LR gives him a 2023 car at 20-38k miles for
+£13-15k instead.
+
+**Live brief:** MG4 / MG5 / ZS, electric only, stickers to £15.5k, 60k mile
+cap, 100 miles of EX23 0JG. Trim sense from the 20 Sep scouting: **MG4 Trophy
+Long Range (64kWh) is the target spec** (SE has no camera and no built-in nav,
+so it fails Rob's kit list); MG5 Long Range (61kWh) and ZS EV Long Range
+(72.6kWh) also clear the Torquay floor. The watcher was flipped the same hour
+(see The automation).
+
+**Seed sweep, 23 Sep 13:02 (31 MG EVs in the net, market is deep):**
+
+- **MG4 Trophy LR, the target:** eight of them £13.6k-£15.2k, mostly Plymouth.
+  Standouts: **£13,599 / 37k mi (Plymouth, great price)**, £13,799 / 28k
+  (Plymouth, lower price), £14,590 / 18k (Newport, lower price), £14,999 / 14k
+  (Plymouth, great price), £14,999 / 18k (Plymouth, good price).
+- **MG5 LR (the estate, same family as the £8.5k Bideford FB car):** £10,895 /
+  46k (Radstock), £11,695 / 31k (delivery), **£12,495 / 15.5k (Swansea)**,
+  2024 Trophy £14,999 / 38k (Plymouth).
+- **MG4 SE LR** (64kWh pack but no camera/nav): £12,960 / 32k Merthyr,
+  £13,644 / 29k Weston, £14,799 / 18k 2024 Plymouth. Cheaper door to the same
+  range if Rob decides the kit list is negotiable.
+- 51kWh MG4 SEs from £11,995: winter-tight for Torquay, digest-only.
+
+Test-drive logistics from 20 Sep still stand: Bateman & Lynch Tavistock (26 mi,
+2025 Trophy LR £15,995), Tracks Suzuki Exeter (2022 Trophy LR £13,999, SOH
+92.3%), Vospers MG St Austell for a new-car drive of the same generation. Plus
+the Bideford MG5 at £8.5k as the cheap private option.
+
+The Model 3 sections above are kept as history; their rules no longer drive
+the watcher.

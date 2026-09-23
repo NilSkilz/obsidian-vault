@@ -16,6 +16,12 @@
 # Later same morning: Performance trim allowed too (same 75kWh pack, same
 # range), and the mileage cap tightened 80k -> 60k so the car finishes the
 # loan at ~140k rather than ~160k.
+# 23 Sep 2026: PIVOT to MG EVs (Rob's call: no low-mile Model 3 does the range
+# at his money). Tesla watch retired; now MG4 / MG5 / ZS EV. The --fuel
+# Electric filter keeps the petrol ZS/HS out. Trim gate swapped: Tesla
+# LR-or-drop is gone, MG scoring below infers pack size from trim when the
+# listing doesn't quote kWh, and MG4 SE is marked (no 360 camera, no built-in
+# nav, fails Rob's kit spec from the 20 Sep scouting) but still digested.
 # Range floor (Rob, 14 Sep): home to Torquay and back on one charge, ~150 mi
 # round trip, year-round. That rules out small packs and demotes Tesla SR trims.
 # Within 100 miles of home (Crackington Haven).
@@ -43,7 +49,7 @@ SEED="${SEED:-0}"
 POSTCODE="${POSTCODE:-EX230JG}"   # Crackington Haven
 RADIUS="${RADIUS:-100}"
 BUDGET="${BUDGET:-15000}"         # raised from £12.5k, Rob 16 Sep 2026: bracket is £15k total again
-PING_SCORE="${PING_SCORE:-8}"
+PING_SCORE="${PING_SCORE:-9}"   # raised 8->9 at the MG pivot: fat market, only strong finds interrupt
 # There are far more PHEVs than EVs in this budget, so they need a higher bar
 # to earn an interruption. Rob's stated preference is still a full EV.
 PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
@@ -55,12 +61,11 @@ PHEV_PING_SCORE="${PHEV_PING_SCORE:-9}"
 # Named-model caps sit ~£500 over budget: a £13k sticker is a £12.5k car after
 # a haggle. Mileage caps tightened 14 Sep: at 20k/yr the car gains 80k miles
 # over the loan, so a 90k starter would finish at 170k.
-# 18 Sep 2026: Rob narrowed the hunt to Model 3 Long Range ONLY. All the
-# alternative-EV and PHEV watches are retired; AutoTrader has no reliable trim
-# filter, so the scrape stays "Model 3" and the Long Range cut happens in the
-# scoring step below (non-LR cars are dropped entirely, not even digested).
+# 23 Sep 2026: Rob pivoted the hunt to MG EVs. Model 3 watch retired.
 WATCHES=(
-  "Tesla|Model 3|15500|60000|Electric|3"
+  "MG|MG4|15500|60000|Electric|3"
+  "MG|MG5|15500|60000|Electric|2"
+  "MG|ZS|15500|60000|Electric|2"
 )
 
 mkdir -p "$STATE"; touch "$SEEN"
@@ -101,15 +106,6 @@ for line in open(raw):
     if not jid or jid in seen or jid in batch: continue
     batch.add(jid)
 
-    # Long Range or Performance only (Rob, 18 Sep 2026; Performance OK'd the
-    # same morning, it carries the same 75kWh pack). Tesla listings carry the
-    # trim in the spec or title text; anything else is dropped here, after
-    # being marked seen, so it never resurfaces. This also bins the SR+/LFP
-    # wildcard: Rob has decided.
-    trim_text = f"{j.get('spec') or ''} {j.get('title') or ''}".lower()
-    if 'long range' not in trim_text and 'performance' not in trim_text:
-        continue
-
     price = j.get('price') or 0
     miles = j.get('mileage') or 0
     dist  = j.get('distance')
@@ -129,14 +125,27 @@ for line in open(raw):
     elif miles and miles < 60000: s += 1; why.append(f"{miles//1000}k miles")
     elif miles and miles > 70000: s -= 2; why.append(f"{miles//1000}k now = ~{(miles+80000)//1000}k by loan end")
     if dist is not None and dist <= 60: s += 1; why.append(f"{dist} miles away")
-    if (j.get('make') or '') == 'Tesla': s += 2
-    # LR and Performance share the 75kWh pack, so both earn the trim bonus.
-    spec_l = (j.get('spec') or '').lower()
-    if 'long range' in spec_l: s += 1; why.append('long range')
-    elif 'performance' in spec_l: s += 1; why.append('performance, same 75kWh pack')
+    trim_text = f"{j.get('spec') or ''} {j.get('title') or ''}".lower()
     import re as _re
     kwh = _re.search(r'([\d.]+)\s*kWh', j.get('spec') or '')
     k = float(kwh.group(1)) if kwh else None
+    # MG listings often skip the kWh figure; the model + trim string pins the
+    # pack down well enough for the range-floor scoring below (23 Sep 2026):
+    #   MG4:  Trophy/SE Long Range = 64, Extended Range = 77, plain SE = 51 LFP
+    #   MG5:  Long Range = 61, early (pre-facelift) = 52.5
+    #   ZS EV: Long Range = 72.6, 2022+ standard = 51, 2019-21 original = 44.5
+    if k is None:
+        if 'mg4' in trim_text or 'mg 4' in trim_text:
+            k = 77 if 'extended range' in trim_text else (64 if 'long range' in trim_text else 51)
+        elif 'mg5' in trim_text or 'mg 5' in trim_text:
+            k = 61 if 'long range' in trim_text else 52.5
+        elif 'zs' in trim_text:
+            k = 72.6 if 'long range' in trim_text else (51 if (j.get('year') or 0) >= 2022 else 44.5)
+    # Rob's kit spec (20 Sep): adaptive cruise, built-in nav, camera, sensors.
+    # MG4 Trophy has the lot; MG4 SE has NO camera and no built-in nav.
+    if ('mg4' in trim_text or 'mg 4' in trim_text):
+        if 'trophy' in trim_text: s += 1; why.append('Trophy trim, full kit')
+        elif 'se' in trim_text: s -= 1; why.append('SE: no camera/nav, fails the kit spec')
     phev = 'Plug-in' in (j.get('fuel') or '')
     j['phev'] = phev
     if phev:
@@ -155,7 +164,11 @@ for line in open(raw):
         # the digest for the evening brief.
         j['ping_ok'] = k is not None and k >= 12 and (j.get('year') or 0) >= 2020
     else:
-        j['ping_ok'] = True
+        # The MG market is fat (31 cars in the net on day one, most scoring
+        # 9-10), so score alone would ping on every new listing. To interrupt
+        # Rob a car must also carry the kit he specced (bins MG4 SE) and a
+        # Torquay-proof pack. Everything else still lands in the digest.
+        j['ping_ok'] = (k is None or k >= 58) and not any('kit spec' in w for w in why)
     if not phev:
         # Range floor (Rob, 14 Sep): home to Torquay and back on one charge,
         # ~150 miles round trip, in winter, on a degraded pack. Under ~45kWh
@@ -165,13 +178,6 @@ for line in open(raw):
             if k < 45: s -= 3; why.append(f'only {k:g}kWh')
             elif k < 55: s -= 1; why.append(f'{k:g}kWh, tight for the Torquay run in winter')
             elif k >= 58: s += 1; why.append(f'{k:g}kWh')
-        # Tesla listings rarely quote kWh; the trim string carries the same
-        # information. Timmy was a Standard Range and Rob found it short.
-        # 16 Sep: Rob says Timmy was barely doing 100 real miles by the end,
-        # so plan on ~80% pack capacity at this age. An SR+ at 80% is ~140
-        # real summer miles and fails the Torquay run outright; penalty raised.
-        if 'Standard Range' in (j.get('spec') or ''):
-            s -= 2; why.append('SR at ~80% pack fails the Torquay test')
 
     j['score'] = max(0, min(10, s))
     j['why'] = ', '.join(why)
