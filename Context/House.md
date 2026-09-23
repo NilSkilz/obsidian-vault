@@ -26,11 +26,12 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - **Sizing:** ~10 kWh usable is the sweet spot (evening+overnight load, summer export peaks ~10-12 kWh/day); 13.5 kWh class (Powerwall 3, GivEnergy All in One) if future-proofing for heat pump + EV.
 - **Recommendation given to Rob 17 Sep (amended 22 Sep, Outgoing already done):** get 2-3 battery quotes now (G99 wait means starting early costs nothing) but time the actual install decision alongside the EV/heat-pump calls, which is what makes the battery pay.
 
-## Heat pump decision (open, as of 10 Sep 2026)
+## Heat pump decision (survey booked, as of 23 Sep 2026)
+- **Survey booked: Thu 19 Nov 2026**, Octopus surveyor Nick Bull, ~3 hours, no fixed start time (in as all-day on the Shared Home Calendar). Must be home throughout, access needed to every room plus proposed pump/tank spots. Tidy-up reminder for Rob + Aimee set for Thu 12 Nov (one week before).
 - Octopus quote: **£2,749 fully installed** after £9,000 BUS grant, includes new cylinder, assumes existing radiators kept (extras £250/radiator fitted). Survey lead time 2-6 months.
 - Value case: UK data puts a heat-pump premium at ~1.7-3% of house value, but the bigger driver is removing the oil tank — oil-heated homes take ~40% longer to sell, and losing it should also lift the EPC band.
 - Solar match: mismatch is seasonal (panels weakest exactly when heating demand peaks, Dec-Feb), but strong for hot water — heating water via the heat pump on solar surplus gets ~3x the yield of an immersion diverter (COP effect), covering most of the household's hot water roughly March-October.
 - Running cost estimate: ~£1,100-1,300/yr on Octopus Cosy to hold 21°C (4-bed, 4 occupants), vs ~£2,000/yr for the same heat via oil at Sep 2026 prices (~94p/L) — heat pump ~£700-900/yr cheaper before solar.
 - Sizing ask for the survey: state 4 occupants + daily showers explicitly so they spec a 200-250L cylinder (not 200L default); MCS requires the installer to agree reheat expectations with the customer.
 - Full research/reasoning trail (microbore pipework, siting, value impact, solar match) logged in `Daily/2026-09-09.md` and `Daily/2026-09-10.md`.
-- Rob was leaning positive (off-oil economics, solar/cylinder synergy, PD-legal siting) but hadn't decided whether to book the survey as of 10 Sep. Follow up on this.
+- Rob was leaning positive (off-oil economics, solar/cylinder synergy, PD-legal siting); decided and booked the survey by 23 Sep.
