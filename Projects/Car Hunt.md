@@ -463,3 +463,15 @@ Everything in the £12.5-15k Trophy LR cluster that lists as "Plymouth" is **Cin
 **Heat pump fact, settled:** UK Trophy Long Range never got a heat pump in any model year (EU Trophy did, UK only got it on Extended Range 77kWh and XPower). So the winter-range caveat (~170-190 mi real) applies to the 2025 car too.
 
 Hunt itself still Model 3 LR/Performance only, untouched.
+
+## Facebook Marketplace MG sweep (23 Sep 2026)
+
+Rob asked for MG electrics on FB Marketplace within 20-30 miles of home, to go test drive. Marketplace can be searched logged-out via headless Chrome (location set with the numeric place ID in the URL path plus a `radius` param; Launceston = `108525519172294`). Tooling: `/home/jarvis/tools/car-hunt/probe-fb*.js`.
+
+**The one real hit inside the radius:**
+- **2022 MG5 Long Range Exclusive (61kWh), Bideford, £8,500.** Private seller, listed 3 wks. Battery SOH 94%, factory warranty to mid-2029/80k miles, summer range 225 mi / winter 170 (clears the Torquay round-trip floor). Odometer shown as 62,000 km (~38.5k mi) but FB's km/miles labelling is unreliable logged-out; confirm with seller. Minor MOT advisories (rear shock misting, front lower bushes). Seller wants phone contact, number in the listing photos, ignores FB messages. facebook.com/marketplace/item/1057787983651729
+
+**Nearby-ish but outside the 30 mi brief:**
+- 2022 MG ZS EV, Seaton, East Devon (~65 mi), £11,000, 47,750 mi, MOT May 2027, warranty to 2029. facebook.com/marketplace/item/1586427146196252
+
+**Filtered out:** 2018 ZS St Austell and 2018 ZS Plymouth (petrol, ZS EV didn't exist until 2019), 2022 "Rover MG ZS" £9,995 (petrol manual), a £199 Exeter "ZS EV" that's a car-finance spam ad. No MG4s on Marketplace within radius; the nearest real MG4 stock is still the AutoTrader/dealer list above (20 Sep section).
