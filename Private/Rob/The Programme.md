@@ -40,6 +40,12 @@ Rob's refinement: head restraint with electric wires coming off it, feeding a po
 - No strobing without an explicit photosensitivity check; slow red pulse and a flickering desk lamp are creepier anyway.
 - Head restraint rules above: quick release, throat clear, neck never loaded.
 
-## The Aimee question (open)
+## The Aimee question (answered 24 Sep)
 
-Nothing on file says whether Aimee actually feeds on dread and anticipation, versus enjoying the evil-scientist *aesthetic* as theatre. Those are different scenes wearing the same costume: one runs the ramps slow and mean, the other plays it half-camp with a wink. Rob knows which she is; the build is identical either way, only the delivery changes. Worth Rob sounding her out obliquely (a film, a "would you ever" chat) before investing in parts. Fen remains ruled out for this rig (visual overwhelm, blindfold-dependent drop).
+Rob confirms: **she loves fear and dread.** So this is the straight version, not the half-camp one. Delivery notes that follow from that:
+
+- Play it cold and clinical throughout. No winks, no breaking character to check she's enjoying it (that's what the non-verbal out and traffic lights are for). The top-as-technician reads the chart, makes notes, and treats her reactions as data.
+- Dread is built in the gaps, not the events: long silences on the trace, the printer feeding slowly, the cuff inflating unprompted mid-silence. Under-deliver on sensation relative to the threat and the anticipation does the work.
+- Because she genuinely feeds on dread, the pre-negotiation matters MORE, not less: she consents to the concept and the not-knowing, plus a real out she trusts. Heavier aftercare and a full debrief-the-tricks afterwards still stand.
+
+Fen remains ruled out for this rig (visual overwhelm, blindfold-dependent drop).
