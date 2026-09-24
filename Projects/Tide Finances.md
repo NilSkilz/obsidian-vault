@@ -9,8 +9,8 @@ Home finances section in Tide (mission-control, cracky.co.uk). Income/expenditur
 | Source | What | How | Status |
 |---|---|---|---|
 | Starling | **Joint account** (opened Oct 2022) + **Personal account** (opened Oct 2022): balances, transactions, Spaces | Personal Access Tokens from developer.starlingbank.com (read scopes incl. savings-goal), nightly sync | **BOTH LIVE 24 Sep.** Tokens in `~/.config/jarvis/starling.env` (chmod 600) as `STARLING_TOKEN_JOINT` / `STARLING_TOKEN_PERSONAL`. Spaces visible on both (joint has 6: Food, Bills, Short Term Savings, Holidays, Fuel, Swear Jar). Full history reachable via `settled-transactions-between` in ≤1yr chunks |
-| Monzo | current account, balance + transactions | OAuth client at developers.monzo.com; SCA approval in app. Full history only for 5 min post-auth (then rolling 90 days), so full backfill runs immediately on first auth. Tokens ~6h, refresh token needs a confidential client | **creds in 24 Sep** (`~/.config/jarvis/monzo.env`, chmod 600). OAuth listener live on `:8321` (`~/finance/monzo-oauth-listener.py`), auth link sent to Rob; on callback it exchanges tokens and auto-runs `~/finance/monzo-backfill.py`, which polls for the in-app approval then grabs full history inside the 5-min window (raw JSON to `~/finance/monzo/`). Waiting on Rob to set the redirect URI in the portal + click the link |
-| NS&I | savings | no API. Manual value entry (or Rob forwards statement email) | manual |
+| Monzo | current account, balance + transactions | OAuth client at developers.monzo.com; SCA approval in app. Full history only for 5 min post-auth (then rolling 90 days), so full backfill runs immediately on first auth. Tokens ~6h, refresh token needs a confidential client | **creds in 24 Sep** (`~/.config/jarvis/monzo.env`, chmod 600). OAuth listener live on `:8321` (`~/finance/monzo-oauth-listener.py`); on callback it exchanges tokens and auto-runs `~/finance/monzo-backfill.py`, which polls for the in-app approval then grabs full history inside the 5-min window (raw JSON to `~/finance/monzo/`). **Gotcha (24 Sep): Monzo's CloudFront WAF 403s any auth link whose redirect_uri is a private LAN IP.** Fix: redirect URI is `https://cracky.co.uk/monzo/callback`, a Tide route that 302s to the LAN listener (commit c6692b8 on feature/tide-build, deployed). Waiting on Rob to set that redirect URI in the portal + click the reissued link on home wifi |
+| NS&I | savings (Premium Bonds) | no API, but **ledger-tracked**: seed £4,000 (24 Sep 2026), then derive from Starling joint transactions. Only flows: £250/month in from the Bills Space, occasional transfers out to joint. Wins are invisible unless paid out, so true-up the real NS&I number occasionally | semi-auto, seeded 24 Sep |
 | Wealthify | savings/investments | no API. Manual value entry, monthly-ish | manual |
 | PensionBee | Rob's pension pot | no public API. Manual value entry | manual |
 | Private pensions | Rob's + Aimee's workplace/private pensions | manual, true-up from annual statements | manual, need current values |
@@ -30,7 +30,8 @@ Decision 24 Sep: **no GoCardless/aggregator needed.** Starling + Monzo first-par
 ## Needed from Rob
 
 - ~~Starling tokens (joint + personal, with savings-goal scope)~~ done 24 Sep, both verified
-- ~~Monzo OAuth client ID + secret (confidential client)~~ in 24 Sep; Rob still to: set redirect URI `http://192.168.1.11:8321/callback` on the client, click the auth link (home wifi), approve in app
+- ~~Monzo OAuth client ID + secret (confidential client)~~ in 24 Sep; Rob still to: set redirect URI `https://cracky.co.uk/monzo/callback` on the client, click the auth link (home wifi), approve in app
+- ~~NS&I current value~~ £4,000 as of 24 Sep, ledger-tracked from here
 - Mortgage terms: balance, rate + fix end date, remaining term, monthly payment
 - House purchase price + year
-- Current values: NS&I, Wealthify, PensionBee, both private pensions
+- Current values: Wealthify, PensionBee, both private pensions
