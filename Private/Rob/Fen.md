@@ -45,6 +45,17 @@ Kinky friend from the Plymouth scene. Good night out together 4 Jul 2026 (Rob's 
 - Standing conditions presumably still live and worth a light touch nearer the day: honesty about everything they do, it doesn't affect Barebones for Rob+Aimee, and Rob's pre-commitment to never being angry at Aimee over Fen fallout.
 - Also still open from Partner Search: Sarah's possible first date was pencilled for the same weekend (26-27 Sep). If both are real, that's a scheduling and an honesty question, his to sort.
 
+## 24 Sep: full Discord log received (WhatsApp log still to come)
+
+Rob sent the DiscordChatExporter dump of the whole Rob/Fen DM history, 14 Jun to 19 Jul 2026 (1,155 messages, ends with the move to WhatsApp). Flattened transcript saved at `Private/Rob/Assets/Fen Discord log 2026-06-14 to 07-19.txt`. Facts worth keeping:
+
+- Handle: twink.com / fen. Lives off Mutley, Plymouth (Prince Maurice Road). Doesn't drive, doesn't drink. On PIP + UC, PIP reassessment live in July. Housing history: kicked out at 17 and 19, YMCA spell, now housemates; money very tight (down to £40 for a fortnight at one point). Dog: Raffles. Wants to do a fashion/textiles course, eventually therapy work.
+- Health/play-relevant: NEAD + Tourette's (seizures during/after play are normal for her: conscious, ~30s bursts over 2-3 min; delirium = instant full stop), AuDHD, hypermobility (careful with behind-back restraint), heat sensitivity, UTI-prone. Hard limits: face/body punching or kicking, branding, scat, anal, unprotected penetration (condoms on shared insertables, gloves fine), feet, spit/moisture on face, gags. Loves: scratching (favourite), struggle/CNC, sensory deprivation, predicament bondage, thuddy impact, marks. Safeword: traffic lights. Aftercare: vape, blanket, low-stim 10 min, do NOT leave her alone straight after (immediate drop risk), then food and yapping.
+- First scene 4 Jul at NMM went genuinely well: she called it a really big deal (first full event scene without Chance, first non-Chance/Lummy play in a year), dreamt about it, posted marks proudly, no drop fallout. Rob's negotiation across 1-3 Jul was thorough and patient; her disclosure was unprompted and complete. Both sides did this properly.
+- The 19 Jul Chance blow-up is all on the record: his lying/cheating, her meltdowns (self-described: hitting her head, shouting), repeated failed blocks, "I am not a good person, I'm extremely messy" in her own words. Rob was already in adviser/rescuer mode by then (PIP form plan, scripting her boundary messages).
+- She explicitly said (8 Jul) that what made playing with Rob feel safe was the hard cap on attachment, because unreciprocated attachment is her known failure mode. Her own words elsewhere: "I struggle with envy/jealousy so baddddd."
+- My preliminary read given to Rob 24 Sep: green on safety/negotiation and genuine mutual warmth; amber on the caretaking slide (she craves being looked after, Rob enjoys providing it, that's the exact "clingy" risk Aimee named) and on her live Chance wound. Full verdict parked until the WhatsApp log (19 Jul onward) arrives, which covers the quiet patch and the reopen.
+
 ## 22 Sep, evening: honesty condition met up front
 
 - ~22:00 Rob told Aimee that Fen accepted his invite to go out, and that they might do **needle play**. That's Aimee's "honest about everything" condition being met in advance of the scene, not confessed after. Fifth ask/tell-don't-read win in six days.
