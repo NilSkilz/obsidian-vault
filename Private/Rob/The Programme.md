@@ -25,6 +25,21 @@ Rob's refinement: head restraint with electric wires coming off it, feeding a po
 
 **More real instrumentation (Rob's additions, 24 Sep evening):**
 - **Blood pressure cuff:** buy a cheap off-the-shelf wrist or arm monitor (£15-25), don't build one. It's already a certified medical device, the readings are real, and the dread beat is free: the machine "decides" to take a reading and the cuff tightens on its own. A basic model can be ESP32-triggered by wiring a relay/optocoupler across its start button; the cuff and pump stay stock and untouched. Rules: standard cuff use only, never left inflated, never on a limb with circulation play happening.
+
+### Cuff automation (specced 24 Sep evening)
+
+Two tiers.
+
+**Tier 1, button hack (do this first):** optocoupler (PC817) across the monitor's start button, driven from an ESP32 GPIO over the usual MQTT backbone. One solder joint each side of the button's PCB pads, everything medical stays stock. The monitor runs its own certified inflate/measure/deflate cycle, so there is nothing to get wrong pneumatically. Bonus theatre: most cheap ones beep before inflating, which becomes a conditioned dread cue for free. Limit: no control over timing or hold, it does its ~30s cycle and dumps.
+
+**Tier 2, custom pneumatic loop (the creepy one):** keep only the cuff itself, replace the guts.
+
+- Parts: 6V diaphragm micro air pump (the same type inside BP monitors, £4-6), **normally-open** solenoid dump valve (£5-8), MPX5050GP pressure sensor (0-50 kPa, ~375 mmHg range, £6) teed into the line, MOSFET drivers, ESP32. All standard fittings on 4mm silicone air line.
+- What it buys: slow-creep inflation (a cuff that tightens over 60 seconds instead of 10 is far worse in the good way), hold-at-pressure, and a real physiological channel: hold ~40 mmHg and the pressure sensor picks up the pulse as oscillations, so the chart gets a live heart-rate trace from the cuff itself. Arousal channel and cuff share one sensor design (same MPX family as the probe line).
+- **Hard safety interlocks, all mandatory:** dump valve is normally open, so any power loss or crash = instant deflate. Firmware pressure ceiling 160 mmHg, no override path in code. Hardware backstop: mechanical relief valve or a fixed bleed. Watchdog auto-dump on any hold longer than 90 seconds, and a scene rule of at least a couple of minutes recovery between cycles. Upper arm or wrist only, over clothing or bare, never anywhere else, and the existing rule stands: never on a limb with circulation play happening. Prolonged or repeated inflation risks nerve compression (radial/ulnar), which is why the 90s watchdog is not negotiable.
+- Physical out: she can rip the cuff's velcro herself even restrained at the head, so cuff arm stays free enough to reach it.
+
+Tier 1 ships the scene. Tier 2 is the upgrade once the rest of the panel exists.
 - **"Arousal probe":** an insertable inflatable, and this one converges with [[Fuck-io]]'s orgasm-detect plug idea. **Never DIY the insertable itself**: commercial body-safe inflatable plug, flared base, stock hand bulb. The clever bit goes in the AIR LINE: a T-fitting with a small pressure sensor (BMP-type or an MPX air pressure sensor, £3-8) teed in, reading squeeze. Pelvic floor contractions show up as clean pressure pulses, so the trace channel labelled AROUSAL is genuinely live, and orgasm is unmistakable on the chart. Sensor never touches the body, it only reads air. Hard rules: inflation stays on the hand bulb in the top's hand, no motorised or compressor inflation ever, bleed valve in the circuit, inflate to comfort not to spec.
 
 **Panel + control plane:** plywood face, chunky toggles, rotary dials, indicator lamps, mechanical relays purely for the clunk. ESP32 reads the controls and drives trace/lamps/printer, same MQTT backbone as the rest of the kit. Sound is half the scene: low drone or tape hiss under the relay clicks.
