@@ -8,7 +8,7 @@ Home finances section in Tide (mission-control, cracky.co.uk). Income/expenditur
 
 | Source | What | How | Status |
 |---|---|---|---|
-| Starling | current account, balance + transactions | Personal Access Token from developer.starlingbank.com (read scopes), nightly sync | waiting on token from Rob |
+| Starling | **Joint account** (opened Oct 2022), balance + transactions | Personal Access Token from developer.starlingbank.com (read scopes), nightly sync | **LIVE 24 Sep.** Token in `~/.config/jarvis/starling.env` (chmod 600). Scopes: account, balance, transaction, receipts. Full history reachable via `settled-transactions-between` in ≤1yr chunks. Missing `savings-goal:read` so Spaces are invisible (balance shows ~£111 sitting in Spaces); Rob to add scope or reissue token |
 | Monzo | current account, balance + transactions | OAuth client at developers.monzo.com; SCA approval in app. Full history only for 5 min post-auth (then rolling 90 days), so full backfill runs immediately on first auth. Tokens ~6h, refresh token needs a confidential client | waiting on client creds from Rob |
 | NS&I | savings | no API. Manual value entry (or Rob forwards statement email) | manual |
 | Wealthify | savings/investments | no API. Manual value entry, monthly-ish | manual |
@@ -29,7 +29,8 @@ Decision 24 Sep: **no GoCardless/aggregator needed.** Starling + Monzo first-par
 
 ## Needed from Rob
 
-- Starling personal access token
+- ~~Starling personal access token~~ done 24 Sep
+- Starling: add `savings-goal:read` scope (or reissue token with it) so Spaces show up
 - Monzo OAuth client ID + secret (confidential client)
 - Mortgage terms: balance, rate + fix end date, remaining term, monthly payment
 - House purchase price + year
