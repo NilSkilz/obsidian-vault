@@ -101,6 +101,12 @@ Forgotten/duplicated flags: **Dakboard** (possibly paying for retired kit), **IO
 
 **Total identified: roughly £470/mo (~£5,600/yr)** without touching holidays, entertainment, or anyone's hobbies.
 
+> **Revision, 24 Sep 23:50 (post fuel-split):** the groceries save (item 1) shrinks once MORR BUDE fuel is stripped out: true groceries are ~£949/mo vs the £892 spring baseline, so the realistic grocery save is **~£100/mo** (kill the top-up habit, shift weight to Lidl), not £180. Ladder becomes ~£390/mo behavioural + admin. The new biggest lever is **fuel (~£670/mo)**: the MG4 replaces the Fiesta only, and the Logan dCi stays. Per-mile the 2009 Fiesta petrol (~40mpg) costs ~1.6x the Logan dCi (~65mpg), so at an even mileage split the Fiesta is ~60% of the fuel, call it **~£400/mo**, which an EV on an overnight tariff does for £60-80. Realistic fuel save **£300-350/mo**, more if EV-able Logan trips migrate to the cheap car (they will, they always do). MOT odometer histories are login-walled so the mileage split is an estimate, not a reading.
+
+### Action status (24 Sep 2026)
+
+The admin items are now Todoist tasks (Inbox, label `money-saves`, 9 tasks): Dakboard cancel, IONOS/1&1 consolidation, Game Pass annual, Adobe/Newshosting if idle, DigitalOcean → Proxmox migration (needs Rob to hand over what's on it), EE SIM-only audit, Merlin renewal decision (due 1 Oct), remortgage shop (due 1 Nov), Dacia insurance requote (due 15 Mar 2027). The behavioural ones (groceries, Amazon cooling-off, McDonald's) are Rob and Aimee's call, not tasks.
+
 Also worth booking ahead: the **field mortgage fix ends Jan 2027** (1.89%) and the **house fix May 2027** (4.44%). The field payment will jump materially at current rates; start the remortgage shop around November 2026.
 
 ## 4. Oddities for a human look
