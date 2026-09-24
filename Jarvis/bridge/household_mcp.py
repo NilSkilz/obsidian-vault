@@ -13,6 +13,11 @@ and exposes a fixed toolset. What it deliberately does NOT expose:
     (LimeNinja and the broken new-format ones stay Rob's).
   - Rob's email, Slack, code, servers: not here at all.
 
+Also exposes message_rob (added 24 Sep 2026, Rob's call: "her chat should use the
+same plumbing"): sends a Telegram message to Rob's chat via the bot, clearly
+labelled with who it's from. The token stays in this server; the session never
+sees it, and the only reachable chat is Rob's.
+
 Transport: MCP stdio, newline-delimited JSON-RPC 2.0 (same shape as us_mcp.py).
 """
 import json
@@ -326,6 +331,31 @@ def todoist_reschedule_task(args):
     return {"ok": True, "task": t["content"], "due": args["due"]}
 
 
+# ---------- messaging (Telegram, via the bot; token never reaches the session) ----------
+
+def message_rob(args):
+    text = (args.get("message") or "").strip()
+    if not text:
+        raise ValueError("empty message")
+    conf = load_env("telegram.env")
+    rob_chat = (conf.get("TELEGRAM_ALLOWED_CHAT") or conf.get("TELEGRAM_CHAT_ID") or "").strip()
+    if not rob_chat:
+        raise ValueError("Rob's chat id isn't configured")
+    sender = USER.capitalize()
+    payload = json.dumps({
+        "chat_id": rob_chat,
+        "text": f"\U0001F4E8 {sender} (via Jarvis): {text}"[:4000],
+    }).encode()
+    req = urllib.request.Request(
+        f"https://api.telegram.org/bot{conf['TELEGRAM_BOT_TOKEN']}/sendMessage",
+        data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        ok = json.loads(resp.read().decode()).get("ok", False)
+    if not ok:
+        raise ValueError("Telegram rejected the message")
+    return {"ok": True, "delivered": "Rob's Telegram", "sent": text}
+
+
 # ---------- MCP plumbing ----------
 
 TOOLS = [
@@ -373,6 +403,11 @@ TOOLS = [
      "inputSchema": {"type": "object", "properties": {
          "id": {"type": "string"},
      }, "required": ["id"], "additionalProperties": False}},
+    {"name": "message_rob",
+     "description": "Send a message straight to Rob's Telegram. It arrives labelled as from you (via Jarvis), never disguised as anyone else. Confirm the wording before sending, and use it for things Rob should see promptly: logistics, requests, a heads-up. It's a one-way send; his reply, if any, comes back through his own chat with Jarvis or directly to you.",
+     "inputSchema": {"type": "object", "properties": {
+         "message": {"type": "string", "description": "The message to deliver, exactly as it should read."},
+     }, "required": ["message"], "additionalProperties": False}},
     {"name": "todoist_reschedule_task",
      "description": "Change a household Todoist task's due date, by id. Keeps recurrence intact when given a recurring due string.",
      "inputSchema": {"type": "object", "properties": {
@@ -400,6 +435,8 @@ def call_tool(name, args):
         return todoist_complete_task(args)
     if name == "todoist_reschedule_task":
         return todoist_reschedule_task(args)
+    if name == "message_rob":
+        return message_rob(args)
     raise ValueError("unknown tool: " + name)
 
 
