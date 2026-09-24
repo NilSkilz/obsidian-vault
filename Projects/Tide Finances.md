@@ -57,6 +57,12 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 - **Post-fix typical month:** groceries £1,254 -> **£949/mo** (so the "grocery creep" in the spending analysis was ~half fuel misfiled, correction note added there), Transport & fuel -> **£812/mo** of which fuel ~£670 (Morrisons £305, Tesco £232, BP £58, Sainsbury's £31, Shell £25, MFG £18). Bottom line unchanged: overspend £466/mo.
 - Known cosmetic leftover: Monzo-era (pre-Oct-2022) Tesco store rows sit in 'bills' via Monzo's own category; historic months only, not worth a pass tonight.
 
+### Round 6, 24 Sep ~23:40 (Halifax: why Rob can't see it, full history)
+
+- **Rob couldn't find the Halifax DD in the Starling app.** Two reasons: it's on the **JOINT** Starling (he was likely in personal), and **September's payment hasn't gone out yet**, the DD settles on/around the last working day, so the most recent is 31 Aug £45.48 and the next lands ~30 Sep.
+- **Full history changes the story** (round 5's "£46.41 for the year before" was only half the picture): ref 128716577 runs back to at least Nov 2022 at **£22-26/mo**, then **jumps to £46.50 at the June 2025 payment** and stays ~£45-46 since. So the policy predates the Tesla by years; the shape fits the Tesla being ADDED to an existing Halifax policy (multi-car or similar) mid-2025. Tesla went back ~Feb 2026, premium never dropped back to the ~£22 base. Ask Halifax for the removal refund/adjustment, quoting DD ref 128716577, payments visible 31 Aug £45.48, jump at Jun 2025.
+- Fuel context: household fuel ~£670/mo, so the MG EV hunt has a hard number behind it now (home charging on an EV tariff would be roughly a tenth of that per mile).
+
 ### Still open
 
 - **Pension values** (PensionBee + workplace): parked, Rob digs them out; "add" buttons on the page wait for them.
