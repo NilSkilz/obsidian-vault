@@ -63,6 +63,14 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 - **Full history changes the story** (round 5's "£46.41 for the year before" was only half the picture): ref 128716577 runs back to at least Nov 2022 at **£22-26/mo**, then **jumps to £46.50 at the June 2025 payment** and stays ~£45-46 since. So the policy predates the Tesla by years; the shape fits the Tesla being ADDED to an existing Halifax policy (multi-car or similar) mid-2025. Tesla went back ~Feb 2026, premium never dropped back to the ~£22 base. Ask Halifax for the removal refund/adjustment, quoting DD ref 128716577, payments visible 31 Aug £45.48, jump at Jun 2025.
 - Fuel context: household fuel ~£670/mo, so the MG EV hunt has a hard number behind it now (home charging on an EV tariff would be roughly a tenth of that per mile).
 
+### Round 7, 24 Sep ~23:45 (insurance mapping resolved, £160 claim RETRACTED)
+
+- Rob identified the DDs: **Halifax = car insurance (he believes the Dacia), Aviva = home + life** (its 2-payments-a-month pattern since 2020 = two policies, matches). Full ledger pulls back him up:
+  - **Halifax** (ref 128716577) runs back to **Aug 2018 at £19.19**, stepping only at ~April renewals (£23 -> £28 -> £31 -> £26 -> £24 -> £22 -> £26), then a **mid-term jump Jun 2025 £25.96 -> £46.50**. The Tesla arrived Nov 2022 (first Black Horse DD £682.79) and left Feb 2026 (last one), so the Tesla never explains a Jun 2025 jump. Round 6's "Tesla added to Halifax, ~£160 owed" theory is WRONG, retracted with Rob same night.
+  - **Sheilas' Wheels** was the Tesla's insurer at the end: policy starts Dec 2025 at £54.41 and drops to **£16.68 in Mar 2026**, exactly when the Tesla went back. The premium DID drop where the Tesla actually was; nothing owed there. The residual £16.68 presumably covers the Fiesta.
+  - Where the Tesla was insured Nov 2022 - Nov 2025 isn't visible as a DD (annual card payment or elsewhere).
+- **Still worth one look from Rob:** what changed on the Halifax policy in **June 2025** (premium doubled mid-term, same DD ref, and it wasn't renewal month). If the Dacia was added/swapped on then it's legit; possible marker in the ledger is a £10,000 transfer from Aimee's account referenced "Dad" on 7 May 2025. And with Halifax £45.48 + Sheilas' Wheels £16.68 both live, confirm the two policies cover Fiesta + Dacia once each, with the Tesla off both.
+
 ### Still open
 
 - **Pension values** (PensionBee + workplace): parked, Rob digs them out; "add" buttons on the page wait for them.

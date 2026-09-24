@@ -17,4 +17,10 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 - **MOT expires: 5 Feb 2027** (Todoist booking task 19 Jan 2027)
 - **Tax expires: 1 Jan 2027**
 
+## Insurance (mapped from the bank ledger, 24 Sep 2026)
+
+- **Halifax DD** (joint Starling, ref 128716577, £45.48/mo, settles last working day): car insurance, Rob believes the **Dacia**. Policy since Aug 2018; premium doubled mid-term June 2025 (£26 -> £46.50), reason unconfirmed, Rob to check what the policy actually covers.
+- **Sheilas' Wheels** (£16.68/mo): presumably the **Fiesta**. Carried the returned Tesla Dec 2025 - Feb 2026 at ~£54 and dropped correctly when it went back.
+- **Aviva** (two DDs, ~£45 + £13.51): home + life, not motor.
+
 Note: on the first MOT check Rob misheard/gave the wrong reg (CV54 POA, a 2004 VW Bora that came back untaxed + long-expired MOT — not his car). If a plate lookup ever comes back scary, read it back to confirm before alarming him.

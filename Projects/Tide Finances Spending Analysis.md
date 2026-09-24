@@ -106,10 +106,10 @@ Also worth booking ahead: the **field mortgage fix ends Jan 2027** (1.89%) and t
 ## 4. Oddities for a human look
 
 - **Brian Solomon, £2,000, 9 Mar 2026** (Starling Joint, ref "Rob Stokes"). Largest single payment of the year. Presumably known, but it is unlabelled in the data.
-- **Halifax DD, £45.48/mo, ref 128716577, £551/yr.** Unidentified, and the cadence is odd: it doubled up in March, June and August 2026 (two payments in the month) and skipped others. If nobody can name this policy/loan in ten seconds, ring Halifax.
+- **Halifax DD, £45.48/mo, ref 128716577, £551/yr.** ~~Unidentified~~ Resolved 24 Sep: car insurance (Rob: the Dacia). Policy runs back to Aug 2018; the double-months are just a wobbly payment date. Remaining question: why it jumped £26 -> £46.50 mid-term in June 2025 (see Tide Finances round 7).
 - **Black Horse finance ended Feb 2026** (£682.79 x 6 in window, plus a £90.68 "Blackhorse Ltd" settlement). Tesla public charging (£752, 101 sessions) stopped in April 2026. Reads like the financed EV left the household around then. The £683/mo freed up has been fully absorbed by higher variable spend.
 - **Merlin Entertainments £964.96, Oct 2025.** Annual passes, presumably. Renewal will be coming round about now: decide deliberately, not by auto-renew.
-- **Sheilas' Wheels dropped from ~£54 to £16.68/mo** mid-window while Aviva MHO went up to £45.05. Fine if it reflects the car change, but check the fleet is actually insured the way you think it is.
+- **Sheilas' Wheels dropped from ~£54 to £16.68/mo** mid-window. Resolved 24 Sep: it was the Tesla's policy (started Dec 2025, dropped Mar 2026 when the car went back); the £16.68 residual is presumably the Fiesta. Aviva is home + life (two policies), not motor.
 - **Aimee's wages show £0 in June 2026 then £2,800 in July** (catch-up payment). Also her wages are miscategorised as "internal" in the DB (known bug, being fixed).
 - **Category noise in the bank data**: council tax coded "transport", a KFC coded "groceries", B&M split across groceries/shopping. The per-merchant numbers above are the trustworthy ones.
 - **First Sports International (leisure/gym) charges stopped Nov 2025** after double-charging £30 + £35 in Sep to Nov. Stopped, so no action, just noting the £190.
