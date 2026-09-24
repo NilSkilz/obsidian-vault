@@ -130,14 +130,30 @@ def iso(dt):
 def starling_txn(item):
     sign = 1 if item.get('direction') == 'IN' else -1
     pot = item.get('counterPartyType') in ('CATEGORY', 'SAVINGS_GOAL')
+    amount = sign * item['amount']['minorUnits']
+    cp = item.get('counterPartyName')
+    ref = (item.get('reference') or '').strip()
+    cat = 'internal' if pot else (item.get('spendingCategory') or '').lower() or None
+    # Fuel normalisation. The Morrisons Bude petrol station terminal comes
+    # through as ref 'MORR BUDE' under the plain 'Morrisons' counterparty and
+    # Starling tags it GROCERIES; >=£10 there is a tank, not a meal deal
+    # (the store itself is 'MORRISONS BUDE - 325' / 'WM MORRISONS STORE').
+    if not pot and 'petrol' in (cp or '').lower():
+        cat = 'fuel'
+    elif not pot and ref == 'MORR BUDE' and amount <= -1000:
+        cat = 'fuel'
+        cp = 'Morrisons Petrol'
+    elif not pot and ref.startswith('TESCO PAY AT PUMP'):
+        cat = 'fuel'
+        cp = 'Tesco Petrol'
     return {
         'providerTxnId': item['feedItemUid'],
         'ts': item.get('transactionTime') or item.get('settlementTime'),
-        'amountMinor': sign * item['amount']['minorUnits'],
+        'amountMinor': amount,
         'description': item.get('reference') or item.get('counterPartyName'),
-        'counterparty': item.get('counterPartyName'),
+        'counterparty': cp,
         'source': item.get('source'),
-        'category': 'internal' if pot else (item.get('spendingCategory') or '').lower() or None,
+        'category': cat,
         '_own': not pot and is_own(item.get('counterPartyName')),
     }
 

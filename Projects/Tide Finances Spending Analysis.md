@@ -1,5 +1,7 @@
 # Tide Finances: Spending Analysis
 
+> **Correction, 24 Sep 23:30:** the groceries figures below include Morrisons Bude petrol-station fuel (~£300/mo since March 2026), which the bank tagged GROCERIES via the 'MORR BUDE' kiosk terminal. Recategorised to fuel that night (round 5 in `Tide Finances.md`). True groceries typical is ~£950/mo, not £1,254; the grocery "creep" is roughly half real, half fuel misfiled. Household fuel total is ~£670/mo, which is its own conversation. Total spend and the £466/mo overspend are unchanged (money moved between categories, not in or out).
+
 Analysed: 2026-09-24. Window: 2025-09-01 to 2026-08-31 (12 full months). Accounts: Starling Joint, Starling Personal, Monzo Personal, Monzo Rewards (open, non-space). Internal transfers excluded. All figures from `db/family.sqlite` on CT 112, read-only.
 
 ## Headline numbers
