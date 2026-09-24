@@ -1,5 +1,7 @@
 # Fen
 
+**Limits/wants/safety reference: `Fen Negotiation Sheet.md`** (compiled 24 Sep from both full chat logs; use that for scene prep, not memory).
+
 Kinky friend from the Plymouth scene. Good night out together 4 Jul 2026 (Rob's mood log). Rob hadn't spoken to her in a while as of early Sep; now back in the frame as a play prospect.
 
 ## Reopened (21 Sep 2026)
