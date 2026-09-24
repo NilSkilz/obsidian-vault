@@ -8,7 +8,7 @@ Applies to natural jute AND hemp, both cellulose, so identical chemistry. Hemp c
 
 Oil blocks dye. So: condition, dye, dry, singe, oil, break in. Never oil before dye.
 
-1. **Cut and whip.** Cut to length (8m is the usual working length), whip or overhand-knot the ends so it can't unlay.
+1. **Cut and whip.** Cut to length (8m is the usual working length), whip or overhand-knot the ends so it can't unlay. **First-treatment shrinkage measured at ~12.5%** (23 Sep 2026: 4m dry off the reel came out ~3.5m finished), higher than the 5-10% ballpark quoted earlier. Cut ~15% over target: **9.2m raw for a true finished 8m, 4.6m raw for a finished 4m.**
 2. **Hot soak, not boil.** 40-50°C, hand-hot, 20-30 min, squirt of washing-up liquid or a tsp of soda ash. Strips mill oil and dust without weakening the fibre. **Don't actually boil jute** (corrected 30 Aug): simmering strips the lignin/pectin that holds bast fibre together and the rope comes out floppy and fuzzy with a real tensile loss. Boiling is fine for cotton, not for jute/hemp. Don't stir hard either, it fuzzes.
 3. **Dye** (optional, see below). Do it here, while the rope is clean and unoiled.
 4. **Dry under tension.** Stretch between two points with a bit of weight, 24-48 hours, fully dry. This is what stops it drying kinky and uneven.
@@ -94,6 +94,7 @@ One 2/3 oz jar (~19g, 7-8 tsp) does **1 to 1.2kg of rope** at a medium shade. 6m
 - **Rope Locker (Dawlish)** is the good source and it's local. Their **natural** hemp (6mm x 220m, £112.68) and **natural** jute (6mm x 220m, £112.80, clearance) are both explicitly 100% natural and untreated. Their "Hardy Hemp" is the synthetic line, sold separately, so "natural" on a listing there is a deliberate distinction, not marketing fluff. Their *reinforced* jute is the poly-core stuff to avoid.
 - Their "6mm" measures nearly **8mm**, which is actually ideal for shibari.
 - They'll send **samples on request**. Rob bought 10m of each on 26 Aug to compare before committing to a reel.
+- **Reel came up short (23 Sep 2026).** Rob's 220m natural jute reel: everything measured dry off the reel (not shrinkage-affected) came to ~184m cut + ~10m waste ≈ 194m, ~26m (~12%) under nominal. Beyond normal reel tolerance; complaint to Rope Locker justified.
 - Burn test if in doubt: natural chars and smells like burnt grass, synthetic melts to a hard bead.
 
 ## Links
