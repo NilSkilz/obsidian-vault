@@ -58,6 +58,13 @@
 - Focus on system health and monitoring
 - Terminal aesthetic implementation
 
+### Sep 2026 - Jarvis ops page (/ops, parents only)
+Rob asked (24 Sep) for a management page showing what Jarvis is running. Live at cracky.co.uk/ops, parents-only route like /health and /journal.
+
+- **Data flow:** the jarvis LXC pushes a JSON snapshot every 10 min (`Jarvis/bin/tide-status.sh`, cron `3-53/10`) to `POST /api/jarvis/status` on CT 112, authenticated with a shared key (`TIDE_STATUS_KEY` in `~/.config/jarvis/tide-status.env` on jarvis, `JARVIS_STATUS_KEY` in `/opt/mission-control/.env` on CT 112). Parents read it via `GET /api/jarvis/status` (bearer token). Route mounts unguarded like /api/auth and does its own checks.
+- **Shows:** Claude usage (session / weekly / Fable bars, extra usage, current chat model), all Jarvis cron jobs (name, note, human schedule, next run, disabled state), host vitals (load, memory, disk, uptime), bridge last-active. Page flags the snapshot as stale if it is older than 25 min.
+- Snapshot stored at `db/jarvis-status.json` on CT 112 (gitignored, or the deploy script's clean-tree check would abort).
+
 ## Tags
 #project #mission-control #dashboard #monitoring #react #typescript #docker
 
