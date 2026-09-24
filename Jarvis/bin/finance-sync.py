@@ -11,8 +11,13 @@ Usage:
 
 Secrets: ~/.config/jarvis/starling.env, monzo.env (refresh token rotated here),
 health.env (JARVIS_API_KEY + TIDE_API_BASE). Money is signed pence, out = negative.
-Internal moves (space/pot transfers) are ingested with category='internal' so the
-cash-flow chart can exclude them.
+Internal moves are ingested with category='internal' so the cash-flow chart can
+exclude them: space/pot transfers, plus anything whose counterparty is one of the
+household's own names (personal<->joint, Monzo<->Starling, legacy own accounts).
+Aperture Labs (Rob's ltd) is NOT internal: company->personal is real income.
+
+Also posts a monthly house valuation from the Land Registry UK HPI (Cornwall),
+scaled from the £199,950 Feb 2015 purchase.
 """
 import json
 import sys
@@ -35,6 +40,20 @@ MONZO_NAMES = {  # account type -> display name
     'uk_business': 'Monzo Business (old)',
     'uk_rewards': 'Monzo Rewards',
 }
+
+
+# Exact-match set of the household's own names as banks render them (seen in the
+# 2016-2026 dumps). Exact, not substring: 'Anne Stokes' and 'Ashley Jeffs' are
+# real other people. A transfer to/from any of these is our own money moving.
+OWN_NAMES = {
+    'robert stokes', 'rob stokes', 'r stokes', 'mr robert stokes', 'robert mark stokes',
+    'amy stokes', 'a stokes', 'mrs amy stokes',
+    'amy stokes & robert stokes', 'robert stokes & amy stokes',
+}
+
+
+def is_own(name):
+    return bool(name) and ' '.join(name.lower().split()) in OWN_NAMES
 
 
 def env(name):
@@ -63,7 +82,8 @@ def iso(dt):
 
 def starling_txn(item):
     sign = 1 if item.get('direction') == 'IN' else -1
-    internal = item.get('counterPartyType') in ('CATEGORY', 'SAVINGS_GOAL')
+    internal = (item.get('counterPartyType') in ('CATEGORY', 'SAVINGS_GOAL')
+                or is_own(item.get('counterPartyName')))
     return {
         'providerTxnId': item['feedItemUid'],
         'ts': item.get('transactionTime') or item.get('settlementTime'),
@@ -124,7 +144,7 @@ def monzo_txn(t):
     if isinstance(merchant, dict):
         merchant = merchant.get('name')
     counterparty = merchant or (t.get('counterparty') or {}).get('name') or None
-    internal = (t.get('scheme') or '') == 'uk_retail_pot'
+    internal = (t.get('scheme') or '').endswith('_pot') or is_own(counterparty)
     return {
         'providerTxnId': t['id'],
         'ts': t['created'],
@@ -185,6 +205,51 @@ def backfill():
     return accounts, txns, []
 
 
+# ---------- house value from the Land Registry UK HPI ----------
+
+HOUSE_PURCHASE_MINOR = 19995000   # £199,950 on 2 Feb 2015
+HPI_BASE_MONTH = '2015-02'
+HPI_REGION = 'cornwall'
+
+
+def hpi_index(month):
+    d = http(f'https://landregistry.data.gov.uk/data/ukhpi/region/{HPI_REGION}/month/{month}.json')
+    return d['result']['primaryTopic'].get('housePriceIndex')
+
+
+def update_house_value():
+    """Scale the purchase price by Cornwall's HPI. The baseline is fetched live
+    too (the index gets revised); publication lags ~2 months, so walk back from
+    last month to the newest month that exists. Idempotent: the value row is
+    keyed on the HPI month."""
+    base = hpi_index(HPI_BASE_MONTH)
+    if not base:
+        return None
+    now_dt = datetime.now(timezone.utc)
+    for back in range(1, 8):
+        y, m = now_dt.year, now_dt.month - back
+        while m < 1:
+            m += 12
+            y -= 1
+        month = f'{y:04d}-{m:02d}'
+        try:
+            idx = hpi_index(month)
+        except Exception:
+            idx = None
+        if not idx:
+            continue
+        value = round(HOUSE_PURCHASE_MINOR * idx / base)
+        conf = env('health.env')
+        base_url = conf.get('TIDE_API_BASE', 'http://192.168.1.16:3001')
+        hdr = {'X-Jarvis-Key': conf['JARVIS_API_KEY'], 'Content-Type': 'application/json'}
+        http(f'{base_url}/api/finance/asset-value', hdr, data=json.dumps({
+            'key': 'house', 'valueMinor': value, 'date': f'{month}-01', 'source': 'hpi',
+            'note': f'UKHPI Cornwall {month}: index {idx} vs {base} at the Feb 2015 purchase',
+        }).encode())
+        return {'month': month, 'index': idx, 'valueMinor': value}
+    return None
+
+
 # ---------- push ----------
 
 def push(accounts, txns, balances):
@@ -219,7 +284,11 @@ def main():
         a3, t3, b3 = pull_monzo()
         accounts, txns, balances = a2 + a3, t2 + t3, b2 + b3
     totals = push(accounts, txns, balances)
-    print(f"{datetime.now().isoformat(timespec='seconds')} finance-sync: {totals}")
+    try:
+        hpi = update_house_value()
+    except Exception as e:
+        hpi = f'failed: {e}'
+    print(f"{datetime.now().isoformat(timespec='seconds')} finance-sync: {totals} house-hpi: {hpi}")
 
 
 if __name__ == '__main__':

@@ -31,12 +31,17 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 4. **Sync** `Jarvis/bin/finance-sync.py`: nightly cron 05:20 on the jarvis LXC (`~/finance/sync.log`). Starling last 8 days + balances + spaces; Monzo with refresh-token rotation (rewrites monzo.env), rolling 90 days, declines skipped, pot transfers marked internal. `--backfill` mode loaded the full dumps: **22,920 transactions ingested** (Starling personal 1,256 + joint 7,823 dumped to `~/finance/starling/`, Monzo 14,335 minus declines).
 5. Express JSON body limit raised to 5mb for ingest batches.
 
+### Round 2, 24 Sep ~22:45 (the two launch footnotes, both closed)
+
+- **House HPI valuation LIVE.** `finance-sync.py` now posts a monthly house value from the Land Registry UK HPI (region: Cornwall, home is Crackington Haven / EX23 0JG). Baseline fetched live each run (the index gets revised): Feb 2015 = 65.1; latest published month walked back from today (data lags ~2 months). Jul 2026 index 92.4 -> house valued **£283,800** (£199,950 x 92.4/65.1). Value rows are keyed on the HPI month (source 'hpi'), so it's idempotent; a manual true-up dated today outranks it until the next data month. Net worth jumped £85,083 -> **£168,933**; house equity now £157,489. (Had to delete a stray £199,950 'true-up' row dated 24 Sep from testing, which outranked the HPI row.)
+- **Cash flow now nets out own-account transfers.** New rule in the sync: category='internal' when the counterparty is one of the household's own names, exact-match set ('Robert Stokes', 'Amy Stokes', 'Rob Stokes', 'R Stokes', 'A Stokes', 'Mr Robert Stokes', 'ROBERT MARK STOKES', 'Amy Stokes & Robert Stokes', 'Robert Stokes & Amy Stokes'). Exact match, NOT substring: 'Anne Stokes' (Rob's mum) and 'Ashley Jeffs' are real other people and stay in. Starling-internal moves are counterPartyType='CUSTOMER'; Monzo pot moves now match any scheme ending '_pot' (catches the old business account's uk_business_pot). **Aperture Labs Ltd (Rob's old ltd) is deliberately NOT internal**: company->personal is real income. Wealthify/Winterflood and NS&I flows also stay visible (single-leg savings flows, not double-counted). Full history re-pushed via `--backfill` (22,920 txns, upsert updates category in place).
+- **Mortgage payments verified from the actual HSBC DDs in the joint feed** (both paid from Starling Joint): house **£837.88/mo** since May 2025 (was £667.54 before the 4.44% rate kicked in), field **£181.54/mo** (my amortisation estimates: £838 / £181.51, so the maths was honest). Written into the DB via guarded seed true-ups in financeDb.js.
+
 ### Still open
 
 - **Pension values** (PensionBee + workplace): parked, Rob digs them out; "add" buttons on the page wait for them.
-- **House HPI valuation**: house is on the books at the £199,950 purchase price; wire the Land Registry UK HPI (free monthly data) into the sync to scale from the Feb 2015 baseline. Equity currently reads £73,639 at cost.
-- Cash-flow chart is gross in/out; cross-account transfers (personal -> joint etc.) not yet netted out (space/pot moves already are).
 - Categorised spend breakdown + spending plans: next iteration.
+- Field stays at cost (£42k); no HPI equivalent for amenity woodland.
 
 ## Needed from Rob
 
