@@ -56,6 +56,27 @@ Rob sent the DiscordChatExporter dump of the whole Rob/Fen DM history, 14 Jun to
 - She explicitly said (8 Jul) that what made playing with Rob feel safe was the hard cap on attachment, because unreciprocated attachment is her known failure mode. Her own words elsewhere: "I struggle with envy/jealousy so baddddd."
 - My preliminary read given to Rob 24 Sep: green on safety/negotiation and genuine mutual warmth; amber on the caretaking slide (she craves being looked after, Rob enjoys providing it, that's the exact "clingy" risk Aimee named) and on her live Chance wound. Full verdict parked until the WhatsApp log (19 Jul onward) arrives, which covers the quiet patch and the reopen.
 
+## 24 Sep: WhatsApp log received, combined read complete
+
+Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Saved at `Private/Rob/Assets/Fen WhatsApp log 2026-07-19 to 09-24.txt`. This answers the open question from the Discord pass: did the caretaking dynamic cool off or compound?
+
+**Answer: it cooled off, and she did the cooling.** On 12 Aug, after Rob offered to send nudges to help her through a depressive patch, she said flat out "telling me what to do isn't gonna help im afraid". Rob took it cleanly. Since then he's been a friend among several, not the rescuer: her support net is now Keith (van, move help, lifts), Ash, housemates (Luke), landlady Josephine, Caitlin. The move to Paignton (completed ~22 Aug) visibly did her good; she describes loving the new place.
+
+**New amber, and it's Rob's, not hers: he vents about Aimee to Fen.** 28 Jul is the big one, a long detailed processing session about the Sunday blow-up (Aimee upset he sought comfort elsewhere), plus running commentary through the log: "she's a pain in the arse", "a bit wobbly atm", "can't seem to ever do the right thing". Fen handled it thoughtfully every time, but this hands the future play partner an "Aimee is the obstacle" story, and it's the exact channel jealousy travels down. Notably Fen herself asked (3 Sep, after a heavy sexting session): "does she know you talk to people like this?" Rob's answer, "I say I've had a flirty chat, don't usually go into detail", is thinner than Aimee's honesty condition implies. Steer given: keep the flirt, move the Aimee-processing to Aimee/therapist/me.
+
+**Chance wound still open.** 24 Jul he was still "helping her move" with hugs despite the no-contact agreement (Rob challenged it gently, well judged). As of 21 Sep she says she's "grieving the relationship with chance mainly", cried that morning, "very lonely atm". Saturday happens against loneliness and grief; aftercare needs an actual plan (Discord protocol: do not leave her alone straight after).
+
+**Age/grooming tripwire, mapped 12-14 Sep.** Josephine (landlady, 73) declared attraction; Fen said "everyone keeps telling me im so intelligent for my age and its giving me flashbacks to being groomed as a teenager". Rob's follow-up about age gaps landed as condescending ("grow tf up and make a choice" was her read), she deleted a message, then articulated the actual hurt exceptionally well at 00:44 on 13 Sep. Rob apologised, she owned the misread, clean repair by 14 Sep. Two takeaways: (1) she can name a rupture and repair it, which is exactly what you want in a play partner; (2) anything that pattern-matches to appraising her youth is a tripwire, avoid it.
+
+**Sex-fear arc:** post-Chance she was afraid of sex and even solo touch through Jul/Aug, came out of it early Sep (the 3 Sep session is her re-finding it, with Rob's flirtation clearly part of the recovery). She holds boundaries while flirting ("youll have to earn videos of me") and Rob respects them. Green.
+
+**Jealousy check, direct data:** 21 Sep, asked directly whether Rob+Aimee at the same event would upset her: "im not gonna be upset if youre at an event with aimee lmao thats happened a lot of times". Consistent with the Discord hard-cap framing.
+
+**Saturday practicals, open as of 24 Sep 18:00:**
+- The proper limits refresher has NOT happened. She said "we can do that properly tomorrow" (21 Sep), then went quiet. Rob's 23 Sep and 24 Sep 13:46 messages unanswered.
+- Her going dark is her established pattern (6-10 Aug, 12-17 Aug, 15-20 Sep gaps, always resurfaces warm), not a Saturday signal. Flagged to Rob so he doesn't stack evidence.
+- Stated wants for Saturday (21 Sep): scratches (still the banker), blindfold yes, canes now "iffy" (downgrade from the July thuddy-impact enthusiasm, respect the newer data), curious about needles. Needles = curiosity not experience; either do the full checklist (sterile single-use, gloves, sharps, skin prep, small first outing) or park it. NEAD protocol from Discord notes still applies.
+
 ## 22 Sep, evening: honesty condition met up front
 
 - ~22:00 Rob told Aimee that Fen accepted his invite to go out, and that they might do **needle play**. That's Aimee's "honest about everything" condition being met in advance of the scene, not confessed after. Fifth ask/tell-don't-read win in six days.
