@@ -11,10 +11,16 @@ Usage:
 
 Secrets: ~/.config/jarvis/starling.env, monzo.env (refresh token rotated here),
 health.env (JARVIS_API_KEY + TIDE_API_BASE). Money is signed pence, out = negative.
+
 Internal moves are ingested with category='internal' so the cash-flow chart can
-exclude them: space/pot transfers, plus anything whose counterparty is one of the
-household's own names (personal<->joint, Monzo<->Starling, legacy own accounts).
-Aperture Labs (Rob's ltd) is NOT internal: company->personal is real income.
+exclude them. A move only counts as internal when BOTH sides are visible:
+space/pot transfers always, and own-name transfers only when the opposite leg
+(same amount, opposite sign, another account, within 4 days) is in the batch.
+An unpaired own-name credit is money entering from an account we can't see
+(Aimee's wages into joint, Aperture drawings) and counts as income; an unpaired
+own-name debit leaves the tracked system and counts as spend ('transfer').
+That pairing is why the Starling window matches Monzo's 89 days: re-ingesting a
+transaction without its twin in the batch would flip its category.
 
 Also posts a monthly house valuation from the Land Registry UK HPI (Cornwall),
 scaled from the £199,950 Feb 2015 purchase.
@@ -56,6 +62,47 @@ def is_own(name):
     return bool(name) and ' '.join(name.lower().split()) in OWN_NAMES
 
 
+def parse_ts(ts):
+    try:
+        return datetime.fromisoformat((ts or '').replace('Z', '+00:00'))
+    except ValueError:
+        return None
+
+
+def pair_own_transfers(txns):
+    """Categorise own-name transfers: paired (both legs in the batch) ->
+    'internal'; unpaired credit -> 'income'; unpaired debit -> 'transfer'.
+    Greedy nearest-in-time matching on (abs amount), opposite signs, different
+    accounts, <=4 days apart. Mutates txns in place and drops the _own flag."""
+    own = [t for t in txns if t.pop('_own', False)]
+    by_amount = {}
+    for t in own:
+        by_amount.setdefault(abs(t['amountMinor']), []).append(t)
+    for group in by_amount.values():
+        group.sort(key=lambda t: t['ts'] or '')
+        for t in group:
+            if t.get('_paired') or t['amountMinor'] >= 0:
+                continue
+            tt = parse_ts(t['ts'])
+            best, best_gap = None, timedelta(days=4)
+            for c in group:
+                if c.get('_paired') or c['amountMinor'] <= 0:
+                    continue
+                if c['providerAccountId'] == t['providerAccountId'] and c['provider'] == t['provider']:
+                    continue
+                ct = parse_ts(c['ts'])
+                gap = abs(ct - tt) if ct and tt else timedelta(days=99)
+                if gap <= best_gap:
+                    best, best_gap = c, gap
+            if best is not None:
+                t['_paired'] = best['_paired'] = True
+    for t in own:
+        if t.pop('_paired', False):
+            t['category'] = 'internal'
+        else:
+            t['category'] = 'income' if t['amountMinor'] > 0 else 'transfer'
+
+
 def env(name):
     out = {}
     for line in (CONF / name).read_text().splitlines():
@@ -82,19 +129,20 @@ def iso(dt):
 
 def starling_txn(item):
     sign = 1 if item.get('direction') == 'IN' else -1
-    internal = (item.get('counterPartyType') in ('CATEGORY', 'SAVINGS_GOAL')
-                or is_own(item.get('counterPartyName')))
+    pot = item.get('counterPartyType') in ('CATEGORY', 'SAVINGS_GOAL')
     return {
         'providerTxnId': item['feedItemUid'],
         'ts': item.get('transactionTime') or item.get('settlementTime'),
         'amountMinor': sign * item['amount']['minorUnits'],
         'description': item.get('reference') or item.get('counterPartyName'),
         'counterparty': item.get('counterPartyName'),
-        'category': 'internal' if internal else (item.get('spendingCategory') or '').lower() or None,
+        'source': item.get('source'),
+        'category': 'internal' if pot else (item.get('spendingCategory') or '').lower() or None,
+        '_own': not pot and is_own(item.get('counterPartyName')),
     }
 
 
-def pull_starling(days=8):
+def pull_starling(days=89):
     accounts, txns, balances = [], [], []
     tokens = env('starling.env')
     for key, name, kind in STARLING_ACCOUNTS:
@@ -144,14 +192,16 @@ def monzo_txn(t):
     if isinstance(merchant, dict):
         merchant = merchant.get('name')
     counterparty = merchant or (t.get('counterparty') or {}).get('name') or None
-    internal = (t.get('scheme') or '').endswith('_pot') or is_own(counterparty)
+    pot = (t.get('scheme') or '').endswith('_pot')
     return {
         'providerTxnId': t['id'],
         'ts': t['created'],
         'amountMinor': t['amount'],
         'description': t.get('description'),
         'counterparty': counterparty,
-        'category': 'internal' if internal else t.get('category'),
+        'source': t.get('scheme'),
+        'category': 'internal' if pot else t.get('category'),
+        '_own': not pot and is_own(counterparty),
     }
 
 
@@ -283,6 +333,13 @@ def main():
         a2, t2, b2 = pull_starling()
         a3, t3, b3 = pull_monzo()
         accounts, txns, balances = a2 + a3, t2 + t3, b2 + b3
+    # Dedupe (backfill dumps overlap the live pull; keep the live copy) so the
+    # transfer pairing sees each leg exactly once.
+    seen = {}
+    for t in txns:
+        seen[(t['provider'], t['providerAccountId'], t['providerTxnId'])] = t
+    txns = list(seen.values())
+    pair_own_transfers(txns)
     totals = push(accounts, txns, balances)
     try:
         hpi = update_house_value()
