@@ -86,3 +86,7 @@ Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Saved at `Priva
 - ~22:00 Rob told Aimee that Fen accepted his invite to go out, and that they might do **needle play**. That's Aimee's "honest about everything" condition being met in advance of the scene, not confessed after. Fifth ask/tell-don't-read win in six days.
 - Aimee's reaction not yet reported; worth hearing before Saturday counts as fully squared.
 - Needle play note for Saturday prep if he asks: fresh single-use sterile needles, gloves, sharps disposal, skin prep, and Fen's actual experience level are the questions that matter. He has adjacent experience (saline rig, e-stim) but play piercing on/with a new partner deserves the checklist treatment.
+
+## 24 Sep, evening: stapler parked, needles are the real intro
+
+Rob bought a skin stapler as a potential kink item and considered opening tonight's re-contact message with a flirty "got you something" pic of it. Steered off: it's not on her sheet at all (staples never came up), it's an all-or-nothing tool with no titration and a worse removal, and a cold flirty pic is the wrong ask while she's mid grief-gap. Decision: hold the stapler for a mid-conversation reveal once she's warm and engaged (works well as a "found this, thoughts?" beat), keep tonight's message to a plain no-pressure open door instead, and treat needles (not staples) as the actual first sharps toy given her curiosity-not-experience status.

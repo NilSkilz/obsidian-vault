@@ -33,7 +33,7 @@ Compiled 24 Sep 2026 from the full Discord log (14 Jun to 19 Jul) and WhatsApp l
 ## Iffy / current status (21 Sep, respect the newer answer)
 
 - **Canes: "still iffy."** She enjoyed the cane stripes in July but her current answer is iffy and she dislikes cold caning. Ask, don't assume; warm up first if she opts in.
-- **Needles: curiosity, not experience.** New interest (right after getting piercings). If it happens: sterile single-use needles, gloves, skin prep, sharps disposal, small first outing. Otherwise park it for a scene with proper lead time.
+- **Needles: curiosity, not experience.** New interest (right after getting piercings). If it happens: sterile single-use needles, gloves, skin prep, sharps disposal, small first outing. Otherwise park it for a scene with proper lead time. Right spec for a genuine first outing: 25 or 27g fine-gauge, surface skin only, one needle in then stop and check before any more; matches her "curiosity not experience" status far better than a skin stapler (all-or-nothing, no titration, worse on removal) which isn't on her sheet at all and isn't her intro toy.
 - Knife play: she's interested; Rob parked it in July until he'd seen a seizure. That's now happened, so it's negotiable again, but it wasn't on her 21 Sep list.
 - Electro (shock collar): never tried, was open in July. Not raised since.
 
