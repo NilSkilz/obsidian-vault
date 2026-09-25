@@ -23,3 +23,14 @@ How the Stokes household money actually flows, per Rob 25 Sep 2026. The live num
 - Own-name transfers between visible accounts pair off as `internal`.
 - NS&I moves are `internal` BOTH ways (added 25 Sep 2026): deposits go to counterparty 'NS&I', withdrawals return as codes ending 'nspb'. Before this, premium bond withdrawals inflated "Other income".
 - Wealthify stays visible as the "Savings & investments" line (one-way, committed).
+
+## The old spreadsheet P&L (design reference, 25 Sep 2026)
+
+Rob shared his pre-Jarvis finance spreadsheet (2023-era numbers, so the figures are dead: Tesla PCP, old salaries). What it shows about the P&L he WANTS, beyond what /finances already does:
+
+- **A budget, not just actuals**: named line items with a fixed expected monthly amount (Mortgage £x, Netflix £y), grouped as House Bills / Insurance / Entertainment / Debts / Subscriptions -> Total Fixed, then Allowances / Expenses / Savings -> Surplus.
+- **A "confirmed" tick per line**: is this DD verified as still live at this amount.
+- **Explicit allowances as lines**: Rob £200, Aimee £200, Dexter £25, Logan £25.
+- **Sinking funds inside savings**: Oil £50, Boiler £100, MOT £75, Appliances £75 (monthly set-asides for lumpy costs).
+
+Possible future feature: budget-vs-actual (expected line amounts vs what the ledger says). The wishlist tab became the /finances wishlist section (shipped 25 Sep 2026, `financeWishlist` table, seeded with his house items).
