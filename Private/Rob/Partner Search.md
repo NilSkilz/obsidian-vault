@@ -40,13 +40,15 @@ He sent her a clear message on 25 Aug naming what he wants (ongoing rather than 
 
 ## Candidates
 
-### Sarah (Sep 2026) — active prospect
+### Sarah (Sep 2026) — closed by her, 24 Sep
 
 Chatting as of 21 Sep 2026; a first date is possibly on for the weekend of 26-27 Sep. Never met, nothing negotiated, a long way from playing. Complication: Rob senses Aimee is pleased he's "moved on" from Fen to Sarah, which isn't true (the Fen want is live, see `Fen.md`), and Aimee's own condition on Fen is full honesty. Watch that Sarah doesn't become the polite cover story for not having the Fen conversation.
 
 Update 21 Sep evening: still no reply from Sarah, so nothing is booked. Saturday 26 Sep is now Fen's (Aimee agreed, Fen keen); Rob's plan is Sunday 27 for Sarah if she ever surfaces, which cleanly resolves the potential clash. If Sunday firms up, the Aimee honesty condition applies to Sarah too: she needs to hear it from Rob before it happens.
 
 Update 23 Sep: Sarah surfaced. Plan is to meet Sunday 27 Sep. Rob ran it past Aimee FIRST, before booking anything, unprompted; as of midday he was waiting on her response. The honesty-condition sequence he did right with Fen is now his default move, not a one-off. Once Aimee answers, Sunday either firms up or doesn't; either way the process is clean.
+
+Update 25 Sep: Rob sent me the full WhatsApp export (raw log: `Assets/Sarah WhatsApp export 2026-09-25.txt`). On 24 Sep at 21:54, after Rob proposed "6ish Sunday", she declined cleanly: new country + MSc overwhelm, "I don't really have the bandwidth for it right now", "I've been trying to force it a little bit", apologised for wasting his time. That's a considerate, unambiguous close, not a reschedule. Nothing in the transcript reads as a fault of Rob's; his messages were warm and low-pressure throughout, and the one 4-day quiet patch (19-23 Sep) was her first week of 9-6 lectures, then she replied warmly. Rob's final reply (21:58, unanswered as of 25 Sep morning) offered two re-contact options: check in in a month or two, or a low-pressure hello at the Falmouth munch. My steer: the munch option is the right one because it's ambient and costs her nothing; do not follow up again if she doesn't answer, and if she does answer, take whatever she picks at face value. Sunday 27 Sep is now free again.
 
 ### Grace (late July 2026) — cooling / likely off
 
