@@ -106,3 +106,4 @@ Rob has 2 rope orders in hand, first real income from the hobby. Household money
 
 ## Links
 - [[Product Ideas - Sellable Kink Goods]]
+- [[Rope Shop]] (Etsy listing copy, prices, shot list)
