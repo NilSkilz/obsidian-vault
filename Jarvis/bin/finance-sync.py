@@ -316,6 +316,35 @@ def update_house_value():
     return None
 
 
+# ---------- field value from the Knight Frank English Farmland Index ----------
+# No API for this one: quarterly average £/acre for English bare land, pasted in
+# from the published index (knightfrank.co.uk/research, "English Farmland
+# Index") whenever a new quarter appears. Small amenity plots like the field
+# trade at a premium to bare farmland, so scaling the £42k purchase by this
+# index is the conservative view. Idempotent: keyed on the quarter-end date.
+
+FIELD_PURCHASE_MINOR = 4200000    # £42,000, ~Dec 2021 (100% mortgaged)
+FARMLAND_INDEX = {                # quarter-end -> KF average £/acre
+    '2021-12-31': 7580,           # Q4 2021, the base at purchase
+    '2026-06-30': 8497,           # Q2 2026, latest published (added 25 Sep 2026)
+}
+
+
+def update_field_value():
+    base = FARMLAND_INDEX['2021-12-31']
+    date = max(FARMLAND_INDEX)
+    acre = FARMLAND_INDEX[date]
+    value = round(FIELD_PURCHASE_MINOR * acre / base)
+    conf = env('health.env')
+    base_url = conf.get('TIDE_API_BASE', 'http://192.168.1.16:3001')
+    hdr = {'X-Jarvis-Key': conf['JARVIS_API_KEY'], 'Content-Type': 'application/json'}
+    http(f'{base_url}/api/finance/asset-value', hdr, data=json.dumps({
+        'key': 'field', 'valueMinor': value, 'date': date, 'source': 'index',
+        'note': f'KF English Farmland Index £{acre}/acre vs £{base} at the Dec 2021 purchase',
+    }).encode())
+    return {'date': date, 'valueMinor': value}
+
+
 # ---------- push ----------
 
 def push(accounts, txns, balances):
@@ -361,7 +390,11 @@ def main():
         hpi = update_house_value()
     except Exception as e:
         hpi = f'failed: {e}'
-    print(f"{datetime.now().isoformat(timespec='seconds')} finance-sync: {totals} house-hpi: {hpi}")
+    try:
+        field = update_field_value()
+    except Exception as e:
+        field = f'failed: {e}'
+    print(f"{datetime.now().isoformat(timespec='seconds')} finance-sync: {totals} house-hpi: {hpi} field-index: {field}")
 
 
 if __name__ == '__main__':
