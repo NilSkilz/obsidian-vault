@@ -138,7 +138,15 @@ def starling_txn(item):
     # through as ref 'MORR BUDE' under the plain 'Morrisons' counterparty and
     # Starling tags it GROCERIES; >=£10 there is a tank, not a meal deal
     # (the store itself is 'MORRISONS BUDE - 325' / 'WM MORRISONS STORE').
-    if not pot and 'petrol' in (cp or '').lower():
+    # NS&I premium bonds are a tracked asset, so both legs are internal moves:
+    # deposits go out to counterparty 'NS&I', withdrawals come back as
+    # DIRECT_CREDITs from a code ending 'nspb' (ref 'PB <holder number>').
+    # Before this rule the withdrawals inflated "Other income" (£2,775 Mar-Aug
+    # 2026 read as income) while the deposits padded the savings outgoings.
+    cpl = (cp or '').strip().lower()
+    if not pot and (cpl == 'ns&i' or cpl.endswith('nspb')):
+        cat = 'internal'
+    elif not pot and 'petrol' in cpl:
         cat = 'fuel'
     elif not pot and ref == 'MORR BUDE' and amount <= -1000:
         cat = 'fuel'

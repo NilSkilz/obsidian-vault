@@ -71,6 +71,13 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
   - Where the Tesla was insured Nov 2022 - Nov 2025 isn't visible as a DD (annual card payment or elsewhere).
 - **Still worth one look from Rob:** what changed on the Halifax policy in **June 2025** (premium doubled mid-term, same DD ref, and it wasn't renewal month). If the Dacia was added/swapped on then it's legit; possible marker in the ledger is a £10,000 transfer from Aimee's account referenced "Dad" on 7 May 2025. And with Halifax £45.48 + Sheilas' Wheels £16.68 both live, confirm the two policies cover Fiesta + Dacia once each, with the Tesla off both.
 
+### Round 8, 25 Sep ~10:55 (NS&I withdrawals were counted as income; corrected deficit £554/mo)
+
+- Rob flagged the "Other income" line as "me transferring money from the overdraft". Checked the ledger: overdraft top-ups were never the issue, own-name Monzo<->Starling moves already pair off as `internal`. The real contaminant was **NS&I premium bonds**: withdrawals arrive as DIRECT_CREDITs from codes ending 'nspb' (ref 'PB 422245994') and were categorised as income (£2,775 across Mar-Aug), while the £250-500/mo deposits sat in "Savings & investments".
+- Fix in `finance-sync.py starling_txn`: counterparty 'NS&I' or `*nspb` -> `internal`, both directions. Full `--backfill` re-run recategorised history (22,846 txns upserted). NS&I balance itself is a tracked asset, so net worth is unaffected.
+- **Corrected typical month (Mar-Aug):** income £6,033 (Rob £4,189, Aimee £1,350, child benefit £180, other £314), fixed £1,999 (mortgages £1,019, bills £880, Wealthify £100), variable £4,588. **Net -£554/mo** (was -£466 before the fix). NS&I flows Mar-Aug: £2,250 in vs £2,775 out, so the "household savings" line was actually net NEGATIVE £525 over the window; the deficit has been quietly funded from premium bonds.
+- Structure facts from Rob captured in `Context/Household Money.md`: NS&I = household savings, Wealthify = his personal holiday/Christmas sinking fund, £200/mo pocket money each, he saves £100 of his.
+
 ### Still open
 
 - ~~Pension values~~ done 25 Sep: PensionBee £20,583.37 (Rob entered) + Standard Life £37,376 (plan D4431472000), combined £57,959.37 on "Rob's pensions". Aimee's still empty.
