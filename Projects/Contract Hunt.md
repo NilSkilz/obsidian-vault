@@ -85,6 +85,7 @@ What we deliberately skip: scripting around bot detection on portals (LinkedIn E
 - 2026-09-04 (22:05): **retro-applied to the recent 6s: 4 more sent** (Dcoded Go/TS Manchester hybrid £465; SR2 Frontend Agentic AI London hybrid £450; RecOps Senior Node/TS Leeds 1-2d/wk £480; Scope AT Senior UI Dev, Tier 1 investment bank, 1d/wk London, pitched £1140). Skipped: La Fosse "fully remote £500-525" turned out inside IR35 in the full ad; GCS £300/day is under the £350 floor. Plus two auto-applies under the old 7+ bar this week not previously logged here: ARC React Native Tech Lead (3 Sept, £680) and IO Associates Senior Node/TS (4 Sept, £530). **Scoreboard: 10 sent, 0 replies.**
 
 ## Open questions
+- **Follow-up (25 Sep 2026):** if the voice-overhauled covers don't shift the 0-reply record within a couple of weeks (by ~9 Oct), the CV is the next thing to rewrite in Rob's actual voice the same way, since JobServe covers get skimmed and the CV does the heavy lifting.
 - ~~LinkedIn~~ resolved 24 Aug: profile names Superdry, Rob accepts the connectable dots. URL on CV header. Don't re-raise.
 - ~~GitHub~~ omitted (Rob: half-finished projects, nothing worth showing).
 - ~~Education~~ omitted.
