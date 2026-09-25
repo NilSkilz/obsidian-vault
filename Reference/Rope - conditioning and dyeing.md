@@ -97,5 +97,12 @@ One 2/3 oz jar (~19g, 7-8 tsp) does **1 to 1.2kg of rope** at a medium shade. 6m
 - **Reel came up short (23 Sep 2026).** Rob's 220m natural jute reel: everything measured dry off the reel (not shrinkage-affected) came to ~184m cut + ~10m waste ≈ 194m, ~26m (~12%) under nominal. Beyond normal reel tolerance; complaint to Rope Locker justified.
 - Burn test if in doubt: natural chars and smells like burnt grass, synthetic melts to a hard bead.
 
+## Selling finished sets (started 25 Sep 2026)
+
+Rob has 2 rope orders in hand, first real income from the hobby. Household money plan: sell-to-spend, rope income tops up his personal materials budget rather than counting as household income (see `Context/Household Money.md`).
+
+- **Set packaging:** cotton drawstring bags (~£9/Amazon) + safety shears, bought per-set rather than a bulk box while order volume is still 2.
+- **Safety shears are safety equipment, test before shipping.** Cheap bulk shears (e.g. 42p-a-pair listings) are often the same generic EMT stock as pricier ones, but jute is tough and a soft-bladed cheap pair chews it instead of cutting. Test every batch on doubled jute before it goes in a set: one squeeze-and-slide should give a clean cut. Only buy in bulk once order volume justifies it, and test one from any new bulk batch too.
+
 ## Links
 - [[Product Ideas - Sellable Kink Goods]]
