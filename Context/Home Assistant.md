@@ -71,7 +71,7 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 
 ## System Services
 - **Music Assistant** runs a builtin Snapcast server (`:1704`) feeding the two play-room speaker Pis. Full detail: [[Play Room Speakers]].
-- Pre-rebuild this box ran a Dakboard service and Plausible analytics alongside HA. Not yet re-confirmed on the Proxmox setup. See `Context/Infrastructure.md` for the current tooling picture.
+- Pre-rebuild this box ran a Dakboard service and Plausible analytics alongside HA. **DAKboard confirmed alive and in use (Rob, 25 Sep 2026): it carries a Jarvis notification iframe. Subscription (£4.59/mo) stays.** Plausible still unconfirmed. See `Context/Infrastructure.md` for the current tooling picture.
 
 ## Technical Lessons
 - **Docker/BLE limitation:** Can't access Bluetooth from containers

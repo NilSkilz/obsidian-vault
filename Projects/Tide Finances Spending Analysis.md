@@ -60,10 +60,10 @@ Regular payments verified by cadence in the data, at current (mid-2026) amounts:
 | Nabu Casa | 6.50 | HA Cloud, keep |
 | JetBrains | 5.96 | Keep |
 | Ring | 4.99 | Doorbell, keep |
-| Dakboard | 4.59 | The DAKboard died with the NUC rebuild. **Is this paying for a dead dashboard?** |
+| Dakboard | 4.59 | ~~Dead dashboard?~~ **KEEP (Rob, 25 Sep 2026): the DAKboard is alive and in use, Jarvis notification iframe runs on it.** Cancel task deleted. |
 | AWS | 4.40 | Small, check what it hosts |
 
-Forgotten/duplicated flags: **Dakboard** (possibly paying for retired kit), **IONOS + 1&1 double hosting**, **Adobe** if unused, **Xbox month-to-month pricing**, **DigitalOcean vs the Proxmox cluster**.
+Forgotten/duplicated flags: ~~Dakboard~~ (cleared 25 Sep: in active use, keep), **IONOS + 1&1 double hosting**, **Adobe** if unused, **Xbox month-to-month pricing**, **DigitalOcean vs the Proxmox cluster**.
 
 ## 2. Variable spend: averages and trends
 

@@ -87,6 +87,10 @@ Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Saved at `Priva
 - Aimee's reaction not yet reported; worth hearing before Saturday counts as fully squared.
 - Needle play note for Saturday prep if he asks: fresh single-use sterile needles, gloves, sharps disposal, skin prep, and Fen's actual experience level are the questions that matter. He has adjacent experience (saline rig, e-stim) but play piercing on/with a new partner deserves the checklist treatment.
 
+## 25 Sep, early afternoon: logistics text sent
+
+Rob sent the plain time-and-pickup message for Saturday by ~13:35. Not yet delivered (single tick), so her phone is likely off or out of signal; consistent with her established quiet-spell pattern, not a cancellation signal. Ball is in her court; if still undelivered/unanswered by this evening, the plan slides rather than gets forced (per 24 Sep note). Limits refresher still outstanding and must happen before any scene.
+
 ## 24 Sep, evening: stapler parked, needles are the real intro
 
 Rob bought a skin stapler as a potential kink item and considered opening tonight's re-contact message with a flirty "got you something" pic of it. Steered off: it's not on her sheet at all (staples never came up), it's an all-or-nothing tool with no titration and a worse removal, and a cold flirty pic is the wrong ask while she's mid grief-gap. Decision: hold the stapler for a mid-conversation reveal once she's warm and engaged (works well as a "found this, thoughts?" beat), keep tonight's message to a plain no-pressure open door instead, and treat needles (not staples) as the actual first sharps toy given her curiosity-not-experience status.
