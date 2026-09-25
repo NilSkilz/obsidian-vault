@@ -234,12 +234,20 @@ def pull_monzo(days=89):
             continue
         bal = http(f"https://api.monzo.com/balance?account_id={a['id']}", hdr)
         balances.append({'provider': 'monzo', 'providerAccountId': a['id'], 'balanceMinor': bal['balance']})
+        # Monzo caps every page at 100 rows (oldest first) regardless of limit,
+        # so page with the last txn id as the `since` cursor or anything after
+        # the first 100 is silently dropped.
         since = iso(datetime.now(timezone.utc) - timedelta(days=days))
-        page = http(f"https://api.monzo.com/transactions?account_id={a['id']}&since={since}&limit=200", hdr)
-        for t in page.get('transactions', []):
-            if t.get('decline_reason'):
-                continue
-            txns.append({'provider': 'monzo', 'providerAccountId': a['id'], **monzo_txn(t)})
+        while True:
+            page = http(f"https://api.monzo.com/transactions?account_id={a['id']}&since={since}&limit=100", hdr)
+            batch = page.get('transactions', [])
+            for t in batch:
+                if t.get('decline_reason'):
+                    continue
+                txns.append({'provider': 'monzo', 'providerAccountId': a['id'], **monzo_txn(t)})
+            if len(batch) < 100:
+                break
+            since = batch[-1]['id']
     return accounts, txns, balances
 
 
