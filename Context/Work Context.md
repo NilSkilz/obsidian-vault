@@ -73,6 +73,10 @@
 - [[Tethered]] - Primary side project
 - [[Mission Control]] - Side project
 - [[Haven]] - Side project
+## Security follow-up: creds leaked in personal finance spreadsheet (found 25 Sep 2026)
+- Rob's old personal finance spreadsheet (uploaded to Jarvis over Telegram for the /finances wishlist work) had a Sheet4 with **plaintext Superdry credentials**: Rundeck prod, Salesforce (incl. production), SFTP, GitHub, PIM. The file has evidently travelled outside any vault.
+- **Outstanding:** rotate whatever's still live and move to a password manager. Not yet confirmed done, ask Rob.
+
 ## Secure Properties tool
 - Working URL: https://secure-properties-api-ch.us-e2.cloudhub.io/ (the us-e1 host in older Slack threads 504s, ignore it)
 - Fallback: MuleSoft secure-properties-tool.jar locally, Blowfish/CBC default
