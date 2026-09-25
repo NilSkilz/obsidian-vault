@@ -73,7 +73,8 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 
 ### Still open
 
-- **Pension values** (PensionBee + workplace): parked, Rob digs them out; "add" buttons on the page wait for them.
+- ~~Pension values~~ done 25 Sep: PensionBee £20,583.37 (Rob entered) + Standard Life £37,376 (plan D4431472000), combined £57,959.37 on "Rob's pensions". Aimee's still empty.
+- **Pension forecast card** shipped 25 Sep: fan chart to retirement (real-terms, central 3% growth, band 1-5%), retire-at 60/65/68 toggle, PLSA "moderate" target line (£474k = £31.5k/yr minus state pension, 4% drawdown), and a "+£X/mo closes the gap" line. At 65 central lands ~£316k vs the £474k target, gap ~£420/mo. Constants live at the top of `TideFinances.jsx` (DOB, £540.75/mo contribution).
 - ~~Categorised spend breakdown~~ done 24 Sep round 3 (P&L section); spending plans/budgets still open.
 - ~~Field stays at cost~~ indexed 25 Sep via the KF English Farmland Index (see table); the /finances property card now shows bought price + appreciation for house (+£83,850, +42%) and field (+£5,081, +12%). Note the farmland market is currently SOFTENING (-4.1% YoY, Q2 2026, IHT-change jitters), so expect the field line to drift down before up.
 
@@ -86,4 +87,4 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 - ~~Mortgage terms~~ house + field both in, 24 Sep (see table). Monthly payments to be confirmed from the Starling DD feed
 - ~~Field purchase price + date~~ £42k total, ~Dec 2021 (calculated 24 Sep)
 - ~~Wealthify market value~~ £1,226.07 as of 24 Sep (but see the discrepancy note in the table)
-- Pension values (PensionBee + both private pensions): **parked 24 Sep**, Rob will dig them out; don't nag, schema build proceeds without them
+- ~~Pension values (PensionBee + both private pensions)~~ done 25 Sep, both on the site
