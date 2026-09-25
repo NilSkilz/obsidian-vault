@@ -109,6 +109,8 @@ The admin items are now Todoist tasks (Inbox, label `money-saves`, 9 tasks): Dak
 
 Also worth booking ahead: the **field mortgage fix ends Jan 2027** (1.89%) and the **house fix May 2027** (4.44%). The field payment will jump materially at current rates; start the remortgage shop around November 2026.
 
+> **Correction, 24 Sep 23:53 (Rob's catch): the EV is cash-neutral, not a "pay rise".** An MG4 finance payment lands at roughly the same ~£300/mo as the fuel it saves, so it doesn't shrink the household overspend. But it's not a wash either: fuel money is gone forever, finance payments buy an asset (equity, resale value), and the Fiesta's own insurance/MOT/repair costs disappear too. Net effect: roughly cash-neutral month to month, wealthier over time. The overspend still needs to be closed by the admin cancellations and behavioural saves above, not the car.
+
 ## 4. Oddities for a human look
 
 - **Brian Solomon, £2,000, 9 Mar 2026** (Starling Joint, ref "Rob Stokes"). Largest single payment of the year. Presumably known, but it is unlabelled in the data.
