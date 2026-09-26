@@ -55,6 +55,10 @@ Made to order in the UK. Dispatched in 3-5 working days (the drying stage alone 
 ## Listing 2 (later): 4 x 8m set
 Cotton drawstring bag + batch-tested safety shears included. Natural set ~£60, dyed ~£85. Do after singles prove out.
 
+**Pricing rule for any dyed set:** dyed = natural price x1.4 (matches singles ratio exactly: 8m £17→£24, 4m £10→£14). Dye materials are cheap (£6-8 Procion/soda ash/salt per 36m batch); the premium is really paying for labour (dye bath, rinsing, drying, re-conditioning, crock test), roughly £25-30 over natural on a 4-8m set.
+
+Example worked 26 Sep: a 4x8m + 2x2m set priced £65 natural → dyed comes out £91 by the rule; list at £90 (round number) or £95 (psychological gap under £100).
+
 ## Notes
 - Red (fuchsia) colourway pending the dye test; don't list until a batch has dried and crock-tested clean.
 - 2 direct orders already in hand (25 Sep), pre-Etsy.
