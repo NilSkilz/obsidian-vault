@@ -60,7 +60,7 @@ Rob sent the DiscordChatExporter dump of the whole Rob/Fen DM history, 14 Jun to
 
 ## 24 Sep: WhatsApp log received, combined read complete
 
-Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Saved at `Private/Rob/Assets/Fen WhatsApp log 2026-07-19 to 09-24.txt`. This answers the open question from the Discord pass: did the caretaking dynamic cool off or compound?
+Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Superseded 26 Sep by `Private/Rob/Assets/Fen WhatsApp log 2026-07-19 to 09-26.txt` (same log, extended). This answers the open question from the Discord pass: did the caretaking dynamic cool off or compound?
 
 **Answer: it cooled off, and she did the cooling.** On 12 Aug, after Rob offered to send nudges to help her through a depressive patch, she said flat out "telling me what to do isn't gonna help im afraid". Rob took it cleanly. Since then he's been a friend among several, not the rescuer: her support net is now Keith (van, move help, lifts), Ash, housemates (Luke), landlady Josephine, Caitlin. The move to Paignton (completed ~22 Aug) visibly did her good; she describes loving the new place.
 
@@ -90,6 +90,21 @@ Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Saved at `Priva
 ## 25 Sep, early afternoon: logistics text sent
 
 Rob sent the plain time-and-pickup message for Saturday by ~13:35. Not yet delivered (single tick), so her phone is likely off or out of signal; consistent with her established quiet-spell pattern, not a cancellation signal. Ball is in her court; if still undelivered/unanswered by this evening, the plan slides rather than gets forced (per 24 Sep note). Limits refresher still outstanding and must happen before any scene.
+
+## 25-26 Sep: scene cancelled, but done properly (updated log received 26 Sep)
+
+Fen resurfaced 21:25 Fri 25 Sep and cancelled the Saturday scene: "overdone it this last week... serious risk of drop". Honest accounting note against my 25 Sep reassurance: the feared silence-then-cancel DID technically happen this time. But the substance is nothing like the Sarah/Mary script, and that difference is the whole point:
+
+- She named a real, scene-safety reason (drop risk), which given her NEAD/drop history is exactly the call a responsible bottom makes. Cancelling the scene to protect the scene.
+- She apologised unprompted ("really sorry to mess you around") and reaffirmed keenness ("super keen to do a scene at some point, maybe nmm again").
+- She counter-offered twice: possibly still coming tonight to chill ("shoulder rub is tempting", "see how i do tomorrow", asked what time he's getting there), and floated "something around Thursday perhaps".
+- Then stayed warm and chatty for hours after cancelling (dinner party pics, crumble review, up to 02:27 Sat). A fade doesn't send you photos of her dinner.
+
+State as of Sat 26 Sep 13:30:
+- Rob is going to WT tonight anyway, aiming ~8pm, packing massage oil. He told her he'd message today to check how she feels.
+- If she comes: chill only, NO scene. Her own drop-risk call stands, and the limits refresher still hasn't happened (the "properly tomorrow" from 21 Sep never did). Shoulder rub fine; anything heavier is off the table tonight regardless of how the evening feels.
+- Thursday 1 Oct is the live pencil for the next attempt; the limits refresher is the prerequisite and can happen in the week.
+- Rob's last message (02:27, "U glad u moved?") unanswered as of export; she slept til 5pm the day before, so afternoon silence today means nothing.
 
 ## 24 Sep, evening: stapler parked, needles are the real intro
 
