@@ -106,6 +106,10 @@ State as of Sat 26 Sep 13:30:
 - Thursday 1 Oct is the live pencil for the next attempt; the limits refresher is the prerequisite and can happen in the week.
 - Rob's last message (02:27, "U glad u moved?") unanswered as of export; she slept til 5pm the day before, so afternoon silence today means nothing.
 
+## 26 Sep, evening: depressed post on FetLife
+
+~19:10 Sat, Fen posted on fet that she's depressed. Fits the picture: overdone week, drop-risk cancellation, Chance grief, loneliness. Rob's instinct was "want to help"; steer given: this is the caretaking amber flag firing. Her own words (12 Aug): "telling me what to do isn't gonna help im afraid." What helps is low-demand presence, not fixing: the no-reply-needed thinking-of-you message (drafted 19:12) plus tonight's open door at WT, chill only. Do NOT slide into project mode (PIP-form pattern); she has her own support net (Keith, Ash, Luke, Josephine, Caitlin). If she comes tonight she sets the pace; no-scene line stands regardless.
+
 ## 24 Sep, evening: stapler parked, needles are the real intro
 
 Rob bought a skin stapler as a potential kink item and considered opening tonight's re-contact message with a flirty "got you something" pic of it. Steered off: it's not on her sheet at all (staples never came up), it's an all-or-nothing tool with no titration and a worse removal, and a cold flirty pic is the wrong ask while she's mid grief-gap. Decision: hold the stapler for a mid-conversation reveal once she's warm and engaged (works well as a "found this, thoughts?" beat), keep tonight's message to a plain no-pressure open door instead, and treat needles (not staples) as the actual first sharps toy given her curiosity-not-experience status.
