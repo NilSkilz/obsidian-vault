@@ -5,6 +5,7 @@ Working draft, 2026-08-24. This is the master contractor CV. Per-application we 
 **Positioning rules (settled 2026-08-24):**
 - **Superdry is never named.** Both the current perm role and the 2021-23 contract are anonymised as "major UK fashion retailer". Overemployed setup: nothing on the CV or in cover notes hints the contract runs alongside other work.
 - **Tethered and Tide are never named** (Rob's call, 2026-08-24): neutral descriptions only, no URLs, no product names. Every other employer (Headforwards, LimeNinja, Redsource/Redware) is named, they're clean.
+- **AI/agentic engineering added 26 Sep 2026** (Rob's ask): profile line, an AI/LLM skills row, and the internal-tooling bullet upgraded to a named agentic-platform bullet. All claims are backed by the running Jarvis system. **AWS Bedrock is deliberately NOT listed yet:** no evidence of hands-on Bedrock use, and it has to survive an interview question. Add it to the Cloud/infra and AI/LLM lines only when Rob confirms he's actually used it.
 
 ---
 
@@ -14,11 +15,12 @@ Cornwall, UK · Fully remote · Outside IR35 via own Ltd
 rob_stokes@me.com · 07906 888994 · linkedin.com/in/rbstokes
 
 ### Profile
-Senior full-stack developer with 13+ years shipping production software, the last five building e-commerce integrations and retail-operations tooling for a major UK fashion retailer. Previously ran his own software consultancy for four years, delivering enterprise applications end to end for named clients. Ships complete products solo: two live SaaS platforms designed, built, deployed and operated end to end on AWS, including billing, PWA delivery and error monitoring. Strong TypeScript/React core, comfortable owning everything from schema to CI to production incident. Fast, pragmatic, and used to delivering with minimal ceremony.
+Senior full-stack developer with 13+ years shipping production software, the last five building e-commerce integrations and retail-operations tooling for a major UK fashion retailer. Previously ran his own software consultancy for four years, delivering enterprise applications end to end for named clients. Ships complete products solo: two live SaaS platforms designed, built, deployed and operated end to end on AWS, including billing, PWA delivery and error monitoring. Strong TypeScript/React core, comfortable owning everything from schema to CI to production incident. Has run a production agentic AI system for over a year: LLM agents with tool use, persistent memory and scheduled autonomy, doing real work daily. Fast, pragmatic, and used to delivering with minimal ceremony.
 
 ### Core skills
 - **Languages/frameworks:** TypeScript, JavaScript, Node.js, React (previously C#, Objective-C)
-- **Cloud/infra:** AWS (Lambda, SQS, SNS, DynamoDB + streams, Amplify Gen 2, CloudFront), event-driven serverless architecture, Docker, Cloudflare Pages, Linux server admin (Proxmox, LXC), CI/CD with GitHub Actions
+- **Cloud/infra:** AWS (Lambda, SQS, SNS, DynamoDB + streams, Amplify Gen 2, CloudFront), event-driven serverless architecture, Docker, Cloudflare Pages, Linux server admin (Proxmox, LXC), CI/CD pipeline design with GitHub Actions (typecheck/test/build gates, automated deploys)
+- **AI/LLM engineering:** production agentic systems on Anthropic Claude APIs: multi-tool agents, function calling, persistent memory, MCP integrations, LLM-as-judge triage pipelines, cron-driven autonomous agents with human-in-the-loop guardrails
 - **APIs/data:** REST, GraphQL, SQL, MongoDB, DynamoDB, high-volume data feeds (CSV/XML/API)
 - **Product engineering:** PWAs (service workers, offline, install), Stripe subscriptions, auth, error tracking (Sentry-compatible), E2E and unit testing (Cucumber, Selenium)
 - **Ways of working:** remote-first since 2021, Jira/agile, PR-based review, AI-assisted delivery (daily driver: Claude-based agent tooling for research, test scaffolding and throughput)
@@ -41,7 +43,7 @@ Digital team across e-commerce integrations and retail-operations platforms. (Em
 Designed, built and operate two production SaaS products solo:
 - **Safety check-in SaaS:** React/TypeScript PWA on AWS Amplify Gen 2 with live Stripe subscriptions, timed check-ins and escalation alerts. Owns the full lifecycle: product design, build, deployment, billing, monitoring, support.
 - **Family life-admin platform:** React/TypeScript app with per-user private journaling, mood and health tracking, deployed to self-managed infrastructure with automated deploys.
-- Plus internal tooling: automated email triage, monitoring/alerting pipelines, headless-browser verification, cron-driven ops on a Proxmox homelab.
+- **Agentic AI platform:** personal-infrastructure agent system built on Claude LLM APIs, in continuous production use since 2025: multi-tool agents with persistent memory, Telegram interface, email/calendar/task integrations, LLM-judged email and error triage, headless-browser verification, and scheduled autonomous jobs on a self-managed Proxmox homelab.
 
 **Headforwards** · Software Engineer · May 2019 to Nov 2021 · Cornwall
 - React.js developer on a cloud management platform: applications and widgets visualising complex resource data from AWS, Azure and other providers
