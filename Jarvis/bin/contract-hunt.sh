@@ -14,6 +14,9 @@
 #    an application, no need to ask, just tell me in the evening"). Applications
 #    land in jarvis-contract-hunt-applied.log for the evening brief. No live
 #    Telegram ping any more; only a failed apply pings, since that needs him.
+#    Exception: a JobServe "Verify Human" CAPTCHA wall (exit 2 from
+#    auto-apply.sh) is transient, so it queues for retry silently (see the
+#    retry-queue block below) and only pings after 3 walled attempts.
 # 5. Bins the alert emails it has actioned (30-day iCloud recovery).
 # Set DRYRUN=1 to print instead of pinging/binning. SKIP_SCRAPE=1 skips the
 # ~20 min JobServe scrape (email-only pass, handy for testing).
@@ -36,6 +39,45 @@ SEARCHES=("typescript" "react contract" "node aws" "next.js" "full stack javascr
 mkdir -p "$STATE"; touch "$SEEN"
 exec >>"$LOG" 2>&1
 echo "----- $(date -Iseconds) contract-hunt poll start -----"
+
+# --- Retry queue: applications that hit JobServe's "Verify Human" CAPTCHA
+# wall on an earlier run (rate-based bot filter, transient; first seen
+# 2026-09-26). We never automate past a CAPTCHA, so walled applies are queued
+# here and re-tried at the START of each poll, before our own scrape hammers
+# the site. 3 attempts total, then ping Rob with the link (needs one human
+# click). Format: <attempts-so-far>TAB<job json>. ---
+RETRYQ="$STATE/jarvis-contract-hunt-retry.jsonl"
+if [ -s "$RETRYQ" ] && [ "$DRYRUN" != "1" ]; then
+  RQTMP="$(mktemp)"
+  while IFS=$'\t' read -r attempts job; do
+    [ -n "$job" ] || continue
+    rtitle="$(printf '%s' "$job" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("title","?"))' 2>/dev/null)"
+    rid="$(printf '%s' "$job" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("id",""))' 2>/dev/null)"
+    "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; rrc=$?
+    if [ "$rrc" -eq 0 ]; then
+      echo "retry-queue: applied to '$rtitle' on attempt $((attempts+1))"
+      set -a; source "$TCONF"; set +a
+      curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+        --data-urlencode "text=💼 Applied on your behalf (retry after JobServe's bot-wall cleared):
+${rtitle}" >/dev/null || echo "telegram send failed"
+    elif [ "$rrc" -eq 2 ] && [ "$((attempts+1))" -lt 3 ]; then
+      echo "retry-queue: '$rtitle' still walled (attempt $((attempts+1)) of 3), keeping"
+      printf '%s\t%s\n' "$((attempts+1))" "$job" >>"$RQTMP"
+    else
+      echo "retry-queue: giving up on '$rtitle' after $((attempts+1)) attempts (rc=$rrc)"
+      set -a; source "$TCONF"; set +a
+      curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+        --data-urlencode "text=💼 Auto-apply kept hitting JobServe's Verify Human wall for:
+${rtitle}
+It needs one human click, cover note is already written. Apply here:
+https://www.jobserve.com/gb/en/W${rid}.jsap
+Cover: ~/contract-hunt/out/cover-auto-${rid}.txt" >/dev/null || echo "telegram send failed"
+    fi
+  done <"$RETRYQ"
+  mv "$RQTMP" "$RETRYQ"
+fi
 
 RAW="$(mktemp)"; NEWJOBS="$(mktemp)"
 trap 'rm -f "$RAW" "$NEWJOBS"' EXIT
@@ -140,7 +182,7 @@ done
 
 # Auto-apply: every JobServe job the judge scored 6+ (matched by permalink or
 # id back to the scraped JSON) gets an application via auto-apply.sh.
-APPLIED_N=0; FAILED_N=0; FAILED_MSG=""; SENT_MSG=""
+APPLIED_N=0; FAILED_N=0; WALLED_N=0; FAILED_MSG=""; SENT_MSG=""
 while IFS= read -r line; do
   score="$(printf '%s' "$line" | sed 's/^DIGEST:[[:space:]]*//' | cut -d'|' -f1 | tr -dc '0-9')"
   [ -n "$score" ] && [ "$score" -ge 6 ] || continue
@@ -154,13 +196,19 @@ while IFS= read -r line; do
   if [ "$DRYRUN" = "1" ]; then
     echo "DRYRUN: would auto-apply to $link"; DRYRUN=1 "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; continue
   fi
-  if "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; then
+  "$HOME/contract-hunt/auto-apply.sh" "$job" </dev/null; rc=$?
+  if [ "$rc" -eq 0 ]; then
     APPLIED_N=$((APPLIED_N+1)); SENT_MSG="${SENT_MSG}${line#DIGEST: }
 "
+  elif [ "$rc" -eq 2 ]; then
+    # CAPTCHA wall: queue for automatic retry next poll, no ping (Rob, 26 Sept:
+    # fix issues myself, only interrupt him when it genuinely needs him).
+    WALLED_N=$((WALLED_N+1)); printf '1\t%s\n' "$job" >>"$RETRYQ"
+    echo "auto-apply: walled, queued for retry next poll: $link"
   else FAILED_N=$((FAILED_N+1)); FAILED_MSG="${FAILED_MSG}${line#DIGEST: }
 "; fi
 done < <(printf '%s\n' "$OUT" | grep -i '^DIGEST:')
-echo "auto-apply: sent=$APPLIED_N failed=$FAILED_N"
+echo "auto-apply: sent=$APPLIED_N walled=$WALLED_N failed=$FAILED_N"
 
 # Instant receipt per application (Rob, 6 Sept: he was missing the evening-brief
 # receipts, so each sent application now pings him a one-liner immediately).
