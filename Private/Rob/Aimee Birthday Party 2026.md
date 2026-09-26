@@ -38,6 +38,19 @@ Rejected: cardboard/papier-mache shell (bulky, blocks all sensation, looks worse
 - The **royal blue birthday set** ([[Aimee Birthday Rope Set]]) is finished and bagged. Decision for Rob: reveal it at the party (first tie in front of everyone, big moment) or keep it for the birthday itself on the 11th and use the workhorse jute at the venue. Party reveal is the showman's option; there is no wrong answer.
 - Take: main rope bag, safety shears (accessible, everyone knows where), suspension kit only if the venue has rated points (ask when paying).
 
+## Helium (friend's part-used tank, offered 26 Sep)
+
+Best use: **pop-a-dare ceiling.** Before guests arrive, fill balloons each containing a folded paper slip, let them float to the ceiling with long ribbons hanging down. Slips are a mix of: party dares/mini-scene tasks for Aimee or the puller, compliments and memories of Aimee collected from guests in advance (ask for these in the invite update), and a few duds/sweet-tokens. Through the night anyone can pull one down and pop it. Doubles as the decor, costs a bag of balloons, and gives the party a built-in pacing mechanism between scenes.
+
+Notes:
+- Latex helium balloons only float 8-12 hours: fill on the day, at the venue if possible (ask if the tank can travel, it's just a gas cylinder, upright and secured in the boot).
+- Unknown how much helium is actually left. Test-fill a couple at home first so the plan doesn't die at 6pm on the 10th.
+- **Balloons and the fire scene do not share a room-moment.** Fire first (already the sequencing), or keep balloons on the ceiling well clear. Latex + open flame is a bang and burning drips.
+- Popped latex scraps on the floor join the sweet-sweeping duty.
+- Bonus daft moment: one balloon reserved for helium-voice happy birthday. Costs nothing, always lands.
+
+Rejected: sweets inside balloons (too heavy to float), anything looner-adjacent (not her thing as far as we know, and it's a party not a scene).
+
 ## Guest scenes with Aimee
 
 - Confirm who's actually doing scenes with her (Sean presumably; who else?).
@@ -49,7 +62,8 @@ Rejected: cardboard/papier-mache shell (bulky, blocks all sensation, looks worse
 - [ ] **Pay the venue** (get receipt; ask about fire policy, rated suspension points, arrival/leave times, cleanup expectations, and their first-aid/incident kit while paying)
 - [ ] **Update invites**: optional £10 donation towards venue hire, no cards or presents. Add the photo policy line here too. RSVP-by date so numbers are known for cake and sweets.
 - [ ] **The kids.** Dexter and Logan need to be elsewhere overnight on the 10th with a clean cover story (party at a friend's / normal birthday do). This is load-bearing; sort it early, not on the 9th.
-- [ ] Buy: crepe paper/streamers, wrapped sweets, cake(s), candles (if allowed), party bits.
+- [ ] Buy: crepe paper/streamers, wrapped sweets, cake(s), candles (if allowed), party bits, balloons + ribbon (helium tank from friend, confirm pickup + test-fill).
+- [ ] Collect memories/compliments of Aimee from guests for the balloon slips (fold into the invite update).
 - [ ] Transport plan: who's driving, is anyone drinking, how does a well-subbed Aimee get home.
 
 ## Packing list (living, add as we think of it)
