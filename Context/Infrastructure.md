@@ -297,6 +297,15 @@ Rob asked for Slack messages to "wake Jarvis up". True push isn't available: the
 - The window only advances on a successful judge run, so a failed run's messages are re-covered next tick. Log: `~/.local/state/jarvis-slack-check.log`. `DRYRUN=1` prints instead of sending. Model override: `JARVIS_SLACK_MODEL`.
 - Key fact discovered while building it: **claude.ai connectors (Slack, Atlassian) DO load in headless `claude -p` runs** on this box, verified 2026-08-24. Cron jobs can use MCP.
 
+## Cron inventory: read it off /ops, not from here (2026-09-24)
+
+Every scheduled job I run is rendered live at **https://cracky.co.uk/ops** (parents-only), with plain-English schedules, next run times and disabled jobs greyed out, alongside Claude usage and host vitals. `Jarvis/bin/tide-status.sh` (cron `3-53/10`) pushes the snapshot from this box to CT 112 every 10 minutes, and the page flags a stale snapshot, which doubles as a "Jarvis's cron is broken" alarm. Check that page before answering "what have you got running": a static list in this file would rot within a fortnight.
+
+Jobs added since the sections above were written: `finance-sync.py` (05:20 nightly, see [[Tide Finances]]), `inspiration.sh` (Sundays 09:30, the weekly wild-ideas scout, see `Ideas/Inspiration Log.md`), `car-hunt.sh`, `contract-hunt.sh`, `glitchtip-check.sh`, `blog-suggest.sh`.
+
+**Finance credentials** live on this box only, chmod 600, never in the vault or a repo: `~/.config/jarvis/starling.env` (both Starling personal access tokens) and `~/.config/jarvis/monzo.env` (OAuth client + access/refresh tokens, rewritten by the sync as the refresh token rotates).
+
+
 ## History
 
 The old NUC ("HomeServer", i3-8109U) ran HA Supervised on Debian 12 with a Docker Compose + PM2 + "hermit" always-on-daemon stack. It suffered a run of hard kernel panics in June 2026 (root cause: bad/flaky RAM, a single no-name 8GB SO-DIMM) and was retired. Everything moved to Proxmox in July 2026. The full pre-rebuild operational memory (hermit daemon architecture, session reports, the crash investigation) is preserved under `Archive/legacy-jarvis/`.

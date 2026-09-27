@@ -255,3 +255,27 @@ Rules:
 - Scale the language to the evidence. "Deep links return 404 status, body looks intact, checking user impact" would have been both true and useful; "every invite link is dead" was neither.
 - Ask who is actually harmed before escalating. Here the answer was "the test runner and Googlebot", which is a tidy-up, not a drop-everything. Getting that wrong spends Rob's attention and costs credibility on the next real alarm.
 - Corollary for SPA hosting specifically: a rewrite that serves files first must still return **200** for app routes. The working Amplify rule is a plain 200 rewrite to `/index.html` gated by an extension-exclusion regex, not a 404-fallback. Full rule in [[Tethered]] overview.
+
+## Cash flow is boundary accounting: a transfer is only "internal" when you can see both legs (2026-09-24, Tide Finances)
+
+The first version of the finance sync marked any transaction with a household name as an internal transfer, so it wouldn't double-count money moving between Rob's own accounts. The chart then showed a permanent ~£2k/month deficit. The cause wasn't double-counted spending, it was **uncounted income**: Aimee's wages land in the joint account with counterparty "Amy Stokes", and her wage account isn't one of our feeds, so every payday got binned as an internal move. £16,887 a year of invisible income.
+
+The fix is a rule worth reusing for any partial-visibility ledger: an own-name transaction is internal **only if the opposite leg is visible** (same amount, opposite sign, different tracked account, within a few days). Unpaired own-name credits are income; unpaired debits are money leaving the system. Cash flow is defined by the **boundary of the accounts you can actually see**, not by whose name is on the counterparty.
+
+Consequence that bites: the sync windows for each provider must overlap enough that a re-ingested transaction always arrives in the same batch as its twin, or its category flips on the next run. Starling's window was widened from 8 to 89 days to match Monzo's for exactly this reason.
+
+Related trap from the same build: Rob's own instinct ("you're double counting something") pointed at the wrong half. He was right that the number was wrong and wrong about why. Confirm which side of the equation is broken before fixing the side he named.
+
+## A paged API can cap you below what you asked for, and the sync will look healthy (2026-09-25, Tide Finances)
+
+Monzo's transactions endpoint returns **at most 100 rows, oldest first**, regardless of the limit or date range requested. The nightly sync asked for 90 days, got the oldest 100 transactions of that window, and silently stopped ingesting anything after 28 August. No error, no warning, a green log line every night. It only surfaced because Rob asked about a £713 payment that wasn't on the page.
+
+Rules: when a response comes back at a suspiciously round count (100, 500, 1000), assume it's a cap and paginate with a cursor (Monzo uses `since=<txn-id>`) until a short page comes back. And any sync that can legitimately return zero new rows needs a freshness check (newest row date vs today) rather than "did it error", because silent truncation looks exactly like a quiet week.
+
+## OAuth redirect URIs pointing at a LAN IP get blocked by the provider's WAF (2026-09-24, Tide Finances)
+
+Monzo's auth link with `redirect_uri=http://192.168.1.11:8321/callback` was rejected by CloudFront with a 403 "request blocked" before Monzo's own service ever saw it. Nothing to do with the browser or the network.
+
+Fix that generalises to any OAuth dance run from this box: register the redirect on a **public HTTPS host we control** (added a `/monzo/callback` route to Tide at `cracky.co.uk`) that forwards to the listener on the jarvis LXC. Keep the listener local, keep the credentials local, and let the public route be a dumb bounce.
+
+Second gotcha from the same evening: the listener exchanged the code successfully and then crashed rendering its own success page, so Rob saw an error and reported failure when the tokens were already captured. **Confirm from the server's state, not the user's screen**, before concluding an auth flow failed.
