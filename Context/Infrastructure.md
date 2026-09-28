@@ -301,7 +301,7 @@ Rob asked for Slack messages to "wake Jarvis up". True push isn't available: the
 
 Every scheduled job I run is rendered live at **https://cracky.co.uk/ops** (parents-only), with plain-English schedules, next run times and disabled jobs greyed out, alongside Claude usage and host vitals. `Jarvis/bin/tide-status.sh` (cron `3-53/10`) pushes the snapshot from this box to CT 112 every 10 minutes, and the page flags a stale snapshot, which doubles as a "Jarvis's cron is broken" alarm. Check that page before answering "what have you got running": a static list in this file would rot within a fortnight.
 
-Jobs added since the sections above were written: `finance-sync.py` (05:20 nightly, see [[Tide Finances]]), `inspiration.sh` (Sundays 09:30, the weekly wild-ideas scout, see `Ideas/Inspiration Log.md`), `car-hunt.sh`, `contract-hunt.sh`, `glitchtip-check.sh`, `blog-suggest.sh`.
+Jobs added since the sections above were written: `finance-sync.py` (05:20 nightly, see [[Tide Finances]]), `inspiration.sh` (Sundays 09:30, the weekly wild-ideas scout, see `Ideas/Inspiration Log.md`), `car-hunt.sh`, `contract-hunt.sh`, `glitchtip-check.sh`, `blog-suggest.sh`, `movie-recs.sh` (Fridays 17:00: reads Plex library + watch history, builds a taste profile from what's actually watched, Telegrams 3-5 picks — unwatched library gems plus "not in the library, want me to grab it?" suggestions; logs picks to the vault so it never repeats; never touches Radarr without Rob replying).
 
 **Finance credentials** live on this box only, chmod 600, never in the vault or a repo: `~/.config/jarvis/starling.env` (both Starling personal access tokens) and `~/.config/jarvis/monzo.env` (OAuth client + access/refresh tokens, rewritten by the sync as the refresh token rotates).
 
