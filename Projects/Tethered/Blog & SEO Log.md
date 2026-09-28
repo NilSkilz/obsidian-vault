@@ -278,3 +278,15 @@ Broader, capped at three:
 - Did the rewrite fix land, and do blog posts serve their own HTML and canonical again
 - Is Search Console registered, and if so what does it say about the 11 posts
 - Whether a fourth consecutive zero-visibility week means the content strategy needs a distribution answer rather than more posts
+
+---
+
+## 2026-09-28 addendum: rewrite fixed, item 2 shipped
+
+Rob added the two ordered rewrite rules the same morning (10:07). Verified from origin: every sitemap URL now serves its own prerendered HTML with the correct canonical. Item 1 closed after 11 days.
+
+Item 2 closed the same sitting: `src/lib/pageMeta.ts` sets canonical, description, og and twitter tags client-side on the blog index and post pages, mirroring the prerender. Commit `6e6d21b` on develop, awaiting Rob's merge to main.
+
+One residual: CloudFront cached the broken responses with `s-maxage=31536000`, so some URL/encoding variants serve stale homepage HTML until the next production deploy invalidates the CDN (or Rob hits "Redeploy this version"). Crawler recovery starts from that invalidation, not from the rule change.
+
+Next up: items 3 (internal links), 4 (`/signup`), 6 (Search Console).
