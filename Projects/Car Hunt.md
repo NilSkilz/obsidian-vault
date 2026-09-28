@@ -524,3 +524,13 @@ the Bideford MG5 at £8.5k as the cheap private option.
 
 The Model 3 sections above are kept as history; their rules no longer drive
 the watcher.
+
+**Cheltenham office pocket, 28 Sep 11:05 (Rob in the office, asked for local
+test drives):** Baylis MG Gloucester (Cole Avenue, GL2 5ER, 01452 526711) is
+the nearest franchise dealer, ~20 min from The Runnings, new MG4 demos and
+test drives bookable; Cinderford MG (Forest of Dean, 01594 540650) is the
+backup at ~45 min. Local used stock spotted the same hour, NB this pocket sits
+outside the watcher's 100-mile EX23 net: MG4 Trophy LR 64kWh **£13,995** near
+Stroud/Ebley GL5 4TW (surfaced via Carwow, dealer name not yet verified) and a
+2023 Trophy LR, 17.7k mi, £15,445 at a Gloucester dealer via Cazoo. Both
+inside the caps.
