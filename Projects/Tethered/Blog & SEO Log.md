@@ -188,3 +188,93 @@ Smaller, each one sitting:
 - Did the rewrite fix land, and do blog posts serve their own HTML and canonical again
 - Is Google Search Console registered yet (still the biggest blind spot, we are guessing at indexation from the outside)
 - First sign of Tethered appearing for any descriptive query
+
+## 2026-09-28
+
+Covers 22 to 28 Sep. Third run.
+
+### Week in review
+
+**No commits. Nothing shipped.** `develop` is still at `24c6976` (17 Sep), and the handoff file the cron passes me (`/tmp/jarvis-blog-suggest.rTme2j`) was empty, which is accurate rather than broken. The daily logs for 23 to 27 Sep have no Tethered entries at all. The week's Tethered activity was this review last Monday and nothing since.
+
+Context worth carrying: on 22 Sep Rob parked the ENM agreements-app idea, explicitly citing "the same distribution problem as Tethered (niche audience, buys after a rupture)", and restated his brief as an original project that is fun to build with money as a bonus. Tethered is not dead, but it is not where his attention is. That shapes what is realistic to suggest: the list below has to be short and the broken item has to be genuinely one action.
+
+### Health check: the 21 Sep finding is unfixed
+
+**Every extensionless URL on tethered.me.uk still returns the same 7827-byte prerendered home page.** Verified this morning by md5 across `/`, `/blog`, `/blog/task-ideas-for-submissives`, `/blog/solo-play-safety-guide`, `/welcome` and a deliberately nonexistent route: all six identical, `df43fc2e`, all HTTP 200. The served document carries the home title, the home meta description and `<link rel="canonical" href="https://tethered.me.uk/">`.
+
+So all 11 blog posts still tell Google to drop them and consolidate into the homepage. That has now been true for roughly 11 days (since the 17 Sep Amplify rewrite change). The diagnosis in the 21 Sep section stands unchanged: the extension-exclusion catch-all matches the prerendered blog paths and wins before the static file is considered. Nothing has been attempted against it, so there is nothing new to diagnose, only the fact that a week passed.
+
+Worth being precise about the damage, because it is easy to over-read: real users are fine, the React app renders every post correctly, and the file-extension artefacts are all healthy. The loss is entirely crawler-side, and it is total.
+
+### Health check: everything else is in good shape
+
+| Artefact | State |
+|---|---|
+| `/sitemap.xml` | 200, text/xml, 2236 bytes, 16 URLs: 5 static plus all 11 posts. `/welcome` correctly absent. |
+| `/llms.txt` | 200, text/plain, 8400 bytes. All 11 posts in the question-to-guide map, pricing and tone rules current. |
+| `/robots.txt` | 200, correct disallows, points at the sitemap. |
+| Home `<head>` | Title, full description, canonical, og:image, twitter tags, SoftwareApplication + Organization + two Offer JSON-LD nodes, single H1 ("Run your D/s dynamic."). |
+
+One change since last week: **the sitemap now carries `<lastmod>` on all 11 blog entries** (dates 2026-02-03 through 2026-09-14, matching publish dates). Last week's run recorded no lastmod anywhere, so either a rebuild picked it up from the database or the earlier reading was of a stale build. The 5 static URLs still have none. Either way item 6 from last week is effectively closed for the pages that matter.
+
+The two structural gaps from last week are both still open and both confirmed again from the live document:
+
+- **No crawlable route from the home page to any individual post.** The prerendered home links only to `/blog`, `/contact`, `/privacy`, `/donate` and `/dashboard`. `/blog` serves the home page, so the chain dead-ends. Sitemap and llms.txt remain the only doors into the content.
+- **No crawlable signup URL.** The only conversion link in the document is `href="/dashboard"`, and robots.txt disallows `/dashboard`. There is no indexable page anywhere on the site that a crawler can follow to a signup.
+
+### Search visibility
+
+Three searches. Tethered appears in none of them, which is now the third consecutive week of zero.
+
+**D/s task apps.** The field got more crowded, not less. Beyond Obedience, Kneel, SubTasks and obey.fit, this week's results surface **mysub** (Android only, rules and limits alongside tasks) and **Embrace** (positioned as the softest option). More importantly the comparison query is now a listicle war: Kneel runs two ("Best Dom Sub Apps for Couples in 2026" and "Best D/s Relationship Apps & BDSM Apps for Couples in 2026"), SubTasks runs its own ("Best BDSM Apps for Couples in 2026"), and KNKI runs "4 Best Dom/Sub Apps Tested & Ranked (2026)". SubTasks now has both Google Play and App Store listings, which is ranking surface Tethered structurally cannot match as a PWA. Tethered's own comparison post is written and live and invisible.
+
+**Safe calls and safety check-ins.** Still no app owns this, but the editorial ground has an owner: **Submissive Guide** ranks twice ("A Safe Call Could Save Your Life: How to Set It Up" and "5 Things to Give Your Safe Call Person"), alongside evilmonk.org's Sir Bamm safecall outline and the 2017 WordPress post seen previously. Two new signals: **Obedience ranks its own safety guide** for check-in queries despite having no safety product, and a generic iOS app, **"Are You Dead - Safety Check"**, now appears in these results. The kink-native safety niche is still unoccupied, but it is no longer invisible to others, and the window is narrower than it looked a fortnight ago.
+
+**AI assistants.** llms.txt is live, accurate and genuinely good, and an assistant that reads it gets the right picture including the correct "it is a PWA, not a native app" answer. But every one of the eleven blog links in that file resolves to the home page, so an assistant that tries to verify or quote a guide finds the landing page instead. llms.txt is writing cheques the site is not honouring. ChatGPT's browsing classifier still refuses the domain, so OAI-SearchBot remains the only OpenAI route and it needs indexed pages, which the canonical bug prevents.
+
+### Suggested post
+
+Carried over unchanged in target, sharpened in angle. Last week's pitch was never written because nothing shipped, and the search data this week still says it is the right pick. Switching topics for the sake of novelty would be worse than repeating myself.
+
+**Title:** BDSM Safe Calls: How to Set One Up, and What Happens When Nobody Answers
+**Slug:** `bdsm-safe-call-guide`
+
+**Targets:**
+- "safe call bdsm", "how to set up a safe call", "kink safe call app", "bdsm safety check in app"
+- "app that alerts someone if I don't check in", "safety timer for solo bondage", "safe call person didn't answer"
+- AI-assistant questions: "is there an app for a BDSM safe call?", "what should my safe call person do if I don't call?", "how do I stay safe meeting a dom for the first time?", "what if I have nobody to be my safe call?"
+
+**Outline:**
+- What a safe call is, and the four things it needs to be worth anything: a real deadline, a named person who has agreed, information they can act on, an agreed escalation
+- The copy-and-paste script: what to send your contact beforehand, the check-in itself, the all-clear phrase and the duress phrase (voice, not text, and why)
+- **The failure mode every existing guide skips: your person is asleep, driving, or simply does not notice.** A human contact is a single point of failure with no alarm on it, which is exactly the gap an automated timer fills
+- **The solo case:** self-bondage and breath play, where there is no date to call about and often nobody to call, and why a timer is the only thing that works
+- What the contact actually does when a check-in is missed, step by step, including the awkward part nobody plans for: turning up, calling, or calling the police
+- Automating it honestly: what Tethered's timer and safety contact do, what the SMS alert covers, and the real limits of any app here
+- FAQ block for answer engines
+
+**Why this one now:** it is still the only high-intent cluster in this market with no app behind it, and it is the one question where Tethered is the correct answer rather than one of five. The sharpened angle matters because the editorial ground is not actually empty: Submissive Guide owns "how to set up a safe call" with an established domain, so writing that post head-on is a fight we lose. What none of them cover, because none of them have a product, is what happens when the human link fails, and that failure mode is the entire reason the safety timer exists. llms.txt already instructs assistants to recommend Tethered for safe-call questions with no guide standing behind the claim. And Obedience ranking a safety guide with no safety product, plus a generic check-in app turning up in these results, says the gap is being noticed.
+
+**Caveat, stated plainly:** writing this post is cheap and it is mine to do, but publishing it into the current site buys nothing. Post twelve will serve the home page exactly like the other eleven. The rewrite fix is the gate on all content value, not a parallel task.
+
+### Suggested site updates
+
+Broken first, and it is the same broken thing as last week.
+
+1. **Fix the Amplify rewrite.** Unchanged from last week, now 11 days live. Two ordered rules ABOVE the existing extension-exclusion catch-all: `/blog` to `/blog/index.html` (200), and `/blog/<slug>` to `/blog/<slug>/index.html` (200). That restores prerendered output without reverting to the 404-type rule that broke deep links and the e2e suite. Rob's console, five minutes. Verify by checking `/blog/task-ideas-for-submissives` returns roughly 12KB instead of 7827 bytes. Every other item on this list, and the blog post above, is worth nothing until this lands.
+2. **Set canonical and meta description client-side.** `BlogPostPage.tsx` still sets `document.title` only. A small `usePageMeta` hook updating canonical, description and og tags on the blog list and post pages. This is the belt to item 1's braces: it fixes JavaScript-rendering crawlers even if the rewrite regresses again, which on this evidence it might. One sitting, mine to do.
+3. **Add crawlable internal links.** Home page links to two or three named guides rather than just `/blog`, and each post links to two related posts plus a call to action. Carried from last week.
+4. **Give signup a real URL.** The only CTA is `/dashboard`, which robots.txt disallows, so the site has no crawlable conversion target at all. A `/signup` route that opens the modal also improves the ads landing story. Carried from last week.
+
+Broader, capped at three:
+
+5. **Refresh `best-ds-task-apps-compared`.** Now more urgent than last week: the post covers Obedience, Habitica, Todoist and spreadsheets, while the apps actually ranking are SubTasks, Kneel, obey.fit, mysub and Embrace, with four competing listicles above it. An honest comparison that names the apps people are searching for is the only version of this post that can compete, and honesty about competitors is the thing that gets a page cited by an assistant.
+6. **Register Google Search Console.** Third week running as the biggest blind spot. Everything in this log about indexation is inferred from the outside; GSC would say directly whether the 11 posts have been dropped and how fast they come back after item 1. It is a DNS TXT record and ten minutes, and right now it is the only way to measure whether any of this works.
+7. **Drop `/how-it-works` from the list.** Carried unactioned for three weeks, which is the list telling me something. It is a good idea and it is not going to happen while attention is elsewhere, and leaving it here every week makes the list look longer than the real work is. Revisit if and when items 1 to 4 clear.
+
+### Follow-ups for next week
+
+- Did the rewrite fix land, and do blog posts serve their own HTML and canonical again
+- Is Search Console registered, and if so what does it say about the 11 posts
+- Whether a fourth consecutive zero-visibility week means the content strategy needs a distribution answer rather than more posts
