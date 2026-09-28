@@ -2,6 +2,8 @@
 
 *Captured 2026-08-22 from Rob. Status: idea stage, not yet negotiated. Cast would be Rob + Aimee plus friends Luke and Raven (a couple who potentially want to scene with them, first time playing together). Venue: privately hired dungeon.*
 
+*Update 28 Sep 2026: Rob has sounded Raven out about a scene with him and Aimee at Barebones, awaiting her response. Whether that's this scene in full, a scaled version, or a first warm-up scene is TBC. Raven now has a file: `People/Raven.md`.*
+
 ## The arc (Rob's outline)
 
 Three acts: medical horror, then exorcism ritual, then release. Aimee is escorted in blindfolded and hooded, restrained throughout.

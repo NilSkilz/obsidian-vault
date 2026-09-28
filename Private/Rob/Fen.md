@@ -106,6 +106,13 @@ State as of Sat 26 Sep 13:30:
 - Thursday 1 Oct is the live pencil for the next attempt; the limits refresher is the prerequisite and can happen in the week.
 - Rob's last message (02:27, "U glad u moved?") unanswered as of export; she slept til 5pm the day before, so afternoon silence today means nothing.
 
+## 28 Sep: Thursday is ON, at hers
+
+- Aimee said yes to Rob seeing Fen on **Thursday 1 Oct** (the pencil from the 25 Sep cancellation, now real). Rob asked Fen, she's keen; last piece being confirmed is playing **at her place** (Paignton) rather than an event.
+- That venue is new territory: every previous plan was an event (NMM, WT). At-home means no dungeon monitors and no crowd, so the basics need doing deliberately: Rob tells Aimee where he is (her honesty condition covers this anyway), and aftercare has to be his job solo. Her Discord protocol stands: do NOT leave her alone straight after, immediate drop risk, then food and yapping.
+- **The limits refresher is still the outstanding prerequisite.** It has never happened ("properly tomorrow" from 21 Sep never did). It must happen before Thursday, ideally in the week, not on the doorstep.
+- Intensity ceiling: she cancelled the 26 Sep scene for drop risk after an overdone week and posted depressed on fet that Saturday. Six days later is fine to play, but pitch it modest: scratches (the banker), maybe blindfold. Needles and the stapler are not first-scene-at-home material unless the refresher covers them properly.
+
 ## 26 Sep, evening: depressed post on FetLife
 
 ~19:10 Sat, Fen posted on fet that she's depressed. Fits the picture: overdone week, drop-risk cancellation, Chance grief, loneliness. Rob's instinct was "want to help"; steer given: this is the caretaking amber flag firing. Her own words (12 Aug): "telling me what to do isn't gonna help im afraid." What helps is low-demand presence, not fixing: the no-reply-needed thinking-of-you message (drafted 19:12) plus tonight's open door at WT, chill only. Do NOT slide into project mode (PIP-form pattern); she has her own support net (Keith, Ash, Luke, Josephine, Caitlin). If she comes tonight she sets the pace; no-scene line stands regardless.

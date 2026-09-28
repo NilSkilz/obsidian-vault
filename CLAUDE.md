@@ -49,6 +49,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Logan (son, 12) | `People/Logan.md` |
 | Tash (Rob's partner) | `People/Tash.md` |
 | Sean (Aimee's Dom) | `People/Sean.md` |
+| Raven (scene friend, couple with Luke) | `People/Raven.md` |
 | Mary (closed it 14 Sep 2026, friends only; fet: puss-and-boots) | `Private/Rob/Mary.md` |
 | Tethered (BDSM safety SaaS) | `Projects/Tethered/overview.md` |
 | Mission Control (dashboard) | `Projects/Mission Control.md` |
