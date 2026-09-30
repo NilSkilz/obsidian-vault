@@ -120,3 +120,13 @@ State as of Sat 26 Sep 13:30:
 ## 24 Sep, evening: stapler parked, needles are the real intro
 
 Rob bought a skin stapler as a potential kink item and considered opening tonight's re-contact message with a flirty "got you something" pic of it. Steered off: it's not on her sheet at all (staples never came up), it's an all-or-nothing tool with no titration and a worse removal, and a cold flirty pic is the wrong ask while she's mid grief-gap. Decision: hold the stapler for a mid-conversation reveal once she's warm and engaged (works well as a "found this, thoughts?" beat), keep tonight's message to a plain no-pressure open door instead, and treat needles (not staples) as the actual first sharps toy given her curiosity-not-experience status.
+
+## 29-30 Sep: Thursday collapsed to a Saturday ask, now pending
+
+From the full WhatsApp export Rob shared 30 Sep 22:50:
+
+- Thursday 1 Oct died on 29 Sep: Fen forgot her landlord's cabaret thing was creeping up ("ill find out the times around it though"). Not a cancel-cancel, a calendar collision, and she sent it with an apologetic ADHD-brain note: "trying to organise with me can be torture, i have a completely disorganised brain."
+- 26 minutes after that, Rob asked "U a happy lil goblin atm?!" (13:26) and then at 16:17 proposed **Saturday 3 Oct**, NMM or at hers, "can't be home too late" (Aimee away, kids home). No reply since; that's three Rob messages in a row pending, ~30h quiet as of 30 Sep 22:50.
+- My read, given to Rob: this is executive-function avoidance of a scheduling task she'd literally just called torture, not disinterest. She was keen for Thursday ("oooooo i am indeed free") and the 26 Sep evening chat was long, warm and personal (cried on landlord, sleep pattern, blue hair pics, "im gonna look real sexy").
+- **Plan agreed:** no messages before Friday midday. If still quiet then, ONE binary nudge that removes all organising: "No pressure either way, just need to plan my Saturday: yours, 7ish, couple of hours. Yes or no is all I need x". No reply by Friday night = Saturday's off, no chase, no reference to it after.
+- Standing prerequisites unchanged if Saturday lands: limits refresher FIRST (still never happened), modest scene ceiling (scratches banker, maybe blindfold), at-hers protocol (Aimee knows where he is, solo aftercare, don't leave her alone after, food + yapping). Stapler stays in the drawer.
