@@ -33,6 +33,18 @@ Likely shape of a rebuild:
 4. Hosting/domain: who controls the registrar and current hosting?
 5. Budget/expectation: paid gig or favour?
 
+## Deal shape (30 Sep 2026)
+
+Rob's plan: build it himself, likely in exchange for free venue hire sometime, plus possibly a small monthly hosting charge. Not chasing a big invoice.
+
+## Mockup (built 30 Sep 2026)
+
+- Repo: `/home/jarvis/projects/twisted-boudoir` (local git, no remote yet). Vite + React + TS, single-page marketing mock. Target stack per Rob: React/Vite on Amplify.
+- Design: near-black plum background, violet/fuchsia/pink gradients (Tide-adjacent but its own look), Fraunces display serif + Outfit body. Real photos pulled from their current site into `public/photos/`.
+- Sections: hero (playroom wide shot), The Space feature grid, private-hire pricing tiers (sample prices), events/workshops list (sample), Boudoir Bar split, gallery, booking CTA, footer with an "Owners: edit site content" teaser for the custom-admin pitch.
+- Served on LAN at http://192.168.1.11:4620 (python http.server on the dist build). Screenshots sent to Rob 30 Sep.
+
 ## Follow-ups
 
 - Rob to continue the conversation; next step is the open questions above.
+- If the owner bites: real prices/events from their current site, decide Amelia vs replacement booking flow, then scope the admin backend (the actual build).
