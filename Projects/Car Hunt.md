@@ -534,3 +534,36 @@ outside the watcher's 100-mile EX23 net: MG4 Trophy LR 64kWh **£13,995** near
 Stroud/Ebley GL5 4TW (surfaced via Carwow, dealer name not yet verified) and a
 2023 Trophy LR, 17.7k mi, £15,445 at a Gloucester dealer via Cazoo. Both
 inside the caps.
+
+## Running costs at Rob's real mileage (30 Sep 2026)
+
+Rob revised the mileage estimate up: **20,000-30,000 miles a year**, not the
+~20k in the budget revision. That changes the running-cost picture, so here it
+is properly, per year, for an MG4 Trophy LR:
+
+- **VED (road tax): £200/year flat.** EVs lost their exemption April 2025;
+  standard rate rose £195 to £200 in April 2026. A 2023-registered car pays
+  the standard rate, ~£16.70/month. No expensive-car supplement (list price
+  was under £40k).
+- **Insurance: budget £40-55/month (£480-650/year).** Trophy LR 64kWh is
+  **group 29** (most lesser MG4 trims are group 18, so the SE LR is notably
+  cheaper to insure). A mid-range driver in group 29 pays £800-1,100, but Rob
+  insures the Fiesta for ~£240/year, so his profile is cheap; the offsets are
+  the group jump and the 25k+ annual mileage declaration, which insurers load.
+  Real quote needed before purchase, comparison sites with honest mileage.
+- **Electricity: the tariff is the whole game at this mileage.** ~3.5 mi/kWh
+  real-world = 5,700-8,600 kWh/year. On an EV overnight tariff (Intelligent
+  Octopus Go, ~7p) that's **£400-600/year (~2p/mile)**. On the standard
+  ~26p rate it's £1,500-2,250, so an EV tariff switch lands the same week the
+  car does.
+- **Pay-per-mile eVED (proposed ~2028, 3p/mile):** £600-900/year at this
+  mileage. Real money, but see below.
+
+**Comparative total per year at 25k miles:** MG4 ≈ £200 tax + ~£550 insurance
++ ~£500 electric = **~£1,250**, or ~£2,000 if the 3p/mile lands. The Fiesta on
+the same miles: ~£3,375 petrol (45mpg @ ~£1.35/L) + ~£190 tax + £240 insurance
+= **~£3,800**. The EV saves £1,800-2,500/year *even with* the mileage tax.
+
+**Warranty reality check at 25k+/year:** MG's 7-year warranty caps at 80k
+miles. A 17.7k-mile car hits the cap in ~2.5 years. Consistent with the 14 Sep
+note: buy a healthy pack (SoH report), don't pay a premium for paper cover.
