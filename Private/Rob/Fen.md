@@ -130,3 +130,11 @@ From the full WhatsApp export Rob shared 30 Sep 22:50:
 - My read, given to Rob: this is executive-function avoidance of a scheduling task she'd literally just called torture, not disinterest. She was keen for Thursday ("oooooo i am indeed free") and the 26 Sep evening chat was long, warm and personal (cried on landlord, sleep pattern, blue hair pics, "im gonna look real sexy").
 - **Plan agreed:** no messages before Friday midday. If still quiet then, ONE binary nudge that removes all organising: "No pressure either way, just need to plan my Saturday: yours, 7ish, couple of hours. Yes or no is all I need x". No reply by Friday night = Saturday's off, no chase, no reference to it after.
 - Standing prerequisites unchanged if Saturday lands: limits refresher FIRST (still never happened), modest scene ceiling (scratches banker, maybe blindfold), at-hers protocol (Aimee knows where he is, solo aftercare, don't leave her alone after, food + yapping). Stapler stays in the drawer.
+
+## 1 Oct: Thursday check-in replaces the Friday nudge
+
+Rob drafted a Thursday midday message: check-in + "don't worry about Saturday if it's too much, can do another time" + an NMM night-out offer. Steered: the care part is right, but the opt-out line answers for her (decides it's too much before she's said a word) and the NMM offer hands a self-described disorganised brain a third option when she's frozen on one. Trimmed version agreed:
+
+"Hey, just checking in, hope you're doing ok. I'm here if you need me. And zero stress about Saturday either way, just tell me what you fancy when you surface x"
+
+This REPLACES the planned Friday-midday binary nudge (one message total, not both). Care-shaped rather than admin-shaped, so sending a day early is fine. If nothing by Friday night, Saturday is off, no chase, never mentioned after. NMM stays pocketed for a live conversation. All standing prerequisites unchanged if Saturday lands (limits refresher first, modest ceiling, at-hers protocol).
