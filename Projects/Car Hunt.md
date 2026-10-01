@@ -588,3 +588,19 @@ Verdict for a Trophy LR 64kWh against a 170-mile leg:
 - **Consequences for the hunt:** SoH report goes from important to decisive
   (every % is ~2 winter miles on this commute); the 51kWh cars stay dead; the
   SE LR (same 64kWh pack) remains a valid cheaper door.
+
+## iSMART app (1 Oct 2026)
+
+The MG4 has a companion app, MG iSMART (iOS/Android, free, no subscription).
+Remote lock/unlock, battery level and range, car locator, scheduled charging,
+and remote climate/preheat, which matters for the winter commute: preheating
+while plugged in at home protects the 170-mile leg. Known quirks from owner
+forums: remote commands occasionally fail with error 59, and after a long park
+the car deep-sleeps and stops responding to remote climate until woken.
+Flaky-but-useful tier, not Tesla-app tier.
+
+**Buying checklist addition:** a used MG4 stays bound to the previous owner's
+iSMART account until unbound. Dealer can't do it directly; the in-app request
+gives the old owner 72h to respond (then auto-unbinds), or MG HQ does it with
+V5C + invoice. At viewing, ask the dealer to confirm the car is already
+unbound, otherwise it's days-to-weeks of faff before the app works.
