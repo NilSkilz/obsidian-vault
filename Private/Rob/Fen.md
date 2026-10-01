@@ -150,3 +150,13 @@ Fen replied to the midday check-in: been really busy. No mention of Saturday. Ro
 **Move agreed/advised:** chat back warm and normal first, respond to her actual message, no instant pivot to logistics. Then, while she's live (not as a separate later text), the binary ask from the 29-30 Sep plan: "No pressure either way, just need to plan my Saturday: yours, 7ish, couple of hours. Yes or no is all I need x". A live conversation is the one moment that question costs her nothing.
 
 Deadline unchanged: no clear yes by Friday night = Saturday off, no chase, never mentioned after. Standing prerequisites unchanged if it lands: limits refresher FIRST (still never happened, could happen in this very conversation if she says yes), modest ceiling (scratches banker, maybe blindfold), at-hers protocol (Aimee knows where, solo aftercare, do not leave her alone after, food + yapping). Stapler stays in the drawer.
+
+## 1 Oct, ~17:00: live window missed, tonight is the second window
+
+Rob chatted back warm but did NOT send the binary Saturday ask; she went quiet again (short live window, consistent with busy day). He proposed "maybe we catch up when you're home later tonight", so there's a planned second touchpoint.
+
+State of play:
+- The binary ask is still unsent. Tonight's catch-up, if it happens, is the moment: early in the chat, not saved for the end (her live windows close without warning).
+- If tonight's catch-up doesn't materialise, do NOT send the ask as a cold standalone text afterwards; the Friday-night deadline simply does its job. No clear yes by Friday night = Saturday off, no chase.
+- Her going quiet mid-chat after "really busy" is not a new signal, it's the same busy day. No re-reads between now and tonight.
+- If she says yes tonight, the limits refresher happens in that same conversation.
