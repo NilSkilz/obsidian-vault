@@ -175,7 +175,7 @@ A personal loan (not PCP/HP) is the right shape here: he owns the car outright f
 ## Rules the hunt applies
 
 - Hard exclude: **Cat N/S/C/D** write-offs (scored down to nothing, never pinged).
-- **Battery size matters more than usual here.** Crackington to the Cheltenham office is ~120 miles each way, and the Torquay test above sets the floor. Under ~45kWh (Mazda MX-30, e-Golf, Mini SE, 40kWh Leaf) is a second car at best and heavily penalised; 45-55kWh is marked "tight for the Torquay run in winter"; 58kWh+ gets a bonus. Tesla "Standard Range" trims are demoted (added 14 Sep after the Torquay requirement).
+- **Battery size matters more than usual here.** Crackington to the Cheltenham office is **~170 miles each way** (the "~120 miles" first logged here was wrong; straight-line alone is ~135 mi, road route via M5 is ~165-180, corrected 1 Oct 2026), and the Torquay test above sets the floor. Under ~45kWh (Mazda MX-30, e-Golf, Mini SE, 40kWh Leaf) is a second car at best and heavily penalised; 45-55kWh is marked "tight for the Torquay run in winter"; 58kWh+ gets a bonus. Tesla "Standard Range" trims are demoted (added 14 Sep after the Torquay requirement).
 - Mileage scoring rebuilt 14 Sep for the 20k/year reality: under 40k is a big
   plus (finishes ~120k), under 60k a plus, over 70k a firm minus (finishes
   150k+ before the loan is paid off).
@@ -567,3 +567,24 @@ the same miles: ~£3,375 petrol (45mpg @ ~£1.35/L) + ~£190 tax + £240 insuran
 **Warranty reality check at 25k+/year:** MG's 7-year warranty caps at 80k
 miles. A 17.7k-mile car hits the cap in ~2.5 years. Consistent with the 14 Sep
 note: buy a healthy pack (SoH report), don't pay a premium for paper cover.
+
+## The Cheltenham commute test (1 Oct 2026)
+
+Rob asked whether an MG4 covers home → The Runnings. Two new facts:
+
+1. **The office run is ~170 miles each way** (Bude→Cheltenham is 158-170 road
+   miles, Crackington adds ~10; the old "~120 miles" in the scoring rules was
+   wrong and is corrected above). ~3h15 door to door, mostly M5.
+2. **Rob can charge at work back to 100%**, so each leg is an independent
+   single-charge run; no round-trip maths needed.
+
+Verdict for a Trophy LR 64kWh against a 170-mile leg:
+
+- **Summer: yes, comfortably.** Real-world ~230 miles, arrive with ~25%.
+- **Winter: marginal on paper.** Motorway-at-70 winter range is ~180-200 on a
+  healthy pack; a used pack at ~92% SoH puts it ~165-185, i.e. the leg itself.
+  Workable by sitting at 65 and preheating while plugged in, or a 10-minute
+  splash (Gridserve Exeter forecourt is on the route, plus M5 services).
+- **Consequences for the hunt:** SoH report goes from important to decisive
+  (every % is ~2 winter miles on this commute); the 51kWh cars stay dead; the
+  SE LR (same 64kWh pack) remains a valid cheaper door.
