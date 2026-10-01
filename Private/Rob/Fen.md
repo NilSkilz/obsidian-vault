@@ -138,3 +138,15 @@ Rob drafted a Thursday midday message: check-in + "don't worry about Saturday if
 "Hey, just checking in, hope you're doing ok. I'm here if you need me. And zero stress about Saturday either way, just tell me what you fancy when you surface x"
 
 This REPLACES the planned Friday-midday binary nudge (one message total, not both). Care-shaped rather than admin-shaped, so sending a day early is fine. If nothing by Friday night, Saturday is off, no chase, never mentioned after. NMM stays pocketed for a live conversation. All standing prerequisites unchanged if Saturday lands (limits refresher first, modest ceiling, at-hers protocol).
+
+## 1 Oct, 16:41: she surfaced, "really busy", Saturday unmentioned
+
+Fen replied to the midday check-in: been really busy. No mention of Saturday. Rob "can't read her"; read given:
+
+- She did NOT take the exit. The check-in handed her a zero-cost out ("zero stress about Saturday either way") and she replied without using it. Someone wanting out of Saturday takes a free, pre-forgiven exit when it's offered. She answered the care part and skipped the admin part, which is exactly her stated wiring ("trying to organise with me can be torture").
+- "Really busy" is also the honest-accounting fit: cabaret week at her landlord's, post-overdone recovery. Consistent with every prior quiet spell (resurfaces, explains, warm).
+- So: Saturday unmentioned is not a coded no. It's an unorganised maybe sitting in a disorganised brain.
+
+**Move agreed/advised:** chat back warm and normal first, respond to her actual message, no instant pivot to logistics. Then, while she's live (not as a separate later text), the binary ask from the 29-30 Sep plan: "No pressure either way, just need to plan my Saturday: yours, 7ish, couple of hours. Yes or no is all I need x". A live conversation is the one moment that question costs her nothing.
+
+Deadline unchanged: no clear yes by Friday night = Saturday off, no chase, never mentioned after. Standing prerequisites unchanged if it lands: limits refresher FIRST (still never happened, could happen in this very conversation if she says yes), modest ceiling (scratches banker, maybe blindfold), at-hers protocol (Aimee knows where, solo aftercare, do not leave her alone after, food + yapping). Stapler stays in the drawer.
