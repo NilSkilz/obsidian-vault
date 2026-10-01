@@ -1,4 +1,4 @@
-# Lulabelle (scene name: Angel)
+# Lulabelle (real name Lucy, scene name: Angel)
 
 Old scene friend of Rob's, reconnected 28 Sep 2026 after over a year off-grid. Raw WhatsApp export: `Assets/Lulabelle WhatsApp export 2026-10-01.txt` (14 Aug 2025 to 30 Sep 2026). Analysis by Jarvis, 1 Oct 2026, at Rob's request.
 
