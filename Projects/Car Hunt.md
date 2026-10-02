@@ -604,3 +604,28 @@ iSMART account until unbound. Dealer can't do it directly; the in-app request
 gives the old owner 72h to respond (then auto-unbinds), or MG HQ does it with
 V5C + invoice. At viewing, ask the dealer to confirm the car is already
 unbound, otherwise it's days-to-weeks of faff before the app works.
+
+## Paying for it: cinch, cards and Section 75 (2 Oct 2026)
+
+Rob asked specifically about buying from cinch.co.uk up to £15k. Two
+constraints collide and one trick solves both:
+
+- **Starling's personal debit card caps card spending at £10,000/day**, fixed,
+  won't raise it. A straight debit-card payment for £15k fails.
+- **cinch takes Pay by Bank** (open banking transfer, Starling's transfer limit
+  is much higher) as the simple workaround, or **splits payment across up to 4
+  cards** in Rob's name/address.
+- **The actual plan: pay part on a credit card.** Putting any amount on a
+  credit card triggers **Section 75** (Consumer Credit Act) for the **whole
+  purchase price**, not just the card portion, because cinch's checkout is a
+  single transaction. So **~£5k on a credit card + ~£10k on the Starling debit
+  card** gets full Section 75 cover on the entire car (joint liability with
+  cinch, covers consequential losses, a legal right not a goodwill scheme)
+  while staying under Starling's £10k/day card cap. Clear the credit card
+  straight after to avoid interest.
+- Section 75 is materially stronger than debit-card chargeback (voluntary
+  Mastercard scheme, cinch can dispute it, 120-day window) and sits on top of
+  the normal legal rights either way: cinch's 14-day return and the Consumer
+  Rights Act (30-day reject for a refund, then repair/replace to 6 months).
+- Caveat: cards must be in Rob's name at his address; third-party-finance-
+  funded cards aren't accepted.
