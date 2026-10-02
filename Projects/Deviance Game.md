@@ -30,6 +30,20 @@ Rob says it all basically works but was buggy, main culprit being magic-number "
 
 Analytics: Rob's self-hosted Plausible (plausible.cracky.co.uk) snippet in `public/index.html`, wrapper in `src/utils/analytics.ts` (no-ops when blocked). Events: New Game, Resume Game, Game Setup Complete, Dice Rolled, Property Purchased, Rent Settled (cash vs favour), Spice Increased, Under 18. Site deploys to Netlify per Rob. Note: dev-server traffic (192.168.1.11:3000) also registers.
 
+## Card & player-model deep dive (2 Oct 2026, late eve)
+
+Full schema reference now lives in the repo: `docs/card-spec.md` (decks, fields, placeholders, gating rules, content rails). Written as the spec for the big card expansion.
+
+**Deck census before expansion (484 cards):** action 229 (spice 0/1/2/3 = 77/102/25/24, all 2-person), chamber 74 (dungeon/kink deck, mostly 2-person), stage 122 (theatre/performance, 49 solo, up to 4 people), fate 59 (meta: 17 money cards, 3 opt-out cards). Salient findings:
+
+- **The cards were already written for a richer consent model than the game collected.** Gates like `target_will_orgasm` (34 uses), `pain_receiving`/`pain_giving` (65), `restrained` (21), `forceful` (8) and `exhibitionism` existed in card data but `canDoAction` never checked them and PlayerForm never asked. Silently ignored for who knows how long.
+- **Zero cards used toy gates** despite the whole pick-your-toys setup step, and the toy filter in `cardManager` was broken anyway (returned a `.map()` array, always truthy). The toys feature was 100% decorative.
+- `%m3%` timer tokens only rendered if `%m2%` was also present (6 cards showed literal "%m3%"); one card sat at unreachable `spice_level: 5`; spice 2-3 was thin everywhere (action deck: only 49 of 229).
+
+**Player model v2 (same evening):** `PREF_KEYS` in `types/game.ts` is now the single list (19 keys): the old 8 plus oral_giving/receiving, pain_giving/receiving, restraining/restrained, forceful, will_orgasm, exhibitionism, feet, roleplay. `canDoAction` is data-driven over that list (exported, unit-tested per key), so the previously-dead gates are live; everything defaults to unticked (consent-first). PlayerForm renders give/receive pairs as a grid (pain, humiliation, oral, anal, bondage) plus a singles checklist, driven from `PREF_PAIRS`/`PREF_SINGLES` in the types file. Toy filter and %m3% fixed; the spice-5 card re-levelled to 3 with proper gates.
+
+**Card expansion:** new decks live in `src/data/expansion/` (one file per batch; `cardManager` concatenates them with the originals). Written to spec by parallel agents, ~650 new cards in batch 1 (action low/high spice, chamber, stage, fate). Deliberate rails in the spec: no breath/fire/knife/fluids-play, no photos, nothing leaving the room, resisting = declared-pref roleplay only. Future batches: just add a file to expansion/ + import.
+
 ### Gotchas found in the code
 
 - Two opposite dress scales: game state uses 0=Fully Clothed to 3=Naked (`DressLevel`), the setup slider runs the other way. Handled on the enums branch: the inversion now lives only in `sliderToDress` inside PlayerForm.
