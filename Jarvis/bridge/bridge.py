@@ -28,6 +28,13 @@ or transcribing first, as does anything that arrives once the run is past the
 point of accepting input. The queue keeps two agentic runs from fighting over
 the same git repo.
 
+A run is never killed just for taking a while (changed 2026-10-02, after the
+old hard 15-min cap truncated a healthy card-writing run mid-file): the
+watchdog fires only on 15 minutes of SILENCE (no stream output, i.e. genuinely
+wedged) or at a 2-hour hard ceiling. Heartbeats keep reporting real progress
+every 15 minutes for as long as the run goes, and /stop from Rob kills the
+live run on the spot and flushes the queue.
+
 Config: ~/.config/jarvis/telegram.env  (TELEGRAM_BOT_TOKEN, TELEGRAM_ALLOWED_CHAT)
 State:  ~/.local/state/jarvis-bridge/  (offset, conversation.log, bridge.log)
 """
@@ -85,9 +92,13 @@ CLASSIFY_TIMEOUT = 30
 PROMOTE_MODEL = os.environ.get("JARVIS_PROMOTE_MODEL", "claude-sonnet-5")
 PROMOTE_TIMEOUT = 480
 PROMOTE_MIN_LINES = 6      # skip the sweep if the thread has barely grown since its last one
-CLAUDE_TIMEOUT = 900       # 15 min. Measured from bridge.log 2026-08-22: even on the
-                           # heaviest days (57 replies, deep infra digs) p99 lands under
-                           # 10 min, so 25 was just dead air on a genuinely wedged run.
+CLAUDE_IDLE = 900          # kill a run only after 15 min of SILENCE (no stream output),
+                           # i.e. genuinely wedged. Until 2026-10-02 this was a hard cap on
+                           # TOTAL runtime, which killed a healthy 40-min card-writing run
+                           # mid-file; a run that is streaming tool calls is alive, let it work.
+CLAUDE_MAX = 7200          # absolute ceiling (2 h) so a runaway agent can't burn the weekly
+                           # usage limit unattended. Heartbeats keep Rob posted along the way
+                           # and /stop kills a run sooner if he's seen enough.
 ACK_ENABLED = os.environ.get("JARVIS_ACK", "1") == "1"  # stream the model's opening line as the ack (on by default since 2026-08-21; Rob wants natural voice, not canned)
 ACK_GRACE = 25             # if the model hasn't spoken by now, send a canned ack so Rob has confirmation.
                            # Raised 15->25 (2026-08-24): the canned one-liners read as uncanny valley to Rob,
@@ -104,6 +115,9 @@ TYPING_EVERY = 4           # refresh the typing indicator this often while worki
 # (Rob: "still on it" is dead air, tell me what's happened so far). The canned
 # line survives only as the fallback if the summarizer fails or comes back empty.
 HEARTBEAT_AT = (180, 600)  # seconds into a run: 3 min, then 10 min
+HEARTBEAT_EVERY = 900      # after the listed marks, keep beating every 15 min: long runs are
+                           # allowed now, so the "alive and here's where I am" signal must not
+                           # stop at the 10-minute beat
 PROGRESS_MODEL = os.environ.get("JARVIS_PROGRESS_MODEL", "claude-sonnet-5")
 PROGRESS_TIMEOUT = 75      # summarizer is a one-liner from a short log; if it can't do it in this, fall back
 # Absolute path so it works under a minimal PATH too.
@@ -127,7 +141,7 @@ CONVO_LOCK = threading.Lock()     # serialise conversation.log appends
 # a callable that writes a new user message into that run's stdin. The poll
 # loop uses it to fold Rob's mid-job texts into the run instead of queueing
 # them behind a holding message.
-CURRENT = {"inject": None, "chat": None, "topic": None}
+CURRENT = {"inject": None, "chat": None, "topic": None, "kill": None}
 CURRENT_LOCK = threading.Lock()
 
 
@@ -678,18 +692,25 @@ Rob's new message: {text}"""
         )
 
     finished = threading.Event()
-    killed = {"v": False}
-    deadline = {"t": time.time()}  # fold-ins push this forward so an extended job isn't killed mid-extension
+    killed = {"v": None}           # why the run was put down: "idle", "cap" or "user"
+    started_at = time.time()
+    deadline = {"t": started_at}   # pushed forward by EVERY line the run streams (and by
+                                   # fold-ins): a run that is talking or calling tools is
+                                   # alive however long it takes. Only silence reads as wedged.
+
+    def kill_run(reason):
+        killed["v"] = reason
+        try:
+            proc.kill()
+        except Exception:
+            pass
 
     def watchdog():
         while not finished.wait(10):
-            if time.time() - deadline["t"] > CLAUDE_TIMEOUT:
-                killed["v"] = True
-                try:
-                    proc.kill()
-                except Exception:
-                    pass
-                return
+            if time.time() - deadline["t"] > CLAUDE_IDLE:
+                return kill_run("idle")
+            if time.time() - started_at > CLAUDE_MAX:
+                return kill_run("cap")
 
     try:
         if role == "kid":
@@ -806,9 +827,11 @@ Rob's new message: {text}"""
     with CURRENT_LOCK:
         CURRENT["inject"] = inject
         CURRENT["chat"] = chat
+        CURRENT["kill"] = lambda: kill_run("user")
 
     try:
         for line in proc.stdout:
+            deadline["t"] = time.time()  # any output = alive; only true silence trips the watchdog
             line = line.strip()
             if not line:
                 continue
@@ -872,6 +895,7 @@ Rob's new message: {text}"""
             if CURRENT["inject"] is inject:
                 CURRENT["inject"] = None
                 CURRENT["chat"] = None
+                CURRENT["kill"] = None
         with stdin_lock:
             stdin_open["v"] = False
             try:
@@ -880,8 +904,12 @@ Rob's new message: {text}"""
                 pass
 
     proc.wait()
-    if killed["v"]:
-        return "(That job ran past 15 min so I stopped it. Might be too big for one go, tell me how to split it.)"
+    if killed["v"] == "user":
+        return "Stopped, as asked. Anything it already wrote to disk is still there; tell me where you want to go from here."
+    if killed["v"] == "idle":
+        return "(That run went quiet for 15 minutes, which usually means it wedged, so I killed it. Whatever it wrote first is still on disk. Point me at it again and I'll pick it up.)"
+    if killed["v"] == "cap":
+        return "(That job hit my 2-hour ceiling so I pulled the plug. If it genuinely needs that long, say so and I'll split it into stages.)"
     if final_result and final_result.strip():
         return final_result.strip()
     log(f"claude no result; stderr: {(err_buf[0] if err_buf else '')[:300]}")
@@ -1039,7 +1067,9 @@ def process(chat, text, image_path=None, file_path=None, person=None):
         # uncanny, tell me what's actually happened). If the run finishes while
         # the summarizer is thinking, the beat is dropped — the real reply wins.
         prev = 0
-        for mark in HEARTBEAT_AT:
+        marks = list(HEARTBEAT_AT)
+        while True:
+            mark = marks.pop(0) if marks else prev + HEARTBEAT_EVERY
             if done.wait(mark - prev):
                 return
             prev = mark
@@ -1246,6 +1276,33 @@ def main():
                 append_convo(f"{person['name']}: /stats", person)
                 append_convo(f"Jarvis: {stats}", person)
                 log(f">> {chat}: (stats) {stats[:80]}")
+                continue
+            # /stop (Rob only): kill the live run on the spot and flush anything
+            # queued behind it. The killed run's own return path sends the
+            # "stopped, as asked" confirmation, so this branch only speaks when
+            # there was nothing to kill (or extra queued jobs got dropped).
+            if person.get("role") == "rob" and text and text.strip().lower() in ("/stop", "/abort", "/kill"):
+                flushed = 0
+                try:
+                    while True:
+                        JOBS.get_nowait()
+                        JOBS.task_done()
+                        flushed += 1
+                except queue.Empty:
+                    pass
+                with CURRENT_LOCK:
+                    kill = CURRENT["kill"]
+                append_convo(f"{person['name']}: {text.strip()}", person)
+                if kill:
+                    kill()
+                    log(f"/stop: killed live run, flushed {flushed} queued")
+                    if flushed:
+                        send(chat, f"(Dropped {flushed} queued job{'s' if flushed != 1 else ''} too.)")
+                else:
+                    log(f"/stop: nothing running, flushed {flushed} queued")
+                    msg_out = "Nothing running just now." + (f" Dropped {flushed} queued job{'s' if flushed != 1 else ''}." if flushed else "")
+                    send(chat, msg_out)
+                    append_convo(f"Jarvis: {msg_out}", person)
                 continue
             # If a job is already running, fold a plain text message straight
             # into the live run (like typing into Claude Code while it works)

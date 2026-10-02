@@ -15,7 +15,10 @@ pushes, updates the vault) end to end, then replies with a short summary. When
 it says it did something, it did.
 
 Jobs run **one at a time**, so two agentic runs never fight over the same git
-repo. Timeout is 15 min per job (reset by fold-ins). Continuity is faked
+repo. A run is killed only after 15 min of *silence* (no stream output, i.e.
+wedged) or at a 2-hour hard ceiling, never for simply taking long; heartbeats
+report progress every 15 min for the duration, and `/stop` from Rob kills the
+live run and flushes the queue (2026-10-02). Continuity is faked
 cheaply by feeding recent `conversation.log` context into each prompt — no
 persistent Claude process, so it's model-agnostic and doesn't rack up context
 cost ("stateless engine, stateful memory").
