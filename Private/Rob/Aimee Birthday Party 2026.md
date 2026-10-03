@@ -34,7 +34,7 @@ Rejected: cardboard/papier-mache shell (bulky, blocks all sensation, looks worse
 
 ## Fire
 
-- **FIRST: confirm the venue allows open flame.** Fire play AND cake candles. Lots of venues ban both outright, insurance-driven. This decides whether fire is even on the menu; ask when paying.
+- **CONFIRMED FINE (3 Oct): venue allows open flame.** Fire play is on, cake candles are on.
 - Kit: 70% isopropyl, fire blanket, damp towels, torches/wands, metal fuel bowl with lid, lighter. Extinguisher location noted on arrival.
 - Dedicated spotter with the blanket, not participating.
 - Hair tied and covered, no fuel near her face, no product (hairspray/oils) on skin beforehand.
@@ -58,15 +58,14 @@ Notes:
 
 Rejected: sweets inside balloons (too heavy to float), anything looner-adjacent (not her thing as far as we know, and it's a party not a scene).
 
-## Guest scenes with Aimee
+## Scenes with Aimee
 
-- Confirm who's actually doing scenes with her (Sean presumably; who else?).
-- Each top gets the same brief beforehand: her limits, safeword, and where the line is for a party setting vs a private scene. Thirty seconds each, saves a bad night.
-- Rough running order in Rob's head so scenes don't stack: she needs recovery gaps, food and water between them. Multiple scenes in one night is a marathon.
+- **Settled 3 Oct: Sean is NOT going, and no other guests are expected to top her. Rob is her only top for the night.** No per-top briefs or coordination needed; the dare balloons still put guests on the receiving end of Aimee, which is unaffected.
+- Running order is simpler but the marathon warning stands: fire, piñata and any rope reveal are all scenes for her in one night. Recovery gaps, food and water between them.
 - Photo policy set BEFORE anyone arrives: no phones out, or a designated photographer and everyone consents, pick one and put it in the invite update.
 
 ## Admin
-- [ ] **Pay the venue** (get receipt; ask about fire policy, rated suspension points, arrival/leave times, cleanup expectations, and their first-aid/incident kit while paying)
+- [x] **Pay the venue**: deposit paid 3 Oct, fire policy confirmed fine. Still to check: any balance due on the day, rated suspension points, arrival/leave times, cleanup expectations, their first-aid kit.
 - [ ] **Update invites**: optional £10 donation towards venue hire, no cards or presents. Add the photo policy line here too. RSVP-by date so numbers are known for cake and sweets.
 - [ ] **The kids.** Dexter and Logan need to be elsewhere overnight on the 10th with a clean cover story (party at a friend's / normal birthday do). This is load-bearing; sort it early, not on the 9th.
 - [ ] Buy: crepe paper/streamers, wrapped sweets, cake(s), candles (if allowed), party bits, balloons + ribbon (helium tank from friend, confirm pickup + test-fill).
@@ -84,7 +83,8 @@ Rejected: sweets inside balloons (too heavy to float), anything looner-adjacent 
 **Boring but forgotten:** cash for the donation pot, bluetooth speaker charger, bin bags for cleanup, a bag for wet/used towels, her overnight bag if you're not going straight home.
 
 ## Open questions
-- Venue fire policy (blocks the fire scene)
+- ~~Venue fire policy~~ confirmed fine 3 Oct
 - Rated suspension points at the venue
-- Final guest list / who's topping her
+- ~~Who's topping her~~ settled 3 Oct: Rob only (Sean not going)
+- Any venue balance still owed beyond the 3 Oct deposit?
 - Blue rope: party reveal or birthday-day reveal
