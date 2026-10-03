@@ -1,6 +1,13 @@
-# Aimee's birthday party (kink venue, Sat 10 Oct 2026)
+# Aimee's birthday party (Twisted Boudoir, Sat 10 Oct 2026)
 
-Birthday itself is Sun 11 Oct. Venue booked 25 Sep. This file is the master plan and packing list. Private from Aimee's sessions: the piñata, the scene lineup and the rope set reveal are all surprise-adjacent.
+Birthday itself is Sun 11 Oct. Venue booked 25 Sep, confirmed 3 Oct as **Twisted Boudoir** (the kink studio between Bristol and Exeter whose website Rob is rebuilding, see `Projects/Twisted Boudoir Website.md`). This file is the master plan and packing list. Private from Aimee's sessions: the piñata, the scene lineup and the rope set reveal are all surprise-adjacent.
+
+## Venue: what Twisted Boudoir changes
+
+- **On-site bar** ("The Boudoir Bar"): check what it covers before buying drinks/cups; the donation-pot maths may change too.
+- **Custom structures on site**: steel truss, gothic posing cross, industrial swing. The piñata balance point and possibly suspension are solved; still ask if the truss is rated for suspension.
+- **House prop collections** (impact/sensory): the piñata queue may not need everyone bringing implements. Confirm house rules on using theirs.
+- **Direct line to the owner** (website conversation): ask the fire policy, rated points, times, cleanup and first-aid questions directly. Also worth clarifying whether the venue payment interacts with the website-for-venue-hire trade, or whether this one's paid straight so the favour stays clean.
 
 ## Rob's list (as given, 25 Sep)
 - Birthday cake(s)
