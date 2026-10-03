@@ -10,7 +10,7 @@ Birthday itself is Sun 11 Oct. Venue booked 25 Sep, confirmed 3 Oct as **Twisted
 - **Direct line to the owner** (website conversation): ask the fire policy, rated points, times, cleanup and first-aid questions directly. Also worth clarifying whether the venue payment interacts with the website-for-venue-hire trade, or whether this one's paid straight so the favour stays clean.
 
 ## Rob's list (as given, 25 Sep)
-- Birthday cake(s)
+- Birthday cake(s). Decided 3 Oct: **Colin the Caterpillar** (M&S) + candles. One Colin feeds ~10, so two if the RSVP count runs 15+.
 - Human piñata (figure out mechanics)
 - Fire play
 - Rope
