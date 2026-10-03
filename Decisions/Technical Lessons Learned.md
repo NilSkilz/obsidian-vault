@@ -4,6 +4,12 @@
 
 > **Note (2026-07-02):** The development lessons here (TypeScript, git flow, Thread/Matter, browser sandboxing, cron executable bit) remain valid. Some infra items predate the Proxmox rebuild and reference the retired NUC/OpenClaw/Docker stack — treat those as historical. Current infra lives in `Context/Infrastructure.md`.
 
+## Chrome auto-translate crashes React's removeChild, and it looks like your bug (2026-10-03, Tethered)
+
+GlitchTip flagged `NotFoundError: removeChild`, 5 hits in 10 minutes, one Android Chrome user (Spanish locale, Peru) hitting the sign-in modal. Looked like a modal-switching bug in Tethered's own code. It wasn't: Chrome's page-translate feature wraps text nodes in `<font>` tags behind React's back, so when React goes to remove a node it moved, the DOM has already changed under it (facebook/react#11538). Any English-site user with a non-English browser locale can trigger this on any view transition, not just this modal.
+
+Fix is a one-time guard on `removeChild`/`insertBefore` that no-ops when the node isn't actually a child, installed in `src/utils/domTranslateGuard.ts` before first render. Rule: a `removeChild`/`insertBefore` crash tied to a non-English locale is translate-extension interference, not app logic, check the breadcrumb locale before debugging the component.
+
 ## System Infrastructure
 
 ### LVM Thin Pools Fill Silently and Pause VMs
