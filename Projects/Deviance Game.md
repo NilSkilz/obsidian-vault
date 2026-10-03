@@ -12,7 +12,9 @@ Adult board game ("sexy Monopoly"): buy properties going round the board; if you
 
 ## Stack
 
-React 18 + partial TypeScript, Create React App, Bootstrap/Bootswatch, two dice libraries. Card decks in `src/data/` (action/chamber/fate/stage, ~6k lines of card data), game state split across GameContext, `useGameData.js` and raw localStorage reads (a known bug source, ticketed).
+React 18, **100% TypeScript** (migration finished 3 Oct 2026, commit fd517ad: all decks, cardManager, components, screens and tests converted, zero .js left), Create React App, Bootstrap/Bootswatch, two dice libraries. Card decks in `src/data/` (action/chamber/fate/stage, ~6k lines of card data), game state split across GameContext, `useGameData.js` and raw localStorage reads (a known bug source, ticketed).
+
+Pinned to **Node 22** (3 Oct, commit 1c213f6): `.nvmrc` + `engines` in package.json, Netlify builds on 22.x now.
 
 ## State (2 Oct 2026)
 
@@ -59,3 +61,12 @@ Full schema reference now lives in the repo: `docs/card-spec.md` (decks, fields,
 - **Men's orgasms end the scene for them (Rob's rule, 3 Oct):** any card that makes someone climax is now floored at spice 5 when the target has a penis; a per-player "one orgasm ends my night" toggle defaults on for penis-owners but can be overridden (so a not-one-and-done player isn't forced into it). Women's orgasm cards draw at their printed level.
 - **Mobile board is 4x6** (not 6x4) — Rob's instinct, confirmed it fits a phone screen with no scrolling.
 - **Toy coverage check (3 Oct):** every toy has at least one card. Sponge (3 cards) and carrot (3 cards) are the thinnest and spice-skewed (sponge all spice 1-2, carrot mostly spice 4) — candidate for a few extra cards in expansion batch 2 if Rob wants the toy picks to matter across the whole spice range.
+
+## Content balance + batch 2, To Do cleared (3 Oct 2026, daytime)
+
+- **Content analysis (Rob's prompt: "it felt like it lacked much actual sex"):** he was right. Across 1,026 cards, kissing + touching were ~60% of the whole deck and genuine sex acts (oral/PIV/anal) were ~6%, with real PIV closer to 1.5% once story/dirty-talk cards were excluded. Nearly everything sexual sat at spice 4-5; spice 3 (123 cards) had almost none. Root cause: the card manager draws at the player's **exact** spice level, not cumulative, so spice 3 got neither the spice 1-2 heat nor the spice 4-5 sex.
+- **Card batch 2 shipped** (commit a1d8f44): 34 new cards targeted at spice 3 (fingering/teasing oral, edging, counted strokes) and spice 4 (sustained oral incl. orgasm-gated ones, 69, PIV in six variants). 4 tame filler cards culled (two storytelling fillers, one card that explicitly said "no actual sex", one that broke the no-outside-contact rail). Deck now **1,056 cards**. The exact-draw-not-cumulative spice mechanic is still unchanged — next lever if spice 3 still feels light.
+- **New-game wizard close-guard shipped** (commit 9309bdf): setup (Players / partner picker / Toys) lost its X button, backdrop-click and Esc — the only way through is Next Step/Back/Start Game, so a half-set-up game can't be launched by accident. Toys step also gained a Back button it was missing.
+- **Unit tests completed** (commit caa479d): suite now 65 tests, closing the last Deviance To Do item. Added coverage for movement wrap-around (Go bonus fires once, not per step) and rent (cash payment, collection below zero, Work It Off gating).
+- **Legacy deck cleanup done** (commit 5a81ca6): card validator now reads **0 errors/warnings across all 1,056 cards**, down from 101. Fixed ~85 duplicate card names (the used-pile excludes by name, so duplicates were burying variety), broken `others_will_orgasm`/massage-oil consent gates, and four "Improv theatre" cards wrongly marked 2-player that need three. Validator now runs in every build, so a bad card fails the Netlify deploy — the rot can't come back silently.
+- **Trello, end of 3 Oct daytime session:** To Do list is empty. Backlog is just "card expansion batch 2" (further rounds, e.g. evening out thin toys) — the earlier batch-2 ticket above covers the sex-content round already shipped.
