@@ -51,3 +51,11 @@ Full schema reference now lives in the repo: `docs/card-spec.md` (decks, fields,
 - Two opposite dress scales: game state uses 0=Fully Clothed to 3=Naked (`DressLevel`), the setup slider runs the other way. Handled on the enums branch: the inversion now lives only in `sliderToDress` inside PlayerForm.
 - `propertyData` is still its own context + localStorage store (`usePropertyData.js`), but resets properly now and falls back to a fresh board if the save is malformed.
 - The spice auto-increase in `center.js` keys off the used-card pile's length; the pile now actually excludes used cards from draws, so card variety and spice pacing both changed slightly (for the better) after 2 Oct.
+
+## Design decisions (overnight 2-3 Oct, live playtest)
+
+- **Spice is now a hardcoded 1-5 scale** (Rob's spec): 1 kissing/touching, 2 breasts/genitals, 3 fingering/teasing oral, 4 full oral/sex, 5 anal/threesomes/hardcore. All 981 cards regraded (785 moved); rubric lives in `docs/card-spec.md`. New games start at spice 1.
+- **Gender and Sexuality are gone from setup entirely**, replaced after Rob asked how to make it trans-inclusive: players tick body facts ("has a penis / has a vulva / wears a bra") instead of a label, and a new "who plays with whom?" step has each player tick exactly who they're up for (no inferred orientation matrix). Old saves auto-migrate on load.
+- **Men's orgasms end the scene for them (Rob's rule, 3 Oct):** any card that makes someone climax is now floored at spice 5 when the target has a penis; a per-player "one orgasm ends my night" toggle defaults on for penis-owners but can be overridden (so a not-one-and-done player isn't forced into it). Women's orgasm cards draw at their printed level.
+- **Mobile board is 4x6** (not 6x4) — Rob's instinct, confirmed it fits a phone screen with no scrolling.
+- **Toy coverage check (3 Oct):** every toy has at least one card. Sponge (3 cards) and carrot (3 cards) are the thinnest and spice-skewed (sponge all spice 1-2, carrot mostly spice 4) — candidate for a few extra cards in expansion batch 2 if Rob wants the toy picks to matter across the whole spice range.

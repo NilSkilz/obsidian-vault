@@ -1,5 +1,7 @@
 # Deviance Game: Deep Audit, 2026-10-02
 
+**Status update (3 Oct, overnight session):** Criticals 1-3 and Highs 4-6 are fixed and shipped (encounter consent gates, opt-out floor, no-partner crash, self-pairing, 3-person placeholder/gating, used-pile-on-reject). Mediums/Lows still open on the triage pile. See `Projects/Deviance Game.md` for what shipped.
+
 Read-only audit of `~/projects/deviance-game` (main, 0457ff9). Scope: engine/game logic, consent gates, state/UI logic, validator blind spots. Known-issue context honoured: the 99 ticketed legacy card defects are not re-enumerated. All findings below were verified against the code, and the engine findings were reproduced by running the real card manager against the real decks in a node harness (localStorage shimmed, repo untouched).
 
 Checks run: `node scripts/validate-cards.cjs` (fails with exactly the 99 known legacy errors; all expansion cards pass), `react-scripts test` (28/28 pass), `tsc --noEmit` (clean).
