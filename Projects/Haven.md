@@ -80,6 +80,10 @@ New feature: a family "requests" board. Someone posts a request (needs a lift, n
   - Graceful fallback: if push isn't granted, feature still works, just no notifications.
   - Done when: accepting a request pushes a notification to the creator's device.
 
+## Days since widget — habit tracker (2026-10-03)
+
+Shipped on the health page (live at cracky.co.uk/health), inspired by Rob mentioning the standalone "Days Since" app. Each habit is a card: big day count (hours if under a day), habit name, best streak, reset tally. Reset is a two-tap confirm ("I did the thing" → arms coral → confirms within 4s or disarms). New-counter form supports backdating via an optional "last time" date. Same per-person/parents-only split as the rest of health. Bonus fix same pass: hitting `cracky.co.uk/health` directly in a browser used to return the API's status JSON instead of the page; fixed.
+
 ## Tags
 #project #haven #family #meal-planning #chores #react #typescript #docker #requests
 
