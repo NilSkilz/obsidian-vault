@@ -18,8 +18,12 @@ iPhones overheat/throttle over an 80-min match and have no Gyroflow lens profile
 
 Rob's leaning: trial on Akasos if cost-sensitive, but go straight to used GoPros if this becomes a every-Sunday habit.
 
+**iPhone pilot option (discussed 04 Oct 17:47-17:53):** viable as a free first test. iPhone main (24mm) lens has a working Gyroflow profile; ultra-wide (13mm) doesn't, avoid it. Two real catches: narrow combined FOV (~120° vs 150°+ for GoPros, may not see both try lines from a normal touchline spot) and heat/storage over an 80-min match (mitigate: 4K30 not 60, case off, screen dimmed, airplane mode, ~45GB free per phone). Plan: pilot free with two iPhones (main lens, 4K30) at a Sunday match first; only buy GoPros if the stitched result is convincing.
+
+**GoPro model decision (04 Oct 17:53):** minimum viable is Hero 5 Black (oldest with a real 4K sensor + Gyroflow profile). But used prices mean Hero 5 and Hero 7 Black cost about the same (~£76-100), so **buy Hero 7 Black, not 9/10** — better sensor and 4K60 for the same money as the floor model. Watch the trap: Hero 7 White/Silver are NOT Gyroflow-supported, only Black. Settings: stabilisation OFF (needed for profile accuracy), shoot native 4:3. Target: two used Hero 7 Blacks under £90 each, ~£160-180 for the pair.
+
 ## Shopping list (not yet bought)
-2x action cams (tier TBD), 2x 128GB SD cards, a USB-C power bank, a telescopic pole, one evening of Rob 3D-printing the mount. Rob said this one's fine to put on the public Shopping List (not Wishlist) when it's greenlit.
+2x action cams (iPhone pilot first, then used GoPro Hero 7 Black if it sticks), 2x 128GB SD cards, a USB-C power bank, a telescopic pole, one evening of Rob 3D-printing the mount. Rob said this one's fine to put on the public Shopping List (not Wishlist) when it's greenlit.
 
 ## Status
 Idea stage, not yet actioned — no purchases made as of 04 Oct 2026.
