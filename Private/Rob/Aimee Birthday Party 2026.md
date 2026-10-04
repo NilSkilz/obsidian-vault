@@ -72,15 +72,63 @@ Rejected: sweets inside balloons (too heavy to float), anything looner-adjacent 
 - [ ] Collect memories/compliments of Aimee from guests for the balloon slips (fold into the invite update).
 - [ ] Transport plan: who's driving, is anyone drinking, how does a well-subbed Aimee get home.
 
-## Packing list (living, add as we think of it)
+## Packing list (MASTER, consolidated 4 Oct from Rob's list + plan)
 
-**Party:** cake(s) + candles + lighter, cake knife, paper plates/napkins, sweets + crepe paper (piñata), speaker + playlist, drinks/soft drinks, cups, snacks, bin bags, decorations if wanted.
+Rob's items as given, merged with everything the plan implies. Additions beyond his list are marked ➕.
 
-**Kink:** rope bag + shears, fire kit (fuel, wands, blanket, damp towels, bowl), impact toys for piñata queue, blindfold, any of her favourites, wipes, towels, a throw for venue furniture.
+**Balloon dare rig:**
+- Balloons (+ a handful spare)
+- ➕ Helium tank + regulator/nozzle (friend's tank: confirm pickup, TEST-FILL at home first, transport upright + secured)
+- ➕ Ribbon/string for the ceiling pulls
+- Dare cards, WRITTEN OUT before the day (17 dares + blanks + 2-3 "popper does a forfeit" reversals, see [[Aimee Birthday Balloon Dares]]); fold small enough to fit through a balloon neck
+- ➕ Pin or pen-knife on a stick for popping
+- Sharpies (dare 4 needs one that washes off skin, check)
 
-**Safety/aftercare:** first aid kit, fire blanket (again, it matters), water bottles, sugary snacks/chocolate, her aftercare blanket, hoodie/comfy change of clothes for her, hair ties, phone chargers, paracetamol.
+**Dare props:**
+- ➕ Collar + lead (dare 3)
+- ➕ Clothes pegs x10+ (dares 7/8)
+- ➕ Blindfold (dare 6)
+- ➕ Three mystery foods for the taste test (dare 6)
+- Dildo (dare 11)
+- ➕ Whipped cream, in a cool bag (dare 12; ice for dare 13 from the venue bar)
+- ➕ Tequila + salt + limes + shot glasses (dare 9)
+- ➕ Remote toy, charged, + spare batteries (dare 17, only if it stays in)
 
-**Boring but forgotten:** cash for the donation pot, bluetooth speaker charger, bin bags for cleanup, a bag for wet/used towels, her overnight bag if you're not going straight home.
+**Piñata:**
+- Crepe paper/streamers
+- Cellotape + scissors
+- Haribo (individually wrapped minis only, they hit the floor) + ➕ a second sweet variety for volume
+- Pool noodle (soft implement for the guest queue, inspired)
+
+**Scene kit:**
+- Rope (workhorse jute; blue set too if the party reveal wins)
+- ➕ Safety shears, separate from the craft scissors, location announced
+- Fire play kit: isopropyl, wands/torches, metal bowl with lid, fire blanket, damp towels, lighter
+- Wax candles (play) ➕ plus BIRTHDAY cake candles, they are not the same shopping item
+- Floggers, impact toys, dragon whip
+- Massage table + ➕ sheet/towel to cover it, plus a throw for venue furniture
+- ➕ Wipes, kitchen roll, towels, bag for wet/used kit
+
+**Cake + food:**
+- Colin (x2 if RSVPs hit 15+) + cake knife
+- ➕ Lighter/matches for the candles (fire kit lighter works, just know where it is)
+- ➕ Paper plates, napkins, forks, cups (check what the Boudoir Bar provides first)
+- Snacks/food, soft drinks, booze
+- ➕ Bottle opener/corkscrew
+- ➕ Cool bag + ice packs (whipped cream, limes, and Colin's chocolate shell)
+
+**Safety + aftercare:**
+- ➕ First aid kit + burn gel (non-negotiable with fire on)
+- ➕ Water bottles, sugary snacks, her favourite chocolate
+- Blankets (including her aftercare one)
+- Comfy clothes for the drive home, ➕ for BOTH of you, plus her overnight bag if not heading straight back
+- ➕ Hair ties + head covering for the fire scene
+- ➕ Paracetamol, phone chargers
+
+**Boring but load-bearing:**
+- ➕ Cash for the donation pot + a pot to put it in
+- ➕ Speaker + playlist + its charger (unless Twisted has a sound system, ask the owner)
+- ➕ Bin bags (crepe shrapnel, latex scraps, sweet wrappers: the cleanup is real)
 
 ## Open questions
 - ~~Venue fire policy~~ confirmed fine 3 Oct
