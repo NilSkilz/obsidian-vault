@@ -26,6 +26,9 @@
 ## Important Dates
 - **Birthday:** 24 Dec (Christmas Eve - special planning needed)
 
+## Sport
+- **Rugby:** Plays rugby, matches on Sundays. Sparked the [[Veo Camera DIY]] idea (04 Oct 2026)
+
 ## Development Stage
 - **Age:** 15yo - teenage independence and responsibility
 - **Tech comfort:** Growing up with smart home technology
