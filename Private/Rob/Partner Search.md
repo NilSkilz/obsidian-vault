@@ -54,6 +54,8 @@ Update 3 Oct: she's back, and warmer than before the close (new export: `Assets/
 
 Update 3 Oct evening: Rob sent the encouragement game and she loved it. She immediately pushed for the first reward (the saved compliment) before earning it, classic brat testing the frame. Rob asked me for the compliment; I supplied one built on what's actually distinctive about her (named her overwhelm honestly in September, came back on her own terms) rather than looks, since they haven't met. Game is live for her library day Sunday 4 Oct.
 
+Design principle (3 Oct): Rob floated orgasms as a reward tier before this even started. I held the line: not yet, she came back because the pressure was off, and stacking sex onto the structure before the first drink risks reading as a sexting contract rather than a game. Keep these demand-free and let her be the one who escalates (the open-ended 4th reward already does this); if she turns it filthy herself, that's hers to own.
+
 ### Grace (late July 2026) — cooling / likely off
 
 A prospective new partner Rob was talking to; a Tuesday meet was planned. She pulled back citing a **"bad gut feeling"** because his negotiation style differed from hers (**opt-out vs opt-in**), framed around **consent** (her highest-priority thing). She slept on it; the meet went wobbly. **Second time she's reacted OTT to something innocuous.** Rob was sad + annoyed + went into "I don't know what I'm doing anymore" spiral (that last part is his own wobble, not really about her — see [[Rob Mood Log]]).
