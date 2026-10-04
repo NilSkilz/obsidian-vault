@@ -285,3 +285,16 @@ Monzo's auth link with `redirect_uri=http://192.168.1.11:8321/callback` was reje
 Fix that generalises to any OAuth dance run from this box: register the redirect on a **public HTTPS host we control** (added a `/monzo/callback` route to Tide at `cracky.co.uk`) that forwards to the listener on the jarvis LXC. Keep the listener local, keep the credentials local, and let the public route be a dumb bounce.
 
 Second gotcha from the same evening: the listener exchanged the code successfully and then crashed rendering its own success page, so Rob saw an error and reported failure when the tokens were already captured. **Confirm from the server's state, not the user's screen**, before concluding an auth flow failed.
+
+## A validator with a non-zero baseline is not a wall, it's a decoration (2026-10-03, Deviance Game)
+
+The Deviance card validator was written on 2 Oct with the card expansion. It worked, and it reported **84 pre-existing errors in the original decks**, so it could only ever be run by hand and eyeballed against a remembered baseline. That gap let new rot hide: by 3 Oct the count had drifted to 101 because freshly written cards had collided with legacy card names and nobody could tell the new errors from the old ones.
+
+The errors were not cosmetic either. The game's used-card pile excludes **by card name**, so ~85 duplicated names meant drawing one "Adult fun" silently buried all nine of them for the rest of the session. A checker that knew this and couldn't enforce it bought nothing.
+
+Rules that generalise to any lint/validator/typecheck introduced on a legacy codebase:
+
+- **The baseline has to reach zero before the check earns a place in CI.** Until then it is advisory, and advisory checks rot at exactly the rate of the codebase.
+- Budget the cleanup as part of introducing the tool, not as a backlog ticket. "84 known errors, ignore those" is a promise to re-read 84 errors every time, which nobody does.
+- Once it's at zero, **wire it into the build** so one bad input fails the deploy (`scripts/validate-cards.cjs` now runs in every Netlify build). A gate that can't block is a log line.
+- Corollary from the same cleanup: if a system de-duplicates by a human-written string (name, title, slug), uniqueness of that string is a **correctness** constraint, not a tidiness one. Enforce it mechanically or it will drift.
