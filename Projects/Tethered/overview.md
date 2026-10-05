@@ -32,15 +32,31 @@ The issue is NOT "nothing to buy" and NOT a traffic problem. It's that the **pay
 ## Competition Analysis
 **Search visibility baseline (2026-09-15):** zero appearances across 5 customer-style queries ("BDSM safety check-in app", "kink safe call app", "D/s tasks points rewards app", brand searches) on two engines, tested ~12h after the SEO push went live. Space is owned by Obedience, Obey, SubTasks, Kneel, Collared, Ever Collar and KINX — a wider field than the two competitors detailed below. Monday SEO cron tracks movement from this zero baseline.
 
+### How the competitors actually acquire users (researched 2026-10-05)
+**Not ads.** Google/Meta treat BDSM as restricted adult content ("Approved (Limited)" at best, won't serve in most placements), so nobody in this niche can meaningfully buy traffic. Rob's own Google Ads campaign should expect the same ceiling. The field wins on three organic channels Tethered currently has zero presence in:
+1. **Content volume + named listicles.** SubTasks: 47 blog posts. Kneel, Ever Collar, knki.fun: all run blogs whose anchor pieces are "best D/s apps 2026" listicles that NAME the whole field (and rank themselves #1). They review each other, which also farms cross-niche backlinks. **Tethered appears in none of these lists** (checked Kneel's and knki.fun's directly). Our own comparison post avoided naming competitors until 2026-10-05 (fixed, commit 6a93ee1 on develop).
+2. **App-store search.** Obedience, Kneel, SubTasks, mysub are all native iOS/Android apps; "bdsm tasks" App Store search is a discovery channel a PWA can't touch. Structural disadvantage, probably not worth fixing short-term, but it explains a chunk of their signups.
+3. **Free tools as lead magnets.** knki.fun: kink test, yes/no/maybe checklist, aftercare checklist, kinktionary. Natural Tethered move: a public no-signup version of the consent checklist.
+Obedience also runs a Substack (2 yrs, obedienceapp.substack.com) as a content/retention channel.
+
 ### [[Obedience]]
-- **Price:** $60/yr
-- **Focus:** Habit/task tracking, rewards/punishments, point system
+- **Price (updated 2026-10-05):** ~$6.99/mo or $29.99/yr **per person** (old $60/yr note stale)
+- **Focus:** Habit/task tracking, rewards/punishments, points; most beginner-friendly onboarding
 - **Issues:** Buggy, no safety features
 
-### [[BeMoreKinky]]
-- **Rating:** 4.8★
-- **Focus:** Discovery/compatibility, 600+ activities, scene planning
-- **Gap:** No safety timer functionality
+### Kneel (getkneel.com, new entrant)
+- **Price:** $9.99/mo or $79.99/yr, covers both partners
+- **Focus:** Discipline-heavy: consequences, timed reflection, privilege restrictions, chastity tracking
+- **Marketing:** active blog, "best D/s apps" listicle ranking itself #1
+
+### SubTasks (subtasksapp.com, new entrant)
+- **Price:** core loop free, Pro tier for extras
+- **Focus:** gamified (points, demerits, streaks, achievements, "boss raids")
+- **Marketing:** 47 blog posts, own 2026 listicle; outranks us everywhere despite being new — proof the content playbook works fast in this niche
+
+### Others
+- **mysub** (long-distance angle), **Embrace** (soft D/s, journaling, no punishments by design), **ChastiSafe** (free, chastity niche), **KNKI/knki.fun** (community platform + free-tools SEO machine)
+- **[[BeMoreKinky]]**: 4.8★, discovery/compatibility, 600+ activities; no safety timer
 
 ## Differentiation
 **Repositioned 2026-09-14 (Rob's call): lead with D/s dynamic management** (partner-linked tasks, points, rewards, punishments) to compete head-on with Obedience; safety (timer, check-ins, consent checklists) is the differentiator no competitor has, not the headline. Landing page, meta tags and llms.txt all re-aimed at that market (develop commit b8dd48d). Neither competitor addresses "meeting someone new safely", and Obedience has no safety features at all.
