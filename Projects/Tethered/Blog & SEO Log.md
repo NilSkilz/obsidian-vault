@@ -412,3 +412,20 @@ Nothing dropped from the list this week. Last week's items 1 and 2 closed, item 
 - Did Rob request indexing, and did Googlebot come back. Check URL Inspection on the same six URLs and look for a `lastCrawlTime` that is not "never"
 - Whether the internal-link and CTA fixes shipped, and whether Bing's crawl stats stay empty a fortnight after submission
 - If there is still no crawl of any blog post by 12 Oct, the conclusion is that organic is not a channel Tethered can buy its way into with content, and the honest recommendation becomes distribution (munch organisers, FetLife, the Google Ads campaign) rather than a thirteenth post
+
+### Addendum, same day 10:50: items 2-5 shipped
+
+Rob said do them, so they're done, two commits on `develop` awaiting his push/merge (`65d5656` renderers, `5052173` content):
+
+- Item 2 (CTA): every `[Try it free →](/dashboard)` across the 10 markdown posts now points at `/`.
+- Item 3 (internal links): every post ends with a Related Guides block (3-4 links) plus contextual in-body links; the fireplay post (admin-authored, no markdown source) is included as a link target. Zero post-to-post links before, ~45 now.
+- Item 4 (duplicate H1): leading `# Title` stripped from the markdown sources, AND both renderers (prerender + BlogPostPage) strip a leading body H1 defensively, so the fix applies to current DB content without waiting for a reseed. Also: internal markdown links now render same-tab via the router instead of `target="_blank"`.
+- Item 5 (JSON-LD): `/blog` prerender now carries `Blog` + `ItemList` schema listing every post.
+
+Verified: tsc clean, 494 tests green (7 new), `CI=true npm run build` green.
+
+Two gates left that are genuinely Rob's:
+1. **Request indexing in GSC** for `/blog` + the 11 posts + `/privacy` (item 1, still the highest-value ten minutes available).
+2. **Reseed after merging** so the content changes reach the live DB: `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts` (no AWS creds on my box). The H1 and JSON-LD fixes need only the deploy, not the reseed.
+
+Item 6 (refresh the comparison post to name Kneel/SubTasks/mysub/EverCollar) deliberately held per the review's own ordering: after items 1-3 land.
