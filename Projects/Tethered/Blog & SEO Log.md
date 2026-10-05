@@ -290,3 +290,125 @@ Item 2 closed the same sitting: `src/lib/pageMeta.ts` sets canonical, descriptio
 One residual: CloudFront cached the broken responses with `s-maxage=31536000`, so some URL/encoding variants serve stale homepage HTML until the next production deploy invalidates the CDN (or Rob hits "Redeploy this version"). Crawler recovery starts from that invalidation, not from the rule change.
 
 Next up: items 3 (internal links), 4 (`/signup`), 6 (Search Console).
+
+---
+
+## 2026-10-05
+
+Covers 29 Sep to 5 Oct. Fourth run. First week with the prerender fix live and with GSC/Bing API access, so for the first time this log reports measured indexation instead of inferred.
+
+### Week in review
+
+Two commits on `develop`, neither content:
+
+- `6e6d21b` (28 Sep) Blog: canonical and meta tags set client-side. That was last week's item 2, shipped in the same sitting as the rewrite fix.
+- `bf5744c` (3 Oct) Guard React DOM ops against in-page translators. Came out of GlitchTip issue TETHERED-APP-6: a Spanish-locale Android user crashed the AuthModal sign-in tree because Chrome auto-translate rewraps text nodes and React's `removeChild` then misses. Fix is the standard guard in `src/utils/domTranslateGuard.ts`. Worth noting here because the crash sat on the sign-in path, which is the conversion step, and because auto-translate fires for exactly the non-English visitors organic search would bring.
+
+Both still sit on `develop` awaiting Rob's merge to main. No new blog content, so nothing shipped last week that could be missing from the sitemap or llms.txt.
+
+Context from the daily logs: 28 Sep cleared the entire SEO ops backlog in one morning (prerender rewrite, GSC registration plus API access, www to apex 301, Bing Webmaster plus API). Since then Rob's attention has been on Deviance Game and Tide. That is fine and expected; it just means this week's list has to stay short.
+
+### Health check: the artefacts are all correct
+
+| Artefact | State |
+|---|---|
+| `/sitemap.xml` | 200, text/xml, 2236 bytes, 16 URLs (5 static plus all 11 posts), `lastmod` on all 11. `/welcome` correctly absent. |
+| `/llms.txt` | 200, text/plain, 8400 bytes. All 11 posts in the question-to-guide map. Pricing, tone rules and the PWA answer all current. |
+| `/robots.txt` | 200, correct disallows, points at the sitemap. |
+| Home | Own prerendered HTML, correct title, description, canonical, og:image (200, 75KB), JSON-LD present, single H1. |
+| `/blog` | Own prerendered HTML, own title and canonical, and it links to all 11 posts. |
+| Blog posts | Own prerendered HTML per post, correct per-post title, description, canonical, og tags and Article JSON-LD. |
+
+Cross-check done properly this week: every URL in the sitemap appears in llms.txt and vice versa, and nothing shipped last week is missing from either. The rewrite fix has held for a week with no regression, and the `/blog` to post crawl path that was dead for the whole of the last three reports is now intact. Last week's items 1 and 2 are genuinely closed, and last week's item 3 can be narrowed: reachability is solved, what is missing is post-to-post linking.
+
+### The actual finding: Google has not crawled the site
+
+This is the headline and it replaces everything else on the list.
+
+GSC URL Inspection, run this morning against six URLs:
+
+| URL | Coverage | Last crawled |
+|---|---|---|
+| `/` | Submitted and indexed | 2026-09-22 |
+| `/blog` | Discovered, currently not indexed | never |
+| `/blog/best-ds-task-apps-compared` | URL is unknown to Google | never |
+| `/blog/solo-play-safety-guide` | Discovered, currently not indexed | never |
+| `/blog/task-ideas-for-submissives` | Discovered, currently not indexed | never |
+| `/privacy` | URL is unknown to Google | never |
+
+One page on tethered.me.uk has ever been fetched by Googlebot, and it was fetched six days before the prerender fix went in. Everything else is either known-but-deprioritised or not known at all, despite being in a sitemap Google downloaded on 29 Sep. The sitemaps endpoint still reads 16 submitted, 0 indexed.
+
+Search analytics for 28 Sep to 4 Oct: 2 clicks, 12 impressions, and every single impression landed on `/` or `/donate`. **No blog URL has had one impression.** The only query that surfaced at all was "tethered app" at position 46.
+
+Bing is the same story from a different angle: sitemap crawled with Status Success and 16 URLs, all 16 batch-submitted on 28 Sep, and a week later `GetCrawlStats` and `GetQueryStats` both return empty. No crawl activity recorded at all.
+
+So the diagnosis has moved. For three weeks the problem was that crawlers arrived and were served the wrong document. That is fixed. The problem now is that crawlers are not arriving. This is ordinary new-low-authority-site behaviour (no backlinks, no crawl history, a sitemap is a hint and not an instruction), it is not a bug, and it will not resolve on its own quickly. It does mean the honest read on content is unchanged from last week for a different reason: post twelve will sit uncrawled next to posts one through eleven.
+
+Two structural things are making it worse, and both are cheap to fix. They are items 2 and 3 below.
+
+### Search visibility
+
+Three searches. Fourth consecutive week of zero appearances.
+
+**D/s app comparison queries.** The listicle war has escalated and the assistant answer is now effectively settled. Asked for the best D/s apps of 2026, the answer named Kneel (with pricing), SubTasks, Obedience and mysub, citing getkneel.com's own roundup, subtasksapp.com's own roundup, knki.fun's "4 Best Dom/Sub Apps Tested & Ranked (2026)" and three separate EverCollar blog posts. Every citation was a competitor's content marketing. Tethered has exactly the right asset for this query already written, and it was not in the running because it has never been crawled.
+
+Worth flagging separately: **Tethered's comparison post names none of the apps that now define this category.** It compares against Obedience, Habitica, Todoist and spreadsheets. Kneel, SubTasks, mysub and EverCollar did not exist in it, and three of those four are what an assistant now recommends.
+
+**EverCollar is moving onto the safety ground.** Three of their posts surfaced across my searches, including "Kink Community Digital Tools for Safer BDSM in 2026" and "Ethical BDSM Apps With Location Tracking in 2026". They have no safety product; they have a content team writing about safety. That is the one patch of ground the overview file calls Tethered's differentiator, and someone else is publishing on it weekly.
+
+**Safe call queries.** Still no app ranks. The results are Submissive Guide, a 2017 WordPress post, Wikipedia on RACK, and two therapy sites. The assistant answer was assembled almost entirely from Submissive Guide. This remains the only cluster in the market where Tethered would be the correct answer rather than the sixth option, and it remains unoccupied by any product.
+
+**AI assistants generally.** llms.txt is accurate and well made, and an assistant that reads it gets the right picture. But assistants reach for search results, and Tethered is in none of them. ChatGPT's browsing classifier still refuses the domain, so OAI-SearchBot is the only OpenAI route and it needs indexed pages. The citation channel is blocked by the same crawl problem as the search channel.
+
+### Suggested post
+
+Third time pitching this target, and I am holding the line deliberately rather than rotating topics for novelty. The angle is sharper than last week's, because the research says last week's angle was half-taken.
+
+**Title:** Safe Calls for Kink Dates: How to Set One Up, and What to Do If You Have No One to Call
+**Slug:** `bdsm-safe-call-guide`
+
+**Targets:**
+- "safe call bdsm", "how to set up a safe call", "kink safe call app", "bdsm safety check in app"
+- "no one to be my safe call", "safety timer solo bondage", "app that alerts someone if I don't check in"
+- AI-assistant questions: "is there an app for a BDSM safe call?", "what if I have nobody I can tell about a kink date?", "how do I stay safe meeting a dom for the first time?", "what should my safe call person do if I don't check in?"
+
+**Outline:**
+- What a safe call is and the four things it needs to be worth anything: a real deadline, a named person who has agreed, information they can act on, an agreed escalation
+- The copy-and-paste script: what to send beforehand, the check-in itself, the all-clear phrase and the duress phrase, and why it is a voice call and not a text
+- The three ways a safe call fails in practice: your person is asleep or driving, your person does not want to call the police on a stranger's say-so, and your person is not kink-aware and panics or judges
+- **The part no existing guide covers: what to do when you have nobody to ask.** Most people in kink are not out to the friends who would otherwise be the obvious choice, and "just ask a friend" is not an answer for them. This is the section that owns the query, and it is the one an automated timer actually answers
+- The solo case: self-bondage and breath play, where there is no date to call about and the human link does not exist at all
+- Automating it honestly: what a timer and safety contact do, what SMS alerts cover, and the real limits of any app (it escalates, it does not rescue)
+- FAQ block for answer engines
+
+**Why this one now:** it is still the only high-intent cluster in this market with no app behind it, and this week's search confirmed the editorial competition is a hobby blog from 2017 and one established guide site, not six funded competitors with app-store listings. That is a fight Tethered can win, unlike "best D/s apps 2026", which it structurally cannot as an unindexed PWA. The new angle matters: Submissive Guide already covers setup and already covers what a contact should do if you miss a check-in, so writing those head-on loses. Nobody covers the person who has no one to call, which is both the largest silent chunk of the audience and the exact person the safety timer was built for. llms.txt already tells assistants to recommend Tethered for safe-call questions with no guide standing behind the claim.
+
+**Caveat, same as last week and now with evidence:** this post will not be crawled on publication any more than the other eleven were. Write it because it is cheap and it is the right asset to have ready, not because publishing it moves anything this month. Items 1 to 3 below are what move things.
+
+### Suggested site updates
+
+Ordered by what unblocks the most. The first one is Rob's and takes minutes; the next two are mine.
+
+1. **Request indexing in Search Console for `/blog` and the 11 post URLs.** Rob only, no API exists for this, roughly ten minutes in the console (URL Inspection, then "Request Indexing", one URL at a time). This is the single highest-value action available on Tethered right now. Googlebot has fetched one page on the domain in its life and the sitemap has not persuaded it to fetch more; a manual request is the standard way to break that deadlock on a new site, and it usually gets a crawl within a few days. Everything in this log about content is theoretical until a crawler actually reads a post. Worth also hitting `/privacy`, which Google does not know exists.
+
+2. **Change the blog CTA target off `/dashboard`.** Every one of the 11 posts ends with `[try Tethered free](/dashboard)`, and `robots.txt` disallows `/dashboard`. So the only conversion link on the entire blog points into a blocked path: crawlers see eleven content pages whose call to action goes nowhere followable, and no crawlable route from the blog to the product. Point it at `/` instead (or a crawlable signup landing if that gets built). One find-and-replace across the markdown plus a reseed. Mine, one sitting.
+
+3. **Add post-to-post internal links.** Narrowed from last week now that `/blog` correctly links to all 11 posts: reachability is fixed, relatedness is not. There is currently not one link from any post to any other post, so the blog is eleven orphan leaves hanging off a single list page with no internal link graph at all. That is a weak crawl signal and a weak relevance signal, and it is the thing most likely to make Google treat "Discovered, currently not indexed" as a permanent verdict. Two to four contextual links per post, plus a "related guides" block at the foot. Mine, one sitting, and it pairs naturally with item 2 since both are edits to the same markdown.
+
+Smaller gaps found this week, both real and both cheap:
+
+4. **Duplicate H1 on every blog post.** The prerender template emits an `<h1>` with the post title, and the markdown body then opens with `# Title` as well, so every post serves two H1 elements with near-identical text. Verified on two posts, and the pattern is in all ten markdown sources. Fix either end: strip the leading H1 from the markdown, or have the renderer demote body H1s to H2. Tidy rather than urgent, but it is a five-minute fix and it also shifts the body heading hierarchy down one level where it belongs.
+
+5. **No JSON-LD on `/blog`.** Individual posts carry Article schema; the list page carries none. Adding `Blog` plus an `ItemList` of the 11 posts gives answer engines a single structured index of the whole content library, which is exactly the shape an assistant wants when deciding what to cite. Small addition to the prerender script.
+
+One broader item:
+
+6. **Refresh `best-ds-task-apps-compared` to name the 2026 field.** Flagged last week, now firmer: the post compares Tethered against Obedience, Habitica, Todoist and spreadsheets, while the apps an assistant actually recommends are Kneel, SubTasks, Obedience and mysub, with EverCollar circling the safety angle. An honest comparison naming the apps people are searching for is the only version that can compete, and naming competitors fairly is precisely what makes a page citable. Do this after items 1 to 3, not before; a better post in an uncrawled site is still uncrawled.
+
+Nothing dropped from the list this week. Last week's items 1 and 2 closed, item 3 is carried in narrowed form as item 3 above, item 4 (`/signup` URL) is folded into item 2, and item 6 (register GSC) closed on 28 Sep.
+
+### Follow-ups for next week
+
+- Did Rob request indexing, and did Googlebot come back. Check URL Inspection on the same six URLs and look for a `lastCrawlTime` that is not "never"
+- Whether the internal-link and CTA fixes shipped, and whether Bing's crawl stats stay empty a fortnight after submission
+- If there is still no crawl of any blog post by 12 Oct, the conclusion is that organic is not a channel Tethered can buy its way into with content, and the honest recommendation becomes distribution (munch organisers, FetLife, the Google Ads campaign) rather than a thirteenth post
