@@ -29,5 +29,12 @@ Systematic filming needs: club permission, opposition consent per fixture, paren
 - [ ] Mount: print the ready-made model (printing 05 Oct), then pole/tripod + shade
 - [ ] Pitch to Dexter's club before any match-day filming
 
-## Idea parked 05 Oct: JS/Electron rewrite of Reco
-Rob floated rewriting Reco in JS as an Electron app. Reality check (repo at `/home/jarvis/projects/video-stitcher`): ~71.5k lines of Rust, 9 crates, GPU engine on wgpu with WGSL shaders, FFmpeg/NVDEC/VideoToolbox decode, ONNX/TensorRT inference. Notable: WGSL is WebGPU's shader language, so the shaders port to a browser nearly verbatim; WebCodecs gives hardware 4K decode/encode in Chromium. A full rewrite is a months-of-evenings project; the browser (not Electron) version would be the genuinely interesting one (zero-install "drop two videos in a tab" tool). Cheaper routes if the itch is UI: Electron shell driving reco-cli as a child process (weekend), or napi-rs bindings to reco-core.
+## Spin-off project: Touchline (GREENLIT 05 Oct 2026)
+Rob picked option 3: the full browser-native rewrite of Reco (WebGPU + WebCodecs web app, no Electron). It's now its own project, separate from this one:
+
+- **Code:** `/home/jarvis/projects/touchline` (own git repo, NOT in the vault). GitHub repo pending: Jarvis's PAT can't create repos, Rob needs to create empty `NilSkilz/touchline` (private) or bump the PAT, then Jarvis pushes.
+- **Board:** https://trello.com/b/8JVcabzq (lists: Epics / Backlog / Up Next / In Progress / Review / Done; epics E1-E10 seeded, one per pipeline stage). Ticket-writing session with Rob still to happen.
+- **Live preview:** http://192.168.1.11:4173 (vite preview on Jarvis's box, detached). Current page: live browser capability check (WebGPU, WebCodecs 4K decode/encode, WASM SIMD, cross-origin isolation, file streaming, OffscreenCanvas) + pipeline overview.
+- Background/why: Reco is ~71.5k lines of Rust, 9 crates, wgpu engine with WGSL shaders. WGSL is WebGPU's shader language so the shaders port nearly verbatim; WebCodecs gives hardware 4K decode/encode; onnxruntime-web runs the YOLO model. Zero-install "drop two videos in a tab" is the version with a reason to exist vs Veo Go's £900/year.
+
+This file stays about the hardware/filming project (the test ladder above continues as-is on Reco until Touchline can replace it).
