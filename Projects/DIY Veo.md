@@ -34,7 +34,7 @@ Rob picked option 3: the full browser-native rewrite of Reco (WebGPU + WebCodecs
 
 - **Code:** `/home/jarvis/projects/touchline` (own git repo, NOT in the vault). GitHub repo pending: Jarvis's PAT can't create repos, Rob needs to create empty `NilSkilz/touchline` (private) or bump the PAT, then Jarvis pushes.
 - **Board:** https://trello.com/b/8JVcabzq (lists: Epics / Backlog / Up Next / In Progress / Review / Done; epics E1-E10 seeded, one per pipeline stage). Ticket-writing session with Rob still to happen.
-- **Live preview:** http://192.168.1.11:4173 (vite preview on Jarvis's box, detached). Current page: live browser capability check (WebGPU, WebCodecs 4K decode/encode, WASM SIMD, cross-origin isolation, file streaming, OffscreenCanvas) + pipeline overview.
+- **Live preview:** https://touchline.cracky.co.uk (added 05 Oct: NPM host 19 → 192.168.1.11:4173, wildcard cert, served by `Jarvis/bin/touchline-preview.sh` with an @reboot cron; wildcard `*.cracky.co.uk` DNS already covered it). Serves the built dist via vite preview with COOP/COEP headers, so SharedArrayBuffer / cross-origin isolation checks pass. Current page: live browser capability check (WebGPU, WebCodecs 4K decode/encode, WASM SIMD, cross-origin isolation, file streaming, OffscreenCanvas) + pipeline overview.
 - Background/why: Reco is ~71.5k lines of Rust, 9 crates, wgpu engine with WGSL shaders. WGSL is WebGPU's shader language so the shaders port nearly verbatim; WebCodecs gives hardware 4K decode/encode; onnxruntime-web runs the YOLO model. Zero-install "drop two videos in a tab" is the version with a reason to exist vs Veo Go's £900/year.
 
 This file stays about the hardware/filming project (the test ladder above continues as-is on Reco until Touchline can replace it).
