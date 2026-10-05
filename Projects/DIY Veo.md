@@ -5,7 +5,7 @@ Goal: Veo-style auto-panning match footage of Dexter's rugby for ~£0-180, no £
 ## Software: reco video-stitcher
 - Open source (AGPL), Rust rewrite: https://github.com/reco-project/video-stitcher (repo cloned at `/home/jarvis/projects/video-stitcher` for reference)
 - Prebuilt GUI app, no build needed. Latest v0.5.4 (Aug 2026):
-  - Mac (Apple Silicon): https://github.com/reco-project/video-stitcher/releases/download/v0.5.4/reco-gui-v0.5.4-macos-arm64.tar.gz (if ffmpeg complaints, use the `-ffmpeg9` variant from the same release)
+  - Mac (Apple Silicon): use the **ffmpeg9 build**: https://github.com/reco-project/video-stitcher/releases/download/v0.5.4/reco-gui-v0.5.4-macos-arm64-ffmpeg9.tar.gz, plus `brew install ffmpeg` (Homebrew ships FFmpeg 9.0.2 as of Oct 2026). The plain `macos-arm64` build links libavutil.60 (FFmpeg 8) and dyld-aborts on Rob's Mac (hit 05 Oct 2026).
   - AI tracking model (same page): `yolo26n.onnx`
 - Workflow per QUICKSTART: load left+right video, Auto Calibrate (feature match + audio sync), fix lens via Gyroflow profile browser if warped, set ROI polygon per camera, export 1080p with AI tracking (Field mode, detection interval 15).
 - Jarvis's box CANNOT be the render node: LXC has no GPU and the prebuilt Linux CLI needs FFmpeg 6 (libavutil58) vs Debian 13's FFmpeg 7. Processing lives on a Mac/desktop with a real GPU. (Verified 05 Oct 2026.)
