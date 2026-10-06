@@ -72,3 +72,14 @@ Shortlist (domains RDAP-verified 06 Oct):
 3. **Crowsnest**: same lookout idea, but crowsnest.app/.com taken and the mainsail-crew "crowsnest" webcam tool owns the name in camera software. Only crowsnest.football free. Third place.
 
 Rejected: TopBins (topbins.app taken), MatchReel (.com/.app taken, SportReel/MatchCut adjacent), Gantry (gantry.football + gantrycam.com taken, Gantry web framework), mast.football alone too thin.
+
+### Rugby round (06 Oct, Rob found Huer too obscure and asked for rugby names)
+
+New front-runner: **TouchJudge**. The touch judge is the official who stands ON the touchline watching the whole game, so it keeps the original Touchline concept but names the watcher instead of the line. Self-explaining to anyone in rugby, readable even outside it. No software/app clash found (searched; only the rugby role itself and unrelated video-analysis tools). Domains RDAP-verified 06 Oct: **touchjudge.app, touchjudge.co.uk, touchjudge.io, gettouchjudge.com all unregistered**; touchjudge.com is registered but only a registrar parking lander, nobody trades under it.
+
+Backups from the same round:
+- **Garryowen** (the up-and-under high kick; the camera literally hangs in the air over the pitch). garryowen.app free, .com taken. No software clash, but the famous Limerick club owns the word culturally; product would always be "like the club".
+- **DropGoal**: dropgoal.app + dropgoal.co.uk free, .com taken. Fine, but less on-concept for a camera.
+- **Uprights**: uprights.app free, .co.uk taken. Generic-ish.
+
+Checked and rejected: TMO (perfect concept, the video official, but tmo.app taken and the acronym is owned by T-Mobile/Thermo Fisher associations), Gainline (gainline.app taken, Gain Line Analytics is an existing rugby analytics firm), Fifty22 (both domains taken), Lineout/Grubber/Highball (.app all taken).
