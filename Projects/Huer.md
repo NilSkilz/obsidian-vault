@@ -6,6 +6,8 @@
 
 Rob's brief (06 Oct): turn Touchline into a SaaS. Free tier capped at 5 minutes, subscription around £4.99/month for more. Home page shipped same day (touchline 6a7ec0c, live at https://touchline.cracky.co.uk): hero, how-it-works, pricing cards (Kickabout £0 / Season Ticket £4.99 "coming soon"), "why so cheap" privacy pitch, browser check, FAQ. No billing wired up; the Go Unlimited button says so honestly.
 
+**Homepage redesigned for Huer + DIY-Veo positioning (06 Oct 15:31, touchline daf32e5, live).** Hero: "The DIY match camera. Your phones, a printed mount, £5 a month." New sections: "The whole kit" (phones £0 / printed mount for pennies / browser tab £0-£4.99) with the mount STL downloadable at /mount.stl (repo is private so the site serves the file itself, copied from hardware/mount.stl, refresh the copy when the mount regenerates), and a "Huer vs the dedicated cameras" comparison table (camera/mount/subscription/processing/full-season rows; Veo named once in the intro line, table kept generic "dedicated camera" with the already-published £500-£1,000 + £30-£90/mo ranges). FAQ gained "I don't have a 3D printer" and "Why Huer?" (the name story), footer carries the huer definition. All user-facing Touchline strings renamed (index.html title, capability-check verdicts, Studio/Matches footer links); internal names (repo, window.__touchline test hooks, e2e paths) untouched. Verified live in headless Chrome at 390px and 1280px.
+
 ## The implications, ranked
 
 ### 1. AGPL. The big one, decide this first.
