@@ -95,3 +95,15 @@ Survivors:
 - Matchmast from round 1 still free and still fine.
 
 Open question put to Rob: pick a flavour (literal pitch-thing, person/role, or coined-short like Veo/Hudl) before a round 4, three rounds of guessing taste is enough.
+
+### Round 4 (06 Oct, Rob's steer: leaning Huer but finds it obscure, literal names dull, liked Touchline, suggested "Eagle Eye")
+
+The eye/watcher family is dead on arrival, every direction:
+
+- **EagleEye**: worst clash of the whole search. Eagle Eye Networks is a major cloud video-surveillance camera company (een.com), Ross Video sells an "EagleEye" cable camera system for sports broadcast, and Eagle Eye Digital Video does sports video officiating/review (NCAA, Olympic Trials). Three camera-video companies, two of them sports. Domains mostly registered too (eagleeye.app/.football/.co.uk/geteagleeye.com taken, only .io free). Hard no for a camera product.
+- **Birdseye**: birdseye.app/.football/.co.uk/getbirdseye.com registered, and Birds Eye Sports (birdseyesports.com) is a US sports video production company, plus the frozen-food trademark looming. No.
+- **Pitchside**: would have been ideal, and is catastrophically taken: **Pitchside AI (pitchside.ai) is a live private-beta competitor doing AI football camera + highlights from phone footage**, plus NV Play Pitchside Analytics (cricket), Peacock's "Pitchside Live" World Cup 2026 product, and pitchside.app already trades. Logged as a competitor find, belongs in the DIY Veo / competitor analysis too.
+- **Eyrie** (keeping the eagle, naming the nest up high): several small software products already trade as Eyrie, domains gone except .io, and the spelling is a support-ticket generator. No.
+- Hawkeye (Sony's officiating tech), Lookout, Overwatch, Periscope, Skycam: all owned, not re-checked, known dead.
+
+**Conclusion put to Rob**: four rounds prove every familiar English word near this product is taken BECAUSE it's familiar. The real choice is Huer vs a coined nothing-word (Veo/Hudl/Spiideo style). Case made for Huer: the "obscurity" is exactly why it's clean (trademark + every domain free), it's a real word with a story (the cliff-top watcher directing the team below) which is more than Veo or Hudl ever had, it IS the eagle-eye concept but ownable, and it fits the Tide/Haven sea-naming pattern. Awaiting verdict.
