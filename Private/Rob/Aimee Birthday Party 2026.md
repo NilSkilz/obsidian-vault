@@ -68,7 +68,7 @@ Rejected: sweets inside balloons (too heavy to float), anything looner-adjacent 
 - [x] **Pay the venue**: deposit paid 3 Oct, fire policy confirmed fine. Still to check: any balance due on the day, rated suspension points, arrival/leave times, cleanup expectations, their first-aid kit.
 - [ ] **Update invites**: optional £10 donation towards venue hire, no cards or presents. Add the photo policy line here too. RSVP-by date so numbers are known for cake and sweets.
 - [ ] **The kids.** Dexter and Logan need to be elsewhere overnight on the 10th with a clean cover story (party at a friend's / normal birthday do). This is load-bearing; sort it early, not on the 9th.
-- [ ] Buy: split 6 Oct. Everyday items (cake, candles, balloons, Haribo, tequila/limes, whipped cream, snacks, plates, wipes, bin bags, water) are on the **Tide shopping list** (shared, Aimee + kids can see it, all reads as normal party shop). Discreet buys (crepe paper, isopropyl/fire consumables, pegs, blindfold, dare-card slips, burn gel, donation cash) stay on the **private Todoist task only**, never Tide.
+- [ ] Buy: **everything is on the Tide shopping list** (19 items, as of 6 Oct). I originally split everyday vs discreet buys off Tide, Rob overrode it same day: kids and Aimee won't look, put it all on. Discreet items are worded plainly (isopropyl, pegs, blindfold/sleep mask, card slips) so nothing on the list names the party's actual content. The Todoist task is now just the shopping-run reminder (due 6 Oct, still open).
 - [ ] Collect memories/compliments of Aimee from guests for the balloon slips (fold into the invite update).
 - [ ] Transport plan: who's driving, is anyone drinking, how does a well-subbed Aimee get home.
 
