@@ -1,4 +1,8 @@
-# Touchline SaaS pivot (opened 06 Oct 2026)
+# Huer (formerly Touchline) — SaaS pivot (opened 06 Oct 2026)
+
+**NAME DECIDED 06 Oct 2026, 15:05: Huer.** Rob picked it after four naming rounds (see Naming section below). File renamed from `Touchline SaaS.md`. Next admin step: buy the domains while they're still free (huer.app, huer.football, gethuer.com, huerapp.com, all RDAP-verified unregistered 06 Oct). Needs Rob's card.
+
+**Positioning decided 06 Oct (Rob's words): "a DIY solution to Veo. Own cameras, 3D printed mount and a £5 a month sub."** The customer brings their own phones, prints the open-source mount, pays £5/mo for the processing/hosted convenience. See the Pitchside section for why this lane is defensible.
 
 Rob's brief (06 Oct): turn Touchline into a SaaS. Free tier capped at 5 minutes, subscription around £4.99/month for more. Home page shipped same day (touchline 6a7ec0c, live at https://touchline.cracky.co.uk): hero, how-it-works, pricing cards (Kickabout £0 / Season Ticket £4.99 "coming soon"), "why so cheap" privacy pitch, browser check, FAQ. No billing wired up; the Go Unlimited button says so honestly.
 
@@ -106,4 +110,25 @@ The eye/watcher family is dead on arrival, every direction:
 - **Eyrie** (keeping the eagle, naming the nest up high): several small software products already trade as Eyrie, domains gone except .io, and the spelling is a support-ticket generator. No.
 - Hawkeye (Sony's officiating tech), Lookout, Overwatch, Periscope, Skycam: all owned, not re-checked, known dead.
 
-**Conclusion put to Rob**: four rounds prove every familiar English word near this product is taken BECAUSE it's familiar. The real choice is Huer vs a coined nothing-word (Veo/Hudl/Spiideo style). Case made for Huer: the "obscurity" is exactly why it's clean (trademark + every domain free), it's a real word with a story (the cliff-top watcher directing the team below) which is more than Veo or Hudl ever had, it IS the eagle-eye concept but ownable, and it fits the Tide/Haven sea-naming pattern. Awaiting verdict.
+**Conclusion put to Rob**: four rounds prove every familiar English word near this product is taken BECAUSE it's familiar. The real choice is Huer vs a coined nothing-word (Veo/Hudl/Spiideo style). Case made for Huer: the "obscurity" is exactly why it's clean (trademark + every domain free), it's a real word with a story (the cliff-top watcher directing the team below) which is more than Veo or Hudl ever had, it IS the eagle-eye concept but ownable, and it fits the Tide/Haven sea-naming pattern.
+
+**Verdict (06 Oct 15:05): Rob picked Huer.** Naming closed.
+
+## Competitor: Pitchside AI (researched 06 Oct 2026)
+
+pitchside.ai, found during naming round 4. University of Bristol student startup (co-founder Liam Jones, CompSci with Innovation; the team play for the uni football club). Won £10k at Bristol's Innovation Showcase, April 2025. **Private beta, subscriptions not yet purchasable.**
+
+Their offer:
+- **Phone-first, football only, small-sided (5/6/7-a-side).** Record on one smartphone at halfway, upload, AI extracts stats (goals, assists, saves, passes, tackles), highlights, player leaderboards and "player moments". User reviews/corrects event + player assignments in the app. Processing up to 45 min per match.
+- **Hardware**: an AI tripod that physically swivels the phone to track the ball (their original showcase pitch), plus a "double-phone mount" listed as a separate physical product, price TBC. So they independently landed on the same two-phones-on-a-mount idea.
+- **Pricing (planned)**: free tier = 1 recording/month + stats/highlights/leaderboards; paid from **£4.99/WEEK, £12.99/month, £99/year** = 1 recording/week + personal clips. UK launch, GBP.
+- Also free engagement tools (team generator, formation builder, league tables) as the funnel.
+- They publish their own "7 Veo alternatives" SEO page (pitchside.ai/blog/veo-camera-alternative), which handily maps the field: XbotGo Chameleon £320+ / Falcon $699+, Trace $180-300/yr leased, Hudl Focus Flex / Pixellot Air / Spiideo quote-only, Reeplayer $1,499 + $1,188/yr.
+
+### How Huer differs (the pitch writes itself)
+- **Code**: they're football small-sided; Huer's first market is rugby (Dexter's club), full pitch, both codes eventually.
+- **Processing model**: they upload to cloud, 45-min queue, per-recording caps. Huer processes **in the browser, client-side**: no upload of kids' footage (GDPR/safeguarding differentiator), no queue, no per-match metering, marginal cost ~£0.
+- **Output**: they sell stats/events; Huer sells **Veo-style auto-panned match video**, a different product (film of the whole match vs a stats feed).
+- **Price**: their £12.99/mo vs Huer's £5/mo flat. Their £4.99 is per WEEK, which makes Huer's £4.99-5/mo look almost free in a comparison table.
+- **Hardware**: both do a phone mount, but Huer's is open-source STL (print it yourself) vs their TBC-priced product.
+- Watch item: they're funded, building in public, and their blog does competitor SEO. When Huer launches, expect to appear on that page. Their "double-phone mount, price TBC" is worth re-checking at their public launch.
