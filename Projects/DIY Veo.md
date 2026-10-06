@@ -18,7 +18,7 @@ Goal: Veo-style auto-panning match footage of Dexter's rugby for ~£0-180, no £
 ## Test ladder (agreed 05 Oct 2026)
 1. **Sofa test: PASSED 05 Oct 2026.** Two iPhones, reco-gui on the Mac (ffmpeg9 build), stitch worked. Pipeline proven for £0.
 2. **Motion test:** kids + ball in the park, same setup, export with yolo26n AI tracking in Field mode. Proves the auto-pan.
-3. **Mount:** Rob found a ready-made 3D-print model for the dual-phone rig, printing as of 05 Oct (so no custom crossbar build needed). Still goes on a painter's pole / sturdy tripod, 2-3m up, plus shade for heat.
+3. **Mount:** Rob is designing his own (decided 06 Oct, replaces the ready-made model). v1 parametric design shipped same day: `touchline/hardware/` has a Fusion 360 generator script (`fusion_touchline_mount.py`, wedgeAngle as a live user parameter), a build123d twin, and STEP/STL exports. Landscape trays splayed 50°, camera windows at the seam (lenses close together = low parallax), strap slots, vents, 1/4-20 captive nut boss. Footprint ~278 x 77 mm. Still goes on a painter's pole / sturdy tripod, 2-3m up, plus shade for heat.
 4. **Match day:** only after the club conversation (see safeguarding below).
 
 ## Safeguarding (kids' rugby)
@@ -31,13 +31,14 @@ Notes/implications flagged 06 Oct:
 - iOS will not record with the display truly off (AVCaptureSession stops when the app backgrounds or the phone locks). The achievable version is brightness-to-zero + black overlay + `isIdleTimerDisabled`; still a real battery/thermal win. Watch `ProcessInfo.thermalState` and relay it to the master phone; 4K30 in sun is the killer.
 - **Sync metadata is the integration gem:** if the master phone timestamps the start command (or the app embeds a shared clock in the file metadata), Touchline can skip the Sync step entirely for app-captured footage. Worth designing the file naming/metadata contract early.
 - The app is Rob's own code, zero Reco derivation, so licence is his choice (AGPL does not reach it).
-- The printed mount currently in use is someone else's ready-made model: check its licence before republishing an STL (many Printables/Thingiverse models are CC BY-NC/ND). Publishing his own remix or original design is the clean path.
+- The printed mount currently in use is someone else's ready-made model: check its licence before republishing an STL (many Printables/Thingiverse models are CC BY-NC/ND). Resolved 06 Oct: Rob is designing his own; Jarvis shipped the v1 parametric design in `touchline/hardware/` (original work, licence ours to pick).
+- Phone sizing reference (06 Oct): the "STL I printed" Rob shared is a **dummy phone**, 133.0 x 66.7 x 7.3 mm + 1.6 mm camera bump (~iPhone 12 mini, vertical twin-lens island 24x24 inset ~4.5 from the corner). His 81%-vs-100% scaling dance is the argument for parametric sizing: never scale a print to fit a phone, set the real dimensions. Actual rig phone models still unconfirmed; mount defaults currently use the dummy's numbers.
 - App Store needs the £79/yr Apple Developer account.
 
 ## Open items
 - [x] Sofa test (passed 05 Oct, two iPhones + reco-gui on the Mac)
 - [ ] Motion test: kids + ball in the park, export with yolo26n AI tracking (Field mode)
-- [ ] Mount: print the ready-made model (printing 05 Oct), then pole/tripod + shade
+- [ ] Mount: print the v1 own design (`touchline/hardware/mount.stl`), confirm which iPhone models the rig uses + set real dims in CONFIG, then pole/tripod + shade
 - [ ] Pitch to Dexter's club before any match-day filming
 
 ## Spin-off project: Touchline (GREENLIT 05 Oct 2026)
