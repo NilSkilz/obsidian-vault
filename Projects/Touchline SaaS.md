@@ -48,6 +48,12 @@ Two repos:
 - **touchline-cloud** (private): the Stripe webhook worker, magic-link auth, entitlement-token issuing, any future settings-sync. Legally clean: AGPL's network clause binds the AGPL *program*, and a separate backend service talking to it over HTTP is its own work, not a derivative (standard open-core split, same as GitLab/Plausible). Practically right too: Stripe webhook secrets, price IDs and the token-signing key never belong anywhere near a public repo, and the issuing logic staying private means the only public half of the paywall is the client check we already accepted as a nudge.
 Fuss level: one extra repo with one Worker and a wrangler deploy. Create it when step 4 below starts, not before.
 
+### 7. Capture app + open hardware (Rob, 06 Oct)
+Rob is building an iOS capture app (left/right phones, blacked screen, master phone over peer networking, possible App Store release) and publishing the mount STL. Details in `Projects/DIY Veo.md`. SaaS relevance:
+- **The free capture app is the acquisition funnel.** A "Process your match" button in the app pointing at Touchline web is distribution Veo cannot match on price.
+- If the app embeds sync/start-time metadata, app-captured footage can skip the Sync step in the web app entirely: smoother onboarding for exactly the paying audience.
+- The app is Rob's own code (no Reco derivation), so its licence is free choice regardless of the AGPL story; open-sourcing it fits the DIY-kit positioning.
+
 ## Next actions (when Rob says go)
 1. Rob eyeballs the home page, tweaks copy/pricing names.
 2. Decide the AGPL stance (recommend: publish repo + embrace open-core). Optionally email reco-project re dual licence.

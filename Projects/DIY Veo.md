@@ -24,6 +24,16 @@ Goal: Veo-style auto-panning match footage of Dexter's rugby for ~£0-180, no £
 ## Safeguarding (kids' rugby)
 Systematic filming needs: club permission, opposition consent per fixture, parental consent on file both teams (one no-photo flag = no filming). Sharing = private links only (GDPR). Route: pitch it to Dexter's club as their DIY Veo, club handles consents. Templates: Billericay RFC + Chelmsford RFC policies.
 
+## Capture app (Rob's, announced 06 Oct 2026)
+Rob is writing an **iOS capture app** himself: the two pitch iPhones run as "left"/"right" cameras with the screen blacked out to save battery, controlled by a third "master" phone over peer networking (MultipeerConnectivity territory). Possible App Store release later. He'll also **publish an STL for the dual-phone mount**, making the whole thing a complete DIY kit for other rugby parents: free capture app + printed mount + Touchline web processing.
+
+Notes/implications flagged 06 Oct:
+- iOS will not record with the display truly off (AVCaptureSession stops when the app backgrounds or the phone locks). The achievable version is brightness-to-zero + black overlay + `isIdleTimerDisabled`; still a real battery/thermal win. Watch `ProcessInfo.thermalState` and relay it to the master phone; 4K30 in sun is the killer.
+- **Sync metadata is the integration gem:** if the master phone timestamps the start command (or the app embeds a shared clock in the file metadata), Touchline can skip the Sync step entirely for app-captured footage. Worth designing the file naming/metadata contract early.
+- The app is Rob's own code, zero Reco derivation, so licence is his choice (AGPL does not reach it).
+- The printed mount currently in use is someone else's ready-made model: check its licence before republishing an STL (many Printables/Thingiverse models are CC BY-NC/ND). Publishing his own remix or original design is the clean path.
+- App Store needs the £79/yr Apple Developer account.
+
 ## Open items
 - [x] Sofa test (passed 05 Oct, two iPhones + reco-gui on the Mac)
 - [ ] Motion test: kids + ball in the park, export with yolo26n AI tracking (Field mode)
