@@ -83,3 +83,15 @@ Backups from the same round:
 - **Uprights**: uprights.app free, .co.uk taken. Generic-ish.
 
 Checked and rejected: TMO (perfect concept, the video official, but tmo.app taken and the acronym is owned by T-Mobile/Thermo Fisher associations), Gainline (gainline.app taken, Gain Line Analytics is an existing rugby analytics firm), Fifty22 (both domains taken), Lineout/Grubber/Highball (.app all taken).
+
+### Round 3 (06 Oct, Rob rejected both shortlists: Huer too obscure, rugby round didn't land)
+
+Tried the "thing/place, instantly readable" flavour (the shape of Touchline itself). Finding: the clean single dictionary words are domain-dead across the board. RDAP-confirmed registered (.app): grandstand, floodlight, crossbar, perch, kestrel, stork, terrace, flagpole, cornerflag, gannet, pitchview, fixture, harrier, polevault, longshot. postmatch.app/.com also taken (only .co.uk free).
+
+Survivors:
+- **HalfwayLine** (best of round): the spot on the pitch where the mast actually stands, both codes, same place-on-the-pitch shape as Touchline. halfwayline.app, halfwayline.io, gethalfwayline.com free; .com taken, .co.uk held by a dormant "The Half Way Line" site (maintenance page). No sports-software clash found in search.
+- **FourthOfficial**: fourthofficial.app/.co.uk/.io free, .com parked. No software clash found. But it's another official-person name, same family Rob just rejected.
+- **Highmast** (.app + .co.uk free, but it's a lighting-industry term and reads flat), **Skymast** (.app free but Skymasts Antennas Ltd and Sky-Mast UK Ltd are real UK mast companies), **Matchtower** (.app free, clunky).
+- Matchmast from round 1 still free and still fine.
+
+Open question put to Rob: pick a flavour (literal pitch-thing, person/role, or coined-short like Veo/Hudl) before a round 4, three rounds of guessing taste is enough.
