@@ -42,6 +42,12 @@ There is no server render step; everything runs in the user's browser. Any cap w
 - **Pricing sanity**: £4.99 vs Veo's ~£75/mo + £900 hardware is almost suspiciously cheap. It is defensible because our marginal cost is ~£0, and it prices like a no-brainer. Could test £6.99 later; do not go lower.
 - **Safeguarding trust page**: users film kids. A short "filming junior sport properly" guide (club permission, both-teams consent, private sharing) costs an afternoon and buys real trust. We have the playbook in the DIY Veo file already.
 
+### 6. Repo split (decided 06 Oct)
+Two repos:
+- **touchline** (public, AGPL): the whole app including the home page and the client-side entitlement checks. The homepage is just part of the app shell; splitting it out buys nothing and doubles the deploy story.
+- **touchline-cloud** (private): the Stripe webhook worker, magic-link auth, entitlement-token issuing, any future settings-sync. Legally clean: AGPL's network clause binds the AGPL *program*, and a separate backend service talking to it over HTTP is its own work, not a derivative (standard open-core split, same as GitLab/Plausible). Practically right too: Stripe webhook secrets, price IDs and the token-signing key never belong anywhere near a public repo, and the issuing logic staying private means the only public half of the paywall is the client check we already accepted as a nudge.
+Fuss level: one extra repo with one Worker and a wrangler deploy. Create it when step 4 below starts, not before.
+
 ## Next actions (when Rob says go)
 1. Rob eyeballs the home page, tweaks copy/pricing names.
 2. Decide the AGPL stance (recommend: publish repo + embrace open-core). Optionally email reco-project re dual licence.
