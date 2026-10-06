@@ -4,6 +4,12 @@
 
 > **Note (2026-07-02):** The development lessons here (TypeScript, git flow, Thread/Matter, browser sandboxing, cron executable bit) remain valid. Some infra items predate the Proxmox rebuild and reference the retired NUC/OpenClaw/Docker stack — treat those as historical. Current infra lives in `Context/Infrastructure.md`.
 
+## Fusion 360 add-in scripts need a matching .manifest file, and an API script ≠ a verified model (2026-10-06, Huer mount)
+
+A Fusion Scripts-and-Add-Ins script only shows up if it sits in its own folder with a `.manifest` file next to it, and the folder, the `.py` and the `.manifest` must all share the same name (`fusion_touchline_mount/fusion_touchline_mount.py` + `.manifest`). Point the "+" picker at the folder, not a loose `.py`, or it won't appear in My Scripts.
+
+Separately: generating a Fusion API script and smoke-testing its build123d/headless twin (STEP/STL export looks right) is not the same as the script working *in Fusion*. Rob ran it and the resulting model was wrong ("looked rubbish") despite the exported geometry checking out offline. Treat a Fusion API script as unverified until Rob has actually run it in Fusion and eyeballed the result.
+
 ## Chrome auto-translate crashes React's removeChild, and it looks like your bug (2026-10-03, Tethered)
 
 GlitchTip flagged `NotFoundError: removeChild`, 5 hits in 10 minutes, one Android Chrome user (Spanish locale, Peru) hitting the sign-in modal. Looked like a modal-switching bug in Tethered's own code. It wasn't: Chrome's page-translate feature wraps text nodes in `<font>` tags behind React's back, so when React goes to remove a node it moved, the DOM has already changed under it (facebook/react#11538). Any English-site user with a non-English browser locale can trigger this on any view transition, not just this modal.
