@@ -60,3 +60,15 @@ Rob is building an iOS capture app (left/right phones, blacked screen, master ph
 3. Domain + trademark sanity check.
 4. Stripe account + magic-link auth + entitlement worker (a weekend, not a month).
 5. ToS/privacy pages, then flip "Coming soon" to live.
+
+## Naming (06 Oct 2026): "Touchline" is too crowded, shortlist found
+
+Checked because Rob asked. The space is genuinely busy, at least five live sports products trade as Touchline, several in UK grassroots football, and one (Touchline Tracker, touchlinetracker.co.uk) is a grassroots football VIDEO highlights platform, direct collision. Also touchlineapp.com (assistant-coach app), gettouchline.app (tournament manager), touchlineapp.uk, touchlinefc.co.uk (club websites), a Touchline coaching app on the App Store. Renaming before buying domains/branding is the right call.
+
+Shortlist (domains RDAP-verified 06 Oct):
+
+1. **Huer** (front-runner). The Cornish cliff-top lookout who watched for pilchard shoals and directed the boats below; a person stood up high watching the field, guiding the team. Fits the Crackington/sea naming pattern (Tide, Haven). Zero software/app clashes found. **huer.app, huer.football, gethuer.com, huerapp.com all unregistered.** huer.co.uk is taken (small site behind a bot-blocker). Bonus flavour: the huer's shout was "Hevva!", nice for release names/free tier copy.
+2. **Matchmast**: literal (phones up a mast at a match), self-explaining, no clashes. matchmast.com and matchmast.co.uk unregistered.
+3. **Crowsnest**: same lookout idea, but crowsnest.app/.com taken and the mainsail-crew "crowsnest" webcam tool owns the name in camera software. Only crowsnest.football free. Third place.
+
+Rejected: TopBins (topbins.app taken), MatchReel (.com/.app taken, SportReel/MatchCut adjacent), Gantry (gantry.football + gantrycam.com taken, Gantry web framework), mast.football alone too thin.
