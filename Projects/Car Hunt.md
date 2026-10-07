@@ -629,3 +629,14 @@ constraints collide and one trick solves both:
   Rights Act (30-day reject for a refund, then repair/replace to 6 months).
 - Caveat: cards must be in Rob's name at his address; third-party-finance-
   funded cards aren't accepted.
+
+## Cinch listing check, 7 Oct 2026
+
+Rob flagged a specific cinch Trophy LR: 2023, 30k miles, £14,599 + £300
+delivery = **£14,899 all-in**, top of the Cinch range for that age/mileage
+(most 2023/~30k Cinch Trophy LRs sit £13,999-£14,500). Not a bad deal, not a
+sharp one. Two checks before any offer: 64kWh LR vs 77kWh Extended Range (the
+77 makes £14,899 a strong deal outright), and the battery SOH report.
+**Cinch doesn't haggle and reprices constantly**, so the leverage is waiting a
+week or two, not negotiating; their 14-day money-back return covers the
+no-test-drive risk in the meantime.
