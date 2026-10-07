@@ -2,6 +2,8 @@
 
 *Idea captured 2 Oct 2026. Redone 4 Oct: Aimee is the SUB, dares point at her, not from her. Spicy tier added later same day. Surprise planning, stays in Private/Rob.*
 
+**7 Oct update:** Rob asked for the full list to send to Aimee for her thoughts, breaking the "deck exists, contents secret" plan below. Full list was sent as given. If Rob confirms she's now seen the whole deck, the pre-party brief and trade-rule mechanic need re-reading as her informed consent to specific cards, not a surprise reveal.
+
 **Concept:** dares/forfeits written on cards, hidden inside balloons. Guests pop a balloon and get a dare that puts the birthday girl on the receiving end. BDSM-flavoured, playful, with a spicy tier that runs properly sexual. Contact rule throughout: guests command, choose and witness; only Rob (or an inert object) touches her.
 
 ## The ten dares (v2, sub Aimee)
