@@ -160,3 +160,7 @@ State of play:
 - If tonight's catch-up doesn't materialise, do NOT send the ask as a cold standalone text afterwards; the Friday-night deadline simply does its job. No clear yes by Friday night = Saturday off, no chase.
 - Her going quiet mid-chat after "really busy" is not a new signal, it's the same busy day. No re-reads between now and tonight.
 - If she says yes tonight, the limits refresher happens in that same conversation.
+
+## 7 Oct: six days quiet, cabaret opener chosen
+
+No contact logged since 1 Oct's "catch up later tonight" plan; that catch-up evidently didn't happen or went nowhere, and Saturday 3 Oct died quietly as planned (no chase, never mentioned, per the standing rule). Rob asked for a re-opener after the six-day gap. Agreed line: "How did the landlord's cabaret go?? Need a full review, crumble-level detail please x" (callback to her own crumble review). Standing rules reaffirmed for this reopen: don't mention Saturday, don't float a plan in the opener itself (only once she's warm and chatty), one message then leave it, her slow replies are normal not a verdict. **Limits refresher still has never happened** and is the prerequisite before any future scene, whenever one gets planned.
