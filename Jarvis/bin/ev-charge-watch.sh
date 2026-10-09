@@ -7,6 +7,7 @@
 set -uo pipefail
 source "$HOME/.config/jarvis/ha.env"
 source "$HOME/.config/jarvis/telegram.env"
+source "$HOME/.config/jarvis/unifi.env"
 STATE="$HOME/.local/state/ev-charge-watch"; mkdir -p "$STATE"
 EXPIRY="${EV_WATCH_EXPIRY:-2026-10-10 10:00}"
 
@@ -21,6 +22,11 @@ tg() { curl -sS -m 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}
 W=$(get sensor.shellyem_34945470ed50_channel_2_power)
 CLOUD=$(get binary_sensor.psl_557234_cloud_connection)
 STATUS=$(get sensor.psl_557234_status)
+# Pod Point cloud_connection lags by many minutes (it still read "on" after the
+# 23:10 trip on 9 Oct), so the wifi association on the UDM is the real tell.
+WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
+  | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?")
+[ "$WIFI" = "off" ] && CLOUD=off
 KWH_NOW=$(get sensor.shellyem_34945470ed50_channel_2_energy)
 [ -f "$STATE/start_kwh" ] || echo "$KWH_NOW" > "$STATE/start_kwh"
 ADDED=$(python3 -c "import sys; print(round((float(sys.argv[1])-float(sys.argv[2]))/1000,1))" "$KWH_NOW" "$(cat "$STATE/start_kwh")" 2>/dev/null || echo "?")
