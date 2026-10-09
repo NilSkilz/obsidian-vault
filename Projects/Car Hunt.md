@@ -672,3 +672,4 @@ At viewing: SOH report, iSMART unbound, 64kWh confirmed on the V5C/spec.
 
 ### 9 Oct 16:05, warranty at Carbase
 - Carbase claimed "no manufacturer warranty" and offered a 6-month warranty for £500. MG's 7yr/80k (battery 8yr/100k) is transferable regardless of seller, so a 2023 / 35k car should still be covered unless voided (missed services, modifications). Advised: make them explain why, check service book, decline the £500 (CRA 2015 already covers first 6 months), or use it as a "throw it in free" haggle chip.
+- 16:08: Rob confirms NO service history. That's why: missed scheduled services lets MG refuse warranty claims (likely battery too). Advised: get them to check MG's digital service record by VIN via an MG dealer; if truly none, demand a big drop (~£1k) or walk to Tavistock.
