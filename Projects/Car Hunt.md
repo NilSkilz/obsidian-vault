@@ -640,3 +640,28 @@ sharp one. Two checks before any offer: 64kWh LR vs 77kWh Extended Range (the
 **Cinch doesn't haggle and reprices constantly**, so the leverage is waiting a
 week or two, not negotiating; their 14-day money-back return covers the
 no-test-drive risk in the meantime.
+
+## Buy-day local sweep, 9 Oct 2026
+
+Rob: "Today's the day. Any MG4s locally? Not cinch." Fresh AutoTrader sweep
+(100mi, ≤£16k, ≤60k miles) plus dealer pages checked.
+
+**Watcher gotcha:** every "Plymouth, 35mi" MG4 in the feed is actually
+**cinch EV Superstore Derby** (cinch lists against a Plymouth location). The
+"mostly Plymouth" Trophy LR cluster from 23 Sep was cinch all along.
+"Delivery only" rows are online sellers too. Neither is local.
+
+Genuinely local, non-cinch MG4s that clear the 64kWh floor:
+
+| Dealer | Miles away | Car | Mileage | Price |
+|---|---|---|---|---|
+| Bateman & Lynch Tavistock (01822 367071) | 26 | 2025 (74) Trophy LR, white, 1 owner | 17,000 | £15,495 |
+| Hawkins Launceston (01566 339337) | 14 | 2023 SE LR, white (SE: no camera/nav) | 30,232 | £14,499 ("higher price") |
+| Wellington MG (01823 760482) | 65 | 2023 (73) SE LR, blue, 2 owners | 12,374 | £14,995 |
+| Carbase Lympsham | 83 | 2023 Trophy LR | 34,837 | £14,218 |
+| Shepton Mallet / Radstock dealers | 97-98 | 2023 Trophy LR | ~19k | £15,295-15,495 |
+
+**Pick: the Tavistock Trophy LR.** Newest, lowest-mileage Trophy in range,
+one owner. Leverage: listed since June (4 months on the forecourt) and it was
+**£14,995 on 23 Sep**, now £15,495, so ask for the September price back.
+At viewing: SOH report, iSMART unbound, 64kWh confirmed on the V5C/spec.
