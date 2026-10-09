@@ -18,11 +18,12 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 - **Tax expires: 1 Jan 2027**
 
 ## Car 3 — MG4 (Rob's, bought 9 Oct 2026)
-- **Reg: YG23 NUO** (per Rob on the day; the listing read earlier as YG73NUO was a misread or typo, trust the V5C)
+- **Reg: YG73 NUO** (confirmed 9 Oct 2026 via carcheck.co.uk: orange MG 4 Trophy, 2023. Rob said "YG23" on the day; YG23NUO returns nothing, the 73 plate is right)
 - Orange 2023 MG4 Trophy Long Range 64kWh, ~34.8k miles at purchase, bought from Carbase (Lympsham) 9 Oct 2026, listed at £14,218. No MG service history and Carbase offered no manufacturer warranty (see `Projects/Car Hunt.md`). Consumer Rights Act: 30-day reject window runs to ~8 Nov 2026, presumption of fault at sale to ~9 Apr 2027.
-- **MOT:** a 23 plate's first MOT fell due Mar-Aug 2026, so it should already have one. Check gov.uk MOT history for the date and add it here + the calendar. **Tax:** not yet recorded (EVs pay VED since Apr 2025).
+- **MOT expires: 23 Sep 2027** (first MOT passed 24 Sep 2026, zero advisories, test no. 306381565678). Calendar event + Todoist booking task 9 Sep 2027.
+- **Tax expires: 1 Oct 2027** (taxed, on the calendar).
 - **Insurance:** not yet mapped.
-- **Charging:** home 7kW Pod Point. First session 9 Oct 2026 19:17 BST drew a steady ~6.8kW (Shelly ch2), i.e. full speed. App: MG iSMART (watch for "bound to another user").
+- **Charging:** home 7kW Pod Point. First session 9 Oct 2026 19:17 BST drew a steady ~6.8kW (Shelly ch2), i.e. full speed. Charger is a Pod Point S7-2C (7kW), PSL-557234, commissioned Feb 2023, now in HA (see `Context/Home Assistant.md`). App: MG iSMART (watch for "bound to another user").
 
 ## Insurance (mapped from the bank ledger, 24 Sep 2026)
 

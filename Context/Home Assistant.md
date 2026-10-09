@@ -99,3 +99,10 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 - [[Tesla]] - "Timmy" integration
 - [[Thread Border Router]] - ZBT-2 setup
 - [[Play Room Speakers]] - Snapcast Pis (main + ambient) fed by Music Assistant
+## Pod Point (EV charger), added 2026-10-09
+
+- Custom integration `pod_point` (mattrayner/pod-point-home-assistant-component 2.0.7), installed by hand into `/config/custom_components/pod_point` over HAOS SSH (no HACS on this instance). Config entry `01M4GZZZNT5M2JVGKX2QM907J4`, account rob_stokes@me.com. Creds in `~/.config/jarvis/podpoint.env` on CT 110.
+- Charger PSL-557234, S7-2C (7kW, untethered). Entities `*.psl_557234_*`: status, cable_status, current_energy (session kWh), total_energy, last_completed_charge_cost, charge_mode, smart_charge_mode switch, charging_allowed switch.
+- Cloud-polled and laggy (session kWh trails reality by many minutes). For live power use Shelly EM ch2 (`sensor.shellyem_34945470ed50_channel_2_power`), which is clamped on the Pod Point circuit.
+- Charger wifi is weak (~-83 dB).
+- Updates are manual (no HACS): re-download the release zip and restart core.
