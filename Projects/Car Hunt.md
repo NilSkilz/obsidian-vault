@@ -669,3 +669,6 @@ At viewing: SOH report, iSMART unbound, 64kWh confirmed on the V5C/spec.
 **9 Oct 14:22: going to view the Carbase Lympsham Trophy LR (£14,218, 34,837mi per listing; Rob thought 30k, check the odo).** Carbase is supermarket-style: reviews say little/no movement on sticker price, margin is in part-ex, finance and add-ons. Haggle plan: target admin fee waived + extras (tyres, MOT, warranty, full charge) rather than sticker; SOH report is the walk-away lever.
 
 **9 Oct 14:25: Rob confirmed the exact car from the listing screenshot:** orange 2023 MG4 Trophy LR 64kWh, reg **YG73NUO**, 34,839mi, £14,218 (PCP quote £215/mo, "£695 of extras" banner = spec marketing, not a discount). 73 plate means first MOT falls due between Sep 2026 and Feb 2027, so ask for a fresh MOT as part of the deal. gov.uk MOT check blocks scripted fetches (403), Rob to run it on his phone.
+
+### 9 Oct 16:05, warranty at Carbase
+- Carbase claimed "no manufacturer warranty" and offered a 6-month warranty for £500. MG's 7yr/80k (battery 8yr/100k) is transferable regardless of seller, so a 2023 / 35k car should still be covered unless voided (missed services, modifications). Advised: make them explain why, check service book, decline the £500 (CRA 2015 already covers first 6 months), or use it as a "throw it in free" haggle chip.
