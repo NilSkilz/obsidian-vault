@@ -665,3 +665,5 @@ Genuinely local, non-cinch MG4s that clear the 64kWh floor:
 one owner. Leverage: listed since June (4 months on the forecourt) and it was
 **£14,995 on 23 Sep**, now £15,495, so ask for the September price back.
 At viewing: SOH report, iSMART unbound, 64kWh confirmed on the V5C/spec.
+
+**9 Oct 14:22: going to view the Carbase Lympsham Trophy LR (£14,218, 34,837mi per listing; Rob thought 30k, check the odo).** Carbase is supermarket-style: reviews say little/no movement on sticker price, margin is in part-ex, finance and add-ons. Haggle plan: target admin fee waived + extras (tyres, MOT, warranty, full charge) rather than sticker; SOH report is the walk-away lever.
