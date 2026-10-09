@@ -1,6 +1,8 @@
 # Car Hunt (used EV or plug-in hybrid)
 
-**Current state (23 Sep 2026): the hunt is MG EVs.** Rob's call, in his words: "I've pivoted to the MG's. I don't think we'll find a Model 3 with few miles that will do the range that we need." The Model 3 chapter is closed; see the pivot section near the bottom for the live brief.
+**CLOSED 9 Oct 2026: BOUGHT.** Orange 2023 MG4 Trophy LR from Carbase, reg **YG23 NUO** (Rob's figure; earlier YG73NUO note was a misread). Home and on the Pod Point by 19:17 that evening. `car-hunt.sh` cron removed at Rob's request (script left in `Jarvis/bin/` but unscheduled). Car details now live in `Context/Vehicles.md`.
+
+**Previous state (23 Sep 2026): the hunt is MG EVs.** Rob's call, in his words: "I've pivoted to the MG's. I don't think we'll find a Model 3 with few miles that will do the range that we need." The Model 3 chapter is closed; see the pivot section near the bottom for the live brief.
 
 Started 14 Sep 2026, after the flat tyre on the M5 made the case for itself. Replace/supplement the household fleet with a second-hand electric car, or a plug-in hybrid (added the same day, see below).
 

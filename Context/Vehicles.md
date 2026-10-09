@@ -17,6 +17,13 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 - **MOT expires: 5 Feb 2027** (Todoist booking task 19 Jan 2027)
 - **Tax expires: 1 Jan 2027**
 
+## Car 3 — MG4 (Rob's, bought 9 Oct 2026)
+- **Reg: YG23 NUO** (per Rob on the day; the listing read earlier as YG73NUO was a misread or typo, trust the V5C)
+- Orange 2023 MG4 Trophy Long Range 64kWh, ~34.8k miles at purchase, bought from Carbase (Lympsham) 9 Oct 2026, listed at £14,218. No MG service history and Carbase offered no manufacturer warranty (see `Projects/Car Hunt.md`). Consumer Rights Act: 30-day reject window runs to ~8 Nov 2026, presumption of fault at sale to ~9 Apr 2027.
+- **MOT:** a 23 plate's first MOT fell due Mar-Aug 2026, so it should already have one. Check gov.uk MOT history for the date and add it here + the calendar. **Tax:** not yet recorded (EVs pay VED since Apr 2025).
+- **Insurance:** not yet mapped.
+- **Charging:** home 7kW Pod Point. First session 9 Oct 2026 19:17 BST drew a steady ~6.8kW (Shelly ch2), i.e. full speed. App: MG iSMART (watch for "bound to another user").
+
 ## Insurance (mapped from the bank ledger, 24 Sep 2026)
 
 - **Halifax DD** (joint Starling, ref 128716577, £45.48/mo, settles last working day): car insurance for the **Dacia**. Policy since Aug 2018; premium doubled mid-term June 2025 (£26 -> £46.50) because the Dacia had a **non-fault, no-damage accident** and the insurer loaded the premium anyway (confirmed by Rob 24 Sep 2026). Nothing owed, but worth shopping around at the April renewal: non-fault loadings often melt away with a new insurer quote.
