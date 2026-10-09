@@ -24,6 +24,7 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 - **Tax expires: 1 Oct 2027** (taxed, on the calendar).
 - **Insurance:** not yet mapped.
 - **Charging:** home 7kW Pod Point. First session 9 Oct 2026 19:17 BST drew a steady ~6.8kW (Shelly ch2), i.e. full speed. Charger is a Pod Point S7-2C (7kW), PSL-557234, commissioned Feb 2023, now in HA (see `Context/Home Assistant.md`). App: MG iSMART (watch for "bound to another user").
+- **Battery health check, 9 Oct 2026:** dash showed 145 mi at 59% charge, i.e. ~246 mi at 100%, top of the healthy 230-260 mi range for this age/mileage. No sign of a tired pack, though the figure is driver-habit-based, not a lab reading. No SOH report obtained from Carbase.
 
 ## Insurance (mapped from the bank ledger, 24 Sep 2026)
 
