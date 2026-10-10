@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# One-night EV charge watchdog (Rob's ask, 9 Oct 2026: "let me know if it dies").
+# EV charge watchdog (Rob's ask, 9 Oct 2026: "let me know if it dies"; re-armed 10 Oct
+# for the midday stop-start / LED-dark cut-outs).
 # Cron every 2 min. Pings Telegram once when the Pod Point stops drawing power
 # (Shelly ch2 < 500W on two checks in a row), says whether it looks like a trip
 # (cloud_connection off) or a normal stop (car full / paused). Re-arms if charging
@@ -9,10 +10,10 @@ source "$HOME/.config/jarvis/ha.env"
 source "$HOME/.config/jarvis/telegram.env"
 source "$HOME/.config/jarvis/unifi.env"
 STATE="$HOME/.local/state/ev-charge-watch"; mkdir -p "$STATE"
-EXPIRY="${EV_WATCH_EXPIRY:-2026-10-10 10:00}"
+EXPIRY="${EV_WATCH_EXPIRY:-2026-10-13 10:00}"
 
 if [ "$(date +%s)" -ge "$(date -d "$EXPIRY" +%s)" ]; then
-  crontab -l | grep -v 'ev-charge-watch.sh' | crontab -; exit 0
+  crontab -l | grep -v -e 'ev-charge-watch.sh' -e 'EV charge watchdog' | crontab -; exit 0
 fi
 
 get() { curl -s -m 10 -H "Authorization: Bearer $HA_TOKEN" "$HA_URL/api/states/$1" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("state","?"))' 2>/dev/null || echo "?"; }
@@ -35,8 +36,11 @@ if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
   if [ "$LOW" -ge 2 ] && [ ! -f "$STATE/alerted" ]; then
     T=$(date +%H:%M)
+    echo "$(date '+%F %T') stop W=$W status=$STATUS cloud=$CLOUD wifi=$WIFI added=$ADDED" >> "$STATE/events.log"
     if [ "$CLOUD" = "off" ]; then
       MSG="⚡ Charger's died at about $T: no power and the Pod Point has dropped off the network, so it looks like a trip. ~${ADDED} kWh went in tonight (roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added). Reset it at its consumer unit and note which switch was down."
+    elif [ "$STATUS" = "out-of-service" ]; then
+      MSG="🔌 Charging's stopped at about $T: the Pod Point has cut itself out (status out-of-service, probably the LED-dark thing), not a trip. It usually retries itself in ~10 min; unplug/replug if you want it back sooner. ~${ADDED} kWh in so far."
     else
       MSG="🔌 Car stopped drawing power at about $T (Pod Point still online, status: $STATUS). ~${ADDED} kWh went in tonight, roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added. If that's near 48 kWh it's just full; if not, check the car."
     fi
@@ -44,5 +48,5 @@ if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>
   fi
 else
   echo 0 > "$STATE/low"
-  if [ -f "$STATE/alerted" ]; then rm -f "$STATE/alerted"; tg "✅ Charging's back on: $(printf '%.1f' "$W" 2>/dev/null) W at $(date +%H:%M)."; fi
+  if [ -f "$STATE/alerted" ]; then echo "$(date '+%F %T') resume W=$W" >> "$STATE/events.log"; rm -f "$STATE/alerted"; tg "✅ Charging's back on: $(printf '%.1f' "$W" 2>/dev/null) W at $(date +%H:%M)."; fi
 fi
