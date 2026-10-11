@@ -138,3 +138,7 @@ Their offer:
 - **Price**: their £12.99/mo vs Huer's £5/mo flat. Their £4.99 is per WEEK, which makes Huer's £4.99-5/mo look almost free in a comparison table.
 - **Hardware**: both do a phone mount, but Huer's is open-source STL (print it yourself) vs their TBC-priced product.
 - Watch item: they're funded, building in public, and their blog does competitor SEO. When Huer launches, expect to appear on that page. Their "double-phone mount, price TBC" is worth re-checking at their public launch.
+
+## Auto-calibrate notes (11 Oct)
+- Two-tier detect: strict pass (sofa-tuned, y band 20-80%, 8% y disparity) then relaxed (5-95%, 25%, AKAZE 0.0003, RANSAC 3px). Real pitch footage typically needs the relaxed pass.
+- Failure message now reports features / matched / in-overlap counts. If Rob reports a failure, ask for that line: it says which stage starved.
