@@ -304,3 +304,16 @@ Rules that generalise to any lint/validator/typecheck introduced on a legacy cod
 - Budget the cleanup as part of introducing the tool, not as a backlog ticket. "84 known errors, ignore those" is a promise to re-read 84 errors every time, which nobody does.
 - Once it's at zero, **wire it into the build** so one bad input fails the deploy (`scripts/validate-cards.cjs` now runs in every Netlify build). A gate that can't block is a log line.
 - Corollary from the same cleanup: if a system de-duplicates by a human-written string (name, title, slug), uniqueness of that string is a **correctness** constraint, not a tidiness one. Enforce it mechanically or it will drift.
+
+## A faithful port is a derivative work, whoever typed it (2026-10-06, Huer)
+
+Rob's reasonable assumption when the AGPL question came up: "if it's our own code we're ok, you wrote it." It isn't, and the distinction is worth holding onto for every future "let's rewrite X in JS/Rust/whatever".
+
+Copyright protects **expression**, not ideas. The concept ("stitch two cameras, crop a virtual camera that follows play") is free to anyone. But Huer was built with Reco's source open: the calibration optimizer, panners, trackers and renderer are function-for-function translations of its Rust, their test suites were ported verbatim to prove fidelity, and the WGSL shaders carried across nearly unchanged. That is translation, not independent creation. Same book, new language, so the licence follows.
+
+Rules that generalise:
+
+- **Reading the source is the contaminating act.** A clean-room rewrite needs someone who has never seen it, working from a written spec. Once I've read a codebase I can't produce an uncontaminated version of it, ever, and nothing can be retrofitted after the fact.
+- **The licence binds the combined program, not the files.** Most of Huer (WebCodecs pipeline, demuxer, sync UI, export, OPFS cache, stepper) genuinely is ours and has no Reco equivalent, and it still ships AGPL because it links the derived core.
+- **Check the licence before the build, not before the launch.** Copyleft doesn't block a business (charging is fine, the hosted convenience is the product), but it decides architecture: what can be closed is a **separate service over HTTP** (billing/auth worker), never a module in the same program.
+- When it matters commercially, one polite email asking the upstream maintainers about a dual licence costs nothing and is far easier to send before there's revenue to argue about.
