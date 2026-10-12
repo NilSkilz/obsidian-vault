@@ -429,3 +429,124 @@ Two gates left that are genuinely Rob's:
 2. **Reseed after merging** so the content changes reach the live DB: `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts` (no AWS creds on my box). The H1 and JSON-LD fixes need only the deploy, not the reseed.
 
 Item 6 (refresh the comparison post to name Kneel/SubTasks/mysub/EverCollar) deliberately held per the review's own ordering: after items 1-3 land.
+
+## 2026-10-12
+
+Fifth weekly review. Two findings dominate everything else this week, and neither is about content.
+
+### Finding 1: last week's work never reached production
+
+All four code-side fixes from the 05 Oct review were verified green and committed to `develop`. None of them are live. `origin/main` is still at `805b773` ("Landing: show the actual product, three real screens"), and **eight commits now sit on `develop` unmerged**, covering three consecutive weekly reviews:
+
+```
+d81a4ce  Positioning: community-first pricing, built from inside the scene
+6a93ee1  Blog: comparison post names the 2026 field, with real pricing
+5052173  Blog content: internal link graph, CTA off /dashboard, drop duplicate H1s
+65d5656  Blog SEO: single H1 per post, Blog+ItemList JSON-LD on /blog
+bf5744c  Guard React DOM ops against in-page translators
+6e6d21b  Blog: set canonical + meta tags client-side
+24c6976  e2e: landing-page assertions for the D/s-first copy
+b1572e6  Add /welcome post-signup page as the ads conversion URL
+```
+
+Confirmed independently against the live site rather than inferred from git, because the H1 and JSON-LD fixes need only a deploy (no reseed), so they are a clean test of whether anything shipped:
+
+- `/blog/best-ds-task-apps-compared` and `/blog/solo-play-safety-guide` both still serve **two `<h1>` elements**.
+- `/blog` still carries **no JSON-LD at all**.
+- Every post still CTAs to `/dashboard`, which `robots.txt` disallows. Two such links on the comparison post.
+- **Zero post-to-post links** on either post sampled. The ~45-link internal graph is not live.
+- The comparison post still serves the old title ("Obedience-Style Trackers, Habit Apps, and Tethered") and the old meta naming Habitica and Todoist. The 2026-field rewrite is not live.
+- The home page contains no trace of the community-first positioning copy ("for the scene": 0 occurrences).
+
+So the last three weeks of SEO work exists only on `develop`. Everything this log has recommended since 21 Sep is, in production terms, unshipped. This is now the single biggest item on the list and it outranks anything I could write.
+
+The reseed (`AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`) is a second, separate gate on top of the merge, and it is the one that carries the content half (CTA targets, internal links, comparison rewrite).
+
+### Finding 2: the 12 Oct crawl deadline fired, and Google went backwards
+
+Last week set an explicit test: if no blog post had been crawled by 12 Oct, the honest conclusion is that organic is not a channel Tethered can buy into with content. That test has now run.
+
+GSC URL Inspection, all five URLs checked today:
+
+| URL | Coverage | Last crawl |
+|---|---|---|
+| `/blog` | URL is unknown to Google | never |
+| `/blog/best-ds-task-apps-compared` | URL is unknown to Google | never |
+| `/blog/solo-play-safety-guide` | URL is unknown to Google | never |
+| `/blog/meeting-new-partners-safely` | URL is unknown to Google | never |
+| `/privacy` | URL is unknown to Google | never |
+
+This is **worse than last week**, not flat. On 05 Oct, `/blog` and three posts read "Discovered, currently not indexed". They now read "URL is unknown to Google". Whatever discovery state they had has lapsed.
+
+- Sitemap: last downloaded by Google **10 Oct**, so Googlebot is fetching the sitemap, reading 16 URLs, and declining to fetch a single one of them. 16 submitted / 0 indexed, unchanged since 15 Sep.
+- Search analytics, 05 to 12 Oct: one page with any data, `/` (2 clicks, 21 impressions). Zero impressions on any blog URL. The only non-branded query recorded all week was "juego solo", 1 impression.
+- Rob's GSC request-indexing (item 1 for the last two weeks) does not appear to have happened. It remains the only lever that has not been tried.
+
+**Bing is the opposite story, and this is the week's one genuinely new opening.** Bing crawls the site every day (3 to 12 pages/day), reports `InIndex: 14` and now returns query data where a fortnight ago it returned nothing. Bing is not the problem Google is.
+
+Two caveats on that, both checked:
+
+- The only Bing-indexed pages drawing impressions are `www.tethered.me.uk/dashboard`, `/dashboard/info`, `/dashboard/settings`, `/dashboard/timer`. I checked the `www` host directly: it 301s correctly to the apex on `/`, `/dashboard`, `/robots.txt` and a blog URL. So these are **stale pre-28-Sep index entries aging out, not a live redirect bug.** No action needed, just do not read them as traffic.
+- Bing's crawl stats show 4 to 7 `BlockedByRobotsTxt` hits per day, every day. That is consistent with crawlers following the blog's `/dashboard` CTAs into a disallowed path, which is exactly the bug fix sitting unmerged in `5052173`.
+
+### Search and AI-assistant landscape
+
+Three searches this week. The safe-call picture has **changed materially** since last week, and the change argues against repeating last week's pitch unmodified.
+
+**"app that alerts someone if I don't check in" is no longer an unanswered query.** Last week this log recorded that no app ranks for safe-call queries. That is still true for *kink* safe calls, but the functional query now returns a confident, well-populated answer built entirely from generic personal-safety apps: **Kitestring, Noonlight, Snug, SentLive, Herline Safety, B Safe You**. Several are free. All do roughly what Tethered's safety timer does, mechanically.
+
+None of them are kink-aware, and that is the whole opening. Every one assumes your emergency contact is someone you can tell where you are and what you are doing. For most of this audience that assumption is the problem, not the solution.
+
+**"how to set up a safe call for a kink date when you have no one to tell"** returned no product at all, and the assistant answer ended by suggesting the user "speak with a therapist about expanding your support network". That is a real gap, and it is the exact person Tethered's timer was built for.
+
+**"best BDSM safety app 2026"** returns no app answer whatsoever: PDFs, a Grindr blog post, a Gumroad checklist, a podcast Substack. Nobody owns this. Compare with "best D/s task apps", which is a settled, fiercely contested answer. Safety is still the uncontested ground, and it is still Tethered's stated differentiator.
+
+Tethered appeared in none of the three answers. Unchanged, and unchangeable while nothing is crawled.
+
+### Suggested post
+
+The target stays (safe calls). The **format changes**, and this is a response to new evidence rather than rotation for novelty. Last week's "how to set one up" angle loses to Submissive Guide, which already owns the setup material. What this week's search revealed is that the query people actually get an answer to is an *app comparison*, and comparison posts are precisely the format that competitors used to capture the D/s-app assistant answer. Tethered should use the same mechanic on the one patch of ground nobody holds.
+
+**Title:** Safety Check-In Apps for Kink Dates: Kitestring, Noonlight, Snug and Tethered Compared
+**Slug:** `safety-check-in-apps-compared`
+
+**Targets:**
+- "safe call app", "app that alerts someone if I don't check in", "kink safe call app", "bdsm safety check in app"
+- "Kitestring alternative", "Noonlight for kink", "safety timer for self-bondage"
+- AI-assistant questions: "is there a safety check-in app for BDSM?", "what if I have nobody I can tell about a kink date?", "which check-in app works if I am not out about kink?", "is Kitestring good for a first meet with a dom?"
+
+**Outline:**
+- What a safety check-in actually has to do: a real deadline, a contact who has agreed, information they can act on, an agreed escalation. The four-point test every app below is scored against
+- Honest reviews of the generic field: Kitestring, Noonlight, Snug, SentLive, Herline, B Safe You. What each does well, what it costs, and where each one genuinely beats Tethered. Name them fairly, the way the comparison post now names Kneel and SubTasks
+- **The outing problem, which is the section that owns the query:** every generic app assumes the contact is someone you can tell. "Alert my sister that I did not come back from a stranger's house" is not a feature for someone who is not out. What a kink-aware alert says instead, and why discretion is a safety feature rather than a privacy nicety
+- What to do when you have nobody to ask at all: the automated-timer case, the duress phrase, and why a timer is the honest answer for the person the generic apps and the therapist advice both fail
+- The solo case: self-bondage and breath play, where there is no date to call about and no human link exists. Link to `solo-play-safety-guide`
+- The limits, stated plainly: any app escalates, none rescue. Emergency services first, always
+- FAQ block for answer engines
+
+**Why this one now:** "best BDSM safety app" has no answer and no incumbent, while "best D/s app" is settled against us. This is the only query cluster left where Tethered is the correct answer rather than the sixth option, and a named comparison is the format proven to get cited in this niche. It also fairly reviews named competitors, which is what makes a page citable rather than promotional.
+
+**Caveat, fourth week running and now with harder evidence:** this post will not be crawled by Google on publication, any more than the other eleven were. Write it because it is cheap and it is the right asset to hold. Items 1 and 2 below are what actually move anything.
+
+### Suggested site updates
+
+Broken first.
+
+1. **Merge `develop` into `main` and deploy.** Rob's, and it is the whole ballgame. Eight commits, three weeks of reviews, zero production effect. Every recommendation in this log since 21 Sep is blocked behind this one action. Verified live today: duplicate H1s, `/dashboard` CTAs, no internal links, no `/blog` JSON-LD, old comparison title, no positioning copy.
+
+2. **Reseed after the merge.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Separate gate, no AWS creds on my box. The deploy alone ships the H1 and JSON-LD fixes; the CTA retargeting, the ~45 internal links and the comparison-post rewrite all need this reseed to reach the live DB. Merging without reseeding gets about half the value and will read as "the fixes did not work".
+
+3. **Request indexing in GSC** for `/blog`, the 11 posts and `/privacy`. Rob only, no API, roughly ten minutes. Third week on this list. Now more urgent, not less: the URLs have degraded from "Discovered" to "unknown to Google", so the passive sitemap route has demonstrably failed over five weeks. Do it after the merge so the crawler gets the fixed pages rather than the broken ones.
+
+Broader, and the new one is the best idea this week:
+
+4. **Push the blog into Bing's index via the submission API, and treat Bing as the primary target.** `Jarvis/bin/bing.sh submit <url>...` is already built and the quota is 10,000 URLs/day, so this is free and takes one command for all 16 sitemap URLs. The argument is stronger than "some traffic from Bing": **ChatGPT and Copilot search are Bing-backed**, and ChatGPT's browsing classifier still refuses the tethered.me.uk domain directly, so Bing's index is the only realistic route into an AI assistant's citations. Bing is already crawling daily and already has 14 pages indexed, which is 14 more than Google. Mine, five minutes, after the merge and reseed so it submits the fixed pages. Flagging rather than doing because this run is read-only.
+
+5. **The strategic call the 12 Oct deadline was set to force.** Five weeks, a correct sitemap, correct llms.txt, correct prerendering, correct canonicals, and Googlebot has fetched exactly one page on this domain ever. The content is not the problem and no thirteenth post fixes it. The honest recommendation is to stop treating Google organic as a channel that content investment can open, and shift the effort to distribution: munch organisers, FetLife, the kink podcast and newsletter circuit, and getting Tethered named in the listicles that already rank (knki.fun and similar) rather than trying to outrank them. Note that `b1572e6` adds a `/welcome` page explicitly as an ads conversion URL and is also sitting unmerged, so the paid route is half-built and parked too. Rob's call, not mine, but after five weeks of identical findings the data has said what it is going to say.
+
+### Follow-ups for next week
+
+- Did the merge happen, and did the reseed follow. If both, re-verify H1 count, `/blog` JSON-LD, CTA targets and the comparison title on the live site. That is a five-minute check and it closes three weeks of carried items at once
+- Did Googlebot fetch anything after request-indexing. Watch for a `lastCrawlTime` that is not "never" on any blog URL
+- If Bing submission happens, whether blog URLs start showing in `GetPageStats` rather than only the stale `www/dashboard` entries
+- If the answer to all of the above is still no crawl, stop writing this section as an SEO review and rewrite the brief as a distribution review
