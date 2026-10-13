@@ -1,5 +1,7 @@
 # Contract Hunt: CV draft (master)
 
+> **Superseded 13 Oct 2026:** the source of truth is now `~/contract-hunt/cv/bank.json` (v2, Rob's voice, per-ad tailoring). This page is the v1 record. See [[Contract Hunt]].
+
 Working draft, 2026-08-24. This is the master contractor CV. Per-application we trim to two pages and reorder bullets to match the role. Career history backfilled from Rob's 2024 CV (received 24 Aug); remaining `[TBC]` markers are listed at the bottom.
 
 **Positioning rules (settled 2026-08-24):**
