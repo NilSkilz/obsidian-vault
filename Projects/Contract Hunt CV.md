@@ -8,6 +8,7 @@ Working draft, 2026-08-24. This is the master contractor CV. Per-application we 
 - **Superdry is never named.** Both the current perm role and the 2021-23 contract are anonymised as "major UK fashion retailer". Overemployed setup: nothing on the CV or in cover notes hints the contract runs alongside other work.
 - **Tethered and Tide are never named** (Rob's call, 2026-08-24): neutral descriptions only, no URLs, no product names. Every other employer (Headforwards, LimeNinja, Redsource/Redware) is named, they're clean.
 - **AI/agentic engineering added 26 Sep 2026** (Rob's ask): profile line, an AI/LLM skills row, and the internal-tooling bullet upgraded to a named agentic-platform bullet. All claims are backed by the running Jarvis system. **AWS Bedrock added 26 Sep 2026** after Rob confirmed hands-on use at work (Claude models behind an AWS endpoint for enterprise use): listed in Cloud/infra and framed in the AI/LLM row as "Anthropic Claude APIs (direct and via AWS Bedrock)".
+- **AI product search bullet confirmed 13 Oct 2026:** Rob worked on the Bedrock-backed AI product search (intent extraction, image enrichment, reranking) at Superdry. Real claim, keep it in the bank.
 
 ---
 
