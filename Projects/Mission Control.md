@@ -65,6 +65,12 @@ Rob asked (24 Sep) for a management page showing what Jarvis is running. Live at
 - **Shows:** Claude usage (session / weekly / Fable bars, extra usage, current chat model), all Jarvis cron jobs (name, note, human schedule, next run, disabled state), host vitals (load, memory, disk, uptime), bridge last-active. Page flags the snapshot as stale if it is older than 25 min.
 - Snapshot stored at `db/jarvis-status.json` on CT 112 (gitignored, or the deploy script's clean-tree check would abort).
 
+### Oct 2026 - House > car tab (parents only)
+Rob asked (13 Oct) for a pretty car/charging/cost/electricity dashboard as a subtab of house. Live at cracky.co.uk/house?tab=car; pill tabs "home / car" on /house, car tab only shown to parents.
+
+- **API:** `GET /api/ha/car` (server/routes/homeAssistant.js), parent-gated server-side (403 for kids), 45s cache. One payload: live MG4 + Pod Point + tariff states from HA, plus daily (35d) and hourly (24h) `change` statistics for `sensor.ev_charging_cost`, Shelly ch2 energy (car), ch1 energy (house import) and ch1 energy_returned (export), pulled over the HA websocket (`recorder/statistics_during_period`, REST has no stats endpoint), and 48h SoC history via REST.
+- **Page:** `src/tide/TideCar.jsx`: battery ring with charge-limit tick (pulses while charging), status headline (charging home/away, plugged waiting for 00:30, parked, out), range in miles, home/lock/charge-speed chips + open doors warning; Go tariff strip with now marker and countdown to the next rate; charger now + last session vs night price; car health (top-down tyre pressures, odometer, 12V, temps); spend tiles today/yesterday/week/month; 30-day charging bars (£ / kWh toggle, £ only from 10 Oct tariff start); 24h electricity (car + house up, solar export down); 48h battery step line. Colours validated (#e0703f car, #4a7fd6 house, #3f9d78 export).
+
 ## Tags
 #project #mission-control #dashboard #monitoring #react #typescript #docker
 

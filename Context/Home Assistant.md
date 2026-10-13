@@ -125,6 +125,7 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 
 ## CarPlay (added 2026-10-10)
 - Rob enabled CarPlay in the iOS Companion app (app 2026.5.0). The CarPlay layout is configured ON THE PHONE (Companion App Settings > CarPlay > Quick access), not server-side, so Jarvis can't pick entities for him. CarPlay only shows actionable domains: button, cover, input_boolean, input_button, light, lock, scene, script, switch (no sensors), plus Assist.
+- **Tide car tab (13 Oct 2026):** the same data (car, charger, Go costs, 24h electricity) now also lives on Tide at cracky.co.uk/house?tab=car, parents only, via `GET /api/ha/car`. See `Projects/Mission Control.md`.
 - Car-ready scripts Jarvis built (all `script.car_*`): `car_nearly_home` (Kitchen Dot announces "Rob is about ten minutes away", living lights on if sun is down), `car_lights_on` / `car_lights_off` (living + snug), `car_ev_smart` / `car_ev_manual` (Pod Point smart_charge_mode on/off). Existing `ev_boost_1h/3h/stop` and the Alexa routine buttons (`button.rob_stokes_me_com_goodnight`, `_my_schedule`) also work there.
 - Not yet tested live (would announce / flip lights). Living Room Echo is unavailable, so the announce uses the Kitchen Dot.
 - Ideas not built: auto "nearly home" from a home-approach zone, or from `sensor.iphone_audio_output` = CarPlay (sensor currently disabled in the app).
