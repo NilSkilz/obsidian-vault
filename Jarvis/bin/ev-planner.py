@@ -9,11 +9,18 @@ Cron every 10 min. Three jobs:
    and below its charge limit, Telegram Rob and Aimee once per night.
 3. Daytime top-up: if the car is plugged in at home outside the cheap window and
    its SoC won't cover what this weekday usually uses for the rest of the day
-   (learned from the log, defaults until there's data), boost the Pod Point
-   until it will. Otherwise leave it on Smart to fill at 9.5p from 00:30.
+   (learned from the log, defaults until there's data), start the car charging
+   until it will, then stop it again. Only ever stops a charge it started, so a
+   manual start from the car or iSMART app is left alone.
+4. Night backstop: in 00:30-05:30, if the car is home, plugged, under its limit
+   and not drawing power, re-send start every 20 min; Telegram Rob once if it
+   still isn't charging by the third try.
 
-The overnight 00:30-05:30 window itself lives on the charger (Smart mode), and
-the car's own 80% limit stops it there, so none of that depends on this script.
+Since 13 Oct 2026 (Rob's call) the Pod Point is in Manual and the CAR is the
+switch: HA automations hold plug-ins outside the window (ev_hold_until_cheap),
+start at 00:30 (ev_cheap_rate_start) and stop at 05:30 (ev_cheap_rate_stop).
+The car's own 80% limit ends the night charge. input_boolean.ev_cheap_rate_auto
+off disables the lot (this script's actions included).
 Kill switch: touch ~/.local/state/ev-planner/off.
 """
 import csv, json, os, sys, urllib.request, urllib.parse
@@ -39,7 +46,7 @@ TG = env(f"{HOME}/.config/jarvis/telegram.env")
 PEOPLE = json.load(open(f"{HOME}/.config/jarvis/telegram-people.json"))
 NOTIFY = [cid for cid, p in PEOPLE.items() if p.get("role") in ("rob", "adult")]
 
-POD_ENTRY = "01M4GZZZNT5M2JVGKX2QM907J4"
+VIN = "LSJWH4099PN166408"
 CAR = "mg_mg4_electric"
 PACK_KWH = 64
 MIN_FLOOR = 20      # never let a daytime decision leave it below this
@@ -70,8 +77,12 @@ def num(eid):
         return None
 
 
-def tg(text):
-    for cid in NOTIFY:
+def car(cmd):
+    ha(f"/api/services/mg_saic/{cmd}", {"vin": VIN})
+
+
+def tg(text, who=None):
+    for cid in (who or NOTIFY):
         data = urllib.parse.urlencode({"chat_id": cid, "text": text}).encode()
         try:
             urllib.request.urlopen(f"https://api.telegram.org/bot{TG['TELEGRAM_BOT_TOKEN']}/sendMessage", data, timeout=15)
@@ -86,6 +97,11 @@ def flag(name, today):
 
 def set_flag(name, today):
     open(f"{STATE}/{name}", "w").write(today)
+
+
+def flag_day(name, day):
+    p = f"{STATE}/{name}"
+    return os.path.exists(p) and open(p).read().split()[:1] == [day]
 
 
 def night_of(now):
@@ -167,12 +183,34 @@ def main():
            f"Plug it in before bed and it'll fill to {limit:.0f}% at 9.5p from 00:30.")
         set_flag("nagged", night)
 
-    # 3. Daytime top-up. Cheap window (00:30-05:30) is the charger's job.
-    boosting = os.path.exists(f"{STATE}/boosting")
+    if state("input_boolean.ev_cheap_rate_auto") == "off":
+        return
+    charging = charger_w > 500
     in_cheap = 30 <= hm < 5 * 60 + 30
-    if in_cheap or not (home and plugged):
-        if boosting:
-            os.remove(f"{STATE}/boosting")
+
+    # 4. Night backstop: the 00:30 automation should have started it.
+    if in_cheap:
+        if os.path.exists(f"{STATE}/planner_charging"):
+            os.remove(f"{STATE}/planner_charging")
+        if home and plugged and soc < limit - 2 and not charging and hm >= 40:
+            _, tries, last = (open(f"{STATE}/night_tries").read().split() if flag_day("night_tries", night)
+                              else (night, 0, 0))
+            tries, last = int(tries), float(last)
+            if tries < 6 and now.timestamp() - last > 19 * 60:
+                car("start_charging")
+                tries += 1
+                open(f"{STATE}/night_tries", "w").write(f"{night} {tries} {now.timestamp()}")
+                if tries == 3:
+                    rob = [c for c, p in PEOPLE.items() if p.get("role") == "rob"]
+                    tg(f"⚠️ MG4 is plugged in at {soc:.0f}% but won't start charging (tried 3 times since 00:30). "
+                       f"Pod Point status: {state('sensor.psl_557234_status')}.", rob)
+        return
+
+    # 3. Daytime top-up.
+    mine = os.path.exists(f"{STATE}/planner_charging")
+    if not (home and plugged):
+        if mine:
+            os.remove(f"{STATE}/planner_charging")
         return
 
     learned, n = learned_need(now)
@@ -184,21 +222,20 @@ def main():
     need = min(limit, max(MIN_FLOOR, base + BUFFER))
 
     if soc < need:
-        # Re-up a 1h boost each hour while short; Pod Point override ends itself.
-        last = float(open(f"{STATE}/boosting").read()) if boosting else 0
-        if now.timestamp() - last > 50 * 60:
-            ha("/api/services/pod_point/charge_now", {"config_entry_id": POD_ENTRY, "hours": 1})
-            open(f"{STATE}/boosting", "w").write(str(now.timestamp()))
+        # Re-send start every 30 min while short and not drawing (car commands go via SAIC's cloud).
+        last = float(open(f"{STATE}/planner_charging").read() or 0) if mine else 0
+        if not charging and now.timestamp() - last > 30 * 60:
+            car("start_charging")
+            open(f"{STATE}/planner_charging", "w").write(str(now.timestamp()))
             if not flag("boost_told", today):
                 kwh = (need - soc) / 100 * PACK_KWH / 0.9
                 why = f"{'on a usual ' + now.strftime('%A') if learned is not None else 'on a ' + kind} you use about {base:.0f}% more before bed"
                 tg(f"⚡ MG4 plugged in on {soc:.0f}%. Topping it up to {need:.0f}% now at the day rate "
                    f"(~£{kwh * 0.3617:.2f}) because {why}. The rest goes in at 9.5p tonight.")
                 set_flag("boost_told", today)
-    elif boosting:
-        ha("/api/services/pod_point/stop_charge_now", {"config_entry_id": POD_ENTRY})
-        os.remove(f"{STATE}/boosting")
-
+    elif mine:
+        car("stop_charging")
+        os.remove(f"{STATE}/planner_charging")
 
 if __name__ == "__main__":
     main()
