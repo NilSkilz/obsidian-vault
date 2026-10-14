@@ -77,6 +77,16 @@ def num(eid):
         return None
 
 
+def km(eid):
+    """Distance sensor in km, whatever display unit HA has it set to."""
+    try:
+        e = ha(f"/api/states/{eid}")
+        v = float(e["state"])
+    except Exception:
+        return None
+    return v * 1.609344 if e["attributes"].get("unit_of_measurement") == "mi" else v
+
+
 def car(cmd):
     ha(f"/api/services/mg_saic/{cmd}", {"vin": VIN})
 
@@ -162,14 +172,14 @@ def main():
     home = where == "home"
     plugged = state(f"binary_sensor.{CAR}_charging_gun_state") == "on" or state("binary_sensor.psl_557234_cable_status") == "on"
     charger_w = num("sensor.shellyem_34945470ed50_channel_2_power") or 0
-    odo = num(f"sensor.{CAR}_mileage")
+    odo = km(f"sensor.{CAR}_mileage")
 
     new = not os.path.exists(LOG)
     with open(LOG, "a", newline="") as f:
         w = csv.writer(f)
         if new:
             w.writerow(["time", "soc", "home", "plugged", "charger_w", "odo"])
-        w.writerow([now.isoformat(timespec="minutes"), soc if soc is not None else "", int(home), int(plugged), round(charger_w), odo or ""])
+        w.writerow([now.isoformat(timespec="minutes"), soc if soc is not None else "", int(home), int(plugged), round(charger_w), round(odo, 1) if odo else ""])
 
     if soc is None:
         return
@@ -178,7 +188,7 @@ def main():
     # 2. Bedtime nag, once per night.
     night = night_of(now)
     if (hm >= 22 * 60 + 30 or hm <= 15) and home and not plugged and soc < limit - 5 and not flag("nagged", night):
-        miles = round((num(f"sensor.{CAR}_electric_range") or 0) / 1.609)
+        miles = round((km(f"sensor.{CAR}_electric_range") or 0) / 1.609344)
         tg(f"🔌 The MG4 isn't plugged in. It's on {soc:.0f}% (~{miles} miles). "
            f"Plug it in before bed and it'll fill to {limit:.0f}% at 9.5p from 00:30.")
         set_flag("nagged", night)
