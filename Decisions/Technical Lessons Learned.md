@@ -305,6 +305,12 @@ Rules that generalise to any lint/validator/typecheck introduced on a legacy cod
 - Once it's at zero, **wire it into the build** so one bad input fails the deploy (`scripts/validate-cards.cjs` now runs in every Netlify build). A gate that can't block is a log line.
 - Corollary from the same cleanup: if a system de-duplicates by a human-written string (name, title, slug), uniqueness of that string is a **correctness** constraint, not a tidiness one. Enforce it mechanically or it will drift.
 
+## Outbound voice calls stay parked, and it's an architecture problem not a trust one (2026-10-13)
+
+Floated giving Jarvis an OpenClaw-style voice-call skill (ringing a supplier about Rob's 26m-short rope reel, say). Rob said no, and was clear the reason is technical, not personality: a call needs STT, then the LLM, then TTS, every turn, which leaves an awkward 1-2s gap before each reply, risks talking over people or getting stuck in an IVR tree, and there's no undo if I agree to something daft live. Text lets me check my work before Rob sees it; a call is pure improvisation.
+
+Don't re-propose outbound phone calling until the underlying real-time STT/TTS latency problem has actually moved. This doesn't touch the existing one-way TTS voice notes to Rob (`Jarvis/bin/jarvis-voice.sh`), which stay in scope.
+
 ## A faithful port is a derivative work, whoever typed it (2026-10-06, Huer)
 
 Rob's reasonable assumption when the AGPL question came up: "if it's our own code we're ok, you wrote it." It isn't, and the distinction is worth holding onto for every future "let's rewrite X in JS/Rust/whatever".
