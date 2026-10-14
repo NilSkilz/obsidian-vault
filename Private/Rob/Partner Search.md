@@ -58,6 +58,10 @@ Design principle (3 Oct): Rob floated orgasms as a reward tier before this even 
 
 Update 4 Oct evening: she did the library day but didn't finish all her blocks; Rob asked me for a punishment. Supplied one calibrated to the September history: the forfeit is 30 seconds of typing (lines: "I will not promise things I couldn't deliver", plus an honest confession of what derailed her), unfinished blocks roll over to her next library day with one extra as interest. Nothing sexual, nothing effortful, keeps the game self-renewing. Standing guardrail given to Rob: punish the brat, never the overwhelm; if her report was drowning rather than slacking, drop the forfeit and do praise + rollover only. She left in September because the pressure got real, so every "punishment" in this game must be symbolic.
 
+### Shez (14 Oct 2026)
+
+A potential play partner Rob is talking to. She floated full-body encapsulation in expanding PU foam as a fantasy. My steer to him: it's a hard no even with protective overalls (heat buildup, compressive asphyxia as it sets rigid around the chest, no fast release, isocyanate fumes, foam leaking past thin seams and bonding to hair). Suggested she'd likely get the same fantasy satisfied by a vacuum bed/vac cube (instant-release valve), a pre-cast foam clamshell built around a body double and cured/aired first, or simple mummification with cling film + tape. Open thread: ask her which part is the actual appeal (the look, immobility, or feeling it set) to pick the right substitute, and her answer on the real-foam idea is an early read on her risk appetite.
+
 ### Grace (late July 2026) — cooling / likely off
 
 A prospective new partner Rob was talking to; a Tuesday meet was planned. She pulled back citing a **"bad gut feeling"** because his negotiation style differed from hers (**opt-out vs opt-in**), framed around **consent** (her highest-priority thing). She slept on it; the meet went wobbly. **Second time she's reacted OTT to something innocuous.** Rob was sad + annoyed + went into "I don't know what I'm doing anymore" spiral (that last part is his own wobble, not really about her — see [[Rob Mood Log]]).
