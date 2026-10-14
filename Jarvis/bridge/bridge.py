@@ -87,6 +87,18 @@ TOPIC_RE = re.compile(r"^\[([a-z0-9][a-z0-9-]{0,23})\] ")
 STAMP_RE = re.compile(r"^\S+ \[([^\]]+)\]: ")
 CLASSIFY_MODEL = os.environ.get("JARVIS_CLASSIFY_MODEL", "claude-haiku-4-5-20251001")
 CLASSIFY_TIMEOUT = 30
+# Broad tags (Rob, 14 Oct 2026): slugs are narrow ("ha-ev-dashboard", "car-charging-dashboard"),
+# so a message filed under one thread lost sight of a sibling thread on the same subject
+# (he said "it should be charging" mid-road-trip and I quoted the home rate, because this
+# morning's away-charging plan lived under a different slug). Each slug now also carries
+# 1-3 broad tags (car, rope, work...) in topic-tags.json; parked threads that share a tag
+# with the current one and were touched recently get their tails pulled in as context.
+TOPIC_TAGS_FILE = STATE / "topic-tags.json"
+RELATED_DAYS = 3           # only pull in sibling threads touched this recently
+RELATED_THREADS = 2        # at most this many sibling threads
+RELATED_ENTRIES = 8        # entries per sibling thread
+RELATED_MAX_LINES = 30     # line cap per sibling thread
+TAG_RE = re.compile(r"[a-z0-9][a-z0-9-]{0,15}")
 # When the conversation switches away from a topic, a background subagent sweeps the
 # parked thread and promotes anything durable to the vault (Rob's addition, 1 Sept 2026).
 PROMOTE_MODEL = os.environ.get("JARVIS_PROMOTE_MODEL", "claude-sonnet-5")
@@ -351,6 +363,40 @@ def entry_stamp(e):
     return m.group(1) if m else None
 
 
+def stamp_time(stamp):
+    """'Wed 14 Oct 08:20' -> epoch seconds (year inferred; stamps never sit in the future)."""
+    if not stamp:
+        return None
+    try:
+        now = time.localtime()
+        t = time.strptime(f"{stamp} {now.tm_year}", "%a %d %b %H:%M %Y")
+        ts = time.mktime(t)
+        if ts > time.time() + 86400:
+            ts = time.mktime(time.strptime(f"{stamp} {now.tm_year - 1}", "%a %d %b %H:%M %Y"))
+        return ts
+    except ValueError:
+        return None
+
+
+def load_topic_tags():
+    try:
+        return json.loads(TOPIC_TAGS_FILE.read_text())
+    except Exception:
+        return {}
+
+
+def save_topic_tags(slug, tags):
+    """Union new broad tags into a slug's tag set (max 4, newest kept)."""
+    tags = [t for t in tags if TAG_RE.fullmatch(t) and t != slug and t != "general"]
+    if not slug or slug == "general" or not tags:
+        return
+    with CONVO_LOCK:
+        m = load_topic_tags()
+        cur = [t for t in m.get(slug, []) if t not in tags] + tags
+        m[slug] = cur[-4:]
+        TOPIC_TAGS_FILE.write_text(json.dumps(m, indent=1, sort_keys=True))
+
+
 def last_topic(person=None):
     """Most recent tagged entry's topic, or None if the log has no tags yet."""
     for e in reversed(parse_entries(person)):
@@ -381,11 +427,32 @@ def topic_buffer(person, topic):
         if t and t != topic:
             seen[t] = (i, entry_stamp(e) or (seen.get(t) or (0, None))[1])
     parked = sorted(seen.items(), key=lambda kv: -kv[1][0])[:12]
+    # Sibling threads: parked slugs sharing a broad tag with this one, touched recently.
+    related = []
+    tags_map = load_topic_tags() if not person or person.get("role") == "rob" else {}
+    my_tags = set(tags_map.get(topic, []))
+    if my_tags:
+        cutoff = time.time() - RELATED_DAYS * 86400
+        for t, (_, st) in sorted(seen.items(), key=lambda kv: -kv[1][0]):
+            shared = my_tags & set(tags_map.get(t, []))
+            ts = stamp_time(st)
+            if not shared or not ts or ts < cutoff:
+                continue
+            lines = []
+            for e in [e for e in entries if e["topic"] == t][-RELATED_ENTRIES:]:
+                lines.extend(e["lines"])
+            related.append((t, sorted(shared), lines[-RELATED_MAX_LINES:]))
+            if len(related) >= RELATED_THREADS:
+                break
     idx = ", ".join(t + (f" (last {s})" if s else "") for t, (_, s) in parked)
     parts = []
     if thread:
         parts.append(f"Current topic thread [{topic}], the conversation this message belongs to; treat it as the primary context:\n"
                      + "\n".join(thread))
+    for t, shared, lines in related:
+        parts.append(f"Related recent thread [{t}] (shares tag {', '.join(shared)} with this one; same subject, "
+                     "different conversation. Use it for facts and plans already established, e.g. where/how he's doing the thing):\n"
+                     + "\n".join(lines))
     parts.append("Last few lines across all topics (immediate recency, whatever the thread):\n" + "\n".join(flat))
     if idx:
         parts.append("Other open threads, parked. If he pivots back to one, pull its tail with: "
@@ -405,20 +472,28 @@ def classify_topic(text, person):
     for i, e in enumerate(entries):
         if e["topic"] and e["lines"]:
             seen[e["topic"]] = (i, " ".join(e["lines"][0].split())[:100])
-    threads = [f"- {t}: {snip}" for t, (i, snip) in sorted(seen.items(), key=lambda kv: kv[1][0])[-15:]]
+    tags_map = load_topic_tags()
+    threads = [f"- {t} {{{', '.join(tags_map.get(t, []))}}}: {snip}"
+               for t, (i, snip) in sorted(seen.items(), key=lambda kv: kv[1][0])[-15:]]
+    vocab = sorted({x for v in tags_map.values() for x in v})
     flat = []
     for e in entries[-4:]:
         flat.extend(e["lines"])
     prompt = (
         "You tag chat messages with a topic slug so a conversation can be read as threads.\n\n"
-        "Active threads (oldest first; slug: a line from the thread):\n"
+        "Active threads (oldest first; slug {broad tags}: a line from the thread):\n"
         + ("\n".join(threads) or "(none yet)")
         + "\n\nLast lines of the conversation:\n" + "\n".join(flat[-8:])
         + f"\n\nNew message from {who}: {text[:500]}\n\n"
         "Answer with ONE slug and nothing else. Reuse an active slug if the message continues that thread; "
         "short replies like \"yes do that\" continue the thread of the lines directly above. Only mint a new "
         "lowercase-kebab-case slug (max 20 chars) for a genuinely new subject. Use general for greetings or "
-        "banter that belongs to no thread."
+        "banter that belongs to no thread.\n\n"
+        "Then give the thread 1-3 BROAD subject tags, so sibling threads on the same subject can be linked "
+        "(e.g. any car, EV, charging or driving thread gets car; anything about rope gets rope). Prefer tags "
+        "already in use: " + (", ".join(vocab) or "(none yet)") + ". Tags are single lowercase words or short "
+        "kebab-case, broader than the slug.\n\n"
+        "Output exactly one line: slug | tag1, tag2"
     )
     try:
         proc = subprocess.run(
@@ -426,8 +501,14 @@ def classify_topic(text, person):
             capture_output=True, text=True, timeout=CLASSIFY_TIMEOUT, cwd="/tmp",
         )
         out = (proc.stdout or "").strip().lower()
-        slug = out.split()[-1].strip("`\"'.[]") if out else ""
+        line = out.splitlines()[-1] if out else ""
+        head, _, tail = line.partition("|")
+        slug = head.split()[-1].strip("`\"'.[]") if head.split() else ""
         if re.fullmatch(r"[a-z0-9][a-z0-9-]{0,23}", slug):
+            try:
+                save_topic_tags(slug, [t.strip(" `\"'.[]{}") for t in tail.split(",") if t.strip()])
+            except Exception as e:
+                log(f"save_topic_tags error: {e}")
             return slug
         log(f"classify_topic unusable output: {out[:80]!r}")
     except Exception as e:

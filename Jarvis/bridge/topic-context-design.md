@@ -56,3 +56,12 @@ A few hours in `bridge.py`: tagging (append-time), `recent_buffer()` becomes
 topic-aware, one prompt-template change. Backfill: optional one-off haiku pass
 over the existing log. Fully reversible (log format stays line-per-turn, tags
 are a prefix).
+
+## Broad tags + sibling threads (Rob, 14 Oct 2026)
+Slugs proved too narrow: "it should be charging" was filed under `ha-ev-dashboard`
+while that morning's away-charging plan lived in `car-charging-dashboard`, so the
+reply quoted the home rate. Now the classifier also emits 1-3 broad tags per slug
+(`slug | car, home`), stored in `~/.local/state/jarvis-bridge/topic-tags.json`
+(backfilled for all existing slugs). `topic_buffer` pulls the tails of up to 2
+parked threads that share a tag and were touched in the last 3 days, as a
+"Related recent thread" layer. Knobs: `RELATED_*` constants in bridge.py.
