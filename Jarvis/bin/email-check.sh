@@ -54,21 +54,36 @@ JOB 1, bin the junk. Rob has asked for clear sales/marketing/spam to be deleted 
 
 JOB 2, decide if ANY email genuinely deserves interrupting Rob on Telegram.
 Worth a ping: personal mail from a real human, anything about family or school, security/fraud alerts, money problems (failed payments, unexpected charges), cloud/hosting cost alerts (AWS Budgets, billing threshold emails: always ping, Rob runs a kill switch for runaway bills), a delivery arriving today, anything time-sensitive he would regret missing. ALWAYS ping any recruiter/agency reply about one of Rob'\''s job applications that needs action or shows movement: interview requests, pre-screening questionnaires or links to complete, callbacks, shortlisting, even rejections from a named human. Boilerplate "we received your application" acks are NOT worth a ping; a reply that asks Rob to DO something always is (missed one on 28 Sep, it sat unread for two days).
-NOT worth a ping: marketing, newsletters, promos, social-media notifications, routine receipts and subscription renewals, automated service noise. When in doubt, stay quiet; he checks email himself eventually.
+NOT worth a ping: marketing, newsletters, promos, social-media notifications, routine receipts and subscription renewals, automated service noise, and repeat nags about a long-standing account state Rob already knows about (e.g. Google Workspace cracky.co.uk storage/read-only/grace-period notices: that account has been read-only since March 2026 by choice, never ping it; Rob said 14 Oct "I don'"'"'t rly need to hear about emails like this"). A notice is only news if the state CHANGED recently. When in doubt, stay quiet; he checks email himself eventually.
 
 Reply in EXACTLY this format, nothing else:
 First line: "BIN: 123,456" (the uid numbers to bin, comma-separated) or "BIN: none".
-Second line onward: either exactly NOTHING_INTERESTING, or ONLY the Telegram message to send: short and chat-shaped, warm and direct with a bit of dry wit, plain text (no markdown headers or tables), absolutely no em dashes. Lead with what the email is and why it matters. Do not use any tools.
+Second line onward: either exactly NOTHING_INTERESTING, or ONLY the Telegram message to send: short and chat-shaped, warm and direct with a bit of dry wit, plain text (no markdown headers or tables), absolutely no em dashes. Lead with what the email is and why it matters. Do not use any tools. Get the BIN line right first time: never correct yourself, never add commentary or a second BIN line.
 
 New emails:
 '
+
+# Memory of what we've already pinged, so recurring nags (weekly reminders
+# about the same thing) aren't treated as news every time. Rob, 14 Oct:
+# "they send one once per week and you message me about it... maybe remember".
+PINGLOG="$HOME/.local/state/jarvis-mail-pinged.log"
+CUTOFF="$(date -d '-60 days' +%Y-%m-%d)"
+PAST="$( [ -f "$PINGLOG" ] && awk -F'\t' -v c="$CUTOFF" '$1 >= c {print "- " $1 ": " $2}' "$PINGLOG" | tail -40 )"
+if [ -n "$PAST" ]; then
+  PROMPT="${PROMPT%New emails:*}PINGS ALREADY SENT in the last 60 days (one per line). If a new email is the same notice/reminder/topic as one of these, do NOT ping again unless something has materially changed (new deadline, new amount, escalation). Rob has already heard it once; repeats are noise.
+${PAST}
+
+New emails:
+"
+fi
 
 OUT="$(cd "$VAULT" && "$CLAUDE_BIN" -p "${PROMPT}${NEW}" --model sonnet --dangerously-skip-permissions 2>/dev/null)" || {
   echo "claude invocation failed"; exit 0; }
 echo "verdict: $OUT"
 
 # --- Job 1: bin what the judge flagged, but only uids we actually fetched ---
-BIN_RAW="$(printf '%s\n' "$OUT" | grep -m1 -i '^BIN:' | sed 's/^[Bb][Ii][Nn]:[[:space:]]*//' | tr -d ' ')" || BIN_RAW=""
+# Last BIN line wins (judge occasionally self-corrects mid-reply).
+BIN_RAW="$(printf '%s\n' "$OUT" | grep -i '^BIN:' | tail -1 | sed 's/^[Bb][Ii][Nn]:[[:space:]]*//' | tr -d ' ')" || BIN_RAW=""
 BIN_UIDS=""
 if [ -n "$BIN_RAW" ] && [ "$BIN_RAW" != "none" ]; then
   for u in ${BIN_RAW//,/ }; do
@@ -98,7 +113,8 @@ if [ -n "$BIN_UIDS" ]; then
 fi
 
 # --- Job 2: ping if the judge composed a message ---
-MSG="$(printf '%s\n' "$OUT" | grep -v -i '^BIN:' | sed -e '/./,$!d')" || MSG=""
+# Only what follows the LAST BIN line is the message (drops any self-correction chatter).
+MSG="$(printf '%s\n' "$OUT" | awk 'tolower($0) ~ /^bin:/ {buf=""; next} {buf=buf $0 "\n"} END {printf "%s", buf}' | sed -e '/./,$!d')" || MSG=""
 case "$MSG" in
   *NOTHING_INTERESTING*) echo "nothing interesting"; ;;
   "") echo "empty verdict; staying quiet"; ;;
@@ -109,7 +125,7 @@ case "$MSG" in
       set -a; source "$TCONF"; set +a
       curl -sS --max-time 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
         --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-        --data-urlencode "text=📬 ${MSG}" >/dev/null && { PINGED=1; echo "pinged Rob"; } || echo "telegram send failed"
+        --data-urlencode "text=📬 ${MSG}" >/dev/null && { PINGED=1; echo "pinged Rob"; printf '%s\t%s\n' "$(date +%Y-%m-%d)" "$(printf '%s' "$MSG" | tr '\n\t' '  ' | cut -c1-300)" >>"$PINGLOG"; } || echo "telegram send failed"
     fi
     ;;
 esac
