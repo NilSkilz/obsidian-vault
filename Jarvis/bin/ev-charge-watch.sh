@@ -30,7 +30,7 @@ WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.
 [ "$WIFI" = "off" ] && CLOUD=off
 KWH_NOW=$(get sensor.shellyem_34945470ed50_channel_2_energy)
 [ -f "$STATE/start_kwh" ] || echo "$KWH_NOW" > "$STATE/start_kwh"
-ADDED=$(python3 -c "import sys; print(round((float(sys.argv[1])-float(sys.argv[2]))/1000,1))" "$KWH_NOW" "$(cat "$STATE/start_kwh")" 2>/dev/null || echo "?")
+ADDED=$(python3 -c "import sys; print(round(float(sys.argv[1])-float(sys.argv[2]),1))" "$KWH_NOW" "$(cat "$STATE/start_kwh")" 2>/dev/null || echo "?")
 
 if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>/dev/null || [ "$W" = "unavailable" ]; then
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
@@ -38,11 +38,11 @@ if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>
     T=$(date +%H:%M)
     echo "$(date '+%F %T') stop W=$W status=$STATUS cloud=$CLOUD wifi=$WIFI added=$ADDED" >> "$STATE/events.log"
     if [ "$CLOUD" = "off" ]; then
-      MSG="⚡ Charger's died at about $T: no power and the Pod Point has dropped off the network, so it looks like a trip. ~${ADDED} kWh went in tonight (roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added). Reset it at its consumer unit and note which switch was down."
+      MSG="⚡ Charger's died at about $T: no power and the Pod Point has dropped off the network, so it looks like a trip. ~${ADDED} kWh went in this session (roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added). Reset it at its consumer unit and note which switch was down."
     elif [ "$STATUS" = "out-of-service" ]; then
       MSG="🔌 Charging's stopped at about $T: the Pod Point has cut itself out (status out-of-service, probably the LED-dark thing), not a trip. It usually retries itself in ~10 min; unplug/replug if you want it back sooner. ~${ADDED} kWh in so far."
     else
-      MSG="🔌 Car stopped drawing power at about $T (Pod Point still online, status: $STATUS). ~${ADDED} kWh went in tonight, roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added. If that's near 48 kWh it's just full; if not, check the car."
+      MSG="🔌 Car stopped drawing power at about $T (Pod Point still online, status: $STATUS). ~${ADDED} kWh went in this session, roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added. If the car's near its 80% limit it's just full; if not, check the car."
     fi
     tg "$MSG" && touch "$STATE/alerted"
   fi
