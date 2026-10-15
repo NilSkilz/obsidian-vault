@@ -34,7 +34,10 @@ ADDED=$(python3 -c "import sys; print(round(float(sys.argv[1])-float(sys.argv[2]
 
 if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>/dev/null || [ "$W" = "unavailable" ]; then
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
-  if [ "$LOW" -ge 2 ] && [ ! -f "$STATE/alerted" ]; then
+  # 00:20-00:35: a late plug-in gets held then restarted by the 00:30 automation,
+  # so a stop here is that handover, not a fault (false alarm 16 Oct 00:30).
+  HM=$(date +%H%M)
+  if [ "$LOW" -ge 2 ] && [ ! -f "$STATE/alerted" ] && { [ "$HM" -lt 0020 ] || [ "$HM" -gt 0035 ]; }; then
     T=$(date +%H:%M)
     echo "$(date '+%F %T') stop W=$W status=$STATUS cloud=$CLOUD wifi=$WIFI added=$ADDED" >> "$STATE/events.log"
     if [ "$CLOUD" = "off" ]; then
