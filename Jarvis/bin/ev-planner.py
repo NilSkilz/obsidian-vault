@@ -198,6 +198,28 @@ def main():
     charging = charger_w > 500
     in_cheap = 30 <= hm < 5 * 60 + 30
 
+    # 5. Cut-out rescue (16 Oct 2026). The Pod Point sometimes ends a session itself (LED dark,
+    # status out-of-service, RCBO fine) and doesn't always retry. A car-side start revives it.
+    # Only when it was drawing in the last 40 min, so holds and full stops are left alone.
+    if charging:
+        open(f"{STATE}/last_drawing", "w").write(str(now.timestamp()))
+    else:
+        try:
+            drew = float(open(f"{STATE}/last_drawing").read())
+            st = ha("/api/states/sensor.psl_557234_status")
+            dark_for = now.timestamp() - datetime.fromisoformat(st["last_changed"]).timestamp()
+        except Exception:
+            drew, st, dark_for = 0, {"state": None}, 0
+        tries = open(f"{STATE}/rescues").read().split() if flag_day("rescues", today) else [today, "0"]
+        if (home and plugged and soc < limit - 2 and st["state"] == "out-of-service"
+                and dark_for > 8 * 60 and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
+            car("start_charging")
+            open(f"{STATE}/rescues", "w").write(f"{today} {int(tries[1]) + 1}")
+            rob = [c for c, p in PEOPLE.items() if p.get("role") == "rob"]
+            tg(f"🔁 Pod Point cut out on its own (LED dark, not a trip) with the MG4 on {soc:.0f}%. "
+               f"Restarted it from the car. Rescue {int(tries[1]) + 1} of 4 today.", rob)
+            return
+
     # 4. Night backstop: the 00:30 automation should have started it.
     if in_cheap:
         if os.path.exists(f"{STATE}/planner_charging"):
