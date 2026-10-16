@@ -31,3 +31,18 @@ Not in Plex (offered for Radarr):
 - The Cabin in the Woods (2012) - direct follow-on from Ready or Not two days ago, same meta horror-comedy with a final girl turning the tables.
 
 Notes: Super Troopers, Snatch, Lock Stock and Road Trip all unwatched and all good future candidates. Alien 3, Resurrection and Covenant are in the library but rated poorly, so the 1979 original is the only Alien worth pushing.
+
+## 2026-10-16
+
+Taste read: no new movies watched since Ready or Not (7 Oct). South Park binge still running (6 more eps 13-14 Oct). The useful signal this week is the TV diet: Andor started 22 Sep, Manhunt (Unabomber) binged 22-24 Sep, Silo and The Last of Us both started late Sep. So: dystopian sci-fi and serial-killer procedural. Library check found Rogue One unwatched while the whole sequel trilogy and Solo are watched, and Andor is literally its prequel. Seven watched Jan 2025, Girl with the Dragon Tattoo watched 2023. Last week's three (South Park movie, Alien, Goonies) all still unwatched.
+
+In Plex, unwatched:
+- Rogue One: A Star Wars Story (2016) - family sofa pick, he is watching Andor and has never seen the film it ends at; sequel trilogy and Solo all watched, so this is the hole.
+- The Silence of the Lambs (1991) - after hours, rides the Manhunt binge and Seven; Horror is still his top watch-through genre.
+- Mad Max: Fury Road (2015) - crowd-pleaser, Action is his biggest genre by volume and Furiosa is also sitting unwatched behind it.
+
+Not in Plex (offered for Radarr):
+- Zodiac (2007) - Fincher procedural, the exact Manhunt itch; he has watched Seven and Dragon Tattoo.
+- Children of Men (2006) - grounded dystopia for the Silo / Last of Us vein.
+
+Notes: Predator (1987) is unwatched while Predator 2 was watched in 2023, and Predator: Badlands (2025, 9.4) is in the library unwatched. Saved as a future pick to avoid repeating last week's "original of the franchise" move. John Wick 1, 2 and 4 all unwatched despite Action being top genre. Mission: Impossible entire series unwatched. Nightcrawler, Memento, Insomnia, No Country for Old Men all unwatched and high-rated.
