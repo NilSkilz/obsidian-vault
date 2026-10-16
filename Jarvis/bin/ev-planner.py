@@ -268,6 +268,7 @@ def main():
     elif mine:
         car("stop_charging")
         os.remove(f"{STATE}/planner_charging")
+        open(f"{STATE}/planner_stopped", "w").write(str(int(now.timestamp())))  # ev-charge-watch stays quiet
 
 if __name__ == "__main__":
     main()

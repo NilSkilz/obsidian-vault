@@ -1,55 +1,84 @@
 #!/usr/bin/env bash
-# EV charge watchdog (Rob's ask, 9 Oct 2026: "let me know if it dies"; re-armed 10 Oct
-# for the midday stop-start / LED-dark cut-outs).
-# Cron every 2 min. Pings Telegram once when the Pod Point stops drawing power
-# (Shelly ch2 < 500W on two checks in a row), says whether it looks like a trip
-# (cloud_connection off) or a normal stop (car full / paused). Re-arms if charging
-# resumes. Removes its own cron line after EXPIRY.
+# EV charge watchdog. Rob, 16 Oct 2026: "until this is fixed I want it to always notify me,
+# whenever I start it charging it turns the watchdog on". Permanent cron every 2 min until
+# the Pod Point fault (trips + dark cut-outs) is fixed; then delete the cron line.
+#
+# Arms itself on any charge (Shelly ch2 >= 500W on two checks running, whoever started it).
+# When an armed charge stops (< 500W twice running) it Telegrams once: full at the car's
+# limit, a trip (charger off wifi), a Pod Point cut-out (LED dark), unplugged, or a plain
+# stop under the limit. Deliberate stops stay quiet: the 00:30 hold, the 05:30 cheap-rate
+# stop, the dashboard Stop button and the planner ending its own top-up.
 set -uo pipefail
 source "$HOME/.config/jarvis/ha.env"
 source "$HOME/.config/jarvis/telegram.env"
 source "$HOME/.config/jarvis/unifi.env"
 STATE="$HOME/.local/state/ev-charge-watch"; mkdir -p "$STATE"
-EXPIRY="${EV_WATCH_EXPIRY:-2026-10-13 10:00}"
-
-if [ "$(date +%s)" -ge "$(date -d "$EXPIRY" +%s)" ]; then
-  crontab -l | grep -v -e 'ev-charge-watch.sh' -e 'EV charge watchdog' | crontab -; exit 0
-fi
 
 get() { curl -s -m 10 -H "Authorization: Bearer $HA_TOKEN" "$HA_URL/api/states/$1" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("state","?"))' 2>/dev/null || echo "?"; }
+# Seconds since an automation/script last ran (huge if never).
+since() { curl -s -m 10 -H "Authorization: Bearer $HA_TOKEN" "$HA_URL/api/states/$1" | python3 -c '
+import json,sys,datetime
+t=json.load(sys.stdin).get("attributes",{}).get("last_triggered")
+print(int((datetime.datetime.now(datetime.timezone.utc)-datetime.datetime.fromisoformat(t)).total_seconds()) if t else 10**9)' 2>/dev/null || echo 1000000000; }
 tg() { curl -sS -m 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
   --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=$1" >/dev/null; }
+lt() { python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<float(sys.argv[2]) else 1)" "$1" "$2" 2>/dev/null; }
 
 W=$(get sensor.shellyem_34945470ed50_channel_2_power)
-CLOUD=$(get binary_sensor.psl_557234_cloud_connection)
-STATUS=$(get sensor.psl_557234_status)
-# Pod Point cloud_connection lags by many minutes (it still read "on" after the
-# 23:10 trip on 9 Oct), so the wifi association on the UDM is the real tell.
-WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
-  | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?")
-[ "$WIFI" = "off" ] && CLOUD=off
 KWH_NOW=$(get sensor.shellyem_34945470ed50_channel_2_energy)
-[ -f "$STATE/start_kwh" ] || echo "$KWH_NOW" > "$STATE/start_kwh"
-ADDED=$(python3 -c "import sys; print(round(float(sys.argv[1])-float(sys.argv[2]),1))" "$KWH_NOW" "$(cat "$STATE/start_kwh")" 2>/dev/null || echo "?")
 
-if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<500 else 1)" "$W" 2>/dev/null || [ "$W" = "unavailable" ]; then
+if lt "$W" 500 || [ "$W" = "unavailable" ]; then
+  echo 0 > "$STATE/high"
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
-  # 00:20-00:35: a late plug-in gets held then restarted by the 00:30 automation,
-  # so a stop here is that handover, not a fault (false alarm 16 Oct 00:30).
-  HM=$(date +%H%M)
-  if [ "$LOW" -ge 2 ] && [ ! -f "$STATE/alerted" ] && { [ "$HM" -lt 0020 ] || [ "$HM" -gt 0035 ]; }; then
-    T=$(date +%H:%M)
-    echo "$(date '+%F %T') stop W=$W status=$STATUS cloud=$CLOUD wifi=$WIFI added=$ADDED" >> "$STATE/events.log"
-    if [ "$CLOUD" = "off" ]; then
-      MSG="⚡ Charger's died at about $T: no power and the Pod Point has dropped off the network, so it looks like a trip. ~${ADDED} kWh went in this session (roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added). Reset it at its consumer unit and note which switch was down."
-    elif [ "$STATUS" = "out-of-service" ]; then
-      MSG="🔌 Charging's stopped at about $T: the Pod Point has cut itself out (status out-of-service, probably the LED-dark thing), not a trip. It usually retries itself in ~10 min; unplug/replug if you want it back sooner. ~${ADDED} kWh in so far."
-    else
-      MSG="🔌 Car stopped drawing power at about $T (Pod Point still online, status: $STATUS). ~${ADDED} kWh went in this session, roughly $(python3 -c "print(int(float('$ADDED')*0.9/64*100))" 2>/dev/null || echo '?')% added. If the car's near its 80% limit it's just full; if not, check the car."
-    fi
-    tg "$MSG" && touch "$STATE/alerted"
+  [ -f "$STATE/armed" ] && [ "$LOW" -ge 2 ] || exit 0
+  rm -f "$STATE/armed"
+  T=$(date +%H:%M); HM=$(date +%H%M)
+  SOC=$(get sensor.mg_mg4_electric_state_of_charge); LIMIT=$(get number.mg_mg4_electric_target_soc)
+  GUN=$(get binary_sensor.mg_mg4_electric_charging_gun_state)
+  CLOUD=$(get binary_sensor.psl_557234_cloud_connection)
+  STATUS=$(get sensor.psl_557234_status)
+  # Pod Point cloud_connection lags by many minutes (still "on" after the 23:10 trip on
+  # 9 Oct), so the wifi association on the UDM is the real trip tell.
+  WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
+    | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?")
+  [ "$WIFI" = "off" ] && CLOUD=off
+  ADDED=$(python3 -c "import sys; print(round(float(sys.argv[1])-float(sys.argv[2]),1))" "$KWH_NOW" "$(cat "$STATE/start_kwh" 2>/dev/null)" 2>/dev/null || echo "?")
+  SOCS=$(printf '%.0f' "$SOC" 2>/dev/null || echo "?")
+  LOG="$(date '+%F %T') stop W=$W soc=$SOC status=$STATUS cloud=$CLOUD wifi=$WIFI gun=$GUN added=$ADDED"
+
+  # Deliberate stops: say nothing. Planner writes a stamp when it ends its own top-up.
+  PLANNER_AGO=$(( $(date +%s) - $(cat "$HOME/.local/state/ev-planner/planner_stopped" 2>/dev/null || echo 0) ))
+  if { [ "$HM" -ge 0020 ] && [ "$HM" -le 0035 ]; } \
+     || [ "$(since automation.ev_stop_charging_at_05_30)" -lt 900 ] \
+     || [ "$(since automation.ev_hold_plug_ins_until_00_30)" -lt 900 ] \
+     || [ "$(since script.ev_charge_stop)" -lt 900 ] \
+     || [ "$PLANNER_AGO" -lt 900 ]; then
+    echo "$LOG (deliberate, quiet)" >> "$STATE/events.log"; exit 0
   fi
+  echo "$LOG" >> "$STATE/events.log"
+
+  if [ "$CLOUD" = "off" ]; then
+    MSG="⚡ Charger's died at $T with the MG4 on ${SOCS}%: no power and the Pod Point's off the network, so it looks like a trip. ~${ADDED} kWh went in. Reset it at its consumer unit and note which switch was down."
+  elif [ "$SOC" != "?" ] && [ "$LIMIT" != "?" ] && ! lt "$SOC" "$(python3 -c "print(float('$LIMIT')-1.5)")"; then
+    MSG="✅ MG4's done: ${SOCS}% at $T (limit ${LIMIT%.*}%). ~${ADDED} kWh went in."
+  elif [ "$GUN" = "off" ]; then
+    MSG="🔌 MG4 unplugged at $T on ${SOCS}%. ~${ADDED} kWh went in."
+  elif [ "$STATUS" = "out-of-service" ]; then
+    MSG="🔌 Charging stopped at $T on ${SOCS}%: the Pod Point cut itself out (LED dark), not a trip. The planner restarts it from the car within ~10-20 min if it doesn't retry itself. ~${ADDED} kWh in so far."
+  else
+    MSG="🔌 Charging stopped at $T on ${SOCS}%, short of the ${LIMIT%.*}% limit. Pod Point still online (status: $STATUS), not a trip. ~${ADDED} kWh went in. Check the car/app."
+  fi
+  tg "$MSG" && touch "$STATE/alerted"
 else
   echo 0 > "$STATE/low"
-  if [ -f "$STATE/alerted" ]; then echo "$(date '+%F %T') resume W=$W" >> "$STATE/events.log"; rm -f "$STATE/alerted"; tg "✅ Charging's back on: $(printf '%.1f' "$W" 2>/dev/null) W at $(date +%H:%M)."; fi
+  HIGH=$(( $(cat "$STATE/high" 2>/dev/null || echo 0) + 1 )); echo "$HIGH" > "$STATE/high"
+  if [ "$HIGH" -ge 2 ] && [ ! -f "$STATE/armed" ]; then
+    # Count from the first high sample, ~2 min ago; close enough.
+    echo "$KWH_NOW" > "$STATE/start_kwh"; touch "$STATE/armed"
+    echo "$(date '+%F %T') armed W=$W" >> "$STATE/events.log"
+    if [ -f "$STATE/alerted" ]; then
+      rm -f "$STATE/alerted"
+      tg "✅ Charging's back on: $(python3 -c "print(round(float('$W')/1000,1))" 2>/dev/null) kW at $(date +%H:%M), MG4 on $(printf '%.0f' "$(get sensor.mg_mg4_electric_state_of_charge)" 2>/dev/null)%."
+    fi
+  fi
 fi
