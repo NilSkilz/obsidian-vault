@@ -6,8 +6,8 @@
 # Arms itself on any charge (Shelly ch2 >= 500W on two checks running, whoever started it).
 # When an armed charge stops (< 500W twice running) it Telegrams once: full at the car's
 # limit, a trip (charger off wifi), a Pod Point cut-out (LED dark), unplugged, or a plain
-# stop under the limit. Deliberate stops stay quiet: the 00:30 hold, the 05:30 cheap-rate
-# stop, the dashboard Stop button and the planner ending its own top-up.
+# stop under the limit. Only the dashboard Stop button stays quiet (since 16 Oct nothing
+# else stops a charge on purpose: no 00:30 hold, no 05:30 stop, no planner top-up).
 set -uo pipefail
 source "$HOME/.config/jarvis/ha.env"
 source "$HOME/.config/jarvis/telegram.env"
@@ -32,7 +32,7 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
   [ -f "$STATE/armed" ] && [ "$LOW" -ge 2 ] || exit 0
   rm -f "$STATE/armed"
-  T=$(date +%H:%M); HM=$(date +%H%M)
+  T=$(date +%H:%M)
   SOC=$(get sensor.mg_mg4_electric_state_of_charge); LIMIT=$(get number.mg_mg4_electric_target_soc)
   GUN=$(get binary_sensor.mg_mg4_electric_charging_gun_state)
   CLOUD=$(get binary_sensor.psl_557234_cloud_connection)
@@ -46,13 +46,8 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   SOCS=$(printf '%.0f' "$SOC" 2>/dev/null || echo "?")
   LOG="$(date '+%F %T') stop W=$W soc=$SOC status=$STATUS cloud=$CLOUD wifi=$WIFI gun=$GUN added=$ADDED"
 
-  # Deliberate stops: say nothing. Planner writes a stamp when it ends its own top-up.
-  PLANNER_AGO=$(( $(date +%s) - $(cat "$HOME/.local/state/ev-planner/planner_stopped" 2>/dev/null || echo 0) ))
-  if { [ "$HM" -ge 0020 ] && [ "$HM" -le 0035 ]; } \
-     || [ "$(since automation.ev_stop_charging_at_05_30)" -lt 900 ] \
-     || [ "$(since automation.ev_hold_plug_ins_until_00_30)" -lt 900 ] \
-     || [ "$(since script.ev_charge_stop)" -lt 900 ] \
-     || [ "$PLANNER_AGO" -lt 900 ]; then
+  # Deliberate stop (dashboard Stop button): say nothing.
+  if [ "$(since script.ev_charge_stop)" -lt 900 ]; then
     echo "$LOG (deliberate, quiet)" >> "$STATE/events.log"; exit 0
   fi
   echo "$LOG" >> "$STATE/events.log"

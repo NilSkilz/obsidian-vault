@@ -4,23 +4,17 @@
 Cron every 10 min. Three jobs:
 
 1. Habit log: appends a snapshot (time, SoC, home?, plugged?, odometer) to
-   ~/.local/state/ev-planner/log.csv. This is what the planner learns from.
+   ~/.local/state/ev-planner/log.csv.
 2. Bedtime nag: between 22:30 and 00:15, if the car is at home, not plugged in
    and below its charge limit, Telegram Rob and Aimee once per night.
-3. Daytime top-up: if the car is plugged in at home outside the cheap window and
-   its SoC won't cover what this weekday usually uses for the rest of the day
-   (learned from the log, defaults until there's data), start the car charging
-   until it will, then stop it again. Only ever stops a charge it started, so a
-   manual start from the car or iSMART app is left alone.
-4. Night backstop: in 00:30-05:30, if the car is home, plugged, under its limit
-   and not drawing power, re-send start every 20 min; Telegram Rob once if it
-   still isn't charging by the third try.
+5. Cut-out rescue: if the Pod Point ends a session itself (out-of-service, LED
+   dark) mid-charge, restart it from the car (max 4 a day).
 
-Since 13 Oct 2026 (Rob's call) the Pod Point is in Manual and the CAR is the
-switch: HA automations hold plug-ins outside the window (ev_hold_until_cheap),
-start at 00:30 (ev_cheap_rate_start) and stop at 05:30 (ev_cheap_rate_stop).
-The car's own 80% limit ends the night charge. input_boolean.ev_cheap_rate_auto
-off disables the lot (this script's actions included).
+16 Oct 2026 (Rob: "kill any automations that stop the car charging, including
+waiting till 00:30"): the daytime top-up (3) and night backstop (4) are gone,
+along with the HA hold / 00:30 start / 05:30 stop automations. Plug in and it
+charges straight away; the car's own 80% limit is the only thing that ends it.
+This script never stops a charge.
 Kill switch: touch ~/.local/state/ev-planner/off.
 """
 import csv, json, os, sys, urllib.request, urllib.parse
@@ -190,13 +184,10 @@ def main():
     if (hm >= 22 * 60 + 30 or hm <= 15) and home and not plugged and soc < limit - 5 and not flag("nagged", night):
         miles = round((km(f"sensor.{CAR}_electric_range") or 0) / 1.609344)
         tg(f"🔌 The MG4 isn't plugged in. It's on {soc:.0f}% (~{miles} miles). "
-           f"Plug it in before bed and it'll fill to {limit:.0f}% at 9.5p from 00:30.")
+           f"Plug it in before bed and it'll charge to {limit:.0f}%.")
         set_flag("nagged", night)
 
-    if state("input_boolean.ev_cheap_rate_auto") == "off":
-        return
     charging = charger_w > 500
-    in_cheap = 30 <= hm < 5 * 60 + 30
 
     # 5. Cut-out rescue (16 Oct 2026). The Pod Point sometimes ends a session itself (LED dark,
     # status out-of-service, RCBO fine) and doesn't always retry. A car-side start revives it.
@@ -219,56 +210,6 @@ def main():
             tg(f"🔁 Pod Point cut out on its own (LED dark, not a trip) with the MG4 on {soc:.0f}%. "
                f"Restarted it from the car. Rescue {int(tries[1]) + 1} of 4 today.", rob)
             return
-
-    # 4. Night backstop: the 00:30 automation should have started it.
-    if in_cheap:
-        if os.path.exists(f"{STATE}/planner_charging"):
-            os.remove(f"{STATE}/planner_charging")
-        if home and plugged and soc < limit - 2 and not charging and hm >= 40:
-            _, tries, last = (open(f"{STATE}/night_tries").read().split() if flag_day("night_tries", night)
-                              else (night, 0, 0))
-            tries, last = int(tries), float(last)
-            if tries < 6 and now.timestamp() - last > 19 * 60:
-                car("start_charging")
-                tries += 1
-                open(f"{STATE}/night_tries", "w").write(f"{night} {tries} {now.timestamp()}")
-                if tries == 3:
-                    rob = [c for c, p in PEOPLE.items() if p.get("role") == "rob"]
-                    tg(f"⚠️ MG4 is plugged in at {soc:.0f}% but won't start charging (tried 3 times since 00:30). "
-                       f"Pod Point status: {state('sensor.psl_557234_status')}.", rob)
-        return
-
-    # 3. Daytime top-up.
-    mine = os.path.exists(f"{STATE}/planner_charging")
-    if not (home and plugged):
-        if mine:
-            os.remove(f"{STATE}/planner_charging")
-        return
-
-    learned, n = learned_need(now)
-    kind = "weekend" if now.weekday() >= 5 else "weekday"
-    base = learned if learned is not None else DEFAULT_NEED[kind]
-    # Late evening needs less: scale the default down towards midnight.
-    if learned is None and hm >= 18 * 60:
-        base *= max(0.3, (24 * 60 - hm) / (6 * 60))
-    need = min(limit, max(MIN_FLOOR, base + BUFFER))
-
-    if soc < need:
-        # Re-send start every 30 min while short and not drawing (car commands go via SAIC's cloud).
-        last = float(open(f"{STATE}/planner_charging").read() or 0) if mine else 0
-        if not charging and now.timestamp() - last > 30 * 60:
-            car("start_charging")
-            open(f"{STATE}/planner_charging", "w").write(str(now.timestamp()))
-            if not flag("boost_told", today):
-                kwh = (need - soc) / 100 * PACK_KWH / 0.9
-                why = f"{'on a usual ' + now.strftime('%A') if learned is not None else 'on a ' + kind} you use about {base:.0f}% more before bed"
-                tg(f"⚡ MG4 plugged in on {soc:.0f}%. Topping it up to {need:.0f}% now at the day rate "
-                   f"(~£{kwh * 0.3617:.2f}) because {why}. The rest goes in at 9.5p tonight.")
-                set_flag("boost_told", today)
-    elif mine:
-        car("stop_charging")
-        os.remove(f"{STATE}/planner_charging")
-        open(f"{STATE}/planner_stopped", "w").write(str(int(now.timestamp())))  # ev-charge-watch stays quiet
 
 if __name__ == "__main__":
     main()
