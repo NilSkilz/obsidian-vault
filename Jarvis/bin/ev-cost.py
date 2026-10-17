@@ -560,7 +560,7 @@ def main():
         mi = max(0.0, ob - oa)
         fp, fd, _ = price_on(series, a + (b - a) / 2)
         periods.append({
-            "label": f"{a:%-d}–{(b - timedelta(minutes=1)):%-d %b}" + ("*" if a == PURCHASE else ""),
+            "label": f"{a:%-d}-{(b - timedelta(minutes=1)):%-d %b}" + ("*" if a == PURCHASE else ""),
             "mi": mi, "ev": sum(h["gbp"] for h in hours if a <= h["t"] < b) + sum(r["gbp"] for r in pub_rows if a <= r["t"] < b),
             "petrol": fuel_cost(mi, fp), "diesel": fuel_cost(mi, fd)})
     petrol = sum(p["petrol"] for p in periods)
@@ -569,10 +569,10 @@ def main():
 
     # ---------------- render
     def per_kwh(g, k):
-        return pp(g * 100 / k) if k > 0.5 else "–"
+        return pp(g * 100 / k) if k > 0.5 else "-"
 
     def share(k):
-        return f"{k / total_kwh * 100:.0f}%" if total_kwh else "–"
+        return f"{k / total_kwh * 100:.0f}%" if total_kwh else "-"
 
     est_bits = []
     if pub_pending:
@@ -609,8 +609,8 @@ def main():
         "",
         f"- **Charging in the day at home cost you {gbp(home_day * (day_p - night_p) / 100)} extra.** {home_day:.0f} kWh went in at {day_p:g}p rather than {night_p:g}p.",
         f"- **Free work charging was worth {gbp(work_kwh * night_p / 100)}** at your night rate, or {gbp(work_kwh * day_p / 100)} at the day rate."
-        + (f" About {work_gap:.0f} kWh of that is from 9–13 Oct, before the car was in HA, worked out from the miles." if work_gap > 1 else ""),
-        f"- **Public charging averaged {per_kwh(pub_gbp, pub_kwh)}/kWh**, about {pp(pub_gbp * 100 / pub_kwh / mi_per_kwh / eff * DC_EFF) if pub_kwh else '–'} a mile, which is more than petrol ({pp(petrol_ppm)}). Fine on a long run, worth avoiding otherwise.",
+        + (f" About {work_gap:.0f} kWh of that is from 9-13 Oct, before the car was in HA, worked out from the miles." if work_gap > 1 else ""),
+        f"- **Public charging averaged {per_kwh(pub_gbp, pub_kwh)}/kWh**, about {pp(pub_gbp * 100 / pub_kwh / mi_per_kwh / eff * DC_EFF) if pub_kwh else '-'} a mile, which is more than petrol ({pp(petrol_ppm)}). Fine on a long run, worth avoiding otherwise.",
         f"- **Home night charging is {pp(night_p / mi_per_kwh / eff)} a mile, day rate {pp(day_p / mi_per_kwh / eff)}.**",
         f"- **The car's doing {mi_per_kwh:.1f} mi/kWh**, and going by its battery %, about {eff * 100:.0f}% of what goes in at home reaches the battery."
         + (f" The charger's own standby use is in the home figures ({standby:.1f} kWh)." if standby >= 0.5 else ""),
@@ -618,10 +618,10 @@ def main():
 
     weeks = ["### By week", "| Week | Miles | EV | p/mi | Petrol | Diesel |", "|:--|--:|--:|--:|--:|--:|"]
     for p in periods[-10:]:
-        weeks.append(f"| {p['label']} | {p['mi']:,.0f} | {gbp(p['ev'])} | {pp(p['ev'] * 100 / p['mi']) if p['mi'] > 1 else '–'} | "
+        weeks.append(f"| {p['label']} | {p['mi']:,.0f} | {gbp(p['ev'])} | {pp(p['ev'] * 100 / p['mi']) if p['mi'] > 1 else '-'} | "
                      f"{gbp(p['petrol'])} | {gbp(p['diesel'])} |")
     weeks.append(f"| **Total** | **{miles:,.0f}** | **{gbp(total_gbp)}** | **{pp(ppm)}** | **{gbp(petrol)}** | **{gbp(diesel)}** |")
-    weeks += ["", "<small>* 9–13 Oct, before the car's data reached HA. EV = home + public. Weeks run Mon–Sun. "
+    weeks += ["", "<small>* 9-13 Oct, before the car's data reached HA. EV = home + public. Weeks run Mon-Sun. "
               "Petrol and diesel use each week's UK average price.</small>"]
 
     rows = []
@@ -654,7 +654,7 @@ def main():
 
     notes = [
         "### How this is worked out",
-        f"- **Home:** the Shelly clamp on the charger circuit (what you actually pay for, losses included), priced at the Octopus Go rate at the time: {night_p:g}p 00:30–05:30, {day_p:g}p otherwise. Standing charge left out, because you'd pay it anyway.",
+        f"- **Home:** the Shelly clamp on the charger circuit (what you actually pay for, losses included), priced at the Octopus Go rate at the time: {night_p:g}p 00:30-05:30, {day_p:g}p otherwise. Standing charge left out, because you'd pay it anyway.",
         "- **Public:** the real payments from Starling and Monzo, matched to the charge the car reported. The bank feed syncs at 05:20 each night.",
         "- **Work:** any charge inside the Cheltenham work zone. Free.",
         f"- **Miles:** odometer now ({odo:,.0f} mi) minus {PURCHASE_ODO_MI:,} at purchase (the listing figure).",
