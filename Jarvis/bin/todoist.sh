@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Minimal Todoist CLI — curl+jq, read-focused, no node needed.
+# Minimal Todoist CLI, curl+jq, read-focused, no node needed.
 # Usage:
 #   todoist.sh today          # tasks due today (includes overdue), across all projects
 #   todoist.sh projects       # list projects

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Family calendar CLI — reads the published iCloud ICS feed (read-only, no CalDAV write).
+# Family calendar CLI, reads the published iCloud ICS feed (read-only, no CalDAV write).
 # Usage:
 #   calendar.sh today        # events today
 #   calendar.sh tomorrow     # events tomorrow

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jarvis Slack check — polls Rob's work Slack (Superdry) for new DMs and
+# Jarvis Slack check, polls Rob's work Slack (Superdry) for new DMs and
 # @mentions, pings Telegram only when a real human needs him.
 #
 # Why polling: the claude.ai Slack connector is pull-only. True push (Events

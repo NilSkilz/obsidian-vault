@@ -18,7 +18,7 @@ set -a
 source "$CONF"
 set +a
 
-# Cron entries are single-line, so newlines arrive as literal "\n" — expand them.
+# Cron entries are single-line, so newlines arrive as literal "\n", expand them.
 MSG="$(printf '%b' "$MSG")"
 
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \

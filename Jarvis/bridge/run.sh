@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Ensure the Jarvis Telegram bridge is running in tmux.
-# Idempotent — safe for @reboot and a periodic watchdog cron.
+# Idempotent, safe for @reboot and a periodic watchdog cron.
 export PATH="$HOME/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 # Pinned to Opus 5.5 at Rob's request (2026-10-06). To restore usage-aware
 # Fable: set JARVIS_MODEL back to claude-fable-5 and JARVIS_MODEL_AUTO=1.

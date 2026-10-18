@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jarvis fleet updates — Home Assistant (add-ons/core/OS), all Debian LXCs, Proxmox host.
+# Jarvis fleet updates, Home Assistant (add-ons/core/OS), all Debian LXCs, Proxmox host.
 #
 #   updates.sh check      report available updates, change nothing
 #   updates.sh apply      apply everything. Never reboots anything itself, with one

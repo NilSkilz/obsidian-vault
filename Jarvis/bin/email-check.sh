@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jarvis hourly email check — cron runs this at :05, 7am-11pm.
+# Jarvis hourly email check, cron runs this at :05, 7am-11pm.
 # 1. Sweeps known-junk senders (mail-bin-senders.txt) from INBOX to the bin.
 # 2. Grabs anything new since the last run; if there is any, a one-shot
 #    `claude -p` judges each email twice over:

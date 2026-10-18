@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-shot personal check-in with Rob — follow-up on the 2026-07-15 post-play-date
+# One-shot personal check-in with Rob, follow-up on the 2026-07-15 post-play-date
 # re-entry anxiety (he asked to "catch up in a couple of days").
 # Scheduled by hand for 2026-07-17 morning; removes its OWN cron line after sending
 # so it only ever fires once. Sends to Rob's private Telegram (same chat as briefings).

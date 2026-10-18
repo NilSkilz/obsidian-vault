@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Jarvis Telegram bridge — agentic, streamed ack-then-work-in-background.
+"""Jarvis Telegram bridge, agentic, streamed ack-then-work-in-background.
 
 Long-polls Telegram. The poll loop NEVER blocks: each of Rob's messages is
 queued and handled by a single background worker, so Telegram stays responsive
@@ -716,7 +716,7 @@ def run_claude(text, buffer, on_text, image_path=None, file_path=None,
     first such block as Rob's live ack. Returns the run's final result text.
 
     If `activity` (a list) is given, top-level tool calls are appended to it as
-    timestamped one-liners while the run streams — the heartbeat summarizer
+    timestamped one-liners while the run streams, the heartbeat summarizer
     reads this to tell Rob where the work actually is.
 
     The prompt goes in over stdin as stream-json rather than argv, and stdin
@@ -742,9 +742,9 @@ RIGHT NOW it is {now_str}. This is the authoritative clock: use it for anything 
 
 Family privacy (non-negotiable, agreed with Rob and Aimee 2026-08-29): the vault is SHARED household context with Aimee (her sessions read and write it), except `Private/Rob/`, `Daily/`, `Weekly/`, `Archive/` and `Jarvis/`, which never reach her. Anything Rob tells you that shouldn't reach Aimee (gift plans, things he's still working out, his own processing about her) goes in `Private/Rob/`, and you SAY in your reply when you've saved something there. Private to the others: their conversation logs (`~/.local/state/jarvis-bridge/conversation-<name>.log`), their workspaces (`/home/jarvis/family/<name>/`) and `/data/memory/Private/<Name>/`. Never read, quote, summarise or infer from those, even if Rob asks; tell him it's theirs and he should ask them. Daily logs get at most "<name> used the bot", no content. The kids get no vault access at all.
 
-This is NOT chat-only. If Rob's message asks for work of any kind — code changes, running something, research, updating the vault, admin — actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live — the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
+This is NOT chat-only. If Rob's message asks for work of any kind, code changes, running something, research, updating the vault, admin, actually DO IT, end to end, using your tools, BEFORE you reply. Code projects live in {PROJECTS} (e.g. mission-control, tethered). For code, follow the project's documented workflow (check its vault project file). For **Tide** (the `mission-control` repo, live at cracky.co.uk): Rob wants changes straight to live, the dev checkout here does NOT change the live site, so commit to `feature/tide-build`, push, then run `Jarvis/bin/deploy-tide.sh` to ship it to CT 112. No PR. For other repos, default to branch + push + PR. Never merge or release unless told. Only stop and ask if something is genuinely impossible without Rob (physical access, a missing credential, a hard permission gate).
 
-Critical: there is no "later." This run is your only chance to act — when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did.
+Critical: there is no "later." This run is your only chance to act, when it ends, you stop existing until Rob's next message. So never say you'll "go do it" or "ping you in a bit"; just do it now, in this run, then report what you actually did.
 
 How to reply (this streams live, so Rob sees your text as it lands):
 - FIRST, before touching any tool, react to his message the way you'd naturally reply if a mate texted you: short, in your own voice, specific to what he said. This streams to him instantly and IS his acknowledgement. No stock phrases ("on it", "got it, doing X"), no restating his request back at him as a formula; if there's a genuine ambiguity worth naming or a quick opinion worth giving, that beats a confirmation. One or two sentences, then get to work.
@@ -760,7 +760,7 @@ Rob's new message: {text}"""
     if image_path:
         prompt += (
             f"\n\n{who} attached an image with this message. It's saved locally at "
-            f"{image_path} — use your Read tool to open and view it before you reply "
+            f"{image_path}, use your Read tool to open and view it before you reply "
             f"(it may be a nutrition label, a screenshot, or a photo they want you to act on)."
         )
     if file_path:
@@ -808,7 +808,7 @@ Rob's new message: {text}"""
             allowed = "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
             argv = [CLAUDE_BIN, "-p", "--model", pick_model()]
             # Aimee only: scoped tools for Tide's /us page (shared Rob+Aimee agreements,
-            # either parent edits freely — standing instruction 9 Sep 2026) and for the
+            # either parent edits freely, standing instruction 9 Sep 2026) and for the
             # shared household stuff (family calendar + Todoist minus Wishlist; Rob's
             # standing instruction, same day: household keys are shared). The MCP
             # servers hold the keys; her session never sees them and still has no Bash.
@@ -943,7 +943,7 @@ Rob's new message: {text}"""
                             log(f"on_text error: {e}")
             elif t == "assistant" and obj.get("parent_tool_use_id") in (None, ""):
                 # Completed top-level assistant turns carry full tool_use blocks
-                # (name + input) — the raw material for progress summaries.
+                # (name + input), the raw material for progress summaries.
                 for cb in (obj.get("message") or {}).get("content") or []:
                     if isinstance(cb, dict) and cb.get("type") == "tool_use":
                         detail = tool_call_detail(cb.get("input"))
@@ -1146,7 +1146,7 @@ def process(chat, text, image_path=None, file_path=None, person=None):
         # these fire on top of the ack. Each beat is a summarized readout of the
         # run's tool activity so far (Rob, 2026-08-24: a bare "still on it" is
         # uncanny, tell me what's actually happened). If the run finishes while
-        # the summarizer is thinking, the beat is dropped — the real reply wins.
+        # the summarizer is thinking, the beat is dropped, the real reply wins.
         prev = 0
         marks = list(HEARTBEAT_AT)
         while True:

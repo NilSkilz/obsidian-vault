@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jarvis weekly self-learn — read the week's Telegram conversation, distil
+# Jarvis weekly self-learn, read the week's Telegram conversation, distil
 # durable lessons into memory, and report what was learned.
 #
 # The Telegram bridge (Jarvis/bridge/bridge.py) already logs the FULL
@@ -79,8 +79,8 @@ The conversation slice for this week is in the file: $SLICE
 Read it in full first.
 
 You have TWO memory systems, both already documented in your CLAUDE.md / system context. Use whichever fits each lesson:
-  1. The VAULT at $VAULT (this working dir) — your rich Obsidian knowledge, git-backed. Durable facts go in the right file: infra facts -> Context/Infrastructure.md, technical lessons -> Decisions/Technical Lessons Learned.md, people -> People/*.md, projects -> Projects/*.md, etc.
-  2. The AUTO-MEMORY at /home/jarvis/.claude/projects/-data-memory/memory/ — one fact per file with frontmatter, indexed in MEMORY.md. This is for lessons about HOW you should work (feedback), ongoing project state, user facts, and reference pointers. Follow the exact format and rules in your system context (frontmatter, [[links]], one-line MEMORY.md pointer).
+  1. The VAULT at $VAULT (this working dir), your rich Obsidian knowledge, git-backed. Durable facts go in the right file: infra facts -> Context/Infrastructure.md, technical lessons -> Decisions/Technical Lessons Learned.md, people -> People/*.md, projects -> Projects/*.md, etc.
+  2. The AUTO-MEMORY at /home/jarvis/.claude/projects/-data-memory/memory/, one fact per file with frontmatter, indexed in MEMORY.md. This is for lessons about HOW you should work (feedback), ongoing project state, user facts, and reference pointers. Follow the exact format and rules in your system context (frontmatter, [[links]], one-line MEMORY.md pointer).
 
 Rules for this pass:
 - Extract only what is genuinely DURABLE and not already recorded. Skip transient chatter, one-off tasks already done, and anything the repo/git history already captures. Before writing, CHECK for an existing file/section that already covers it and update that rather than duplicating. Correct anything that turns out to be wrong.

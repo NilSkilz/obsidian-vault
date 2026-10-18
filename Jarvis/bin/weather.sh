@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Weather CLI — Open-Meteo, no API key needed (free, non-commercial).
+# Weather CLI, Open-Meteo, no API key needed (free, non-commercial).
 # Location defaults to Crackington Haven, Bude, Cornwall (EX23 0PE).
 # Override with LAT/LON env vars if needed.
 # Usage:

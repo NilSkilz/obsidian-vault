@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Minimal Trello CLI for the "Jarvis" board — read-only creds, curl+jq, no node needed.
+# Minimal Trello CLI for the "Jarvis" board, read-only creds, curl+jq, no node needed.
 # Usage:
 #   trello.sh lists
 #   trello.sh cards <list-name-substring>   # e.g. "To Do"

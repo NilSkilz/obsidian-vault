@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Jarvis morning/evening briefing — sent to Rob on Telegram.
+# Jarvis morning/evening briefing, sent to Rob on Telegram.
 # One-shot `claude -p` call that reads the vault, composes a short briefing,
 # and sends it directly (unlike heartbeat, this run is ALLOWED to message Rob).
 set -euo pipefail
@@ -125,7 +125,7 @@ else
   fi
 fi
 
-PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt — he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine — don't pad it."
+PROMPT="You are Jarvis, writing an unattended briefing message to Rob (not a chat reply to a prompt, he will just receive this as a Telegram message). ${ASK} No em dashes. If genuinely nothing happened and nothing is waiting on him, a one-line 'quiet one, nothing needs you' is fine, don't pad it."
 
 cd "$VAULT"
 BRIEF="$("$CLAUDE_BIN" -p "$PROMPT" --model claude-opus-5 --dangerously-skip-permissions 2>/tmp/jarvis-briefing-err.$$)" || {
