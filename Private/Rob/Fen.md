@@ -164,3 +164,16 @@ State of play:
 ## 7 Oct: six days quiet, cabaret opener chosen
 
 No contact logged since 1 Oct's "catch up later tonight" plan; that catch-up evidently didn't happen or went nowhere, and Saturday 3 Oct died quietly as planned (no chase, never mentioned, per the standing rule). Rob asked for a re-opener after the six-day gap. Agreed line: "How did the landlord's cabaret go?? Need a full review, crumble-level detail please x" (callback to her own crumble review). Standing rules reaffirmed for this reopen: don't mention Saturday, don't float a plan in the opener itself (only once she's warm and chatty), one message then leave it, her slow replies are normal not a verdict. **Limits refresher still has never happened** and is the prerequisite before any future scene, whenever one gets planned.
+
+## 18 Oct: "relationship advice", three knots
+
+Rob (13:05 Sun) still really fancies Fen ("pretty, fun, the perfect kinkyness") and raised three problems:
+1. **Aimee and Fen in the same space ignore each other**, and Aimee ends up feeling ignored. Rob wonders if it's nerves.
+2. **Fen keeps him at a distance**, a barrier; his theory is she doesn't want to get attached because he's taken.
+3. **Strung along?** She's keen to play but "not in the right mental space"; lots of reasons to leave it, but he still fancies her.
+
+Steer given:
+- Aimee/Fen isn't nerves on Aimee's side, it's the history (the "do you think I'm ugly" message; she found Fen presumptuous). Stop trying to make them interact. Parallel, not kitchen-table, is a legit shape. In shared spaces Rob is Aimee's anchor first; the ignored feeling is his to fix by where his attention goes, not theirs to fix by chatting. Ask Aimee what would make shared spaces feel OK rather than guessing (ask-don't-read).
+- Distance: his theory is plausible and fits Fen's own self-description (intense, jealous when attached); keeping a married man at arm's length is self-protection, not a verdict on him. Also partly his own amber flag: venting about Aimee to her told her he's spoken for and it's complicated.
+- Strung along: by the log, not deliberately. But scene attempts since the 4 Jul night out: 26 Sep (drop risk), 1 Oct (cabaret clash), 3 Oct (silence), nothing since. Warm words, zero landings. Honest read: her capacity doesn't match his want right now, and his deeper want (27 Sep, "someone of my own") is something she's signalling she can't be.
+- Move: stop organising for her. One plain, warm, no-pressure line naming it ("I like you, I'd love to play when you're up for it, I'll leave the next move with you"), then she proposes the next plan. Fancying her is fine; just stop paying the chase cost.
