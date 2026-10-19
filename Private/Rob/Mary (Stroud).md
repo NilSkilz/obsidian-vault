@@ -16,7 +16,13 @@
 - **Sober play only (19 Oct):** doesn't drink; "a drink" means coffee/soft drink; no adult fun under the influence of anything but caffeine.
 - Tests via SH.uk, shared her results link with Rob unprompted (19 Oct) after asking for his "receipts". He owes her his.
 - Leaning rope first: "intrigued by the rope"; impact feels more personal, worried how she'll react and how Rob will react to her reaction. Asked about his impact experience + what aftercare looks like for him.
-- Going to a rope jam Tue 20 Oct to try tying (topping) an experienced bunny friend; already "threatened with being tied" there.
+- **Glos rope jam (been, reported 19 Oct):** tied her friend Jonathan (experienced bottom: mermaid tail, her Somerville bowline is "a goodun"), then he tied bunny ears on her. Loved being tied: found it "really relaxing", can see how it'd be sexual, "left an impression". Tying felt purely instructional to her, not sexual.
+- **Hypermobile joints.** Matters for Rob tying her: she may not feel strain until a joint's already overextended, so keep shoulders/elbows/wrists in neutral, no strappado-ish arm positions, check nerves/circulation more than usual, and ask rather than trust "I'm fine".
+- Reading The New Topping Book (Fet kink book club), 2 chapters in: confirmed she does NOT want to top, has enough control day to day. Recommended it + The New Bottoming Book to Rob.
+- Autistic ("your girl is autistic, I would literally send you pumpkin pictures"). Takes things literally: say what you mean, no hints.
+- Doesn't send sexy photos: "idk what people find sexy that I fulfill". A self-worth note, not a no to flirting. Rob replied he doesn't do dick pics either. Don't push for photos; tell her plainly what he likes about her instead.
+- Has a cat, does couch to 5k, kid does DnD. Wants an audiobook rec (Rob listens on drives).
+- Rob told her (19 Oct): new people = slow, lots of check-ins, try toys to find thuddy vs stingy; aftercare = cuddles, hugs under a blanket. She: "that sounds appealing". Rob gets claustrophobic in rope himself, prefers tying.
 - Lives in a flat, nosy neighbours, "the lady with all the plants and the litter picking". Asked whether kink = sex for Rob; he said sex-positive, decide limits ahead and stick to them, protection + regular tests.
 - 7 yrs US Navy: Chicago, Japan (there for the 2011 tsunami/Fukushima), Virginia (ship + hospital). WFH Wed/Fri usually, three screens at work.
 
