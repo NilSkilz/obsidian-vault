@@ -30,6 +30,8 @@
 - Mutual "you're cute", flirty, she invited the coffee herself ("maybe a coffee?"). Agreed: Rob tells her when he's next up in Cheltenham, they see what they can manage on a weekday evening, or a munch.
 - Rob has told her he's married (open), teen kids, and that Aimee's fine with him "swanning off" for a weekend.
 - **Mon 26 Oct 2026: she's child-free and offered it.** Rob drives up that morning, evenings free. Rob offered a drink, or rope/impact if she wants; she asked for specifics, Rob's reply (19 Oct) stayed vague ("entirely up to you"). She's offered Mon 26 and said yes to "a drink, a flirt, see the vibe" (coffee, she's sober). Rob said he'd check his week and confirm. Calendar already shows "Rob away" 26-28 Oct, so it's clear. Likely shape: coffee, then maybe simple rope at hers.
+- **26 Oct CONFIRMED (19 Oct evening).** Rob: "Monday is fine", "it's a yes, you can get excited now", can leave the office early, no time constraints, "be as greedy as you like". She hadn't planned ahead in case it was a no; she lives in Matson (Gloucester, ~30 min from Cheltenham) and asked about his time constraints so she could plan. Rob asked "what are you thinking?", so the plan is still unmade: he should propose a concrete shape (time, place, coffee then maybe rope at hers). She's an early-to-bed person, so start early evening.
+- Tease signal (19 Oct): "tying someone and teasing them doesn't sound fun to me... but being tied and teased, now that's more interesting 🫣". Being tied + teased is a live yes-ish interest; still negotiate on the day.
 
 ## My read
 - Correction 19 Oct: she's a bottom, NOT a sub. Fits the Partner Search brief on bottom/rope/impact, but don't frame anything as D/s.
