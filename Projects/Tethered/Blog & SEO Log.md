@@ -550,3 +550,113 @@ Broader, and the new one is the best idea this week:
 - Did Googlebot fetch anything after request-indexing. Watch for a `lastCrawlTime` that is not "never" on any blog URL
 - If Bing submission happens, whether blog URLs start showing in `GetPageStats` rather than only the stale `www/dashboard` entries
 - If the answer to all of the above is still no crawl, stop writing this section as an SEO review and rewrite the brief as a distribution review
+
+## 2026-10-19
+
+The merge happened. Half of it reached production, and Google crawled the home page for the first time. Both halves of that sentence matter.
+
+### Week in review
+
+One commit on `develop` since the last review: `4c9cf80 Merge develop into main` (12 Oct, 22:45). No new feature or content work. Last week was a release week, not a build week, so the right question is not "what shipped" but "did the three weeks of blocked work actually land". Partly.
+
+**What the deploy did fix (verified live, not inferred):**
+
+- Home page serves the D/s-first positioning copy, a single H1, and the reworked title and meta description ("D/s Task, Reward & Punishment App for BDSM Dynamics"). The community-first repositioning is live.
+- `/blog` now carries both JSON-LD blocks: `Blog` + `ItemList` with all 11 `ListItem` entries, plus `Organization`. The structured data fix landed.
+- Single H1 on every page checked. The duplicate-H1 bug is gone.
+- Canonicals are correct and absolute on post pages.
+
+**What did not land: the reseed.** This is the finding of the week, and it is exactly the failure mode flagged in item 2 of last week's list.
+
+The code fixes shipped because they live in the React app. The content fixes live in the DynamoDB `BlogPost` records, and `seed-blog-posts.ts` was never run, so none of them reached production:
+
+- The comparison post still serves the **pre-rewrite title**: "The Best D/s Task Apps Compared: Obedience-Style Trackers, Habit Apps, and Tethered". The repo version (`6a93ee1`) says "Best D/s Apps in 2026: Obedience, Kneel, SubTasks and Tethered Compared". The live meta description still names Habitica, Todoist and spreadsheets rather than the real 2026 competitor set.
+- **Zero internal blog-to-blog links on any live post.** Checked `best-ds-task-apps-compared` (repo source has 6 outbound post links, live HTML has 0) and `solo-play-safety-guide` (same, 0). The ~45-link internal graph from `5052173` is entirely absent.
+- **CTAs still point at `/dashboard`**, which robots.txt disallows. Two on the comparison post, one on the solo post. This is the bug that produces Bing's daily `BlockedByRobotsTxt` hits, and it is still live.
+
+So the merge delivered roughly the structural half and none of the content half. Last week's log predicted this would "read as if the fixes did not work". It does.
+
+### SEO / AI-search health check
+
+**Sitemap and llms.txt are clean and in sync.** `/sitemap.xml` returns 200 with 16 URLs (5 static: `/`, `/blog`, `/privacy`, `/contact`, `/donate`; plus 11 posts). `/llms.txt` returns 200 and advertises exactly the same 11 post links. Cross-checked both ways: no post is in one and missing from the other, and nothing shipped last week is missing from either. The generator pipeline is working. No action needed here.
+
+`robots.txt` is correct: `Allow: /`, disallowing `/dashboard`, `/admin`, `/share`, `/invite`, `/kitchen-sink`, `/welcome`, sitemap declared. `/welcome` being disallowed is right for an ads conversion URL.
+
+**Google has moved for the first time in five weeks.** URL Inspection today:
+
+| URL | Verdict | Coverage | Last crawl |
+|---|---|---|---|
+| `/` | PASS | Submitted and indexed | **2026-10-13 14:35Z** |
+| `/blog` | NEUTRAL | URL is unknown to Google | never |
+| `/blog/best-ds-task-apps-compared` | NEUTRAL | URL is unknown to Google | never |
+
+The home page went from "fetched once, ever" to **submitted and indexed, crawled the day after the deploy**. That is a real change and it refutes the darkest reading of the last five weeks: the domain is not blacklisted or suppressed, and Googlebot will crawl it. The blog is still undiscovered, but it is now a discovery problem on a live, indexed domain rather than a dead domain.
+
+Worth stating plainly because it changes the recommendation: last week this log concluded Google organic was not a channel content investment could open. The 13 Oct crawl is evidence against that conclusion. I checked the obvious orphan explanation and it does not hold either: the home page prerendered HTML links to `/blog` twice. The path exists, Googlebot just has not walked it yet. Request-indexing is now a much better bet than it looked seven days ago.
+
+### Search and AI-assistant landscape
+
+Three searches. The competitive picture has changed more this week than in any week since this log started, and not in Tethered's favour.
+
+**The kink-aware safety space is no longer empty.** Last week "best BDSM safety app 2026" returned no app at all. It now returns two real products:
+
+- **Ever Collar: BDSM Tracker** (released 3 June 2026). Encrypted chat, app contents hidden when backgrounded, encryption keys stored locally, consensual location sharing. That is close to a direct competitor to Tethered's proposition, including the privacy angle Tethered treats as its differentiator.
+- **BeMoreKinky** (E2E encrypted chat on the Signal protocol as of May 2026). Couples-focused, SSC/RACK education, consent negotiation and safeword material.
+
+**KinkCode** also surfaced on Product Hunt. Three entrants in the space that was described here as uncontested ground a week ago.
+
+**The generic check-in field has a new default answer, and it is free and built in.** "App that alerts someone if I don't check in" now leads with **Apple's iOS Check In** (timer or destination, 15-minute countdown, alerts a chosen safety partner), then Deadman Switch, The All Good App, StaySafe and Safe?. Competing with a paid or even free third-party app against an OS-level feature is a different proposition from competing with Kitestring.
+
+**The one gap that is still genuinely open is discretion.** Searching for how to run a kink safe call when you are not out returned no product and no authoritative source. The assistant said so explicitly, that the results "don't specifically address" the practice, and then reasoned its way to a generic fallback: tell a friend the logistics without disclosing the nature of the activity. No citation, because there is nothing good to cite.
+
+That is the entire remaining opening, and it is narrower than it was. The outing problem is the one thing none of the new entrants and none of the generic apps address: Ever Collar's "consensual location sharing" and Apple Check In both assume a contact you can be honest with.
+
+Tethered appeared in none of the three answers.
+
+### Suggested post
+
+Last week pitched `safety-check-in-apps-compared` and it was never written. I am re-pitching it rather than rotating to a new topic, because the week's evidence made the case stronger, but **the field it has to cover has changed** and the angle needs to shift to match. A comparison written last week against Kitestring and Noonlight would already be out of date.
+
+**Title:** Safety Check-In Apps for Kink: Apple Check In, Kitestring, Ever Collar and Tethered Compared
+**Slug:** `safety-check-in-apps-compared`
+
+**Targets:**
+- "best BDSM safety app 2026", "kink safe call app", "bdsm safety check in app", "safe call app"
+- "Ever Collar alternative", "BeMoreKinky vs", "is Apple Check In good enough for a first kink meet"
+- AI-assistant questions: "is there a safety check-in app for BDSM?", "how do I set up a safe call if I am not out about kink?", "what if I have nobody I can tell about a kink date?", "which check-in app does not require telling my contact where I am?"
+
+**Outline:**
+
+- The four-point test every app gets scored against: a real deadline, a contact who has actually agreed, information they can act on, and an agreed escalation. Set the rubric first so the comparison reads as analysis rather than a pitch
+- **Apple Check In first, honestly, because it is the answer most people should take.** It is free, built in, and good. Say so. The post earns its credibility in this section or not at all
+- The generic field: Kitestring, Noonlight, Snug, StaySafe, Deadman Switch, The All Good App. What each costs and where each genuinely beats Tethered
+- The kink-aware entrants: Ever Collar and BeMoreKinky. What they do well, what they are for, and how they differ from a safety timer. Name them fairly, the way the D/s comparison post now names Kneel and SubTasks
+- **The outing problem, the section that owns the query.** Every app above assumes your emergency contact is someone you can tell. "Alert my sister that I did not come back from a stranger's house" is not a feature if you are not out. What a kink-aware alert says instead, and why discretion is a safety feature rather than a privacy nicety
+- The nobody-to-ask case: the automated timer, the duress phrase, and the solo scenario where no human link exists at all. Link to `solo-play-safety-guide`
+- The limits, stated plainly: every app escalates, none rescue. Emergency services first, always
+- FAQ block for answer engines
+
+**Why this one now:** the uncontested window is closing. Three kink-aware products launched into this space in 2026 and none of them have the discretion story yet. The query that still has no good answer anywhere is the one about not being out, and that is the query Tethered's timer was built for. A named, fair comparison is the format that actually gets cited, and unlike five weeks ago there is now a live indexed domain for a crawler to find it on.
+
+### Suggested site updates
+
+Broken first.
+
+1. **Run the reseed.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Rob's, no AWS creds on this box. This is one command and it unblocks three separate fixes that are already written, tested and merged: the comparison post's 2026 title and meta, the ~45 internal links, and getting every CTA off robots-blocked `/dashboard`. The code half of the merge is live and working; this is the other half, and right now the live site is a fair-but-misleading advert for work that was actually done.
+
+2. **Request indexing in GSC** for `/blog` and the 11 posts. Rob only, about ten minutes. Fourth week on this list and the argument for it is now materially better than it has been: `/` was crawled on 13 Oct and is indexed, so the crawler is active on this domain. Do it after the reseed so the crawler gets pages with working internal links and non-blocked CTAs rather than the current ones.
+
+3. **Submit the 16 sitemap URLs to Bing.** `Jarvis/bin/bing.sh submit <url>...`, 10k/day quota, one command, mine. Carried from last week, still the only realistic route into ChatGPT and Copilot citations while the browsing classifier refuses the domain directly. Again, after the reseed.
+
+Broader, and both are small:
+
+4. **Fix the fireplay post's slug.** `/blog/fireplay-101-a-beginner-s-guide-to-playing-with-fire-safely` has an auto-generated slug with the apostrophe mangled into "beginner-s". It is also the only live post with no source file in `scripts/blog-posts/`, so it was created through the admin UI and is not reproducible from the repo. Two jobs in one sitting: shorten the slug to `fireplay-101` with a redirect from the old one, and write the post back into the repo as a seed file so the next reseed does not silently drop or diverge from it.
+
+5. **Add the competitor set to `llms.txt` and the comparison post.** `public/llms.txt` is hand-written for positioning and currently does not mention Ever Collar, BeMoreKinky or Apple Check In. An LLM asked "how does Tethered compare to Ever Collar" has nothing to work with. One paragraph, honest, naming them and saying what Tethered does differently (the discretion and outing angle). Cheap, and it is exactly the content answer engines quote.
+
+### Follow-ups for next week
+
+- Did the reseed run. Re-check the comparison post title, internal link count on two posts, and that no live post links to `/dashboard`. Five-minute check that closes a three-week-old item
+- Did `/blog` move off "URL is unknown to Google". The home page crawl on 13 Oct is the first positive signal in five weeks; watch whether it propagates to the blog, with or without request-indexing
+- Watch Ever Collar and BeMoreKinky. If either starts ranking for "BDSM safety app", the comparison post goes from opportunity to catch-up
+- Bing: whether blog URLs appear in `GetPageStats`, and whether the daily `BlockedByRobotsTxt` hits stop once the reseed retargets the CTAs. That second one is a clean measurable test of whether the reseed actually worked
