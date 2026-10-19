@@ -125,3 +125,6 @@ His resistance is specific and worth respecting rather than arguing: the mask **
 ## Sexual-health / ENM harm-reduction (surfaced late July 2026)
 
 Rob started thinking about the health side of the multi-partner network (Aimee↔Sean, Rob↔Tash, plus outer circles). Weighing **PrEP** (sensible for his risk profile; free on the NHS via GUM clinics) and the **HPV vaccine** (Gardasil 9; free only via the MSM/self-declared route, else ~£150-200/dose private). Nearest clinic is **Holsworthy** (Devon Sexual Health, Thursdays, appointment-only, 0300 303 3989); no clinic in Bude itself. His instinct is partly "make Aimee feel safer" — the real lever there is a shared quarterly testing rhythm and being the one who owns the admin. Nothing booked yet; this is an intention, not a done thing.
+
+## Rope experience
+- Tying ~2.5 years as of Oct 2026, mostly with Aimee. Suspension: Aimee only. Prefers tying; gets claustrophobic in rope himself.

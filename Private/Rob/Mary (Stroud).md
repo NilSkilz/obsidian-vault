@@ -34,6 +34,7 @@
 - Tease signal (19 Oct): "tying someone and teasing them doesn't sound fun to me... but being tied and teased, now that's more interesting 🫣". Being tied + teased is a live yes-ish interest; still negotiate on the day.
 
 - **Plan shape (19 Oct late):** she finishes 4pm, home ~4:30; coffee 5:30 agreed. Venue TBD, she suggested Costa (Starbucks not her vibe, nice coffee means Glos town). "Comfy and simple sounds nice"; wants SAFE before fun, asked how long Rob's been doing rope. Hinted at moving to WhatsApp (more attentive there than Fet).
+- **Rob's rope experience (told Jarvis 19 Oct 23:00):** tying ~2.5 years, mostly with Aimee; has only ever suspended Aimee. Plans to use a tie he's done with Natalie (Storm) before for the 26th, then see how it feels. Check it against her hypermobility: arms in front or at sides, no behind-the-back/TK arm positions unless very loose.
 
 ## My read
 - Correction 19 Oct: she's a bottom, NOT a sub. Fits the Partner Search brief on bottom/rope/impact, but don't frame anything as D/s.
