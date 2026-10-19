@@ -33,6 +33,8 @@
 - **26 Oct CONFIRMED (19 Oct evening).** Rob: "Monday is fine", "it's a yes, you can get excited now", can leave the office early, no time constraints, "be as greedy as you like". She hadn't planned ahead in case it was a no; she lives in Matson (Gloucester, ~30 min from Cheltenham) and asked about his time constraints so she could plan. Rob asked "what are you thinking?", so the plan is still unmade: he should propose a concrete shape (time, place, coffee then maybe rope at hers). She's an early-to-bed person, so start early evening.
 - Tease signal (19 Oct): "tying someone and teasing them doesn't sound fun to me... but being tied and teased, now that's more interesting 🫣". Being tied + teased is a live yes-ish interest; still negotiate on the day.
 
+- **Plan shape (19 Oct late):** she finishes 4pm, home ~4:30; coffee 5:30 agreed. Venue TBD, she suggested Costa (Starbucks not her vibe, nice coffee means Glos town). "Comfy and simple sounds nice"; wants SAFE before fun, asked how long Rob's been doing rope. Hinted at moving to WhatsApp (more attentive there than Fet).
+
 ## My read
 - Correction 19 Oct: she's a bottom, NOT a sub. Fits the Partner Search brief on bottom/rope/impact, but don't frame anything as D/s.
 - Fits the Partner Search brief almost exactly (bottom, near Cheltenham, met in person via the scene).
