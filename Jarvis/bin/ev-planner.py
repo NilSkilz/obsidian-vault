@@ -202,7 +202,13 @@ def main():
         except Exception:
             drew, st, dark_for = 0, {"state": None}, 0
         tries = open(f"{STATE}/rescues").read().split() if flag_day("rescues", today) else [today, "0"]
-        if (home and plugged and soc < limit - 2 and st["state"] == "out-of-service"
+        # A deliberate stop (dashboard Stop / script.ev_charge_stop) is never a cut-out (19 Oct 2026).
+        try:
+            stopped = ha("/api/states/script.ev_charge_stop")["attributes"].get("last_triggered")
+            stopped_ago = now.timestamp() - datetime.fromisoformat(stopped).timestamp() if stopped else 1e9
+        except Exception:
+            stopped_ago = 1e9
+        if (home and plugged and soc < limit - 2 and st["state"] == "out-of-service" and stopped_ago > 12 * 3600
                 and dark_for > 8 * 60 and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
             car("start_charging")
             open(f"{STATE}/rescues", "w").write(f"{today} {int(tries[1]) + 1}")
