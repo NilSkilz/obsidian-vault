@@ -15,3 +15,8 @@ Format per entry:
 **Risk:** what could go wrong / why I didn't just do it
 ```
 
+
+## 2026-10-19: HA add-on core_ssh update failed
+**Problem:** updates.sh heartbeat could not update core_ssh (10.4.0 -> 10.5.0); everything else in the HA sweep succeeded.
+**Option:** retry from the HA UI (Settings > Add-ons > Terminal & SSH), or check the add-on log for why. Probably transient, will see whether tomorrow's run clears it.
+**Risk:** low. Add-on is only the SSH/terminal access; but updates.sh itself may rely on it, so worth a look if it keeps failing.
