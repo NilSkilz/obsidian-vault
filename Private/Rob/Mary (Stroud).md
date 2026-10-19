@@ -13,12 +13,17 @@
 - **Hard nos (19 Oct):** NOT submissive (bottom, not sub: no D/s framing), no blood, no wooden paddle. "Probably more."
 - Prefers questions over assumptions, explicitly. Asks for detail ("what did you have in mind (in details)?").
 - ENM: new to it, 10-year marriage ended (ex said she expected too much). Bestie is poly. Wants solo poly / relationship anarchy for herself. Proactively clarified she's not after a poly relationship with Rob: play partner. Rob agreed (affectionate, chatty, no capacity for another "relationship").
+- **Sober play only (19 Oct):** doesn't drink; "a drink" means coffee/soft drink; no adult fun under the influence of anything but caffeine.
+- Tests via SH.uk, shared her results link with Rob unprompted (19 Oct) after asking for his "receipts". He owes her his.
+- Leaning rope first: "intrigued by the rope"; impact feels more personal, worried how she'll react and how Rob will react to her reaction. Asked about his impact experience + what aftercare looks like for him.
+- Going to a rope jam Tue 20 Oct to try tying (topping) an experienced bunny friend; already "threatened with being tied" there.
+- Lives in a flat, nosy neighbours, "the lady with all the plants and the litter picking". Asked whether kink = sex for Rob; he said sex-positive, decide limits ahead and stick to them, protection + regular tests.
 - 7 yrs US Navy: Chicago, Japan (there for the 2011 tsunami/Fukushima), Virginia (ship + hospital). WFH Wed/Fri usually, three screens at work.
 
 ## Where it stands (19 Oct 2026)
 - Mutual "you're cute", flirty, she invited the coffee herself ("maybe a coffee?"). Agreed: Rob tells her when he's next up in Cheltenham, they see what they can manage on a weekday evening, or a munch.
 - Rob has told her he's married (open), teen kids, and that Aimee's fine with him "swanning off" for a weekend.
-- **Mon 26 Oct 2026: she's child-free and offered it.** Rob drives up that morning, evenings free. Rob offered a drink, or rope/impact if she wants; she asked for specifics, Rob's reply (19 Oct) stayed vague ("entirely up to you"). Next: give her a concrete plan.
+- **Mon 26 Oct 2026: she's child-free and offered it.** Rob drives up that morning, evenings free. Rob offered a drink, or rope/impact if she wants; she asked for specifics, Rob's reply (19 Oct) stayed vague ("entirely up to you"). She's offered Mon 26 and said yes to "a drink, a flirt, see the vibe" (coffee, she's sober). Rob said he'd check his week and confirm. Calendar already shows "Rob away" 26-28 Oct, so it's clear. Likely shape: coffee, then maybe simple rope at hers.
 
 ## My read
 - Correction 19 Oct: she's a bottom, NOT a sub. Fits the Partner Search brief on bottom/rope/impact, but don't frame anything as D/s.
