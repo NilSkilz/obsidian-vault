@@ -14,7 +14,7 @@
 - Prefers questions over assumptions, explicitly. Asks for detail ("what did you have in mind (in details)?").
 - ENM: new to it, 10-year marriage ended (ex said she expected too much). Bestie is poly. Wants solo poly / relationship anarchy for herself. Proactively clarified she's not after a poly relationship with Rob: play partner. Rob agreed (affectionate, chatty, no capacity for another "relationship").
 - **Sober play only (19 Oct):** doesn't drink; "a drink" means coffee/soft drink; no adult fun under the influence of anything but caffeine.
-- Tests via SH.uk, shared her results link with Rob unprompted (19 Oct) after asking for his "receipts". He owes her his.
+- Tests via SH.uk, shared her results link with Rob unprompted (19 Oct) after asking for his "receipts". Rob sent his back (confirmed 20 Oct, she received them), so both sides have swapped results.
 - Leaning rope first: "intrigued by the rope"; impact feels more personal, worried how she'll react and how Rob will react to her reaction. Asked about his impact experience + what aftercare looks like for him.
 - **Glos rope jam (been, reported 19 Oct):** tied her friend Jonathan (experienced bottom: mermaid tail, her Somerville bowline is "a goodun"), then he tied bunny ears on her. Loved being tied: found it "really relaxing", can see how it'd be sexual, "left an impression". Tying felt purely instructional to her, not sexual.
 - **Hypermobile joints.** Matters for Rob tying her: she may not feel strain until a joint's already overextended, so keep shoulders/elbows/wrists in neutral, no strappado-ish arm positions, check nerves/circulation more than usual, and ask rather than trust "I'm fine".
