@@ -1,6 +1,6 @@
 # Mary (Stroud)
 
-**Not** the puss-and-boots Mary (`Mary.md`). Met at the Stroud munch, Rob's first time there (Oct 2026). FetLife handle: RainPeachtea.
+**Not** the puss-and-boots Mary (`Mary.md`). Met at the Stroud munch, Rob's first time there (Oct 2026). FetLife handle: RainPeachtea (any Fet screenshot from RainPeachtea = this Mary). **Moved to WhatsApp (confirmed 20 Oct)**, so newer chat screenshots will be WhatsApp, not Fet.
 
 ## Facts she's shared
 - Single mum, one child (11), works full time. Hospital job, IT-adjacent, not clinical.

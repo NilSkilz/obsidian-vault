@@ -38,6 +38,10 @@ Flirting, mutual interest, she's keen on impact play. **Trans woman, Rob believe
 
 He sent her a clear message on 25 Aug naming what he wants (ongoing rather than one-off) and giving her a clean exit either way. Outcome unknown as of 30 Aug. His own read: "I don't know about an ongoing dynamic anyway, but at least I've been clear."
 
+## Fet handles, who's who
+- **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
+- **LittleRedLou** = host of local events. NOT a potential partner, don't read her messages as flirting or file her as a candidate. (Rob, 20 Oct 2026)
+
 ## Candidates
 
 ### Sarah (Sep 2026) — reopened by her, 2 Oct; live and flirty
