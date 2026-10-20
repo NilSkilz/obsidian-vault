@@ -11,6 +11,7 @@ import json
 import os
 import threading
 import time
+import urllib.parse
 import urllib.request
 
 # index.html ships next to this script (git-backed in the vault). alerts.json is
@@ -52,6 +53,20 @@ def _num(v):
         return None
 
 
+def _drew_since(url, token, since):
+    """True if the charger pulled >500 W at any point since `since` (ISO time)."""
+    q = urllib.parse.urlencode({"filter_entity_id": CHARGER_W, "minimal_response": "",
+                                "no_attributes": ""})
+    req = urllib.request.Request(url + "/api/history/period/" + urllib.parse.quote(since) + "?" + q,
+                                 headers={"Authorization": "Bearer " + token})
+    try:
+        with urllib.request.urlopen(req, timeout=8) as r:
+            rows = (json.load(r) or [[]])[0]
+    except Exception:
+        return False
+    return any((_num(x.get("state")) or 0) > 500 for x in rows)
+
+
 def car_status():
     """Small JSON for the car strip. Charging = car says so OR the charger is
     drawing >500 W (the car polls every 5-30 min, the Shelly is live)."""
@@ -74,6 +89,11 @@ def car_status():
         watts = _num(st(CHARGER_W)) or 0
         charging = watts > 500 or status.lower().startswith("charging")
         plugged = charging or status.lower() not in ("unplugged", "", "unavailable", "unknown")
+        if not plugged:
+            # The car's "Unplugged" can be hours stale (it stops reporting once parked).
+            # If the charger has drawn power since that reading, it's been plugged in since.
+            since = (states.get(CAR + "charging_status") or {}).get("last_updated")
+            plugged = bool(since) and _drew_since(url, token, since)
         soc_state = states.get(CAR + "state_of_charge") or {}
         body = json.dumps({
             "ok": True,
