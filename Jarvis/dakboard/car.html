@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Car</title>
+<style>
+  /* One-line car strip for a short DAKboard frame. Everything is sized off the
+     frame height (vh), so it fills whatever slot it's dropped into. */
+  :root {
+    --ok:   #34d399;
+    --info: #60a5fa;
+    --warn: #fbbf24;
+    --alert:#f87171;
+    --h: min(100vh, 90px);
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: transparent; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #fff; -webkit-font-smoothing: antialiased;
+  }
+  #strip {
+    height: 100%; box-sizing: border-box;
+    display: flex; align-items: center;
+    gap: calc(var(--h) * 0.22);
+    padding: 0 calc(var(--h) * 0.25);
+    font-size: calc(var(--h) * 0.42);
+    white-space: nowrap;
+  }
+  #icon { width: calc(var(--h) * 0.6); height: calc(var(--h) * 0.6); flex: none; opacity: 0.85; }
+  #pct { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 2.6em; }
+  #bar {
+    flex: 1 1 auto; min-width: 3em;
+    height: calc(var(--h) * 0.28);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    overflow: hidden; position: relative;
+  }
+  #fill {
+    height: 100%; width: 0; border-radius: 999px;
+    background: var(--ok);
+    transition: width 0.8s ease, background 0.8s ease;
+  }
+  /* soft sweep across the fill while charging */
+  #strip.charging #fill {
+    background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+    background-size: 40% 100%; background-repeat: no-repeat;
+    animation: sweep 2.2s linear infinite;
+  }
+  @keyframes sweep { from { background-position: -60% 0; } to { background-position: 160% 0; } }
+  #state {
+    display: flex; align-items: center; gap: 0.35em;
+    font-size: 0.8em; font-weight: 600; opacity: 0.9;
+  }
+  #dot { width: 0.55em; height: 0.55em; border-radius: 50%; background: rgba(255,255,255,0.4); flex: none; }
+  #strip.charging #dot { background: var(--ok); box-shadow: 0 0 0.5em var(--ok); animation: pulse 1.6s ease-in-out infinite; }
+  #strip.plugged #dot { background: var(--info); }
+  @keyframes pulse { 0%,100% {opacity:1;} 50% {opacity:0.3;} }
+  #extra { font-size: 0.7em; opacity: 0.6; font-variant-numeric: tabular-nums; }
+  #strip.stale { opacity: 0.5; }
+</style>
+</head>
+<body>
+<div id="strip">
+  <svg id="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v2H3z"/><path d="M5 11h14"/>
+    <circle cx="7.5" cy="13.5" r="0.6" fill="currentColor"/><circle cx="16.5" cy="13.5" r="0.6" fill="currentColor"/>
+  </svg>
+  <span id="pct">--%</span>
+  <div id="bar"><div id="fill"></div></div>
+  <span id="state"><span id="dot"></span><span id="label">...</span></span>
+  <span id="extra"></span>
+</div>
+<script>
+  const KEY = new URLSearchParams(location.search).get("k");
+  const $ = id => document.getElementById(id);
+  function colour(p){
+    // red below 20, amber to 50, green above
+    return p < 20 ? "var(--alert)" : p < 50 ? "var(--warn)" : "var(--ok)";
+  }
+  function dur(m){
+    if (m == null || m <= 0) return "";
+    const h = Math.floor(m / 60), mm = Math.round(m % 60);
+    return h ? h + "h " + String(mm).padStart(2, "0") + "m" : mm + "m";
+  }
+  function render(d){
+    const strip = $("strip");
+    if (!d || !d.ok || d.soc == null){ strip.classList.add("stale"); return; }
+    strip.classList.remove("stale");
+    const p = Math.max(0, Math.min(100, Math.round(d.soc)));
+    $("pct").textContent = p + "%";
+    $("fill").style.width = p + "%";
+    $("fill").style.backgroundColor = colour(p);
+    strip.classList.toggle("charging", !!d.charging);
+    strip.classList.toggle("plugged", !d.charging && !!d.plugged);
+    $("label").textContent = d.charging ? "Charging" : d.plugged ? "Plugged in" : "Not charging";
+    const bits = [];
+    if (d.charging && d.kw) bits.push(d.kw + " kW");
+    if (d.charging && d.mins_left) bits.push(dur(d.mins_left));
+    if (!d.charging && d.range_mi) bits.push(Math.round(d.range_mi) + " mi");
+    $("extra").textContent = bits.join(" · ");
+  }
+  async function poll(){
+    try {
+      let url = "car.json?_=" + Date.now();
+      if (KEY) url += "&k=" + encodeURIComponent(KEY);
+      const r = await fetch(url, {cache: "no-store"});
+      if (r.ok) render(await r.json());
+    } catch(e){ /* keep last good render */ }
+  }
+  poll();
+  setInterval(poll, 30000);
+</script>
+</body>
+</html>
