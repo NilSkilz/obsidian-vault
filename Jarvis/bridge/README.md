@@ -128,11 +128,19 @@ Anyone who isn't Rob runs in `/home/jarvis/family/<name>/`, not the vault, with 
 copied from `family/_template/` on first use and a generated `.claude/settings.json` deny list.
 
 - **Kids:** no tools at all, cwd `/tmp`. Pure text.
-- **Adults (Aimee):** `Read,Write,Edit,Glob,Grep,WebSearch,WebFetch`. The vault `/data/memory` is
-  **shared household context**: she can read and write People/, Projects/, Context/, Reference/ etc.
-  Denied (read and write): `Private/Rob/`, `Daily/`, `Weekly/`, `Archive/`, `Jarvis/`, `CLAUDE.md`,
-  `.git/`, other family members' `Private/<Name>/` and workspaces, plus everything else on the box
-  (`~/.local`, `~/.claude`, `~/projects`, `/etc`...). Not skip-permissions, so a denied path is refused.
+- **Adults (Aimee), since 2026-10-21:** FULL Jarvis (Bash, `--dangerously-skip-permissions`, HA,
+  servers, Proxmox, code), Rob's call ("she needs to do everything I can do"). The boundary is now a
+  **bubblewrap mount namespace** (`sandbox_prefix()` in bridge.py; userland bwrap at
+  `~/opt/sandbox/usr/bin/bwrap`, no root needed), not a deny list: `Private/Rob/`, `Daily/`, `Weekly/`,
+  `Archive/`, vault `.git/`, `~/.local/state/jarvis-bridge`, `~/tmp`, `~/generated`, `~/whatsapp-aimee`,
+  Bitwarden, other family members' pockets/workspaces are empty read-only tmpfs; vault `CLAUDE.md`,
+  `icloud.env`, mail sender lists and `todoist.env` are `/dev/null`; Claude's own transcript dirs are
+  throwaway tmpfs (her transcripts persist in `family/<name>/.claude-projects`). Own PID namespace
+  (no `ps` view of Rob's prompts), private `/tmp`, `ssh_config.d` masked (ssh rejects nobody-owned
+  includes in a userns). `--strict-mcp-config` + `ENABLE_CLAUDEAI_MCP_SERVERS=false` keep Rob's
+  Todoist MCP and claude.ai connectors (Slack, Atlassian) out. Known limit: she has Proxmox root via
+  `~/.ssh`, so the wall stops her sessions, not a determined human with root; her prompt forbids
+  routing around it. Adding a new private path = append to `SANDBOX_HIDE` / `SANDBOX_HIDE_FILES`.
 - **Private pockets:** `/data/memory/Private/<Name>/` per person. Rob's prompt says to put anything
   Aimee shouldn't see in `Private/Rob/` and to announce it in chat; Aimee's prompt says the same for
   `Private/Aimee/`. Rob's sessions never read `Private/Aimee/`, her workspace, or any

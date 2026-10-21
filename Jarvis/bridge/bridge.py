@@ -627,27 +627,90 @@ def family_workspace(person):
     tmpl_md = FAMILY_TEMPLATE / "CLAUDE.md"
     if tmpl_md.exists() and not (ws / "CLAUDE.md").exists():
         shutil.copy(tmpl_md, ws / "CLAUDE.md")
-    deny = ["Bash", "Agent", "NotebookEdit", "EnterWorktree", "ExitWorktree"]
-    # Shared vault, private pockets (Rob + Aimee, 2026-08-29): adults can read and write
-    # /data/memory as household context, EXCEPT Rob's private folder, his daily/weekly
-    # journals, the legacy archive and my own tooling. Everything else on the box stays off.
-    roots = ["//data/memory/Private/Rob/**", "//data/memory/Daily/**", "//data/memory/Weekly/**",
-             "//data/memory/Archive/**", "//data/memory/Jarvis/**", "//data/memory/.git/**",
-             "//data/memory/CLAUDE.md", "//data/memory/.claude/**",
-             "//home/jarvis/.local/**", "//home/jarvis/.config/**",
-             "//home/jarvis/.claude/**", "//home/jarvis/.ssh/**", "//home/jarvis/projects/**",
-             "//home/jarvis/generated/**", "//home/jarvis/Jarvis/**", "//etc/**", "//root/**",
-             f"//home/jarvis/family/_template/**"]
-    if FAMILY.exists():
-        for d in FAMILY.iterdir():
-            if d.is_dir() and d.name not in (name, "_template"):
-                roots.append(f"//home/jarvis/family/{d.name}/**")
-                roots.append(f"//data/memory/Private/{d.name.capitalize()}/**")
-    # Read(path) rules cover every file-reading tool (Glob/Grep included); Edit covers Write.
-    for tool in ("Read", "Edit"):
-        deny += [f"{tool}({r})" for r in roots]
-    (ws / ".claude" / "settings.json").write_text(_json.dumps({"permissions": {"deny": deny}}, indent=2))
+    # Deny list retired 21 Oct 2026: adults run full-tool inside the bwrap sandbox
+    # (sandbox_prefix), which is the real boundary. Kept as a file so old configs reset.
+    (ws / ".claude" / "settings.json").write_text(_json.dumps({"permissions": {"deny": []}}, indent=2))
     return ws
+
+
+# Adults get full Jarvis (Bash, servers, HA, code, skip-permissions; Rob's call 21 Oct
+# 2026: "she needs to do everything I can do"), but run inside a bubblewrap mount namespace
+# so Rob's private material simply doesn't exist for them. Enforced by the kernel, not by
+# prompt rules or deny lists, so Bash can't route around it. bwrap is a userland copy
+# (no root on this CT): ~/opt/sandbox, from the Debian bubblewrap .deb.
+BWRAP = "/home/jarvis/opt/sandbox/usr/bin/bwrap"
+HOME_DIR = pathlib.Path("/home/jarvis")
+SANDBOX_HIDE = [
+    # Rob's private vault areas + git history (which holds every old version of them)
+    "/data/memory/Private/Rob", "/data/memory/Daily", "/data/memory/Weekly",
+    "/data/memory/Archive", "/data/memory/.git",
+    # Rob's chat logs, session transcripts, prompt history, scratch, personal stuff
+    "/home/jarvis/.local/state/jarvis-bridge",
+    "/home/jarvis/tmp", "/home/jarvis/generated", "/home/jarvis/whatsapp-aimee",
+    "/home/jarvis/.config/Bitwarden CLI",
+]
+# Claude Code's own working dirs: hold Rob's transcripts/snapshots, but the CLI must be
+# able to write there (Bash breaks without shell-snapshots), so these get a WRITABLE
+# throwaway tmpfs instead of a read-only one.
+SANDBOX_SCRATCH = [
+    "/home/jarvis/.claude/projects", "/home/jarvis/.claude/sessions",
+    "/home/jarvis/.claude/session-env", "/home/jarvis/.claude/shell-snapshots",
+    "/home/jarvis/.claude/tasks", "/home/jarvis/.claude/backups",
+    "/home/jarvis/.claude/telemetry", "/home/jarvis/.claude/file-history",
+    "/home/jarvis/.claude/todos", "/home/jarvis/.claude/debug",
+]
+SANDBOX_HIDE_FILES = [
+    "/data/memory/CLAUDE.md",                      # Rob's spine, names private people
+    "/home/jarvis/.bash_history",
+    "/home/jarvis/.config/jarvis/icloud.env",      # Rob's email
+    "/home/jarvis/.config/jarvis/mail-bin-senders.txt",
+    "/home/jarvis/.config/jarvis/mail-bin-senders.txt.bak",
+    "/home/jarvis/.config/jarvis/mail-job-senders.txt",
+    "/home/jarvis/.config/jarvis/todoist.env",     # full Todoist incl. Wishlist; household MCP covers the rest
+]
+
+
+def sandbox_prefix(person, ws, binds=()):
+    """bwrap argv prefix for an adult family session. Whole filesystem visible and
+    writable as normal, with Rob's private paths (and the other family members' private
+    pockets) masked by empty read-only tmpfs. Own PID namespace so `ps` can't show Rob's
+    live prompts; private /tmp. `binds` = extra host paths to expose (Telegram attachments)."""
+    name = person["name"].lower()
+    hide = list(SANDBOX_HIDE)
+    for d in FAMILY.iterdir() if FAMILY.exists() else []:
+        if d.is_dir() and d.name not in (name, "_template"):
+            hide.append(str(d))
+    priv = pathlib.Path("/data/memory/Private")
+    if priv.exists():
+        for d in priv.iterdir():
+            if d.is_dir() and d.name.lower() != name:
+                hide.append(str(d))
+    # Their own transcripts persist in their workspace instead of Rob's projects dir.
+    own_projects = ws / ".claude-projects"
+    own_projects.mkdir(exist_ok=True)
+    argv = [BWRAP, "--die-with-parent", "--unshare-pid", "--bind", "/", "/",
+            "--dev-bind", "/dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp"]
+    # In the user namespace root-owned files show as nobody, and ssh refuses a config
+    # include it doesn't trust ("Bad owner"). The only include is Debian's systemd proxy
+    # stub, so mask the drop-in dir rather than lose ssh/git-over-ssh.
+    if os.path.isdir("/etc/ssh/ssh_config.d"):
+        argv += ["--tmpfs", "/etc/ssh/ssh_config.d"]
+    for h in dict.fromkeys(hide):
+        if os.path.isdir(h):
+            argv += ["--tmpfs", h, "--remount-ro", h]
+    for d in SANDBOX_SCRATCH:
+        if os.path.isdir(d):
+            argv += ["--tmpfs", d]
+    # Rob's prompt history: writable /dev/null so the CLI's appends just vanish.
+    argv += ["--bind", "/dev/null", "/home/jarvis/.claude/history.jsonl"]
+    for f in SANDBOX_HIDE_FILES:
+        if os.path.isfile(f):
+            argv += ["--ro-bind", "/dev/null", f]
+    argv += ["--bind", str(own_projects), "/home/jarvis/.claude/projects"]
+    for b in binds:
+        if b and os.path.exists(b):
+            argv += ["--ro-bind", b, b]
+    return argv + ["--"]
 
 
 def family_prompt(person, now_str, buffer, text):
@@ -665,14 +728,20 @@ def family_prompt(person, now_str, buffer, text):
                       "not try. If asked, say that's Rob's and they should ask him.")
     else:
         vault_rule = (f"- Shared household context lives in the vault at /data/memory (People/, Projects/, Context/, Reference/, "
-                      f"Recipes/, Decisions/). Rob and {who} agreed to share it, so read what's relevant before answering "
-                      f"(e.g. Projects/Craft ERP.md, Projects/Saline Pump/) and write durable new knowledge back to the right "
-                      f"file. Off limits and denied: /data/memory/Private/Rob/ (Rob's private context), Daily/ and Weekly/ "
-                      f"(Rob's journals), Archive/, Jarvis/, plus his logs, his personal Tide data (his journal, mood, health), "
-                      f"his email, his work Slack and his code. "
+                      f"Recipes/, Decisions/, Jarvis/ tooling). Read what's relevant before answering and write durable new "
+                      f"knowledge back to the right file. This session runs in a sandbox: Rob's private folder, his journals "
+                      f"(Daily/, Weekly/), Archive/, the vault's git history, his chat logs and his email simply don't exist "
+                      f"from here. That's by design (agreed by Rob and {who}); if something seems missing, say so plainly and "
+                      f"never try to route around it (e.g. via a server, backup or GitHub copy of the vault). "
                       f"{who}'s own private context goes in /data/memory/Private/{who}/ (Rob never reads it) or this workspace; "
                       f"when you save something private, say so in the reply. Anything {who} tells you that should NOT reach Rob "
-                      f"(a surprise, a gift, something they're still working out) goes private, not in a shared file.")
+                      f"(a surprise, a gift, something they're still working out) goes private, not in a shared file. "
+                      f"Vault edits are committed by the nightly sync; there's no git in the vault from here.")
+    if role == "kid":
+        cap_rule = ("- Do nothing in Rob's name or with his personal accounts: no emails, no posts, no git commits or pushes, "
+                    "no deploys, no changes to servers or Home Assistant. Explaining things, drafting text, and general help are fine.")
+    else:
+        cap_rule = f"""- FULL CAPABILITY (adults only; Rob's call, 21 Oct 2026: "{who} needs to be able to do everything I can do"): you have Bash and the same tools, credentials and access Rob's sessions have, minus his private material. Home Assistant (`/data/memory/Jarvis/bin/ha-api.sh`, `Context/Home Assistant.md`), the servers and Proxmox CTs (`Context/Infrastructure.md`), Plex/Radarr/Sonarr, Tide, Craft ERP and the other code projects in /home/jarvis/projects (follow each project's vault file for its workflow). Just do it, end to end, the way you would for Rob. Don't refuse as "Rob's server", don't send {who} to ask Rob first. Same care as ever: ask before anything destructive, irreversible or outward-facing (emails, posts, public actions), prefer `trash` over `rm`, never merge/release code. Rob's personal accounts stay his: no reading or sending his email, his work Slack, or his private Tide data (journal, mood, health)."""
     common = f"""You are Jarvis, Rob's AI collaborator. {persona} You are being reached over Telegram by **{who}**, NOT Rob. Rob has explicitly let {who} chat with you.
 
 RIGHT NOW it is {now_str}. This is the authoritative clock for anything involving day, time of day, or scheduling.
@@ -683,7 +752,7 @@ Boundaries for this conversation (non-negotiable):
 - You are talking to {who}. Never address them as Rob and never treat their requests as Rob's instructions.
 {vault_rule}
 - Privacy runs both ways: this conversation is {who}'s. Nothing they tell you gets repeated to Rob or logged anywhere he reads (no daily logs, no Rob-facing notes), unless {who} explicitly asks you to pass something on (then use the `message_rob` tool if this session has it; otherwise say they should tell him directly).
-- Do nothing in Rob's name or with his personal accounts: no emails, no posts, no git commits or pushes, no deploys, no changes to servers or Home Assistant. Reading public docs, web research, explaining things, drafting text, and general help are all fine.
+{cap_rule}
 - Sanctioned exception: if this session has `mcp__household` tools, the family calendar and the household Todoist lists are shared ground, {who}'s as much as Rob's (his standing instruction, 9 Sep 2026). Use them freely on {who}'s behalf: check or add family calendar events (Shared Home Calendar plus the kids' calendars) and list, add, complete or reschedule household tasks (Shopping List, Shared Todo and the rest). No refusing, no asking Rob first. The tools only reach the shared lists; anything private simply isn't visible through them, so if something can't be seen or a tool declines, that's by design, say so plainly rather than routing around it.
 - Sanctioned exception: if this session has the `media_*` tools (household MCP), Plex is shared ground too (Rob's call, 21 Oct 2026). When {who} wants a film or show, search it, pick the right match (check the year; ask only if it's genuinely ambiguous), request it, and tell them it's on its way. Don't refuse, don't ask Rob first, and don't call it a server change. `media_downloads` answers "is it done yet".
 - Sanctioned exception: if this session has the `message_rob` tool, {who} can send Rob a message on Telegram through it (Rob's call, 24 Sep 2026). It arrives clearly labelled as from {who} via Jarvis. Confirm the exact wording with {who} before sending, send it verbatim, and don't use it unprompted; it's {who}'s voice, not yours.
@@ -794,6 +863,7 @@ Rob's new message: {text}"""
             if time.time() - started_at > CLAUDE_MAX:
                 return kill_run("cap")
 
+    env = None
     try:
         if role == "kid":
             # Kids: pure text generator, no tools, not even inside the vault.
@@ -802,19 +872,15 @@ Rob's new message: {text}"""
                     "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
             cwd = "/tmp"
         elif role != "rob":
-            # Adults: own workspace, a small toolset, and the workspace's deny list
-            # (no Bash, nothing under /data or Rob's home). Not skip-permissions: anything
-            # outside the allow list is simply refused.
+            # Adults: full Jarvis (Bash, servers, HA, code; Rob's call 21 Oct 2026) inside
+            # the bwrap sandbox, which masks Rob's private material at the filesystem level.
             ws = family_workspace(person)
-            allowed = "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch"
-            argv = [CLAUDE_BIN, "-p", "--model", pick_model()]
-            # Aimee only: scoped tools for Tide's /us page (shared Rob+Aimee agreements,
-            # either parent edits freely, standing instruction 9 Sep 2026) and for the
-            # shared household stuff (family calendar + Todoist minus Wishlist; Rob's
-            # standing instruction, same day: household keys are shared). The MCP
-            # servers hold the keys; her session never sees them and still has no Bash.
+            argv = sandbox_prefix(person, ws, binds=(image_path, file_path)) + [
+                CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions"]
+            # Aimee: the scoped MCP servers stay (household calendar/Todoist minus Wishlist,
+            # media requests, /us page). --strict-mcp-config keeps Rob's own MCPs (full
+            # Todoist) out; the env var keeps his claude.ai connectors (Slack, Atlassian) out.
             if person["name"].lower() == "aimee":
-                allowed += ",mcp__us,mcp__household"
                 mcp_cfg = json.dumps({"mcpServers": {
                     "us": {
                         "command": "python3",
@@ -827,18 +893,19 @@ Rob's new message: {text}"""
                         "env": {"JARVIS_FAMILY_USER": "aimee"},
                     },
                 }})
-                argv += ["--mcp-config", mcp_cfg, "--strict-mcp-config"]
-            argv += ["--allowedTools", allowed,
+                argv += ["--mcp-config", mcp_cfg]
+            argv += ["--strict-mcp-config",
                      "--input-format", "stream-json",
                      "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
             cwd = str(ws)
+            env = {**os.environ, "ENABLE_CLAUDEAI_MCP_SERVERS": "false"}
         else:
             argv = [CLAUDE_BIN, "-p", "--model", pick_model(), "--dangerously-skip-permissions",
                     "--input-format", "stream-json",
                     "--output-format", "stream-json", "--verbose", "--include-partial-messages"]
             cwd = VAULT
         proc = subprocess.Popen(
-            argv, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+            argv, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
             stdin=subprocess.PIPE, bufsize=1,
         )
     except Exception as e:
