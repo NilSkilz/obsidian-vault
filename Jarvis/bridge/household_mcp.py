@@ -13,6 +13,9 @@ and exposes a fixed toolset. What it deliberately does NOT expose:
     (LimeNinja and the broken new-format ones stay Rob's).
   - Rob's email, Slack, code, servers: not here at all.
 
+Media (added 21 Oct 2026): search Radarr/Sonarr, add a film or show and start the
+download, see the download queue. No deleting, no settings.
+
 Also exposes message_rob (added 24 Sep 2026, Rob's call: "her chat should use the
 same plumbing"): sends a Telegram message to Rob's chat via the bot, clearly
 labelled with who it's from. The token stays in this server; the session never
@@ -331,6 +334,112 @@ def todoist_reschedule_task(args):
     return {"ok": True, "task": t["content"], "due": args["due"]}
 
 
+# ---------- media (Radarr/Sonarr, so Plex requests just happen) ----------
+# Added 21 Oct 2026: Aimee asked for a film and got refused ("no changes to
+# servers"). Adding to the library is household stuff, not server admin. Search,
+# add + grab, and download progress only; nothing here deletes or reconfigures.
+
+MOVIE_PROFILE = 4   # HD-1080p, what every film in Radarr already uses
+TV_PROFILE = 4      # HD-1080p (the German/Hindi/French audio guards apply to all profiles)
+
+
+def arr(app, method, path, body=None, query=None):
+    conf = load_env("media.env")
+    from urllib.parse import urlencode
+    url = conf[f"{app}_URL"] + "/api/v3" + path
+    if query:
+        url += "?" + urlencode(query)
+    req = urllib.request.Request(url, method=method)
+    req.add_header("X-Api-Key", conf[f"{app}_KEY"])
+    data = None
+    if body is not None:
+        data = json.dumps(body).encode()
+        req.add_header("Content-Type", "application/json")
+    with urllib.request.urlopen(req, data, timeout=30) as resp:
+        raw = resp.read().decode()
+        return json.loads(raw) if raw.strip() else {"ok": True}
+
+
+def media_search(args):
+    q = (args.get("query") or "").strip()
+    if not q:
+        raise ValueError("empty search")
+    kind = (args.get("kind") or "movie").lower()
+    out = []
+    if kind in ("movie", "film"):
+        for m in arr("RADARR", "GET", "/movie/lookup", query={"term": q})[:8]:
+            have = bool(m.get("id"))
+            out.append({"kind": "movie", "title": m.get("title"), "year": m.get("year"),
+                        "tmdb_id": m.get("tmdbId"),
+                        "status": ("downloaded" if m.get("hasFile") else "wanted, not downloaded yet") if have else "not in library",
+                        "overview": (m.get("overview") or "")[:200]})
+    else:
+        for t in arr("SONARR", "GET", "/series/lookup", query={"term": q})[:8]:
+            have = bool(t.get("id"))
+            stats = t.get("statistics") or {}
+            out.append({"kind": "tv", "title": t.get("title"), "year": t.get("year"),
+                        "tvdb_id": t.get("tvdbId"), "seasons": t.get("seasonCount") or len(t.get("seasons") or []),
+                        "status": (f"in library ({stats.get('episodeFileCount', '?')}/{stats.get('totalEpisodeCount', '?')} episodes)") if have else "not in library",
+                        "overview": (t.get("overview") or "")[:200]})
+    return {"results": out}
+
+
+def media_request(args):
+    kind = (args.get("kind") or "movie").lower()
+    if kind in ("movie", "film"):
+        tmdb = int(args.get("tmdb_id") or 0)
+        if not tmdb:
+            raise ValueError("need tmdb_id from media_search")
+        existing = arr("RADARR", "GET", "/movie", query={"tmdbId": tmdb})
+        if existing:
+            m = existing[0]
+            if m.get("hasFile"):
+                return {"ok": True, "title": m["title"], "result": "already downloaded, it's on Plex"}
+            if not m.get("monitored"):
+                m["monitored"] = True
+                arr("RADARR", "PUT", f"/movie/{m['id']}", body=m)
+            arr("RADARR", "POST", "/command", body={"name": "MoviesSearch", "movieIds": [m["id"]]})
+            return {"ok": True, "title": m["title"], "result": "already on the wanted list, kicked off a fresh search"}
+        m = arr("RADARR", "GET", "/movie/lookup/tmdb", query={"tmdbId": tmdb})
+        m.update({"qualityProfileId": MOVIE_PROFILE, "rootFolderPath": "/media/Movies",
+                  "monitored": True, "minimumAvailability": "released",
+                  "addOptions": {"searchForMovie": True, "monitor": "movieOnly"}})
+        added = arr("RADARR", "POST", "/movie", body=m)
+        return {"ok": True, "title": added.get("title"), "year": added.get("year"),
+                "result": "added and searching; it lands on Plex by itself once downloaded (minutes to hours, or waits if not released yet)"}
+    tvdb = int(args.get("tvdb_id") or 0)
+    if not tvdb:
+        raise ValueError("need tvdb_id from media_search")
+    existing = arr("SONARR", "GET", "/series", query={"tvdbId": tvdb})
+    if existing:
+        t = existing[0]
+        arr("SONARR", "POST", "/command", body={"name": "SeriesSearch", "seriesId": t["id"]})
+        return {"ok": True, "title": t["title"], "result": "already in the library, searched for any missing episodes"}
+    t = arr("SONARR", "GET", "/series/lookup", query={"term": f"tvdb:{tvdb}"})[0]
+    t.update({"qualityProfileId": TV_PROFILE, "rootFolderPath": "/media/Series",
+              "monitored": True, "seasonFolder": True, "seriesType": "standard",
+              "addOptions": {"monitor": "all", "searchForMissingEpisodes": True}})
+    added = arr("SONARR", "POST", "/series", body=t)
+    return {"ok": True, "title": added.get("title"), "year": added.get("year"),
+            "result": "added and searching for all episodes; they appear on Plex as each one downloads"}
+
+
+def media_downloads(args):
+    out = []
+    for app, key in (("RADARR", "movie"), ("SONARR", "series")):
+        q = arr(app, "GET", "/queue", query={"pageSize": 50, "includeMovie": "true", "includeSeries": "true", "includeEpisode": "true"})
+        for r in q.get("records", []):
+            size, left = r.get("size") or 0, r.get("sizeleft") or 0
+            title = (r.get(key) or {}).get("title") or r.get("title")
+            ep = r.get("episode")
+            if ep:
+                title += f" S{ep.get('seasonNumber', 0):02d}E{ep.get('episodeNumber', 0):02d}"
+            out.append({"title": title, "status": r.get("trackedDownloadState") or r.get("status"),
+                        "progress": f"{round(100 * (size - left) / size)}%" if size else "?",
+                        "time_left": r.get("timeleft")})
+    return {"downloading": out}
+
+
 # ---------- messaging (Telegram, via the bot; token never reaches the session) ----------
 
 def message_rob(args):
@@ -414,6 +523,22 @@ TOOLS = [
          "id": {"type": "string"},
          "due": {"type": "string", "description": "Natural-language due date, e.g. 'tomorrow', 'next monday'."},
      }, "required": ["id", "due"], "additionalProperties": False}},
+    {"name": "media_search",
+     "description": "Search for a film or TV show to see if it's on Plex already or can be grabbed. kind is 'movie' (default) or 'tv'. Returns ids for media_request.",
+     "inputSchema": {"type": "object", "properties": {
+         "query": {"type": "string"},
+         "kind": {"type": "string", "enum": ["movie", "tv"]},
+     }, "required": ["query"], "additionalProperties": False}},
+    {"name": "media_request",
+     "description": "Add a film (tmdb_id) or TV show (tvdb_id) to the Plex library and start downloading it. If it's already wanted, re-triggers the search. Pick the right match from media_search first (check the year).",
+     "inputSchema": {"type": "object", "properties": {
+         "kind": {"type": "string", "enum": ["movie", "tv"]},
+         "tmdb_id": {"type": "integer"},
+         "tvdb_id": {"type": "integer"},
+     }, "required": ["kind"], "additionalProperties": False}},
+    {"name": "media_downloads",
+     "description": "Show what's downloading for Plex right now, with progress and time left.",
+     "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False}},
 ]
 
 
@@ -437,6 +562,12 @@ def call_tool(name, args):
         return todoist_reschedule_task(args)
     if name == "message_rob":
         return message_rob(args)
+    if name == "media_search":
+        return media_search(args)
+    if name == "media_request":
+        return media_request(args)
+    if name == "media_downloads":
+        return media_downloads(args)
     raise ValueError("unknown tool: " + name)
 
 
