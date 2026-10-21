@@ -33,6 +33,10 @@ apply_ha() {
   local addons slug
   addons=$(ha_json "addons" | jq -r '.data.addons[] | select(.update_available) | .slug')
   for slug in $addons; do
+    if [ "$slug" = "core_ssh" ]; then
+      echo "note: ha-addon core_ssh can't update itself over its own SSH, update via HA UI (Settings > Add-ons > Terminal & SSH)"
+      continue
+    fi
     echo "updating ha-addon $slug..."
     $HA_SSH "ha addons update --backup $slug" >/dev/null 2>&1 \
       && echo "ha-addon $slug: updated" || echo "NEEDS-ROB: ha-addon $slug update failed"
