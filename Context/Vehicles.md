@@ -34,7 +34,8 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 ## Insurance (mapped from the bank ledger, 24 Sep 2026)
 
 - **Halifax DD** (joint Starling, ref 128716577, £45.48/mo, settles last working day): car insurance for the **Dacia**. Policy since Aug 2018; premium doubled mid-term June 2025 (£26 -> £46.50) because the Dacia had a **non-fault, no-damage accident** and the insurer loaded the premium anyway (confirmed by Rob 24 Sep 2026). Nothing owed, but worth shopping around at the April renewal: non-fault loadings often melt away with a new insurer quote.
-- **Sheilas' Wheels** (£16.68/mo): presumably the **Fiesta**. Carried the returned Tesla Dec 2025 - Feb 2026 at ~£54 and dropped correctly when it went back. **Renewal: 22 Oct 2026** (Rob flagged 5 Oct 2026). Todoist task set for 15 Oct to compare quotes before auto-renew.
+- **Sheilas' Wheels** (£16.68/mo): the **Fiesta**'s old policy, renewing 22 Oct 2026. Carried the returned Tesla Dec 2025 - Feb 2026 at ~£54 and dropped correctly when it went back.
+- **One Direct**: new Fiesta insurer, switched 21 Oct 2026 (deposit paid ~midday, cover due to start 22 Oct). As of 20:04 that evening the certificate hadn't appeared in their portal; One Direct's own terms say cover isn't active until the certificate shows there AND they confirm (RTA 1988 s.147 backs this, not just their T&Cs). Rob chased via live chat that night; check whether the certificate landed and whether Sheilas' Wheels auto-renewed as a fallback before treating this as resolved.
 - **Aviva** (two DDs, ~£45 + £13.51): home + life, not motor.
 
 Note: on the first MOT check Rob misheard/gave the wrong reg (CV54 POA, a 2004 VW Bora that came back untaxed + long-expired MOT — not his car). If a plate lookup ever comes back scary, read it back to confirm before alarming him.
