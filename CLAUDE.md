@@ -55,6 +55,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Mission Control (dashboard) | `Projects/Mission Control.md` |
 | Haven (family app) | `Projects/Haven.md` |
 | Craft ERP (Aimee's business app) | `Projects/Craft ERP.md` |
+| Harbourmaster (work PR bot, runs on Rob's work Mac) | `Projects/Harbourmaster.md` |
 | Saline Pump (ESP32 saline-injection rig) | `Projects/Saline Pump/` |
 | Fuck-io (stepper machine + orgasm-detect plug + remote, idea) | `Projects/Fuck-io.md` |
 | Technical lessons | `Decisions/Technical Lessons Learned.md` |
