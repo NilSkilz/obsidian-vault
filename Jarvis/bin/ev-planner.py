@@ -203,17 +203,31 @@ def main():
             drew, st, dark_for = 0, {"state": None}, 0
         tries = open(f"{STATE}/rescues").read().split() if flag_day("rescues", today) else [today, "0"]
         # A deliberate stop (dashboard Stop / script.ev_charge_stop) is never a cut-out (19 Oct 2026).
+        # Only a stop since the last time it was drawing counts: a 21:26 pause must not block
+        # rescuing a 01:22 cut-out after the 00:30 restart (missed exactly that, 21 Oct 2026).
         try:
             stopped = ha("/api/states/script.ev_charge_stop")["attributes"].get("last_triggered")
-            stopped_ago = now.timestamp() - datetime.fromisoformat(stopped).timestamp() if stopped else 1e9
+            stopped_ts = datetime.fromisoformat(stopped).timestamp() if stopped else 0
         except Exception:
-            stopped_ago = 1e9
-        if (home and plugged and soc < limit - 2 and st["state"] == "out-of-service" and stopped_ago > 12 * 3600
-                and dark_for > 8 * 60 and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
+            stopped_ts = 0
+        deliberate = stopped_ts > drew - 15 * 60
+        # The Pod Point cloud can sit on "charging" through a cut-out (21 Oct 01:22: car went
+        # "Charging Stopped" then "Connecting", gun in, no pilot, for 6h), so the car is a second tell.
+        car_st = state(f"sensor.{CAR}_charging_status") or ""
+        car_dark = car_st in ("Connecting", "Charging Stopped")
+        try:
+            car_dark_for = now.timestamp() - datetime.fromisoformat(
+                ha(f"/api/states/sensor.{CAR}_charging_status")["last_changed"]).timestamp()
+        except Exception:
+            car_dark_for = 0
+        cut = ((st["state"] == "out-of-service" and dark_for > 8 * 60)
+               or (car_dark and now.timestamp() - drew > 8 * 60 and car_dark_for > 5 * 60))
+        if (home and plugged and soc < limit - 2 and cut and not deliberate
+                and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
             car("start_charging")
             open(f"{STATE}/rescues", "w").write(f"{today} {int(tries[1]) + 1}")
             rob = [c for c, p in PEOPLE.items() if p.get("role") == "rob"]
-            tg(f"🔁 Pod Point cut out on its own (LED dark, not a trip) with the MG4 on {soc:.0f}%. "
+            tg(f"🔁 Pod Point cut out on its own (not a trip) with the MG4 on {soc:.0f}%. "
                f"Restarted it from the car. Rescue {int(tries[1]) + 1} of 4 today.", rob)
             return
 
