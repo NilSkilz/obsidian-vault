@@ -82,7 +82,12 @@ def km(eid):
 
 
 def car(cmd):
-    ha(f"/api/services/mg_saic/{cmd}", {"vin": VIN})
+    # SAIC's cloud often takes >15s to ack; HA carries on with the call regardless, so a
+    # timeout here isn't a failure and mustn't skip the rescue count + Telegram (23 Oct 2026).
+    try:
+        ha(f"/api/services/mg_saic/{cmd}", {"vin": VIN})
+    except TimeoutError:
+        pass
 
 
 def tg(text, who=None):
@@ -197,10 +202,27 @@ def main():
     else:
         try:
             drew = float(open(f"{STATE}/last_drawing").read())
+        except Exception:
+            drew = 0
+        # A cut-out inside 10 min falls between runs and never sets last_drawing (23 Oct 13:45:
+        # drew 13:45-13:47, out-of-service by 13:50, rescue never armed). Ask HA's history too.
+        try:
+            since = (now - timedelta(minutes=40)).astimezone().isoformat()
+            hist = ha("/api/history/period/" + urllib.parse.quote(since) +
+                      "?filter_entity_id=sensor.shellyem_34945470ed50_channel_2_power&minimal_response")
+            for p in (hist[0] if hist else []):
+                try:
+                    if float(p["state"]) > 500:
+                        drew = max(drew, datetime.fromisoformat(p["last_changed"]).timestamp())
+                except (TypeError, ValueError):
+                    pass
+        except Exception:
+            pass
+        try:
             st = ha("/api/states/sensor.psl_557234_status")
             dark_for = now.timestamp() - datetime.fromisoformat(st["last_changed"]).timestamp()
         except Exception:
-            drew, st, dark_for = 0, {"state": None}, 0
+            st, dark_for = {"state": None}, 0
         tries = open(f"{STATE}/rescues").read().split() if flag_day("rescues", today) else [today, "0"]
         # A deliberate stop (dashboard Stop / script.ev_charge_stop) is never a cut-out (19 Oct 2026).
         # Only a stop since the last time it was drawing counts: a 21:26 pause must not block
