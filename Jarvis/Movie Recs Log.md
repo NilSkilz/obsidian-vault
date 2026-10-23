@@ -46,3 +46,18 @@ Not in Plex (offered for Radarr):
 - Children of Men (2006) - grounded dystopia for the Silo / Last of Us vein.
 
 Notes: Predator (1987) is unwatched while Predator 2 was watched in 2023, and Predator: Badlands (2025, 9.4) is in the library unwatched. Saved as a future pick to avoid repeating last week's "original of the franchise" move. John Wick 1, 2 and 4 all unwatched despite Action being top genre. Mission: Impossible entire series unwatched. Nightcrawler, Memento, Insomnia, No Country for Old Men all unwatched and high-rated.
+
+## 2026-10-23
+
+Taste read: A Quiet Place double bill on 18 Oct (both films, back to back), then he started A Quiet Place: Day One the same night and stopped at 80% (viewOffset 4781031 of 5964666, roughly 20 minutes left). Hot Fuzz watched 20 Oct, so the 2 Oct Radarr pick landed and paid off. Top Gun: Maverick 10 Oct. South Park binge still rolling. Horror remains the top watch-through genre (36%), Fantasy 36%, Adventure and Thriller 34%, Animation still bottom at 12%. Last week's three (Rogue One, Silence of the Lambs, Fury Road) all still unwatched, as are Nice Guys, Shaun of the Dead, Raiders, Alien, Goonies, South Park movie.
+
+In Plex:
+- A Quiet Place: Day One (2024) - NOT a fresh pick, he is 80% through it with about 20 minutes left. Finish-it nudge, closes the trilogy he binged on 18 Oct.
+- Signs (2002) - genuinely untouched, no view offset. The direct ancestor of A Quiet Place: family under siege, rural, tension over gore.
+- The Martian (2015) - genuinely untouched, 9.1/9.1. Family sofa pick, survival sci-fi in the same vein but funny and safe for a 12 year old. Live-action, per the Animation-is-lowest rule.
+
+Not in Plex (offered for Radarr):
+- The World's End (2013) - completes the Cornetto trilogy three days after Hot Fuzz; Shaun of the Dead is still sitting unwatched in the library.
+- Don't Breathe (2016) - Fede Alvarez, who also made Alien: Romulus (watched Nov 2024); silence-as-tension, pairs with the Quiet Place binge and Ready or Not.
+
+Notes: Watch the viewOffset field, not just viewCount. Day One had viewCount=0 but was 80% watched, which would have made a false "unwatched gem" claim. Predator: Badlands and Edge of Tomorrow are in the same state (viewCount 0, partially watched), so neither is a clean unwatched pick. Still banked for later: Predator (1987), John Wick 1/2/4, The Usual Suspects, Nightcrawler, Inglourious Basterds, The Mist, Pitch Black, Indiana Jones Last Crusade and Temple of Doom, Mission: Impossible series.
