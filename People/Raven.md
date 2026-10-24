@@ -1,6 +1,10 @@
 # Raven
 
-One half of a couple with **Luke**, friends of Rob and Aimee from the kink scene. The pair are on the /us page agreements (cracky.co.uk/us) as Luke/Raven. Neither has played with Rob or Aimee yet; the exorcism scene would be the first time.
+One half of a couple with **Luke**, friends of Rob and Aimee from the kink scene. The pair are on the /us page agreements (cracky.co.uk/us) as Luke/Raven.
+
+## Status (24 Oct 2026)
+
+Rob and Raven had their first scene together on the night of 23 Oct: a date night with impact play and sex, Aimee aware and fine with it. Rob's read the next day: "kinda fun but she was a bit shit", no orgasm on her side, and her submission felt **passive** rather than responsive, the opposite of the invested, reactive partner he's after. He doesn't want to repeat it as it was. This is the first Rob/Raven sexual contact, which **supersedes the "nothing sexual between the guys and girls" boundary** agreed for the exorcism scene below, so that casting needs rethinking before it goes ahead. Full emotional detail in `Private/Rob/Rob Mood Log.md` (24 Oct entries).
 
 ## Role in the exorcism scene
 
