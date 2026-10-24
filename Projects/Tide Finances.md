@@ -95,6 +95,7 @@ Both loans are HSBC (DDs on the Starling joint). Unverified: whether the "field"
 - **House (~£125k, 4.44% to 31 May 2027):** window opens ~2 Dec 2026. LTV ~44% (value ~£284k). Compare HSBC switch (fee vs fee-free does matter at £125k) with a fee-free broker quote, since a remortgage offer holds ~6 months. ~£850-890/mo at 4.8-5.3% vs £837.88; SVR ~£950.
 - **Net:** both loans together go up ~£70-100/mo from mid-2027. Plan for that in the budget.
 - Todoist: field switch due Mon 26 Oct (p2), house switch due 2 Dec (p2).
+- **24 Oct, evening:** the HSBC app wouldn't let Rob do the field switch online (likely the bare-land/further-advance quirk above). He's calling HSBC instead; Todoist task renamed to "Call HSBC to lock the field mortgage switch before 5 Nov", reminder Mon 26 Oct 12:00. Worth checking if the house switch in Dec hits the same online block.
 
 ## Needed from Rob
 
