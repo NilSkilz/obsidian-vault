@@ -77,6 +77,9 @@
 - Rob's old personal finance spreadsheet (uploaded to Jarvis over Telegram for the /finances wishlist work) had a Sheet4 with **plaintext Superdry credentials**: Rundeck prod, Salesforce (incl. production), SFTP, GitHub, PIM. The file has evidently travelled outside any vault.
 - **Resolved 25 Sep 2026:** Rob checked them the same afternoon; all of the credentials were old/expired, nothing live. No rotation needed, follow-up closed.
 
+## Cherwell SSL cert (Service Desk)
+- Domain cherwell-online.co.uk, 6-month renewal cycle, managed by Tim. Current cert `CPLSSL26-27OCT.pfx` expires **13 Apr 2027**; password `cherwell` (from Tim's separate "SSL Pass" email). Next renewal due around then, Tim handles issuing it.
+
 ## Secure Properties tool
 - Working URL: https://secure-properties-api-ch.us-e2.cloudhub.io/ (the us-e1 host in older Slack threads 504s, ignore it)
 - Fallback: MuleSoft secure-properties-tool.jar locally, Blowfish/CBC default
