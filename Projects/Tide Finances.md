@@ -85,6 +85,17 @@ The whole pipeline shipped in one evening. Live at **https://cracky.co.uk/financ
 - ~~Categorised spend breakdown~~ done 24 Sep round 3 (P&L section); spending plans/budgets still open.
 - ~~Field stays at cost~~ indexed 25 Sep via the KF English Farmland Index (see table); the /finances property card now shows bought price + appreciation for house (+£83,850, +42%) and field (+£5,081, +12%). Note the farmland market is currently SOFTENING (-4.1% YoY, Q2 2026, IHT-change jitters), so expect the field line to drift down before up.
 
+## Remortgage research (24 Oct 2026)
+
+Both loans are HSBC (DDs on the Starling joint). Unverified: whether the "field" loan is secured on the field or is an HSBC further advance on the house (HSBC doesn't normally lend on bare land). Either way it's a product transfer with HSBC.
+
+- **Market, 24 Oct:** BoE base rate 3.75%, ~90% priced for a hike to 4% on **5 Nov**, curve implies ~4.5% by Apr 2027 and ~5% peak early 2028. HSBC raised its product-switch rates on 20 Oct. Best 60% LTV fixes ~5.1% (2yr and 5yr near-identical, both with £999 fees). HSBC SVR **6.24%**.
+- **HSBC switching:** product switch available up to **180 days** before the fix ends; no valuation or affordability check; fixes end on standard dates (e.g. 31 May), which is why the house fix ends 31 May 2027.
+- **Field (~£34.7k, 1.89% to Jan 2027):** window open now. Lock before 5 Nov, **fee-free product** (a £999 fee is ~1.4%/yr on a £35k loan over 2 years), 5-year term. ~£230-240/mo on a fix vs £181.54 now; SVR ~£260. Switching lender pointless at this size.
+- **House (~£125k, 4.44% to 31 May 2027):** window opens ~2 Dec 2026. LTV ~44% (value ~£284k). Compare HSBC switch (fee vs fee-free does matter at £125k) with a fee-free broker quote, since a remortgage offer holds ~6 months. ~£850-890/mo at 4.8-5.3% vs £837.88; SVR ~£950.
+- **Net:** both loans together go up ~£70-100/mo from mid-2027. Plan for that in the budget.
+- Todoist: field switch due Mon 26 Oct (p2), house switch due 2 Dec (p2).
+
 ## Needed from Rob
 
 - ~~Starling tokens (joint + personal, with savings-goal scope)~~ done 24 Sep, both verified
