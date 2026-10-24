@@ -114,6 +114,9 @@ The tube is **non-galvanised** 33.7 x 3mm mild steel and Rob wants the dark gunm
 
 **Not for chrome.** The 25mm chrome whip-handle tube needs nothing: chrome plating *is* the finish, and oil just leaves a film that never cures. Only the bare cut end wants treating (deburr, IPA, thin smear of BLO or just cap it). Degrease chrome with IPA before any grip wrap or the adhesive won't stick.
 
+## Padding: foam sheets over pipe lagging (decided 2026-10-24)
+Pipe lagging (35mm, the right size for 33.7mm tube) was the first idea but closed-cell EVA foam sheet is the better call: one material covers both tube-wrapping and knee pads, and it's tougher. Sources: interlocking gym floor tiles (10-12mm) or a camping roll mat (8-10mm, better shape for wrapping). Cut strips ~105mm wide (33.7mm tube circumference) and butt-join with tape, or spiral 50mm strips like a bat grip. **Rule: pad where heads/bodies bump, never where suspension lines bear on the bar** — foam compresses and lets rope creep/slide, killing the friction the rig relies on.
+
 ## Upholstery attachment (massage chair cushions on wooden bases)
 Decided 2026-09-20 (full detail in that daily log): half couplers bolted through the wooden base for load-bearing pads, U-bolts with wing nuts for quick-swap pieces, velcro straps for comfort-only padding, old inner tube wrapped under everything to stop slip and protect the BLO finish. **Open: half couplers offered for the shopping list, Rob hasn't confirmed go** (asked again 2026-09-22, still unconfirmed).
 
