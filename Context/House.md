@@ -28,6 +28,13 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - **Sizing:** ~10 kWh usable is the sweet spot (evening+overnight load, summer export peaks ~10-12 kWh/day); 13.5 kWh class (Powerwall 3, GivEnergy All in One) if future-proofing for heat pump + EV.
 - **Recommendation given to Rob 17 Sep (amended 22 Sep, Outgoing already done):** get 2-3 battery quotes now (G99 wait means starting early costs nothing) but time the actual install decision alongside the EV/heat-pump calls, which is what makes the battery pay.
 
+## Emergency preparedness (24 Oct 2026)
+Prompted by the UK government's "be ready for 72 hours" cyber-attack/disruption advice (gov.uk/prepare), not a specific threat. Plan: fold most of it into the existing monthly Amazon household subscription (loo roll, bleach etc.) rather than a one-off shop.
+- **Add to the monthly sub:** bottled water (~3L/person/day, rotate through normal use), AA/AAA batteries, UHT milk/tins/pasta/rice/oats/peanut butter (rotate through cooking), wet wipes/hand sanitiser/bin bags.
+- **One-off buys (not yet ordered):** wind-up/battery FM/DAB radio, torches/head torches per person, two power banks kept charged, basic first aid kit + a week's spare of regular meds, £100-200 cash in small notes.
+- **House-specific gaps flagged:** solar is grid-tied and shuts down in a power cut (no backup power from it); gas hob needs a lighter/matches kept nearby if ignition is electric; write down key phone numbers/addresses on paper; confirm smart locks and the garage can still be opened manually.
+- **MG4 as backup power** is the standout item here, see `Context/Vehicles.md` Car 3 section for the V2L adapter Rob is looking at.
+
 ## Heat pump decision (survey booked, as of 23 Sep 2026)
 - **Survey booked: Thu 19 Nov 2026**, Octopus surveyor Nick Bull, ~3 hours, no fixed start time (in as all-day on the Shared Home Calendar). Must be home throughout, access needed to every room plus proposed pump/tank spots. Tidy-up reminder for Rob + Aimee set for Thu 12 Nov (one week before).
 - Octopus quote: **£2,749 fully installed** after £9,000 BUS grant, includes new cylinder, assumes existing radiators kept (extras £250/radiator fitted). Survey lead time 2-6 months.
