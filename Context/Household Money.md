@@ -18,6 +18,12 @@ How the Stokes household money actually flows, per Rob 25 Sep 2026. The live num
 - Rob saves £100 of his (the £100/mo Wealthify DD) and spends the remainder, historically overspending into the Monzo overdraft.
 - Rob's hobby spend (crafting materials, electronics, project parts) comes out of personal money; lots of small amounts. From Sep 2026 rope sales (2 orders in hand) start offsetting it.
 
+## Car repayment to Rob's mum (from Nov 2026)
+
+- Rob's mum (Anne Stokes) fronted the money for the MG4 (YG73 NUO, £14,218, bought 9 Oct 2026). Rob repays her **£300/mo by standing order**, roughly 47 payments (about 4 years) if it's interest-free. The plan is the 1st of the month from the Starling Joint, starting Nov 2026 (per Rob, 24 Oct 2026; the SO itself still needs setting up).
+- This is separate from the long-running **£50/mo to Anne** (listed in the committed outgoings). Whether that £50 continues is still open.
+- For context, it replaces nothing: the Black Horse finance (£682.79/mo) ended Feb 2026. The car's real cost is set against the drop in petrol spend.
+
 ## Categorisation rules the sync applies
 
 - Own-name transfers between visible accounts pair off as `internal`.

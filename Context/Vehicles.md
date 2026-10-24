@@ -20,6 +20,7 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 ## Car 3 — MG4 (Rob's, bought 9 Oct 2026)
 - **Reg: YG73 NUO** (confirmed 9 Oct 2026 via carcheck.co.uk: orange MG 4 Trophy, 2023. Rob said "YG23" on the day; YG23NUO returns nothing, the 73 plate is right)
 - Orange 2023 MG4 Trophy Long Range 64kWh, ~34.8k miles at purchase, bought from Carbase (Lympsham) 9 Oct 2026, listed at £14,218. No MG service history and Carbase offered no manufacturer warranty (see `Projects/Car Hunt.md`). Consumer Rights Act: 30-day reject window runs to ~8 Nov 2026, presumption of fault at sale to ~9 Apr 2027.
+- **Funding:** Rob's mum (Anne Stokes) fronted the money. Repaid at £300/mo by standing order from Nov 2026, about 4 years. Detail in `Context/Household Money.md`.
 - **MOT expires: 23 Sep 2027** (first MOT passed 24 Sep 2026, zero advisories, test no. 306381565678). Calendar event + Todoist booking task 9 Sep 2027.
 - **Tax expires: 1 Oct 2027** (taxed, on the calendar).
 - **Insurance:** not yet mapped.
