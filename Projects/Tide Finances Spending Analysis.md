@@ -30,7 +30,7 @@ Regular payments verified by cadence in the data, at current (mid-2026) amounts:
 | Octopus Energy | 150.00 | DD has floated £100 to £246; summer 2026 is £100 to £150, Sep DD back to £200. Budget £150 to £200 |
 | South West Water | 74.46 | £893.50/yr, some months doubled |
 | BoilerJuice oil plan | 40.00 | £40/mo plan since spring; £434 total over the year |
-| EE mobiles | 95.00 | 4 to 5 charges/mo, crept from ~£66-88 to ~£97 (see savings) |
+| EE | 95.00 | Corrected 24 Oct: £31 Rob's mobile (includes Game Pass), £30.99 broadband, ~£25-35 PAYG top-ups. Flat since May |
 | Aviva (policy MHO074964349) | 45.05 | Was £40.87 until June 2026, +10% creep |
 | Aviva (policy 2789498EF) | 13.51 | Second policy, flat all year |
 | Sheilas' Wheels car insurance | 16.68 | Was ~£54 early in window, now £16.68 (car change?) |
