@@ -50,7 +50,7 @@ Regular payments verified by cadence in the data, at current (mid-2026) amounts:
 | Spotify | 21.99 | Family plan, fine if all using it |
 | Netflix | 18.99 | Standard |
 | DigitalOcean | 19.20 | **Candidate**: Rob self-hosts a Proxmox cluster. What is still on DO that could not live on CT hardware? £230/yr |
-| Xbox Game Pass / Microsoft | ~24.00 | Corrected 24 Oct: three separate subs (no UK family plan). Rob's is free via EE; the boys' are £16.99 (~27th) + £6.99 (~5th) on the joint. Lever: Rob's EE pass shared to one kid's console via "home Xbox", cancel the £16.99 (~£204/yr). Annual code-buying already ruled out by Rob 25 Sep |
+| Xbox Game Pass / Microsoft | ~24.00 | Corrected 24 Oct: three separate subs (no UK family plan). Rob's is free via EE; the boys' are £16.99 (~27th) + £6.99 (~5th) on the joint. Home-Xbox sharing trick (~£204/yr) dropped by Rob 24 Oct: everyone buys/owns their own games, not worth the licensing tangle. Annual code-buying ruled out 25 Sep. Treat as fixed cost |
 | OpenAI | 17.87 | 9 months running, ~£20/mo. API or ChatGPT Plus? |
 | IONOS + 1&1 Web Hosting | 14.35 | **Two hosting payments to the same company** (1&1 is IONOS). £172/yr combined. Consolidate |
 | Newshosting | 12.68 | Usenet. £139/yr, still used? |
