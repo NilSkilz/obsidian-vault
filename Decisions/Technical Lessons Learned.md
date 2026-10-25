@@ -326,3 +326,16 @@ Rules that generalise:
 
 ## Sonarr ManualImport can delete the files it's "importing" (2026-10-21)
 Clearing "importBlocked" queue items, I called `/manualimport?folder=<outputPath>&seriesId=39`. Sonarr scanned the series' own folder (the files were already in place), returned every episode five times over, and a `ManualImport` with `importMode: auto` on those treated each as an upgrade of itself: deleted the existing file, then failed "File doesn't exist". 14 Rivals episodes gone, no recycle bin. Re-grabbed via SeriesSearch. Rules: only ever submit paths under the downloads folder, dedupe by path, never submit a file whose path is already inside the series root, and check `episodefile` count before and after. Recycle bin now on for both *arrs.
+
+## HA is the engine room, Tide is the front door (2026-10-19, Rob's call)
+
+Rob opened the home-automation push with the right first question: build dashboards in Home Assistant, in Tide, or somewhere else? Answer agreed: **both, with a hard line between them.** Worth holding, because every future "can you add a screen for X" lands on it.
+
+- **HA owns every automation.** Not my Python crons. The EV month is the evidence: `ev-planner.py`, `ev-charge-watch.sh` and the HA automations all acting on the same charger made me a *second source of faults*, and twice I diagnosed a Pod Point failure that turned out to be my own hold automation (16 Oct 14:35, and again on 23 Oct when a stale pause blocked the cut-out rescue). One brain, one logbook, one place to switch it off. Reinforces [[feedback_dont_automate_over_a_fault]].
+- **HA owns control and power-user surfaces:** lights, heating, charger, debug views, anything with fifty entities. It already has live state, auth, the phone app, history graphs and a card per device. Rebuilding that in Tide is rewriting HA badly, in React.
+- **Tide owns the family-facing glance** ("is the car charged, is the heating on, who's home, what's for tea"), mixed with calendar, chores and meals, which HA will never do well. Tide **reads** HA and may hold a few big obvious buttons. It never holds logic.
+- **Tide owns the wall screens** (DAKboard strips, the Lenovo clock). Old WebViews choke on HA's frontend; a light Tide page copes.
+- **The rule that stops drift: each thing has ONE canonical home.** The EV data is currently built twice (HA dashboard *and* the Tide car tab). That was fine as a first pass and is the exact duplication to avoid from here.
+- No third dashboard framework. DAKboard stays as it is.
+
+Follow-on Rob agreed to but hasn't been done yet: an audit of what's actually in HA (it is deliberately sparse, he avoided adding devices that never got automated), which rooms and screens matter, and what annoys him day to day, before designing anything else.

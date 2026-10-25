@@ -4,7 +4,9 @@ One half of a couple with **Luke**, friends of Rob and Aimee from the kink scene
 
 ## Status (24 Oct 2026)
 
-Rob and Raven had their first scene together on the night of 23 Oct: a date night with impact play and sex, Aimee aware and fine with it. Rob's read the next day: "kinda fun but she was a bit shit", no orgasm on her side, and her submission felt **passive** rather than responsive, the opposite of the invested, reactive partner he's after. He doesn't want to repeat it as it was. This is the first Rob/Raven sexual contact, which **supersedes the "nothing sexual between the guys and girls" boundary** agreed for the exorcism scene below, so that casting needs rethinking before it goes ahead. Full emotional detail in `Private/Rob/Rob Mood Log.md` (24 Oct entries).
+Rob and Raven had their first scene together on the night of 23 Oct: a date night with impact play and sex, with Aimee aware of it beforehand and fine with it. That is the first Rob/Raven sexual contact, so it **supersedes the "nothing sexual between the guys and girls" boundary** agreed for the exorcism scene below, and the casting needs revisiting before that scene goes ahead.
+
+How Rob felt about the night, and whether he wants to repeat it, is his own and is **not recorded here**. It lives in `Private/Rob/` (mood log, 24 Oct). Don't restate it in this file: Raven is a mutual friend and this file is shared household context.
 
 ## Role in the exorcism scene
 
