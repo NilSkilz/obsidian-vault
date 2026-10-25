@@ -28,6 +28,7 @@ blog suggest|$STATE/jarvis-blog-suggest.log|192
 docker updates|$STATE/jarvis-docker-updates.log|192
 ev planner errors|$STATE/ev-planner/errors.log|0
 ev cost errors|$STATE/ev-cost/errors.log|0
+ev health errors|$STATE/ev-health/errors.log|0
 "
 
 # Hard failure signatures. A job can log the word "error" (or "killed") in
