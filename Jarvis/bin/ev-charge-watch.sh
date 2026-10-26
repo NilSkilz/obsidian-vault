@@ -23,6 +23,40 @@ print(int((datetime.datetime.now(datetime.timezone.utc)-datetime.datetime.fromis
 tg() { curl -sS -m 10 -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
   --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=$1" >/dev/null; }
 lt() { python3 -c "import sys; sys.exit(0 if float(sys.argv[1])<float(sys.argv[2]) else 1)" "$1" "$2" 2>/dev/null; }
+# Wifi association on the UDM: the real "is the charger alive" tell (see the trip notes below).
+podwifi() { curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
+  | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?"; }
+
+# Wake-up alarm. Rob, 26 Oct 2026: the 22:51 trip went unnoticed while he slept; when the car
+# is set to 100% (he needs a full battery in the morning) a trip should wake him so he can reset
+# it. Bedroom Dot announcement, repeated every ~4 min (max 6, ~20 min) until the charger is back
+# on wifi. If DND is on we switch it off for the announcement and put it back.
+WAKE_DEV=bedroom_dot
+announce() {
+  local dnd body code
+  dnd=$(get switch.${WAKE_DEV}_do_not_disturb)
+  [ "$dnd" = "on" ] && curl -s -m 10 -o /dev/null -X POST -H "Authorization: Bearer $HA_TOKEN" -H 'Content-Type: application/json' \
+    -d "{\"entity_id\":\"switch.${WAKE_DEV}_do_not_disturb\"}" "$HA_URL/api/services/switch/turn_off" && sleep 3
+  body=$(python3 -c 'import json,sys; print(json.dumps({"entity_id":"notify.%s_announce"%sys.argv[2],"message":sys.argv[1]}))' "$1" "$WAKE_DEV")
+  code=$(curl -s -m 15 -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $HA_TOKEN" -H 'Content-Type: application/json' \
+    -d "$body" "$HA_URL/api/services/notify/send_message")
+  [ "$dnd" = "on" ] && sleep 15 && curl -s -m 10 -o /dev/null -X POST -H "Authorization: Bearer $HA_TOKEN" -H 'Content-Type: application/json' \
+    -d "{\"entity_id\":\"switch.${WAKE_DEV}_do_not_disturb\"}" "$HA_URL/api/services/switch/turn_on"
+  [ "$code" = "200" ]
+}
+WAKE_MSG="Rob, wake up. The car charger has tripped and the car is set to charge to a hundred percent. Please reset the charger switch in its little fuse box."
+if [ -f "$STATE/wake" ]; then
+  N=$(cat "$STATE/wake"); AGE=$(( $(date +%s) - $(stat -c %Y "$STATE/wake") ))
+  if [ "$(podwifi)" = "on" ]; then
+    rm -f "$STATE/wake"; echo "$(date '+%F %T') wake cleared (charger back on wifi)" >> "$STATE/events.log"
+  elif [ "$N" -ge 6 ]; then
+    rm -f "$STATE/wake"; echo "$(date '+%F %T') wake gave up after $N" >> "$STATE/events.log"
+    tg "😴 Announced the trip on the Bedroom Dot $N times and the charger's still off. Stopping the alarm; reset it when you see this."
+  elif [ "$AGE" -ge 230 ]; then
+    announce "$WAKE_MSG"; echo $(( N + 1 )) > "$STATE/wake"
+    echo "$(date '+%F %T') wake announce $(( N + 1 ))" >> "$STATE/events.log"
+  fi
+fi
 
 W=$(get sensor.shellyem_34945470ed50_channel_2_power)
 KWH_NOW=$(get sensor.shellyem_34945470ed50_channel_2_energy)
@@ -38,8 +72,7 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   STATUS=$(get sensor.psl_557234_status)
   # Pod Point cloud_connection lags by many minutes (still "on" after the 23:10 trip on
   # 9 Oct), so the wifi association on the UDM is the real trip tell.
-  WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
-    | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?")
+  WIFI=$(podwifi)
   [ "$WIFI" = "off" ] && CLOUD=off
   # A trip takes minutes to show: 25 Oct 22:51 the Pod Point was still "charging", cloud on
   # and on wifi at 22:54, cloud only went off at 22:59, so this said "not a trip". If nothing
@@ -62,6 +95,12 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
 
   if [ "$CLOUD" = "off" ]; then
     MSG="⚡ Charger's died at $T with the MG4 on ${SOCS}%: no power and the Pod Point's off the network, so it looks like a trip. ~${ADDED} kWh went in. Reset it at its consumer unit and note which switch was down."
+    # Car set to 100% = Rob needs a full battery, so wake him (Bedroom Dot, repeats until reset).
+    if python3 -c "import sys; sys.exit(0 if float(sys.argv[1])>=95 else 1)" "$LIMIT" 2>/dev/null; then
+      if announce "$WAKE_MSG"; then echo 1 > "$STATE/wake"; MSG="$MSG 🔊 Announcing it on the Bedroom Dot every few minutes until the charger's back."
+      else echo 1 > "$STATE/wake"; MSG="$MSG ⚠️ Tried to announce on the Bedroom Dot but it failed; will retry."; fi
+      echo "$(date '+%F %T') wake announce 1" >> "$STATE/events.log"
+    fi
   elif [ "$SOC" != "?" ] && [ "$LIMIT" != "?" ] && ! lt "$SOC" "$(python3 -c "print(float('$LIMIT')-1.5)")"; then
     MSG="✅ MG4's done: ${SOCS}% at $T (limit ${LIMIT%.*}%). ~${ADDED} kWh went in."
   elif [ "$GUN" = "off" ]; then
