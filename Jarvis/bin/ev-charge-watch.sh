@@ -31,7 +31,6 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   echo 0 > "$STATE/high"
   LOW=$(( $(cat "$STATE/low" 2>/dev/null || echo 0) + 1 )); echo "$LOW" > "$STATE/low"
   [ -f "$STATE/armed" ] && [ "$LOW" -ge 2 ] || exit 0
-  rm -f "$STATE/armed"
   T=$(date +%H:%M)
   SOC=$(get sensor.mg_mg4_electric_state_of_charge); LIMIT=$(get number.mg_mg4_electric_target_soc)
   GUN=$(get binary_sensor.mg_mg4_electric_charging_gun_state)
@@ -42,6 +41,15 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   WIFI=$(curl -sk -m 10 -H "X-API-KEY: $UNIFI_API_KEY" "https://${UNIFI_HOST:-192.168.1.1}/proxy/network/api/s/default/stat/sta" \
     | python3 -c 'import json,sys; print("on" if any(c.get("mac")=="e0:5a:1b:97:8e:e8" for c in json.load(sys.stdin)["data"]) else "off")' 2>/dev/null || echo "?")
   [ "$WIFI" = "off" ] && CLOUD=off
+  # A trip takes minutes to show: 25 Oct 22:51 the Pod Point was still "charging", cloud on
+  # and on wifi at 22:54, cloud only went off at 22:59, so this said "not a trip". If nothing
+  # else explains the stop yet, hold the verdict for up to ~10 min (LOW 2..6) and recheck.
+  if [ "$CLOUD" != "off" ] && [ "$STATUS" = "charging" ] && [ "$GUN" != "off" ] && [ "$LOW" -lt 6 ] \
+     && [ "$(since script.ev_charge_stop)" -ge 900 ] \
+     && { [ "$SOC" = "?" ] || [ "$LIMIT" = "?" ] || lt "$SOC" "$(python3 -c "print(float('$LIMIT')-1.5)")"; }; then
+    exit 0
+  fi
+  rm -f "$STATE/armed"
   ADDED=$(python3 -c "import sys; print(round(float(sys.argv[1])-float(sys.argv[2]),1))" "$KWH_NOW" "$(cat "$STATE/start_kwh" 2>/dev/null)" 2>/dev/null || echo "?")
   SOCS=$(printf '%.0f' "$SOC" 2>/dev/null || echo "?")
   LOG="$(date '+%F %T') stop W=$W soc=$SOC status=$STATUS cloud=$CLOUD wifi=$WIFI gun=$GUN added=$ADDED"

@@ -254,8 +254,10 @@ def main():
         # A cut-out keeps the Pod Point on wifi; an RCBO trip kills it. Offline means trip, and a
         # car-side start can't fix that (25 Oct: two pointless "not a trip" rescues after 22:51).
         tripped = state("binary_sensor.psl_557234_cloud_connection") in ("off", "unavailable")
+        # The cloud flag lags the trip (8 min on 25 Oct), so the car-side tell waits 15 min for it
+        # to land. "out-of-service" needs the Pod Point online to report it, so that one can't be a trip.
         cut = not tripped and ((st["state"] == "out-of-service" and dark_for > 8 * 60)
-               or (car_dark and now.timestamp() - drew > 8 * 60 and car_dark_for > 5 * 60))
+               or (car_dark and now.timestamp() - drew > 15 * 60 and car_dark_for > 5 * 60))
         if (home and plugged and soc < limit - 2 and cut and not deliberate
                 and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
             car("start_charging")
