@@ -660,3 +660,126 @@ Broader, and both are small:
 - Did `/blog` move off "URL is unknown to Google". The home page crawl on 13 Oct is the first positive signal in five weeks; watch whether it propagates to the blog, with or without request-indexing
 - Watch Ever Collar and BeMoreKinky. If either starts ranking for "BDSM safety app", the comparison post goes from opportunity to catch-up
 - Bing: whether blog URLs appear in `GetPageStats`, and whether the daily `BlockedByRobotsTxt` hits stop once the reseed retargets the CTAs. That second one is a clean measurable test of whether the reseed actually worked
+
+## 2026-10-26
+
+Nothing shipped this week, and the reseed is now a month old. But Google moved again, and the search work turned up a channel this log has never looked at.
+
+### Week in review
+
+**Zero commits.** The handoff file `/tmp/jarvis-blog-suggest.ZUUMGR` was empty, and I checked that rather than trusting it: `git fetch` then `git log origin/develop` confirms the last commit is still `4c9cf80` (merge to main, 12 Oct), and the last substantive work is still `d81a4ce` (5 Oct). Local and origin are level, develop and main are identical. Ten days of `Daily/` logs mention Tethered zero times. So the empty file was accurate, not a broken cron.
+
+That means this is the third consecutive week with no Tethered work, and the honest framing is that the project is parked while the EV and car work has Rob's attention. Not a criticism, just the context for everything below: every item on this list is a Rob item, and the list is not getting shorter on its own.
+
+### The reseed still has not run. Fourth week.
+
+Verified live on three separate posts, not inferred:
+
+| Check | Expected after reseed | Live today |
+|---|---|---|
+| Comparison post title | "Best D/s Apps in 2026: Obedience, Kneel, SubTasks and Tethered Compared" | "The Best D/s Task Apps Compared: Obedience-Style Trackers, Habit Apps, and Tethered" |
+| Comparison post meta | names Kneel, SubTasks, mysub, Embrace | still names Habitica, Todoist, spreadsheets |
+| Internal blog-to-blog links | ~45 across the graph | **0** on all three posts checked |
+| CTAs off `/dashboard` | none | 2 on comparison, 1 on solo, 1 on rules |
+
+This is the same table as last week and the week before. The work is written, committed, merged and deployed; it just lives in DynamoDB records that `seed-blog-posts.ts` has never been run against. One command, Rob's, because there are no AWS creds on this box.
+
+Worth saying plainly after four weeks: the live blog is a worse advert for Tethered than the repo is. Every post is an orphan with no outbound links, and a quarter of the CTAs point at a page robots.txt forbids crawlers to follow.
+
+### SEO / AI-search health check
+
+**Sitemap and llms.txt: clean, no action.** `/sitemap.xml` returns 200 with 16 URLs (5 static plus 11 posts). `/llms.txt` returns 200 and advertises exactly the same 11 posts. Cross-checked both directions, no drift. Nothing shipped last week, so nothing could be missing from either. The generator pipeline is healthy.
+
+**`robots.txt` correct** and unchanged.
+
+**The www 301 is live, and I am correcting a false alarm before it becomes one.** Bing's `GetPageStats` shows `www.tethered.me.uk/dashboard` as the single most-clicked URL on the site (3 clicks, 6 impressions), which reads like the www split and the robots-blocked dashboard both leaking into an index. It is not. `https://www.tethered.me.uk/` and `/dashboard` both return a clean 301 to the apex host today. Bing's stats are historical, from before the redirect went in. The www item on the Trello board is done. No action.
+
+**Google moved for the second week running.** URL Inspection today:
+
+| URL | Verdict | Coverage | Last crawl |
+|---|---|---|---|
+| `/` | PASS | Submitted and indexed | 2026-10-13 14:35Z |
+| `/blog` | NEUTRAL | **Discovered, currently not indexed** | never |
+| `/blog/best-ds-task-apps-compared` | NEUTRAL | URL is unknown to Google | never |
+
+`/blog` was "URL is unknown to Google" seven days ago. It is now **Discovered**. Google has found the blog index, via the home page links or the sitemap, and has it queued. It has not crawled it yet and the individual posts are still unknown, but this is the second consecutive week of forward movement after five static weeks. The sequence unknown, discovered, crawled, indexed is working its way through on its own.
+
+This also sharpens the reseed argument rather than softening it. Google is about to crawl `/blog` for the first time. Whether it crawls a hub linking to eleven interlinked posts or eleven orphans with blocked CTAs is decided by whether the reseed runs first.
+
+**Search Console, last 30 days: 9 impressions, 0 clicks, all brand.** Every query is someone who already knows the name or is already in the product:
+
+- `does tethered cost money` (position 1), `cost uk` (position 2), `tethered me` (position 8), `tethered app` (position 46), `tethered login` (position 80)
+- `como me vinculo` (position 1), `juego solo` (position 1), `are there other options?` (position 4)
+
+Two things worth noting. The Spanish queries and the phrasing of "are there other options?" look like in-product or assistant-mediated questions rather than typed searches, which fits the Chrome auto-translate guard that went in on 3 Oct. And the site ranks 1st for "does tethered cost money", so the pricing story is landing for anyone who asks. But there is still not one non-brand impression. Nobody is finding Tethered who did not already know it exists.
+
+**Bing has the blog. Google does not.** `GetPageStats` shows `/blog/negotiating-consent-checklist` with **7 impressions**, more than the home page. That is the first organic blog impression recorded anywhere in this log. It is also a reminder that the Bing submission route is cheap and works: quota is 10,000/day and untouched.
+
+### Search and AI-assistant landscape
+
+Three searches. Tethered appeared in none of the three answers, which is now the eighth consecutive week of that.
+
+**The discretion gap is real and it has held for two weeks.** I re-ran the "not out" query deliberately, to test whether last week's finding was a fluke. It was not. Asking how to set up a safe call for a kink date when you are not out returns no product, no tool, and no authoritative source. The assistant assembled an answer from a Xtra Magazine culture piece and some dating-app PR, and then reasoned its way to the generic fallback on its own: "select a trusted friend who respects your privacy". No citation, because there is nothing to cite. Same shape as last week, different sources, same hole.
+
+That is a question with real search intent, real community vocabulary ("safe call" is a leatherfolk term, not marketing language), and literally nothing good ranking for it.
+
+**The "best BDSM safety app" SERP got worse, not more competitive.** Last week it surfaced Ever Collar, BeMoreKinky and Apple Check In. This week the same territory returns KinkD (a dating app), a Patreon, a content-farm PDF generator and `publicspace.nyc` spam. The query is thin enough that the result set is unstable week to week. Read honestly, that cuts both ways: it is not a well-defended space, but it is also not a space with much volume behind it.
+
+**The real finding: alternativeto.net is the ranking surface in this niche, and Tethered is not on it.** Four of the ten results for the D/s app comparison query were alternativeto.net pages (The Dynamic, Kneel, Obedience, SubTasks). More importantly, the AI-generated summary of those results lifted its verdict straight from the directory: "SubTasks is identified as the best Obedience alternative". That is an assistant citing a directory listing as authority.
+
+This log has spent six weeks on owned content and never looked at directories. An LLM asked "what are the alternatives to Obedience" reads alternativeto.net and finds SubTasks, Kneel and The Dynamic. It cannot find Tethered, because Tethered has no entry. Listings there are free and user-submitted.
+
+**New competitor logged: The Dynamic.** Surfaced on alternativeto.net as a D/s task manager and habit tracker. Not previously in this log or the overview. Worth a proper look before the next comparison post rewrite.
+
+### Suggested post
+
+Last week and the week before both pitched `safety-check-in-apps-compared`, an eight-section comparison against Apple Check In, Kitestring, Noonlight, Ever Collar and the rest. It has not been written either time. I am not pitching it a third time unchanged, because the reason it keeps not getting written is probably that it is a big research-heavy post about a field that moves every week, and this week's search results showed that field is unstable enough that the post would need rewriting by the time it ranked.
+
+So: same opening, much smaller post, aimed at the one query that actually has no answer.
+
+**Title:** Safe Calls When You're Not Out: How to Check In Without Outing Yourself
+**Slug:** `safe-call-when-not-out`
+
+**Targets:**
+- "safe call kink", "how to do a safe call BDSM", "safe call not out", "kink date safety friend doesn't know"
+- AI-assistant questions: "how do I set up a safe call if I'm not out about kink?", "what if I have nobody I can tell about a kink date?", "how do I stay safe meeting someone when I can't tell anyone where I'm going?", "is there a check-in app that doesn't require telling my contact what I'm doing?"
+
+**Outline:**
+
+- What a safe call actually is, in the community's own words. The leatherfolk custom: a friend who knows where you are, a mid-date check-in, an agreed deadline and an agreed escalation. Use the real vocabulary, because that is what people search
+- The four things a safe call needs to work: a real deadline, a contact who has agreed in advance, enough information to act on, and a plan for what happens when the call does not come
+- **The outing problem, which is the section that owns the query.** Every piece of standard safe-call advice assumes a contact you can be honest with. Most people in kink have at least one relationship where that is not true, and the usual answer is to skip the safe call entirely. That is the actual risk
+- **What to tell someone without telling them everything.** The practical core of the post: an address, a time, a name, a "call me at 11 and if I don't pick up, call again, and if I still don't pick up, here is what to do". No disclosure of what the evening is. Scripts people can copy
+- The case where there is nobody at all: an automated timer that escalates without a human in the loop, and what it can and cannot do. Link to `solo-play-safety-guide` and `meeting-new-partners-safely`
+- Where apps fit, briefly and fairly. Apple's built-in Check In is free and good, and should be named as the right answer for plenty of people. What it assumes, and where a kink-aware alert differs. One short section, not the whole post
+- The limit, stated plainly: every system escalates, none rescue. Emergency services first, always
+- FAQ block for answer engines
+
+**Why this one now:** it targets the only question in this space that two weeks of searching has failed to find a good answer for anywhere, and the gap is the kind LLMs fill by improvising, which is exactly the gap a citable page closes. It is also a fraction of the work of the comparison post, needs no competitor research that will be stale in a month, and Rob can write most of it from inside the scene without looking anything up. After three weeks of nothing shipping, the smaller post that gets written beats the better post that does not.
+
+### Suggested site updates
+
+Broken first.
+
+1. **Run the reseed.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Rob only, no AWS creds here. Fourth week on this list. One command, and it closes three separate fixes that are already written and merged: the comparison post's 2026 title and meta, the internal link graph, and every CTA off robots-blocked `/dashboard`. The new argument this week is timing: `/blog` is now Discovered in Google and will be crawled soon. Running this before that crawl is worth more than running it after.
+
+2. **Strip the em dashes from the four original safety posts.** 74 of them, live on the site under the Tethered Team byline: `solo-play-safety-guide` (27), `negotiating-consent-checklist` (26), `meeting-new-partners-safely` (13), `when-things-go-wrong` (8). The six newer D/s posts are clean, so this is just the pre-rule content. It is a find-and-replace in the seed files and it rides along with item 1 at no extra cost, so do it in the same sitting.
+
+3. **List Tethered on alternativeto.net.** Free, user-submitted, one sitting. This is the week's new finding and probably the best leverage on the list: the directory is four of the ten results for the main comparison query, and assistants quote its verdicts as authority. Add Tethered as an alternative to Obedience, Kneel and SubTasks, with the safety timer and the discretion angle as the differentiator. Every competitor is already there. This is the cheapest route into AI answers that this log has found.
+
+Broader, and all small:
+
+4. **Rewrite the `/blog` index meta description.** It currently reads "consent negotiation, scene safety, aftercare and more", which is the pre-pivot safety framing. Six of the eleven posts are D/s dynamic content now, and the home page repositioned a month ago. The blog index did not. One line of copy, and it is the page Google is about to crawl first.
+
+5. **Fix the fireplay post.** Carried from last week, unchanged. `/blog/fireplay-101-a-beginner-s-guide-to-playing-with-fire-safely` has an auto-generated slug with the apostrophe mangled to "beginner-s", and it is the only live post with no source file in `scripts/blog-posts/`, so it cannot survive a reseed. Shorten to `fireplay-101` with a redirect, and write it back into the repo as a seed file. Two jobs, one sitting. Note the ordering risk: if item 1 runs before this one, check the fireplay post is still intact afterwards.
+
+6. **Add the competitor set to `llms.txt`.** Carried. Still no mention of Ever Collar, BeMoreKinky, Apple Check In or now The Dynamic. One honest paragraph naming them and saying what Tethered does differently.
+
+### Follow-ups for next week
+
+- Did the reseed run. Same five-minute check: comparison post title, internal link count on two posts, no live post linking to `/dashboard`
+- Did `/blog` move from Discovered to Crawled or Indexed. Two weeks of forward movement now, watch whether it continues without intervention
+- Whether any individual post leaves "URL is unknown to Google"
+- Bing: whether `/blog/negotiating-consent-checklist` holds its 7 impressions or grows, and whether any second post appears in `GetPageStats`
+- The Dynamic: proper look at pricing, platform and positioning before the comparison post gets rewritten
+- If the alternativeto.net listing goes in, whether it shows up in an AI answer within a few weeks. That is a clean, measurable test of the directory theory
