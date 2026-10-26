@@ -210,12 +210,21 @@ def main():
             since = (now - timedelta(minutes=40)).astimezone().isoformat()
             hist = ha("/api/history/period/" + urllib.parse.quote(since) +
                       "?filter_entity_id=sensor.shellyem_34945470ed50_channel_2_power&minimal_response")
+            # Only a reading that held >500 W for a minute counts. A 1 s 803 W ghost on ch2 at
+            # 22:26:06 on 25 Oct (dryer step on ch1, Shelly crosstalk) read as "it was charging",
+            # made a 20:09 pause look like a cut-out, and the rescue restarted the car at 22:40.
+            pts = []
             for p in (hist[0] if hist else []):
                 try:
-                    if float(p["state"]) > 500:
-                        drew = max(drew, datetime.fromisoformat(p["last_changed"]).timestamp())
+                    pts.append((float(p["state"]), datetime.fromisoformat(p["last_changed"]).timestamp()))
                 except (TypeError, ValueError):
-                    pass
+                    pts.append((0.0, None))
+            for i, (w, t) in enumerate(pts):
+                if w <= 500 or t is None:
+                    continue
+                end = pts[i + 1][1] if i + 1 < len(pts) else now.timestamp()
+                if end and (end - t >= 60 or (i + 1 < len(pts) and pts[i + 1][0] > 500)):
+                    drew = max(drew, t)
         except Exception:
             pass
         try:
@@ -242,7 +251,10 @@ def main():
                 ha(f"/api/states/sensor.{CAR}_charging_status")["last_changed"]).timestamp()
         except Exception:
             car_dark_for = 0
-        cut = ((st["state"] == "out-of-service" and dark_for > 8 * 60)
+        # A cut-out keeps the Pod Point on wifi; an RCBO trip kills it. Offline means trip, and a
+        # car-side start can't fix that (25 Oct: two pointless "not a trip" rescues after 22:51).
+        tripped = state("binary_sensor.psl_557234_cloud_connection") in ("off", "unavailable")
+        cut = not tripped and ((st["state"] == "out-of-service" and dark_for > 8 * 60)
                or (car_dark and now.timestamp() - drew > 8 * 60 and car_dark_for > 5 * 60))
         if (home and plugged and soc < limit - 2 and cut and not deliberate
                 and now.timestamp() - drew < 40 * 60 and int(tries[1]) < 4):
