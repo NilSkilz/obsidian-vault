@@ -27,3 +27,4 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Ideas, not built
 - Auto-post reviews once Rob has approved ~20 unedited.
 - Pull Jira ticket context into reviews (Atlassian connector, read-only).
+- 27 Oct: Rob floated moving this to an always-on EC2 box instead of his work Mac, for PR review + Slack + repo/Confluence knowledge. My take: a t3.micro (1GB) won't hold a Claude Code session plus a repo checkout and tsc/test run; floor is t3.medium/t4g.medium (4GB, ~$25-30/mo) with 30-50GB disk. It's a port of this bot (always-on version), not a rebuild. Open question before spinning anything up: needs to sit on Superdry's own AWS account with security sign-off, not a personal shadow box with prod code on it. Nothing built yet, pending Rob's decision.
