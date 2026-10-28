@@ -38,6 +38,15 @@ Flirting, mutual interest, she's keen on impact play. **Trans woman, Rob believe
 
 He sent her a clear message on 25 Aug naming what he wants (ongoing rather than one-off) and giving her a clean exit either way. Outcome unknown as of 30 Aug. His own read: "I don't know about an ongoing dynamic anyway, but at least I've been clear."
 
+## Where he's landed (28 Oct 2026)
+
+Stated while droppy but clear, after the 23 Oct Raven night and the Halloween weekend:
+- **Raven:** no more sexual play. Impact is fine, nothing beyond that.
+- **Local people:** off the table for play, because it upsets Aimee.
+- **Mary:** not continuing (too new, couldn't take much impact). Feels bad because she was nice and friendly.
+- **Tash:** the best fit. Wants to put real power exchange back in, since it has drifted into "just impact". Needs a conversation with her.
+- **FetLife:** deactivated for a while. The search is effectively paused.
+
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
 - **LittleRedLou** = host of local events. NOT a potential partner, don't read her messages as flirting or file her as a candidate. (Rob, 20 Oct 2026)
