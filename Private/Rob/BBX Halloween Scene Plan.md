@@ -9,6 +9,9 @@ metadata:
 
 The first Barebones Extreme (it runs in months with five Saturdays). Rob and Aimee are DMing until about 23:00 and play after that. Aimee goes as mucow. The wax detail lives in [[wax-pour-scene-plan]] (`Wax Pour Scene Plan.md`) and the pump in `Projects/Saline Pump/`.
 
+## Status (28 Oct)
+Aimee says she probably won't feel sexual on Saturday after a heavy week. Whether any of this runs, and in what shape, is entirely her call. The saline and the wax coffin don't depend on sex, the AI section does. Don't pitch a cut-down version at her; let her say what she wants.
+
 ## Running order (sterile, then messy, then clean-and-dry)
 1. **Saline on the gyno chair.** Use the sterile path: a new butterfly set, and a pump tube that has only ever carried saline.
 2. **AI lube play on the scaffold.** Use a **separate, dedicated tube set** in the pump head, marked LUBE. It never goes back in for saline.
