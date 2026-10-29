@@ -57,7 +57,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | **Snug** | Light switch | Yes | Done |
 | **Living room** | Light switch | Yes | Done |
 | | 2 x smart bulbs (Tuya, corrected by Rob 29 Oct, was "3") | Yes (29 Oct) | Done: `light.living_room_bulb_1` / `_2` via the Tuya integration, area Living Room. They are the two "lwip0" clients with near-consecutive MACs `d8:c8:0c:b2:e6:5a` (.23) and `d8:c8:0c:b2:e6:87` (.66), both online since 28 Oct 07:04. Cloud control for now, local (LocalTuya) later if latency annoys. Third lwip0 (`80:a0:36:a9:ae:97`, .101) is a different device, unidentified |
-| | Amazon Echo | Yes (currently unavailable) | Assign to Living Room; check why it dropped |
+| | Amazon Echo | Yes, back online 29 Oct (Rob plugged it in) | Assign to Living Room area |
 | | LG TV | Yes (50" UA73006LA, three entries) | Keep the working one, delete duplicates |
 | **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
 | **Play room** | Nanoleaf | Yes (29 Oct) | Done: `light.nanoleaf`, area Play Room, local control incl. its saved effects |
@@ -85,3 +85,7 @@ _(behaviour per room, filled in as Rob walks through them)_
 - Which rooms first? Suggest the most-used shared spaces (living room, kitchen) then outward.
 - Budget per room / overall?
 - Zigbee: add a coordinator (USB stick on the Proxmox host, or SLZB-06 on PoE) before buying sensors?
+
+
+## Living room iPad (29 Oct 2026)
+Rob put an iPad by the sofa. HA dashboard **Sofa** (`/sofa-panel`) built for it: living room presets + lamps, TV (sources, volume, remote), snug light, heating, Echo. Logged in as a non-admin `sofa` user so kiosk-mode hides HA's chrome. Detail in `Context/Home Assistant.md`. Open: is there a snug TV to add?
