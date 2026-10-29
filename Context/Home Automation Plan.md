@@ -56,7 +56,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | | Wax melter | No | Smart plug: auto-off timer as a safety net so it can't be left on |
 | **Snug** | Light switch | Yes | Done |
 | **Living room** | Light switch | Yes | Done |
-| | 3 x smart bulbs | No | Need brand/app. Likely the three "lwip0" Wi-Fi devices in UniFi (Tuya-style chips); if so, Tuya or LocalTuya integration |
+| | 2 x smart bulbs (Tuya, corrected by Rob 29 Oct, was "3") | No | Probably the two "lwip0" clients with near-consecutive MACs `d8:c8:0c:b2:e6:5a` (.23) and `d8:c8:0c:b2:e6:87` (.66), both online since 28 Oct 07:04. No Tuya integration in HA yet. Route: official Tuya integration (Smart Life/Tuya app user code + QR scan, Rob's phone), local control later if wanted. Third lwip0 (`80:a0:36:a9:ae:97`, .101) is a different device, unidentified |
 | | Amazon Echo | Yes (currently unavailable) | Assign to Living Room; check why it dropped |
 | | LG TV | Yes (50" UA73006LA, three entries) | Keep the working one, delete duplicates |
 | **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
@@ -78,7 +78,7 @@ _(behaviour per room, filled in as Rob walks through them)_
 
 ## Open questions
 
-- Living room bulbs: what brand/app? IKEA GU10s: paired to the Hue bridge, an IKEA hub, or Alexa?
+- Living room bulbs: Tuya (2 of them). Which app, Smart Life or Tuya Smart? What is the third lwip0 device (.101)? IKEA GU10s: paired to the Hue bridge, an IKEA hub, or Alexa?
 - Washer/dryer: are either "smart" (own app)? Makes/models.
 - Which rooms first? Suggest the most-used shared spaces (living room, kitchen) then outward.
 - Budget per room / overall?
