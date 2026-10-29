@@ -39,12 +39,47 @@ HA areas: Living Room, Kitchen, Bedroom, Garage, Snug. Most devices aren't assig
 
 **Tidy-up to do before building:** assign devices to areas, add areas for Dexter, Logan, play room, hallway/landing, outside; clear the duplicate TV, clock and Xbox entries; decide whether the dead Dots are coming back.
 
+## Inventory pass (Rob, 29 Oct 2026)
+
+Rob's kit list per room, matched against HA and the UniFi client list the same afternoon. Room-by-room behaviour (who uses it, what annoys) still to come.
+
+**Big finding:** a lot of the "missing" kit is already on the network, just never connected to HA. A **Philips Hue bridge** is wired in (UniFi .173, MAC 00:17:88:6d:eb:d1) and the **Nanoleaf** ("Aurora", .60) is on Wi-Fi. Both are native HA integrations that only need a button press on the device to pair. A **Logitech Harmony Hub** (.142) is also on the network and not in HA.
+
+| Room | Kit (Rob) | In HA? | Gap / next step |
+|---|---|---|---|
+| **Garage** | Washing machine, tumble dryer | No | Energy-monitoring smart plug on each (13A-rated, e.g. Shelly Plug UK) for "washing's done" announcements and running cost. Check first whether either is a "smart" model with its own app |
+| | Solar inverter (Solis S6-GR1P3.6K, WiFi datalogger fitted) | No | Add via the datalogger: local Solarman integration if the stick supports it, else SolisCloud. Puts real solar generation on the Energy dashboard (currently missing) |
+| | Pod Point | Yes | Done (plus the MG4 and Shelly EM) |
+| **Master bedroom** | LG TV | Probably (the 43" UA75006LA, duplicated) | Assign to Bedroom, delete the dead duplicate |
+| | Amazon Dot | Yes, online again | Assign to Bedroom |
+| | iMac | No (on Wi-Fi as Robs-iMac, .41) | Presence/"is it on" only if useful; low priority |
+| | Wax melter | No | Smart plug: auto-off timer as a safety net so it can't be left on |
+| **Snug** | Light switch | Yes | Done |
+| **Living room** | Light switch | Yes | Done |
+| | 3 x smart bulbs | No | Need brand/app. Likely the three "lwip0" Wi-Fi devices in UniFi (Tuya-style chips); if so, Tuya or LocalTuya integration |
+| | Amazon Echo | Yes (currently unavailable) | Assign to Living Room; check why it dropped |
+| | LG TV | Yes (50" UA73006LA, three entries) | Keep the working one, delete duplicates |
+| **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
+| **Play room** | Nanoleaf | No (on Wi-Fi) | Native Nanoleaf integration, hold the power button 5-7s to pair |
+| | 6 x IKEA GU10 bulbs | No | Need to know what they're paired to: Hue bridge (then they come in with it), an IKEA hub, or nothing |
+| | 2 x Philips Hue bulbs | No | Come in with the Hue bridge |
+| | Music Assistant speakers (main + ambient Pis) | Yes | Main speakers currently unavailable, ambient fine |
+| **Loft** | UniFi Dream Machine | Used for presence | Optional: full UniFi integration for network health |
+| **Kitchen** | (not listed) | Kitchen Dot | Rob to walk it |
+| **Dexter's / Logan's rooms** | (not listed) | Dots, offline since Aug | Rob to walk them |
+
+**HA area naming:** the dungeon room stays **"Play room"** in HA. HA area names show up in the app and on any wall screen, and the kids can see those.
+
+**Quick wins (minutes, need someone at the device):** Hue bridge (press the link button), Nanoleaf (hold power), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
+
 ## Rooms
 
-_(filled in as Rob walks through them)_
+_(behaviour per room, filled in as Rob walks through them)_
 
 ## Open questions
 
+- Living room bulbs: what brand/app? IKEA GU10s: paired to the Hue bridge, an IKEA hub, or Alexa?
+- Washer/dryer: are either "smart" (own app)? Makes/models.
 - Which rooms first? Suggest the most-used shared spaces (living room, kitchen) then outward.
 - Budget per room / overall?
 - Zigbee: add a coordinator (USB stick on the Proxmox host, or SLZB-06 on PoE) before buying sensors?
