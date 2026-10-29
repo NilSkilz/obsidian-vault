@@ -53,7 +53,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | **Master bedroom** | LG TV | Probably (the 43" UA75006LA, duplicated) | Assign to Bedroom, delete the dead duplicate |
 | | Amazon Dot | Yes, online again | Assign to Bedroom |
 | | iMac | No (on Wi-Fi as Robs-iMac, .41) | Presence/"is it on" only if useful; low priority |
-| | Wax melter | No | Smart plug: auto-off timer as a safety net so it can't be left on |
+| | Wax melter | Yes (29 Oct) | Already on a Hue smart plug (two plugs named Bedroom / Living Room Wax Melter, both on at pairing). Auto-off safety net is now just an automation, no purchase |
 | **Snug** | Light switch | Yes | Done |
 | **Living room** | Light switch | Yes | Done |
 | | 2 x smart bulbs (Tuya, corrected by Rob 29 Oct, was "3") | Yes (29 Oct) | Done: `light.living_room_bulb_1` / `_2` via the Tuya integration, area Living Room. They are the two "lwip0" clients with near-consecutive MACs `d8:c8:0c:b2:e6:5a` (.23) and `d8:c8:0c:b2:e6:87` (.66), both online since 28 Oct 07:04. Cloud control for now, local (LocalTuya) later if latency annoys. Third lwip0 (`80:a0:36:a9:ae:97`, .101) is a different device, unidentified |
@@ -61,8 +61,8 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | | LG TV | Yes (50" UA73006LA, three entries) | Keep the working one, delete duplicates |
 | **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
 | **Play room** | Nanoleaf | No (on Wi-Fi) | Native Nanoleaf integration, hold the power button 5-7s to pair |
-| | 6 x IKEA GU10 bulbs | No | Need to know what they're paired to: Hue bridge (then they come in with it), an IKEA hub, or nothing |
-| | 2 x Philips Hue bulbs | No | Come in with the Hue bridge |
+| | 6 x IKEA GU10 bulbs | Partly (29 Oct) | Hue bridge has 3 IKEA dimmables (bridge calls them Hallway 1-3). Where the other 3 are paired is unknown |
+| | 2 x Philips Hue bulbs | Yes (29 Oct) | Hue bridge paired; the two colour spots are named for the living room on the bridge, physical location to confirm, then rename/re-area |
 | | Music Assistant speakers (main + ambient Pis) | Yes | Main speakers currently unavailable, ambient fine |
 | **Loft** | UniFi Dream Machine | Used for presence | Optional: full UniFi integration for network health |
 | **Kitchen** | (not listed) | Kitchen Dot | Rob to walk it |
@@ -72,7 +72,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 
 **HA area naming:** the dungeon room stays **"Play room"** in HA. HA area names show up in the app and on any wall screen, and the kids can see those.
 
-**Quick wins (minutes, need someone at the device):** Hue bridge (press the link button), Nanoleaf (hold power), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
+**Quick wins (minutes, need someone at the device):** ~~Hue bridge~~ (paired 29 Oct, see `Context/Home Assistant.md` Lighting), Nanoleaf (hold power), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
 
 ## Rooms
 
