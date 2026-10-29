@@ -68,6 +68,8 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | **Kitchen** | (not listed) | Kitchen Dot | Rob to walk it |
 | **Dexter's / Logan's rooms** | (not listed) | Dots, offline since Aug | Rob to walk them |
 
+**Living room automations (built 29 Oct 2026, Rob asked):** "cinema mode": lights off while the TV plays, dim warm on pause, back up when the TV goes off. Details in `Context/Home Assistant.md` (Lighting).
+
 **HA area naming:** the dungeon room stays **"Play room"** in HA. HA area names show up in the app and on any wall screen, and the kids can see those.
 
 **Quick wins (minutes, need someone at the device):** Hue bridge (press the link button), Nanoleaf (hold power), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
