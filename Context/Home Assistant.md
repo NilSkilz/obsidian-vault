@@ -59,20 +59,20 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 **Wi-Fi presence (built 29 Oct 2026, Rob asked).** Package `/config/packages/presence.yaml` (packages enabled in `configuration.yaml` the same day, backup `configuration.yaml.bak-20261029-presence`).
 - **Source:** one `rest` call every 30s to the UDM integration API (`/proxy/network/integration/v1/sites/<default>/clients`, key in HA `secrets.yaml` as `unifi_api_key`). UniFi association, not ping: iPhones nap their Wi-Fi radio and ignore ICMP, so pings flap.
 - **Per phone:** `binary_sensor.<phone>_on_wi_fi` (raw) -> automation `automation.presence_phones_on_wi_fi_to_trackers` -> router `device_tracker.<dev>` via `device_tracker.see` (home at once, `not_home` after 10 min off Wi-Fi, re-evaluated every minute).
-- **People:** `person.rob_stokes` = GPS `device_tracker.iphone` + `device_tracker.rob_phone_wifi`. `person.aimee`, `person.dexter`, `person.logan` created 29 Oct (storage persons, no HA user). Dexter = `device_tracker.phone_iphone_14` (29 Oct); Aimee + Logan still to assign (14 Pro vs 13 Mini).
+- **People:** `person.rob_stokes` = GPS `device_tracker.iphone` + `device_tracker.rob_phone_wifi`. `person.aimee`, `person.dexter`, `person.logan` created 29 Oct (storage persons, no HA user). Dexter = `device_tracker.phone_iphone_14`, Aimee = `device_tracker.phone_iphone_13_mini`, Logan = `device_tracker.phone_iphone_14_pro` (all linked 29 Oct). The 14 Pro tracker entity only appears once the automation first `see`s it (off Wi-Fi since the 16:05 restart, so it materialises as not_home after the 10-min timer).
 - **Phones** (UniFi fingerprint model, DHCP-reserved on the UDM 29 Oct, named in UniFi):
 
 | Phone | MAC | IP | Tracker | Owner |
 |---|---|---|---|---|
 | iPhone 12 (HA companion app) | a8:4a:28:7a:7d:ef | .92 | rob_phone_wifi | Rob |
 | iPhone 14 (fixed private MAC) | 72:3b:a0:f9:77:29 | .21 | phone_iphone_14 | Dexter (confirmed 29 Oct: only phone on Wi-Fi with Rob's off) |
-| iPhone 14 Pro (**rotating** MAC) | c6:ec:73:01:64:58 | .139 | phone_iphone_14_pro | TBC by Rob |
-| iPhone 13 Mini (**rotating** MAC) | ba:c3:57:9e:a8:ef | .39 | phone_iphone_13_mini | TBC by Rob |
+| iPhone 14 Pro (**rotating** MAC) | c6:ec:73:01:64:58 | .139 | phone_iphone_14_pro | Logan (by elimination, 29 Oct) |
+| iPhone 13 Mini (**rotating** MAC) | ba:c3:57:9e:a8:ef | .39 | phone_iphone_13_mini | Aimee (Rob, 29 Oct) |
 
 - **Rotating MAC gotcha:** two phones change their private Wi-Fi address about every 2 weeks (seen in UniFi history), which silently breaks MAC tracking and the reservation. Fix is on the phone: Settings > Wi-Fi > (i) on PidgeonsNest > Private Wi-Fi Address > **Fixed**, then update the MAC in the package + reservation.
 - **Assigning a phone:** `person/update` over the websocket (helper `~/Jarvis/ha/ha_ws.py`, run with `~/.venvs/podpoint/bin/python`), optionally rename the dev_id in the package.
 - An iPhone Air that shows up occasionally on evenings is a visitor's, deliberately not tracked.
-- **First ID attempt (29 Oct, inconclusive):** Rob said Dexter was home with him; at that moment both iPhone 14 (reconnected 13:48, same second as Rob's own phone/MacBook swapped AP, so physically near Rob) and iPhone 13 Mini (on Wi-Fi since 4am) were present, so no safe call could be made from traffic alone. Jarvis's fallback: get Dexter to toggle Wi-Fi off/on and watch which tracker drops and rejoins. Still unresolved, no phone assigned yet.
+- **First ID attempt (29 Oct, inconclusive):** Rob said Dexter was home with him; at that moment both iPhone 14 (reconnected 13:48, same second as Rob's own phone/MacBook swapped AP, so physically near Rob) and iPhone 13 Mini (on Wi-Fi since 4am) were present, so no safe call could be made from traffic alone. Jarvis's fallback: get Dexter to toggle Wi-Fi off/on and watch which tracker drops and rejoins. Resolved same afternoon: Rob turned his own Wi-Fi off, leaving the iPhone 14 as the only phone on, so Dexter = iPhone 14.
 
 ## Project Integration
 ### Mission Control
