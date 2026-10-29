@@ -72,6 +72,7 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 - **Rotating MAC gotcha:** two phones change their private Wi-Fi address about every 2 weeks (seen in UniFi history), which silently breaks MAC tracking and the reservation. Fix is on the phone: Settings > Wi-Fi > (i) on PidgeonsNest > Private Wi-Fi Address > **Fixed**, then update the MAC in the package + reservation.
 - **Assigning a phone:** `person/update` over the websocket (helper `~/Jarvis/ha/ha_ws.py`, run with `~/.venvs/podpoint/bin/python`), optionally rename the dev_id in the package.
 - An iPhone Air that shows up occasionally on evenings is a visitor's, deliberately not tracked.
+- **First ID attempt (29 Oct, inconclusive):** Rob said Dexter was home with him; at that moment both iPhone 14 (reconnected 13:48, same second as Rob's own phone/MacBook swapped AP, so physically near Rob) and iPhone 13 Mini (on Wi-Fi since 4am) were present, so no safe call could be made from traffic alone. Jarvis's fallback: get Dexter to toggle Wi-Fi off/on and watch which tracker drops and rejoins. Still unresolved, no phone assigned yet.
 
 ## Project Integration
 ### Mission Control
