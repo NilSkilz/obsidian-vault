@@ -62,7 +62,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
 | **Play room** | Nanoleaf | Yes (29 Oct) | Done: `light.nanoleaf`, area Play Room, local control incl. its saved effects |
 | | 6 x IKEA GU10 bulbs | Partly (29 Oct) | Hue bridge has 3 IKEA dimmables (bridge calls them Hallway 1-3). Where the other 3 are paired is unknown |
-| | 2 x Philips Hue bulbs | Yes (29 Oct) | Hue bridge paired; the two colour spots are named for the living room on the bridge, physical location to confirm, then rename/re-area |
+| | 2 x Philips Hue bulbs | Yes (29 Oct) | Hue bridge paired; the two colour spots ARE in the living room (Rob confirmed 29 Oct), renamed Living Room Spot 1/2 and part of cinema mode |
 | | Music Assistant speakers (main + ambient Pis) | Yes | Main speakers currently unavailable, ambient fine |
 | **Loft** | UniFi Dream Machine | Used for presence | Optional: full UniFi integration for network health |
 | **Kitchen** | (not listed) | Kitchen Dot | Rob to walk it |
