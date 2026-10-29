@@ -60,7 +60,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 | | Amazon Echo | Yes (currently unavailable) | Assign to Living Room; check why it dropped |
 | | LG TV | Yes (50" UA73006LA, three entries) | Keep the working one, delete duplicates |
 | **Hallway** | DAKboard | No (Pi on Wi-Fi, .85) | Fine as is; it already shows Jarvis notifications. Hallway area needed for future sensors |
-| **Play room** | Nanoleaf | No (on Wi-Fi) | Native Nanoleaf integration, hold the power button 5-7s to pair |
+| **Play room** | Nanoleaf | Yes (29 Oct) | Done: `light.nanoleaf`, area Play Room, local control incl. its saved effects |
 | | 6 x IKEA GU10 bulbs | Partly (29 Oct) | Hue bridge has 3 IKEA dimmables (bridge calls them Hallway 1-3). Where the other 3 are paired is unknown |
 | | 2 x Philips Hue bulbs | Yes (29 Oct) | Hue bridge paired; the two colour spots are named for the living room on the bridge, physical location to confirm, then rename/re-area |
 | | Music Assistant speakers (main + ambient Pis) | Yes | Main speakers currently unavailable, ambient fine |
@@ -72,7 +72,7 @@ Rob's kit list per room, matched against HA and the UniFi client list the same a
 
 **HA area naming:** the dungeon room stays **"Play room"** in HA. HA area names show up in the app and on any wall screen, and the kids can see those.
 
-**Quick wins (minutes, need someone at the device):** ~~Hue bridge~~ (paired 29 Oct, see `Context/Home Assistant.md` Lighting), Nanoleaf (hold power), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
+**Quick wins (minutes, need someone at the device):** ~~Hue bridge~~ (paired 29 Oct, see `Context/Home Assistant.md` Lighting), ~~Nanoleaf~~ (paired 29 Oct), then sort which hub the IKEA bulbs live on. That alone takes the house from 2 controllable lights to ~13.
 
 ## Rooms
 
