@@ -16,7 +16,8 @@
 
 ### Lighting
 - **Nanoleaf:** `light.aurora_52_50_96`
-- **Living room:** `light.living_room_lights_led`, `switch.living_room_lights`
+- **Living room:** `light.living_light_switch_swtich_state` (ESP32 switch relay) + `light.living_light_switch_leds`
+- **Living room bulbs (Tuya, added 29 Oct 2026):** `light.living_room_bulb_1`, `light.living_room_bulb_2` (G45 Extrastar, colour temp 2000-6500K + colour, area Living Room). Official Tuya integration via Rob's Smart Life account (entry `01M647QNS7T9423ZZCKTR856CE`, title rob_stokes@me.com), cloud control. Only these two devices are in that Tuya account. Commands silently did nothing until the entry was reloaded once after setup; after that the odd combined command (colour temp + brightness) still drops, so verify state and resend. QR trick for setup: HA's QR was rendered and opened in the LG TV browser (`webostv.command` `system.launcher/open` with a target URL), and `~/tools/tuya/qr_watch.py` polls Tuya's login endpoint (non-destructive) and finishes the HA flow once scanned.
 - **Snug:** `switch.snug_lights`
 - **IKEA Matter/Thread:** KAJPLATS bulbs, BILRESA switch (working as of Mar 2026)
 
