@@ -67,6 +67,10 @@ if lt "$W" 500 || [ "$W" = "unavailable" ]; then
   [ -f "$STATE/armed" ] && [ "$LOW" -ge 2 ] || exit 0
   T=$(date +%H:%M)
   SOC=$(get sensor.mg_mg4_electric_state_of_charge); LIMIT=$(get number.mg_mg4_electric_target_soc)
+  # SAIC's charging-data call can fail for hours (30 Oct: target_soc unavailable all day), so a
+  # limit Jarvis just set by hand is written to limit_hint and used for up to 18h when the car won't say.
+  case "$LIMIT" in ''|*[!0-9.]*) LIMIT="?"
+    [ -n "$(find "$STATE/limit_hint" -mmin -1080 2>/dev/null)" ] && LIMIT=$(cat "$STATE/limit_hint");; esac
   GUN=$(get binary_sensor.mg_mg4_electric_charging_gun_state)
   CLOUD=$(get binary_sensor.psl_557234_cloud_connection)
   STATUS=$(get sensor.psl_557234_status)
