@@ -61,3 +61,18 @@ Not in Plex (offered for Radarr):
 - Don't Breathe (2016) - Fede Alvarez, who also made Alien: Romulus (watched Nov 2024); silence-as-tension, pairs with the Quiet Place binge and Ready or Not.
 
 Notes: Watch the viewOffset field, not just viewCount. Day One had viewCount=0 but was 80% watched, which would have made a false "unwatched gem" claim. Predator: Badlands and Edge of Tomorrow are in the same state (viewCount 0, partially watched), so neither is a clean unwatched pick. Still banked for later: Predator (1987), John Wick 1/2/4, The Usual Suspects, Nightcrawler, Inglourious Basterds, The Mist, Pitch Black, Indiana Jones Last Crusade and Temple of Doom, Mission: Impossible series.
+
+## 2026-10-30
+
+Taste read: nothing new watched since Hot Fuzz on 20 Oct, so no fresh watch signal this week. Ten days dormant. The angle is the calendar instead: Halloween weekend, and Horror is still his highest watch-through genre (36% of 58). Library genre rates otherwise unchanged (Fantasy 37%, Thriller 35%, Adventure 34%, Animation bottom at 12%). Vampire-comedy vein confirmed watched: Renfield, Queen of the Damned, Lesbian Vampire Killers. Only new addition since last week is Practical Magic 2 (21 Oct, unwatched, presumed Aimee's). All of last week's picks still unwatched, as is everything from the three weeks before.
+
+In Plex, unwatched (viewCount 0, no viewOffset, all verified):
+- Weapons (2025) - 8.5, Zach Cregger. Biggest horror of 2025 and it has been sitting there untouched; horror is his top watch-through genre.
+- From Dusk Till Dawn (1996) - 7.6, crime film that turns into a vampire film at the halfway mark. Direct hit on the Renfield / Queen of the Damned / Lesbian Vampire Killers run plus his crime streak (Blow, 27 Sep).
+- Hocus Pocus (1993) - family sofa pick for Halloween night. He watched the 2022 sequel (4.7) and has never seen the 1993 original. Clean hole, and it is literally set on Halloween.
+
+Not in Plex (offered for Radarr):
+- Barbarian (2022) - Cregger's previous film, the natural double bill with Weapons which is already in the library.
+- Trick 'r Treat (2007) - Michael Dougherty Halloween-night anthology, cult horror-comedy, the exact vein as the Tucker and Dale / Ready or Not run.
+
+Notes: 28 Years Later is in the library (6.3) but 28 Days Later and 28 Weeks Later are not, so it is not a clean pick. Ghostbusters: Frozen Empire and Beetlejuice Beetlejuice are both present and unwatched but their predecessors are missing, same problem. Sleepy Hollow (8.0) is a good future Halloween pick but too gory for a 12 year old. Still banked: Predator (1987), John Wick 1/2/4, The Usual Suspects, Memento, Nightcrawler, The Mist, Pitch Black, Cube, Split, Inglourious Basterds, The Sixth Sense, Mission: Impossible series.
