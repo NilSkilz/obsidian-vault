@@ -341,3 +341,5 @@ Rob opened the home-automation push with the right first question: build dashboa
 Follow-on Rob agreed to but hasn't been done yet: an audit of what's actually in HA (it is deliberately sparse, he avoided adding devices that never got automated), which rooms and screens matter, and what annoys him day to day, before designing anything else.
 
 - **Cloudflare hides origin cert expiry (30 Oct 2026).** The NPM wildcard expired a month unnoticed because proxied traffic never validates the origin cert. Check certs direct against NPM (`openssl s_client -connect 192.168.1.14:443 -servername <host>`), not through the public name.
+
+- **Faking a sensor in HA hits the live automations (31 Oct 2026).** `POST /api/states` on a real sensor feeds every automation watching it. Testing the cooker guard that way sent Rob a real critical "cooker on" alert. Disable the automation's kill switch (or the automation) before injecting test states, and clear the fake state after.
