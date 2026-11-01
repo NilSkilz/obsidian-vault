@@ -202,3 +202,4 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 - **Backtest 21-31 Oct:** zero hits during the empty-house windows (only meaningful since 29 Oct, when all four persons existed).
 - **Testing gotcha:** faking ch1 via `POST /api/states` drives the live automations. Turn `input_boolean.cooker_guard` off first. (31 Oct: the test fired a real critical alert at 17:11 because the house went empty on the Wi-Fi timer mid-test.)
 - **Proper fix if wanted:** a dedicated clamp (second Shelly EM / Pro EM, 50A CT) on the cooker radial at the consumer unit gives an exact signal; a contactor on the isolator would allow a remote kill. Electrician job.
+- **Open question (asked 31 Oct, no answer yet):** should Aimee get the Telegram alert too, since she's the one who uses the isolator?
