@@ -44,3 +44,11 @@ Prompted by the UK government's "be ready for 72 hours" cyber-attack/disruption 
 - Sizing ask for the survey: state 4 occupants + daily showers explicitly so they spec a 200-250L cylinder (not 200L default); MCS requires the installer to agree reheat expectations with the customer.
 - Full research/reasoning trail (microbore pipework, siting, value impact, solar match) logged in `Daily/2026-09-09.md` and `Daily/2026-09-10.md`.
 - Rob was leaning positive (off-oil economics, solar/cylinder synergy, PD-legal siting); decided and booked the survey by 23 Sep.
+
+## Downstairs flooring (laminate, measured 30 Oct 2026)
+Long-standing job: laminate the downstairs living room and hallway, on soft hold since 28 Aug 2026 (original plan was to floor before buying the TV). Tracked as a Todoist task.
+
+- **Rooms (Rob's figures, "about", 30 Oct):** living room **5m x 5m = 25m²**, hallway **1m x 3.5m = 3.5m²**. Total **28.5m²**, or **31.4m²** with 10% added for cuts and waste.
+- **At a 2.2m² pack: 15 packs** (33m²). Buy **16** if he wants a spare pack in the loft for a later repair. Underlay ~**32m²**; beading = room perimeter minus door openings.
+- **Rob remembered "25 packs" from an old shop wishlist. That's wrong**, it would be ~55m², roughly double the floor and £200+ of surplus. I could find no 25 anywhere (not in Todoist, not in email, no dimensions in the vault or chat log), so it was almost certainly a different pack size or a different plan. The Todoist task has been rewritten with the numbers above and the old 25-pack note removed.
+- **Before ordering:** measure once properly with a tape, since the sizes above are eyeballed. Spec from the Todoist task: 8mm minimum (12mm nicer underfoot), **AC4 for the hallway** because of foot traffic. Order living room and hallway together so they come from one batch and the colour matches.
