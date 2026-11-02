@@ -783,3 +783,107 @@ Broader, and all small:
 - Bing: whether `/blog/negotiating-consent-checklist` holds its 7 impressions or grows, and whether any second post appears in `GetPageStats`
 - The Dynamic: proper look at pricing, platform and positioning before the comparison post gets rewritten
 - If the alternativeto.net listing goes in, whether it shows up in an AI answer within a few weeks. That is a clean, measurable test of the directory theory
+
+---
+
+## 2026-11-02
+
+Fifth consecutive week with no commits. `develop` and `main` are both still parked on `4c9cf80` (12 Oct merge), last real work 5 Oct. The handoff file `/tmp/jarvis-blog-suggest.*` arrived zero bytes, which was correct rather than broken: there genuinely were no commits to list. No Tethered mentions in the last week of daily logs either.
+
+This week I pulled Google Search Console and Bing rather than re-walking the same on-page checks, because last week's follow-ups asked for exactly that and it is the only part of the picture that can actually change while nothing ships. It changed the conclusion.
+
+### The finding that matters: the blog produces nothing
+
+Over the last 28 days (5 Oct to 1 Nov), GSC reports seven pages with any impressions at all:
+
+| Page | Impressions | Clicks | Avg pos |
+|---|---|---|---|
+| `/` | 108 | 7 | 6.5 |
+| `/donate` | 12 | 0 | 2.7 |
+| `/dashboard/tasks` | 6 | 0 | 3.0 |
+| `/#features`, `/#safety`, `/#tools`, `/dashboard` | 1 each | 0 | 2.0 |
+
+Not one of the eleven blog posts appears. Zero impressions across the entire content library in 28 days. The sitemap still reads 16 submitted, 0 indexed, unchanged since the 28 Sep baseline, and it was last downloaded 29 Oct so Google is still fetching it.
+
+Bing is worse: `GetRankAndTrafficStats` returns 0 impressions and 0 clicks for every recent day. The `/blog/negotiating-consent-checklist` row that showed 7 impressions last week has not grown, and the `www.../dashboard/*` zombie URLs are still present in `GetPageStats`.
+
+So the honest position after seven weeks of SEO work: the home page is indexed and ranks for brand terms, and the blog is invisible. Eleven posts, roughly 110,000 words of guides, generating no search impressions whatsoever.
+
+There is one piece of genuine good news, and it is small but real. Week on week the property moved from 30 impressions / 0 clicks / average position 10.6 to 26 impressions / 2 clicks / average position 3.7. Those are the first organic clicks since the single `/dashboard/tasks` click in September. It is brand traffic on the home page, not discovery, but position 3.7 means the site now resolves properly when someone searches for it by name. That was broken before.
+
+### Why the blog is invisible, in order of confidence
+
+1. **The October content work is still not deployed.** Confirmed again, and now I can measure what it costs. Every live post has zero internal `/blog/` links (the repo versions have four to six each) and every live post still CTAs to `/dashboard`, which `robots.txt` disallows. The internal link graph from commit `5052173` is the single strongest on-site signal available to a new site, and it has been sitting merged and undeployed for four weeks. A blog where no post links to any other post is eleven orphan pages, which is close to the worst possible crawl shape.
+
+2. **Nothing external links to Tethered.** Four searches this week, and the site did not surface once. A direct search for `"tethered.me.uk" OR "Tethered" BDSM safety app D/s dynamic` returned no result for the site and the engine explicitly reported it could not confirm the app exists. Without inbound links a new domain in an adult-adjacent niche has no path to authority, and the blog is where that bites first.
+
+3. **The SERP is owned by App Store listings and directories.** Every competitor query returns `apps.apple.com`, `alternativeto.net`, `appgoblin.info` and `mwm.ai`. Tethered is a PWA with no App Store presence, so it cannot compete on the format the results are made of.
+
+### Live site health: unchanged from last week
+
+Sitemap and `llms.txt` agree with each other, both carry all eleven posts, both return 200 with correct content types, `robots.txt` is correct. Title, meta description, single H1 and canonical are present and correct on `/`, `/blog` and the post I spot-checked. `Blog` and `ItemList` JSON-LD on `/blog`, `Article` JSON-LD on the post. The code-side SEO from 5 Oct is all live, because it was frontend code and rode the 12 Oct merge. Only the content-side work is stranded.
+
+Confirmed again, no change: `best-ds-task-apps-compared` serves the pre-October title and meta live and mentions Kneel, SubTasks, mysub and Embrace zero times, where the repo mentions them 11, 10, 3 and 3 times. Sitemap `lastmod` reads 2026-09-14 for posts edited 2026-10-05, because the generator reads `updatedAt` off the database rows and those rows have not been touched. The `lastmod` dates are currently telling Google the content is older than it is, which suppresses recrawl.
+
+`fireplay-101-...` is still live-only with no source file in the repo, so a reseed cannot restore it if anything goes wrong.
+
+### New this week
+
+**Three competitors the comparison post does not name.** The repo rewrite covers Obedience, Kneel, SubTasks, mysub and Embrace. Searches surfaced three more with real presence: **The Dynamic** (Dominant sets tasks with optional photo proof, rules and protocols, submissive journals; has an AlternativeTo page), **Ever Collar** (encrypted chat, consensual location sharing, tasks/punishments/rewards, pitched on discretion and security) and **Binded** (BDSM lifestyle app with Trustpilot reviews in multiple locales). Ever Collar in particular competes directly on the privacy angle Tethered uses as a differentiator.
+
+**Brand name ambiguity is worse than assumed.** "Tethered" collides with `Tethered: Couples Games Daily` on the App Store, a `Tethered Relationship App` on mwm.ai, phone tethering, Tether the stablecoin, and tethered-shooting photography software. A branded search does not reliably reach the site. This is not fixable cheaply and I am not proposing a rename, but it raises the value of ranking for descriptive non-branded queries and of being listed in directories where the entry carries a description.
+
+**Pricing intent is already landing with nowhere to go.** Two of the seven queries in 28 days are pricing questions: `does tethered cost money` at position 1 and `cost uk` at position 2. Both resolve to the home page. There is no indexable pricing page, despite `llms.txt` carrying a well-argued pricing section including the "why it is this cheap" community-infrastructure story.
+
+**Soft 404s on unknown top-level paths.** `/pricing`, `/features` and `/wibble` all return HTTP 200 serving the home page shell. `/blog/nonexistent` correctly 404s. This is the Amplify extensionless-path rewrite working as designed for SPA routes, and the canonical correctly points at `/`, so it is mitigated rather than harmful. Worth knowing before anyone links to a page that does not exist and assumes it works.
+
+### Blog post pitch
+
+I want to flag the obvious tension first. Suggesting a twelfth post when eleven produce zero impressions is treating a distribution problem as a supply problem. The binding constraint is deployment and inbound links, not ideas. That said, there is one topic where a new post genuinely is the highest-leverage content move, because it targets the only query space in this niche with no incumbent at all.
+
+**Title:** Safety Check-In Apps for Kink: Why Generic Safe-Call Apps Fall Short
+**Slug:** `safety-check-in-apps-for-kink`
+
+**Targets:**
+- "BDSM safety check-in app", "kink safe call app", "safety timer for solo play"
+- "self-bondage safety timer app", "app that alerts someone if I don't check in"
+- AI-assistant phrasing: "is there an app that will alert someone if I don't respond after a scene?", "what's a safe call app for meeting someone from FetLife?"
+
+**Outline:**
+- What a safe call actually is, and the three failure modes that kill it: the contact who falls asleep, the timer you cancel while still restrained, the friend who does not know what to do when the alert arrives
+- Honest review of what people currently use, naming them: If I'm Quiet, Am I Safe, Alive, SoloSafe, and a plain phone timer. What each gets right
+- Where generic apps break for kink specifically: no language for what is happening, alert text that outs you to the contact, no notion of a negotiated scene, no sharing with a partner, and the discretion problem when the contact is not someone you are out to
+- What to tell your safety contact before the scene, with a copy-paste script. This is the section that earns links and gets quoted
+- Solo play and self-bondage: the escape-must-not-depend-on-the-phone rule, testing the release, and why the timer is the last line not the first
+- Where Tethered fits, stated plainly and without overselling: timer, check-in, alert to a chosen contact, SMS on premium, and the fact that the same account also runs the dynamic
+
+**Why this one now:** the search for `BDSM safety check-in app solo play safety timer self-bondage` returned no kink-native product at all. The results were generic safety-timer apps and several outright spam domains. That is an empty niche with real intent behind it, and it is the one claim Tethered can make that no competitor in the D/s app field can match, since Obedience, Kneel, SubTasks, The Dynamic and Ever Collar are all task trackers with no safety layer. It is also the gap an assistant currently has to improvise an answer for, which is precisely the gap a citable page closes. The copy-paste safety-contact script gives it a reason to be linked to, which is the thing the site needs most.
+
+### Suggested site updates
+
+Broken first, and the first item has not changed in five weeks.
+
+1. **Run the reseed.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Rob only, no AWS creds on this box. Fifth week on this list. What is new is that I can now put a number on the cost: eleven posts, zero impressions, four weeks. The internal link graph, the `/dashboard` CTA fix and the comparison post's 2026 rewrite are all written, merged and doing nothing. Everything else on this list is worth less than this one command.
+
+2. **Strip the em dashes from the four original safety posts.** Carried, unchanged: 74 of them under the Tethered Team byline across `solo-play-safety-guide` (27), `negotiating-consent-checklist` (26), `meeting-new-partners-safely` (13), `when-things-go-wrong` (8). Find and replace in the seed files, rides along with item 1 at no extra cost.
+
+3. **List Tethered on alternativeto.net.** Carried from last week and now better evidenced. Four of the search results this week were AlternativeTo pages, and the engine's own summary quoted AlternativeTo's descriptions as the authority on what each competitor does. Obedience, Kneel, SubTasks and The Dynamic are all listed. Tethered is not. Free, user-submitted, one sitting, and it is the cheapest inbound link and the most direct route into AI answers available. Given finding 2 above, inbound links are now the headline problem, which promotes this from nice-to-have to second priority.
+
+Broader, all small:
+
+4. **Add a real `/pricing` page.** Two of seven queries in 28 days are pricing questions ranking at positions 1 and 2, resolving to the home page. The argument is already written in `llms.txt` (free core, $1.99, one subscription, no ads, built by someone in the scene, priced to cover costs). Lift it onto an indexable page, add it to the sitemap and to the canonical pages list in `llms.txt`. Also fixes one of the soft-404 paths.
+
+5. **Rewrite the `/blog` index meta description.** Carried. Still reads "consent negotiation, scene safety, aftercare and more", which is pre-pivot framing. Six of eleven posts are D/s dynamic content. One line of copy.
+
+6. **Fix the fireplay post.** Carried, unchanged. Slug `fireplay-101-a-beginner-s-guide-to-playing-with-fire-safely` has the apostrophe mangled to "beginner-s" and it is the only live post with no source file in `scripts/blog-posts/`, so it cannot survive a reseed. Shorten to `fireplay-101` with a redirect, write it back into the repo. If item 1 runs first, check the post is still intact afterwards.
+
+7. **Add the competitor set to `llms.txt` and the comparison post.** Now four names missing, not three: The Dynamic, Ever Collar, Binded, plus BeMoreKinky and Apple Check In from earlier weeks. Ever Collar is the one that matters most, since it competes on the encryption and discretion angle Tethered leans on.
+
+### Follow-ups for next week
+
+- Did the reseed run. Same five-minute check: comparison post title, internal link count on two posts, no live post linking to `/dashboard`
+- **Does any blog post record a single GSC impression.** This is now the metric that matters more than indexed counts or crawl state. Zero across 28 days is the number to beat
+- Whether the position 3.7 / 2 clicks improvement on the home page holds or was a one-week artefact
+- Bing: whether anything at all returns from zero, and whether the `www.../dashboard/*` zombies finally wash out
+- If the alternativeto.net listing goes in, whether it produces a referral or an AI citation. Clean test of the directory theory
+- The Dynamic, Ever Collar and Binded: pricing, platform and positioning before the comparison post is rewritten
