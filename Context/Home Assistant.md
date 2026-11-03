@@ -62,6 +62,7 @@ The core **Alexa Devices** integration (`alexa_devices`, config entry `01KXS4B99
 - **Commissioning:** Use HA Companion app (Docker can't access BLE)
 - **Note:** BILRESA scroll wheel not fully exposed in Matter yet (button works)
 - **Troubleshooting:** Restart OTBR if "NoBufs" errors appear
+- **NUC-era fix re-checked (3 Nov 2026 18:16):** the only written-down fix from the March pairing struggle is the three lines above (Companion app, IPv6 forwarding, restart OTBR on NoBufs). On HAOS IPv6 forwarding is handled by the OS, OTBR is leader with no NoBufs, so none of it is the current blocker.
 - **iPhone "Unable to add accessory" (3 Nov 2026):** HA side was clean (Matter server 9.3.0 up, OTBR leader, IPv6 fine) and the Matter server logged no commissioning attempt at all, so it fails on the phone. Cause: the iPhone doesn't hold the new `ha-thread-8fe5` credentials. Fix: Companion app Settings > Companion App > Troubleshooting > Sync Thread credentials, then retry with a freshly reset device (pairing window is short).
 
 ## Presence Tracking
