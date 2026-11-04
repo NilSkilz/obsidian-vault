@@ -129,5 +129,7 @@ Decided 2026-09-20 (full detail in that daily log): half couplers bolted through
 
 ## Toy mounts (proposed 4 Nov 2026)
 Rob wants clamp-on dildo mounts for the rig, Vac-U-Lock to start. Recommended design: **don't print the tube clamp.** Use a real 101 short tee (10 salvaged) or 147 swivel tee (for angle) on the rig, holding a short 33.7 stub (spare capped 470 offcuts, cut down). Steel carries all the bending and bodyweight side load. The printed part is only a **tube-end plug**: spigot into the 27.7mm bore (33.7 x 3 wall), flange over the end, VUL peg on top, retained by an M6 cross-bolt through a drilled hole in the stub (VUL suction pulls on it every time a toy comes off). PETG, 100% infill on the peg, printed upright so the peg isn't snapping along layer lines.
+
+![[Scaffold Rig - toy mount.png]]
 Option: make the peg a separate part on an M8 stud so the same stub takes VUL, a KlicLok receiver (per [[Fuck-io]] note) or a flat suction-cup plate.
 Open: measure a real VUL socket (bore diameter at mouth and base, depth) before CAD; no trustworthy published dims.
