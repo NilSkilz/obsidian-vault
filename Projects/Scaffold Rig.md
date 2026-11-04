@@ -140,3 +140,6 @@ Option: make the peg a separate part on an M8 stud so the same stub takes VUL, a
 - Plan once real bore is known: print the spigot ~0.3mm under the measured bore for a snug slide fit; the M6 cross-bolt carries the retention load, not friction.
 
 **4 Nov 2026, KlicLok pivot:** Rob found the cheap AliExpress toys almost all ship KlicLok, and VUL-socket toys are scarce outside Doc Johnson. Recommendation: build the stub around the **M8-stud split** so the swappable head is the decision, and make the first head a **bought metal KlicLok female receiver** (Hismith-style machine connector / KlicLok suction-cup adapter) rather than a printed one; a printed spring latch is the weak point, a printed VUL peg isn't. VUL head stays on the list for any DJ toys. Open: Rob to pick a receiver; measure its mounting (thread/bore) when it lands, then CAD the adapter.
+
+![[Scaffold Rig - toy mount KlicLok.png]]
+KlicLok layout: printed spigot+flange with a captive M8 nut (dropped in mid-print) under the flange, M8 stud Loctited in, bought receiver screwed on and locked with a jam nut; M6 cross-bolt sits lower in the spigot, clear of the stud. Heads swap on the same stud (KlicLok receiver, printed VUL peg, flat suction plate). If the receiver isn't M8, only the captive nut changes. Source SVG: `~/generated/scaffold/mount-kliclok.svg`.
