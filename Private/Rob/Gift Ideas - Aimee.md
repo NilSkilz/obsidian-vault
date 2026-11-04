@@ -16,3 +16,6 @@ Status 4 Nov 2026: nothing written down before today. Rob asked, these are my su
 
 - Nothing collar-shaped (Sean is her Dom, that's his territory).
 - Budget sits inside the household money picture; see [[Rob's money pattern]], fund it rather than blow it.
+
+## 2026-11-04
+Rob passed on all of the above ("don't rly like any of those"). Don't re-pitch them as a set; start fresh from what she's into lately.
