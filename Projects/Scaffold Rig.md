@@ -132,4 +132,9 @@ Rob wants clamp-on dildo mounts for the rig, Vac-U-Lock to start. Recommended de
 
 ![[Scaffold Rig - toy mount.png]]
 Option: make the peg a separate part on an M8 stud so the same stub takes VUL, a KlicLok receiver (per [[Fuck-io]] note) or a flat suction-cup plate.
-Open: measure a real VUL socket (bore diameter at mouth and base, depth) before CAD; no trustworthy published dims.
+
+**Open, before CAD (4 Nov 2026):**
+- VUL socket on Rob's actual toy: bore diameter at mouth and base, depth. No trustworthy published dims to assume from.
+- **470 offcuts' real bore:** 27.7mm assumes 3mm wall on the salvaged tube, but it's never been measured and salvaged shopfitting tube is often 2.6 or 3.2mm wall (bore 28.5 or 27.3 instead). Measure inside one with calipers.
+- Measure **after deburring**, not on the raw cut: the pipe cutter rolls a lip into the bore that the deburrer then removes.
+- Plan once real bore is known: print the spigot ~0.3mm under the measured bore for a snug slide fit; the M6 cross-bolt carries the retention load, not friction.
