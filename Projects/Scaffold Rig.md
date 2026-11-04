@@ -126,3 +126,8 @@ Decided 2026-09-20 (full detail in that daily log): half couplers bolted through
 33.7 OD / 3mm wall / plain mild steel: **Faithfull 6-42mm manual steel pipe cutter, Screwfix £20.99, code 161YL** (5mm wall clearance, rated for steel, retractable deburrer). A dozen turns per cut, quarter-turn tighter each pass, don't rush or the wheel wanders. It rolls a lip into the bore, so deburrer inside and a file on the outside so fittings slide on.
 - Fallback if it's hard work: **Erbauer 750W 115mm angle grinder £32.99** + 1mm cutting discs + a flap disc. 15 seconds a cut.
 - Do NOT buy the Rothenberger 6-67mm (£109.99): it's rated for thin-wall only. Toolstation is a dead end entirely, their steel-rated cutters stop at 28mm.
+
+## Toy mounts (proposed 4 Nov 2026)
+Rob wants clamp-on dildo mounts for the rig, Vac-U-Lock to start. Recommended design: **don't print the tube clamp.** Use a real 101 short tee (10 salvaged) or 147 swivel tee (for angle) on the rig, holding a short 33.7 stub (spare capped 470 offcuts, cut down). Steel carries all the bending and bodyweight side load. The printed part is only a **tube-end plug**: spigot into the 27.7mm bore (33.7 x 3 wall), flange over the end, VUL peg on top, retained by an M6 cross-bolt through a drilled hole in the stub (VUL suction pulls on it every time a toy comes off). PETG, 100% infill on the peg, printed upright so the peg isn't snapping along layer lines.
+Option: make the peg a separate part on an M8 stud so the same stub takes VUL, a KlicLok receiver (per [[Fuck-io]] note) or a flat suction-cup plate.
+Open: measure a real VUL socket (bore diameter at mouth and base, depth) before CAD; no trustworthy published dims.
