@@ -3,7 +3,8 @@
 Durable facts about the property, gathered during the heat pump research (Sep 2026).
 
 ## Heating & hot water
-- **Currently heating oil**, no mains gas. No hot water cylinder at all (combi-style setup) — any heat pump/cylinder quote needs a full new cylinder, no "keep existing" discount applies.
+- **Currently heating oil**, no mains gas. No hot water cylinder at all: oil combi, hot water on demand (Rob confirmed 5 Nov 2026). Any heat pump/cylinder quote needs a full new cylinder, no "keep existing" discount applies.
+- **Nest thermostat controls heating only.** No stored hot water means nothing to boost, so a "boost the hot water" ask isn't a thing on this system. If hot water is slow or lukewarm, that's the boiler (flow rate, burner, or a preheat/keep-warm setting on the boiler itself), not the Nest.
 - Boiler sits inside the **garage**, which juts ~1m forward of the house at the front.
 - Has **solar PV** installed.
 - Village is in an **AONB**, not a conservation area, not listed. Confirmed via GPDO Class G that AONB carries no extra permitted-development restriction for ground-mounted heat pump units (only conservation areas/World Heritage Sites do) — front garden by the garage is PD-legal, pending the surveyor's noise calc and no Article 4 direction on the village.
