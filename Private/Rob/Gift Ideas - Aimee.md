@@ -19,3 +19,6 @@ Status 4 Nov 2026: nothing written down before today. Rob asked, these are my su
 
 ## 2026-11-04
 Rob passed on all of the above ("don't rly like any of those"). Don't re-pitch them as a set; start fresh from what she's into lately.
+
+## 2026-11-06
+Rob's own idea: **an electric blanket.** "She likes warm things." First idea he's actually landed on, so this is the frontrunner. When buying: dual control if it's going on the shared bed (so Rob isn't cooked), washable, auto shut-off timer. Check the bed size first. A heated throw for the sofa is the alternative if she runs cold in the evenings rather than at bedtime.
