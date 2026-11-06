@@ -7,6 +7,7 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - **Nest thermostat controls heating only.** No stored hot water means nothing to boost, so a "boost the hot water" ask isn't a thing on this system. If hot water is slow or lukewarm, that's the boiler (flow rate, burner, or a preheat/keep-warm setting on the boiler itself), not the Nest.
 - Boiler sits inside the **garage**, which juts ~1m forward of the house at the front.
 - Has **solar PV** installed.
+- **Local oil top-up supplier: Certas**, depots in Bodmin and Redruth (01208 72551). Winter deliveries can take a week or more, so order before the tank's empty. Most suppliers' minimum order is 500L, some (e.g. BoilerJuice) do 300L for a few pence/L more.
 - Village is in an **AONB**, not a conservation area, not listed. Confirmed via GPDO Class G that AONB carries no extra permitted-development restriction for ground-mounted heat pump units (only conservation areas/World Heritage Sites do) — front garden by the garage is PD-legal, pending the surveyor's noise calc and no Article 4 direction on the village.
 
 ## Energy monitoring & solar (17 Sep 2026)
