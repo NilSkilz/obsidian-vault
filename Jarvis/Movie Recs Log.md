@@ -76,3 +76,20 @@ Not in Plex (offered for Radarr):
 - Trick 'r Treat (2007) - Michael Dougherty Halloween-night anthology, cult horror-comedy, the exact vein as the Tucker and Dale / Ready or Not run.
 
 Notes: 28 Years Later is in the library (6.3) but 28 Days Later and 28 Weeks Later are not, so it is not a clean pick. Ghostbusters: Frozen Empire and Beetlejuice Beetlejuice are both present and unwatched but their predecessors are missing, same problem. Sleepy Hollow (8.0) is a good future Halloween pick but too gory for a 12 year old. Still banked: Predator (1987), John Wick 1/2/4, The Usual Suspects, Memento, Nightcrawler, The Mist, Pitch Black, Cube, Split, Inglourious Basterds, The Sixth Sense, Mission: Impossible series.
+
+## 2026-11-06
+
+Taste read: the library woke up this week and it woke up as 90s crime. L.A. Confidential 3 Nov (9.9, highest-rated thing he has touched in months), The Bone Collector 5 Nov, No Time to Die 5 Nov. Practical Magic 2 played three times 31 Oct to 1 Nov (presumed Aimee). It's Always Sunny started 30 Oct, South Park binge appears to have ended 20 Oct. Genre rates steady: Fantasy 38%, Horror 36%, Adventure and Thriller 35%, Mystery 33%, Action 33% (but 295 titles, biggest by volume), Animation still bottom at 12%. 791 titles, 229 watched. Every pick from the last five weeks is still unwatched.
+
+Two clean holes found: he watched No Time to Die, the END of the Craig Bond arc, and Casino Royale / Quantum / Skyfall / Spectre are all untouched. Same shape as the Rogue One pick. And Seven, The Departed, Dragon Tattoo, The Negotiator and The Jackal are all watched while The Usual Suspects and Fargo sit there.
+
+In Plex, unwatched (viewCount null, viewOffset null, all verified):
+- The Usual Suspects (1995) - 9.6 audience. The other half of the L.A. Confidential / Bone Collector run he did this week; 90s crime puzzle, Mystery/Thriller.
+- Casino Royale (2006) - 9.4. He watched the end of the Craig arc on Thursday and has never seen the beginning. Family sofa pick, 12A, works for a 15 and a 12 year old.
+- Fargo (1996) - 9.5/9.2 Coen crime. Same 90s crime lane, completely different tone, and Crime sits at only 28% watch-through with 79 titles.
+
+Not in Plex (offered for Radarr):
+- Heat (1995) - Mann's L.A. crime epic, the direct neighbour of L.A. Confidential, confirmed absent from the library.
+- Prisoners (2013) - Villeneuve abduction procedural, modern Seven; confirmed absent (only Prisoner of Azkaban matched).
+
+Notes: Casino (1995, 9.3) IS in the library and unwatched, held back to avoid three Scorsese-adjacent crime picks in one week; strong next-week candidate. Quantum of Solace, Skyfall and Spectre all unwatched behind Casino Royale, so the Bond vein has three more weeks in it. Predator: Badlands now sits at 74% watched (viewCount 0), still not a clean pick. Indiana Jones: Last Crusade and Temple of Doom unwatched but Raiders was already pitched 2 Oct and never played, so the Indy lane is parked. Still banked: Memento (9.4), Snatch (9.3), Lock Stock (9.3), Nightcrawler, No Country, Inside Man, Jackie Brown, Collateral, Insomnia, Sin City, The Princess Bride (9.4, family), The Karate Kid (1984), Blade Runner, John Wick 1/2/4, Predator (1987).
