@@ -40,6 +40,7 @@ Strip-search "inspection", circle every mole and freckle in marker as a witch's 
 ### Ordeal by Hot Iron (mindfuck brand)
 Heat a poker or a brand where she can see it and hear it hiss. Blindfold her, swap it for an identical cold one, or for ice. Cold steel on skin straight after that build-up reads as a burn for a split second.
 - Jarvis note: the swap must be foolproof. Hot iron goes straight into a bucket of sand, out of reach, before the cold one comes out. Never both in hand at once.
+- Kit (7 Nov): Rob's going with the fake. Buy TWO identical cheap irons (BBQ/steak irons with clip-in letters, ~£17 on ManoMano, or Menkind's 55-letter set): one heated for show, one from the freezer for skin. Freezer cold only, never dry ice or liquid-cooled (that's a real cold burn). Mark the cold one's handle so the swap can't go wrong.
 
 ### The Witch's Cradle
 A real historic torture: the accused was put in a sack and hung up to swing and spin until she was disoriented. Suspension version: hood or blindfold, rope cocoon or hammock, slow spin, no sense of up.
