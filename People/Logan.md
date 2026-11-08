@@ -37,6 +37,9 @@
 - **ENM awareness:** None — Logan is NOT aware of the ENM arrangement; as far as he knows, his parents are monogamous
 - **Jarvis interaction:** Comfortable with AI assistance in daily life
 
+## Wants / gift ideas
+- **A fake jellyfish tank (7 Nov 2026).** He asked for one; the cheap bubble-jet "jellyfish lamps" (~£25-80) look rubbish and Rob agrees. The version that works: a **real jellyfish tank** (kreisel / pseudo-kreisel, slow round flow, no jets) with **floppy silicone jellies** in it, lit a single blue or cool white against a black background, not a rainbow cycle. Nothing under £150 found second-hand on 7 Nov; best options were a used TMC Kreisel 15 at £167 (new is £169.99, so only a deal around £120) or a £56 1.8L desktop jelly kit. Facebook Marketplace and Gumtree still unsearched (login walls), so worth Rob scrolling. **Wildcard:** casting their own jellies from thin translucent silicone with glow powder in the tentacles is a decent father-son build.
+
 ## Activities & Interests
 - **Development tracking:** Activities and interests evolving
 - **Calendar management:** Personal schedule coordination

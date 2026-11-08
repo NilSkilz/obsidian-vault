@@ -8,6 +8,8 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - Boiler sits inside the **garage**, which juts ~1m forward of the house at the front.
 - Has **solar PV** installed.
 - **Local oil top-up supplier: Certas**, depots in Bodmin and Redruth (01208 72551). Winter deliveries can take a week or more, so order before the tank's empty. Most suppliers' minimum order is 500L, some (e.g. BoilerJuice) do 300L for a few pence/L more.
+- **Rob is on a BoilerJuice monthly plan: £40/mo since spring 2026** (see `Projects/Tide Finances Spending Analysis.md`), so there is usually several hundred pounds of credit sitting on that account. **Check the BoilerJuice balance before paying for a delivery by card.**
+- **Price benchmark (6 Nov 2026):** ~111-113p/L ex-VAT nationally, so ~£1.15-1.20/L inc. VAT. Roughly £360-400 for 300L, £575-600 for 500L, £1,100-1,150 for 1000L. Cornwall usually sits at or just above the national average. Check live prices (Pricetank / Fueltool / Oilcompare) rather than quoting these.
 - Village is in an **AONB**, not a conservation area, not listed. Confirmed via GPDO Class G that AONB carries no extra permitted-development restriction for ground-mounted heat pump units (only conservation areas/World Heritage Sites do) — front garden by the garage is PD-legal, pending the surveyor's noise calc and no Article 4 direction on the village.
 
 ## Energy monitoring & solar (17 Sep 2026)
@@ -56,3 +58,12 @@ Long-standing job: laminate the downstairs living room and hallway, on soft hold
 - **1 Nov 2026: switched to vinyl click (LVT/SPC).** Underlay must be thin, dense LVT underlay (~1-1.5mm), NOT 3mm laminate foam: soft foam lets the click joints flex and snap, and voids most vinyl warranties. If the planks come with an attached backing pad, no extra underlay at all (just a DPM on concrete). Quote seen: 1mm LVT underlay £37 per 6m², so ~32m² = 6 rolls ≈ £222.
 - **Before ordering:** measure once properly with a tape, since the sizes above are eyeballed. Spec from the Todoist task: 8mm minimum (12mm nicer underfoot), **AC4 for the hallway** because of foot traffic. Order living room and hallway together so they come from one batch and the colour matches.
 - **5 Nov 2026:** 4 surplus flooring packs from B&Q. Returning 3 for refund, keeping 1 pack as a colour/batch-matched spare in case a plank gets damaged later (B&Q returns need receipt + unopened, 90-day window).
+
+## Front door lock (6 Nov 2026, unresolved)
+The front door had a **Yale Connect 6 L1 motorised smart lock**: fully motorised, **no key at all**, driven by the inside motor unit and, manually, by a metal pin from inside. Rob is replacing it with an ordinary key cylinder.
+
+- **Where it stuck:** with every panel and the motor unit off, the bare tailpiece turns only between roughly **8 o'clock and 5 o'clock** and cannot reach **6 o'clock**, which is where the cam has to sit to withdraw the cylinder. Both end stops are in the **multipoint gearbox**, not the cylinder, so the cam fouls on each side of the bottom position. Forcing it snaps the cam or cracks the gearbox hub, which is a far worse job than a stuck cylinder.
+- **Things still untried:** handle held part-way up (the obstruction moves with the handle), handles and spindle removed entirely, faceplate screws near the gearbox slackened a couple of turns for a millimetre of play, and checking whether the tailpiece is actually driving the cam (smart cylinders often have a clutch).
+- **Fallbacks:** locksmith (~£60-90 plus the cylinder) or drilling it out, accepting the mis-drill risk to the gearbox. Have the new cylinder in hand before anything destructive, and keep the door unlocked while working so the multipoint can't be thrown with nothing to drive it.
+- **Replacement spec:** measure the old cylinder from the **centre of the retaining screw hole to each face separately** (L1 cylinders are often asymmetric), and buy **anti-snap, TS007 3-star**, since it is the front door.
+- Related: the emergency-preparedness note above flags "confirm smart lock behaviour in a power cut", which this replacement answers by removing the smart lock.

@@ -44,6 +44,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Work (Superdry) | `Context/Work Context.md` |
 | Home Assistant | `Context/Home Assistant.md` |
 | Infrastructure (current layout) | `Context/Infrastructure.md` |
+| The house itself (heating/oil, solar, flooring, front door) | `Context/House.md` |
 | Aimee (wife) | `People/Aimee.md` |
 | Dexter (son, 15) | `People/Dexter.md` |
 | Logan (son, 12) | `People/Logan.md` |
@@ -58,6 +59,8 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Harbourmaster (work PR bot, runs on Rob's work Mac) | `Projects/Harbourmaster.md` |
 | Saline Pump (ESP32 saline-injection rig) | `Projects/Saline Pump/` |
 | Fuck-io (stepper machine + orgasm-detect plug + remote, idea) | `Projects/Fuck-io.md` |
+| Scaffold Rig (key-clamp play furniture + toy mounts) | `Projects/Scaffold Rig.md` |
+| UK law on kink images and practice | `Context/Kink Safety - UK Law.md` |
 | Technical lessons | `Decisions/Technical Lessons Learned.md` |
 | Daily logs | `Daily/YYYY-MM-DD.md` (format below) |
 
