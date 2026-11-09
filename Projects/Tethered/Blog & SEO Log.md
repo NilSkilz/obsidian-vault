@@ -887,3 +887,101 @@ Broader, all small:
 - Bing: whether anything at all returns from zero, and whether the `www.../dashboard/*` zombies finally wash out
 - If the alternativeto.net listing goes in, whether it produces a referral or an AI citation. Clean test of the directory theory
 - The Dynamic, Ever Collar and Binded: pricing, platform and positioning before the comparison post is rewritten
+
+## 2026-11-09
+
+Sixth consecutive week with no commits. `develop` and `main` are both still on `4c9cf80` (12 Oct merge), last real work 5 Oct. The handoff file arrived zero bytes again, correctly: a dry-run fetch confirms no new commits on either branch. No Tethered mentions anywhere in the last week of daily logs.
+
+Last week's review was thorough and most of its findings are unchanged, so this entry reports the delta rather than re-walking the same checks. Three things are genuinely new, and one of them changes the diagnosis.
+
+### New: the crawl state is worse than "not indexed"
+
+Last week's evidence was the sitemap's `16 submitted / 0 indexed` plus zero blog impressions. This week I ran the GSC URL Inspection API per URL, which distinguishes between Google having looked and declined, and Google having never looked at all:
+
+| URL | Coverage state |
+|---|---|
+| `/blog/best-ds-task-apps-compared` | Discovered, currently not indexed |
+| `/blog` | **URL is unknown to Google** |
+| `/blog/solo-play-safety-guide` | **URL is unknown to Google** |
+
+The blog index page itself has never been crawled. That is the finding. It is not that Google crawled the blog and judged it thin, it is that Google has never fetched the hub page that lists all eleven posts, despite that URL sitting in a sitemap it downloaded cleanly on 7 Nov with zero errors.
+
+This matters because it reorders the fixes. A sitemap listing is a hint, not a crawl instruction, and on a new low-authority domain in an adult-adjacent niche it is clearly being ignored. What actually earns a crawl is a link, and the blog currently has almost none pointing into it: the home page links to `/blog` twice and to no individual post, and no live post links to any other post, because the internal link graph from 5 Oct is still undeployed. So the blog is not merely eleven orphan pages, it is eleven orphan pages behind an uncrawled hub. Deploying the link graph is no longer just the strongest on-site signal available, it is the only discovery path the site has.
+
+### New: Kneel is running this exact playbook and winning
+
+The competitive news of the week. `kneelapp.pages.dev` is not just an App Store listing, it is a vendor content site with a blog: `best-ds-relationship-apps`, `obedience-app-alternative`, `dom-sub-app`, `chastity-app`, plus a structured `/guide` section with pages per feature. It ranks first for "best app for managing a D/s dynamic tasks rewards punishments 2026". A second site, `dominant-guide.pages.dev`, is doing the same thing (`articles/apps-for-ldr-bdsm-couples`, a relationships category).
+
+Both are Cloudflare Pages vendor-content sites. That is precisely Tethered's strategy, executed faster, already indexed, and already cited: the search engine's own summary quoted Kneel's blog as a review source while explicitly flagging that it is vendor-published. So the approach is not wrong and the niche is not unrankable. Tethered is simply six weeks behind on the one step that makes content count, which is being crawlable.
+
+The same searches returned no trace of Tethered. A direct branded query for `Tethered app D/s dynamic BDSM safety timer consent checklist review` produced the flat statement that no review of an app called "Tethered" could be found. That is the AI-citation question answered: an assistant asked to recommend a D/s app today will name Kneel, SubTasks, Obedience, mysub, Devotion, Ever Collar and The Dynamic, and will not know Tethered exists.
+
+### New: two more competitors, making five the comparison post does not name
+
+Added this week: **Devotion** (iPhone, pairs two devices by shared code, photo evidence behind premium) and **Collar: BDSM Habit Tracker** (iOS, also surfacing as "Ever Collar: BDSM tracker"). These join The Dynamic, Ever Collar and Binded from last week. The repo rewrite names Obedience, Kneel, SubTasks, mysub and Embrace, so the comparison post is already behind the field again before it has even shipped.
+
+### Confirmed, unchanged from last week
+
+- **The October content work is still not deployed.** Re-verified across all ten repo posts, not just one. Repo versions carry four to six internal `/blog/` links each, 51 in total. Every live post has **zero**. Every live post still CTAs to `/dashboard`, which `robots.txt` disallows; the comparison post does it twice. The live comparison post serves the pre-October title and meta and mentions Kneel, SubTasks, mysub and Embrace zero times against the repo's 11, 10, 3 and 3.
+- **Sitemap and `llms.txt` agree and are both complete.** All eleven posts in both, both 200 with correct content types, `robots.txt` correct, `/welcome` correctly excluded from all three. Nothing shipped last week, so nothing could be missing.
+- **On-page SEO is correct where it is code.** Title, single H1, meta description and canonical all present and right on `/`, `/blog` and the comparison post. `Blog` plus `ItemList` with eleven `ListItem`s on `/blog`, `Article` plus `WebPage` plus `Person` on the post, `SoftwareApplication` plus `Organization` plus two `Offer`s on the home page. The 5 Oct frontend SEO work is all live. Only the database-side content is stranded.
+- **Sitemap `lastmod` is stale and partly absent.** Posts edited on 5 Oct still read `2026-09-14`, because the generator reads `updatedAt` off database rows nothing has touched. The five static pages (`/`, `/blog`, `/privacy`, `/contact`, `/donate`) carry no `lastmod` at all.
+- **Soft 404s.** `/pricing`, `/features`, `/signup` and `/this-page-does-not-exist-xyz123` all return HTTP 200 serving an identical 8657-byte home page shell with canonical pointing at `/`. Mitigated, not harmful, but it means `/pricing` and `/features` silently look like working pages.
+- **Zombie `/dashboard` URLs persist**: `/dashboard/tasks` 6 impressions, `/dashboard` 1, both still ranking despite the robots disallow.
+
+### Traffic: the brand recovery is holding
+
+Answering last week's follow-up directly. Over 10 Oct to 6 Nov the property shows 109 impressions and 9 clicks on the home page at average position 7.6, against 108 and 7 for the comparable window last week. Clicks are accumulating rather than spiking, so the position 3.7 week-on-week figure was not a one-week artefact: the site now resolves reliably when someone searches it by name. That was broken in September and is fixed.
+
+Everything else is still a rounding error. Seven queries in 28 days, eight impressions between them, zero clicks on anything but the home page, and **not one blog post with a single impression**, now across 34 days. Three of the seven queries are intent Tethered cannot serve: `does tethered cost money` (position 1), `cost uk` (position 2), `are there other options?` (position 4).
+
+### Blog post pitch
+
+Unchanged from last week, deliberately. Last week pitched **Safety Check-In Apps for Kink: Why Generic Safe-Call Apps Fall Short** (`safety-check-in-apps-for-kink`) and it was not written, because nothing shipped at all. Pitching a thirteenth idea on top of an unwritten twelfth would be noise, and this week's evidence makes the same post stronger rather than weaker, so I am carrying it with the new material folded in rather than inventing a replacement.
+
+**Title:** Safety Check-In Apps for Kink: Why Generic Safe-Call Apps Fall Short
+**Slug:** `safety-check-in-apps-for-kink`
+
+**Targets:**
+- "BDSM safety check-in app", "kink safe call app", "safety timer for solo play"
+- "self-bondage safety timer app", "app that alerts someone if I don't check in"
+- AI-assistant phrasing: "is there an app that will alert someone if I don't respond after a scene?", "what's a safe call app for meeting someone from FetLife?"
+
+**Outline:**
+- What a safe call actually is, and the three failure modes that kill it: the contact who falls asleep, the timer you cancel while still restrained, the friend who does not know what to do when the alert arrives
+- Honest review of what people currently use, naming them. **Updated this week:** the searches surfaced **Deadman Switch** (iOS, checks you in before a timer expires then emails or texts your contacts a message you wrote) and **Demumu** (tiered alerts to emergency contacts on a missed check-in) as the real incumbents, alongside If I'm Quiet, Am I Safe, Alive and a plain phone timer. Both of the new ones are built for solo living, not for scenes, which is exactly the argument
+- Where generic apps break for kink specifically: no language for what is happening, alert text that outs you to the contact, no notion of a negotiated scene, no sharing with a partner, and the discretion problem when the contact is not someone you are out to
+- What to tell your safety contact before the scene, with a copy-paste script. This is the section that earns links and gets quoted
+- Solo play and self-bondage: the escape-must-not-depend-on-the-phone rule, testing the release, and why the timer is the last line not the first. Note that the one widely repeated claim here, that solo bondage is the leading cause of BDSM-related death, traces only to class handouts and not to any primary source, so cite it carefully or not at all
+- Where Tethered fits, stated plainly and without overselling: timer, check-in, alert to a chosen contact, SMS on premium, and the fact that the same account also runs the dynamic
+
+**Why this one now:** re-confirmed independently this week. A search for a kink-native safety check-in app returned no such product, only generic solo-living safety timers and several spam domains. That is still the only query space in this niche with no incumbent, and it is the only claim Tethered can make that no competitor can match, since Obedience, Kneel, SubTasks, mysub, Devotion, Collar, The Dynamic, Ever Collar and Binded are all task trackers with no safety layer. Kneel has already taken the comparison and alternatives queries with an indexed vendor blog, so competing there is now uphill; the safety niche is still empty. The copy-paste safety-contact script gives the post a reason to be linked to, which remains the thing the site needs most.
+
+### Site updates
+
+1. **Run the reseed.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Rob only, no AWS creds on this box. **Sixth week on this list**, and the URL Inspection finding above promotes it from "strongest available signal" to "the only discovery path the blog has". 51 internal links, the `/dashboard` CTA fix and the comparison post's 2026 rewrite are all written, merged and doing nothing. Nothing else on this list is worth attempting first.
+
+2. **Link individual blog posts from the home page.** New, and a direct consequence of `/blog` being unknown to Google. The home page is the only page on the site with any crawl equity, and it currently links to `/blog` twice and to no post at all. Three links to the comparison post, task ideas and the solo safety guide, in the body rather than the nav, is the cheapest crawl path into the content that exists and it does not depend on the reseed. One sitting, frontend only, so it can ship the moment anyone touches the repo.
+
+3. **List Tethered on alternativeto.net.** Carried, third week, and the evidence keeps strengthening. Kneel, SubTasks, Obedience, The Dynamic and now Collar all have entries; Tethered has none. Free, user-submitted, one sitting, and with the blog uncrawlable it is the most direct available route into both inbound links and AI answers.
+
+4. **Request indexing on `/blog` and the top three posts.** Console-only in GSC, no API, so Rob. Worth doing once the reseed has landed and the posts actually link to each other, not before, because a manual index request on an orphan page wastes the request. I can submit the same URLs through the Bing API myself on the same day if wanted.
+
+5. **Strip the em dashes from the four original safety posts.** Carried, unchanged: 74 of them under the Tethered Team byline across `solo-play-safety-guide` (27), `negotiating-consent-checklist` (26), `meeting-new-partners-safely` (13), `when-things-go-wrong` (8). Find and replace in the seed files, rides along with item 1 at no extra cost.
+
+Broader, all small:
+
+6. **Add a real `/pricing` page.** Carried. Three of seven queries in 28 days are now cost or alternatives questions, two of them ranking at positions 1 and 2, all resolving to the home page. The argument is already written in `llms.txt`. Lift it onto an indexable page, add it to the sitemap and to the canonical pages list in `llms.txt`, and it fixes one of the soft-404 paths at the same time.
+
+7. **Fix the sitemap `lastmod` generator.** Emit `lastmod` for the five static pages, which currently have none, and make sure post dates follow `updatedAt` properly once the reseed has moved those rows. Right now the sitemap is telling Google the content is older than it is, which suppresses recrawl on exactly the pages that need it.
+
+8. **Fix the fireplay post.** Carried, unchanged. Slug `fireplay-101-a-beginner-s-guide-to-playing-with-fire-safely` has the apostrophe mangled to "beginner-s" and it is the only live post with no source file in `scripts/blog-posts/`, so it cannot survive a reseed. Shorten to `fireplay-101` with a redirect and write it back into the repo. If item 1 runs first, check the post is still intact afterwards.
+
+### Follow-ups for next week
+
+- Did the reseed run. Same five-minute check: comparison post title, internal link count on two posts, no live post linking to `/dashboard`
+- **Has `/blog` moved off "URL is unknown to Google".** This is now the single metric that matters. It is the gate everything else sits behind
+- Does any blog post record a single GSC impression. Zero across 34 days is the number to beat
+- Whether home page clicks keep accumulating past 9, or whether brand traffic has found its ceiling
+- If the alternativeto.net listing goes in, whether it produces a referral or an AI citation. Still a clean test of the directory theory
+- Devotion, Collar, Ever Collar, The Dynamic and Binded: pricing, platform and positioning before the comparison post is rewritten. Five names now, and Kneel's own blog is the fastest place to read most of them
