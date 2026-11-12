@@ -189,7 +189,9 @@ def chunks(con):
             charging.append((r[0], end))
     out = []
     for i, r in enumerate(pm):
-        if r[1] != "On":
+        # The car re-reports "On" every poll while driving: only an Off->On edge starts a
+        # drive, or one trip gets cut into 2-3 overlapping windows and counted 2-3 times.
+        if r[1] != "On" or (i and pm[i - 1][1] == "On"):
             continue
         off = next((x[0] for x in pm[i + 1:] if x[1] == "Off"), None)
         if not off:
