@@ -38,8 +38,10 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Status
 - 22 Oct: v0.1 built and smoke-tested here (local bare repo as origin, real Claude run: fix, commit, push, replies with footer, review draft, dashboard screenshots). Dry-run poll against NilSkilz repos worked.
 - 12 Nov: Rob created the repo, v0.1 pushed to `main` (04be3d7). Scanned first: no secrets, only Superdry mentions are the example config allowlist + Jira URL. Repo is public; Rob to flip it private (Settings > Danger Zone).
-- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the iMac ~13:00. PR #2 (conversational chat, then full work agent) merged 13:10; Rob to `git pull && ./install.sh` on the iMac.
+- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the iMac ~13:00. PR #2 (conversational chat, then full work agent) merged 13:08, pulled + reinstalled on the iMac by 13:10.
 - Next, on the Mac: install `gh` first (`brew install gh && gh auth login`, HTTPS + browser login, account that can see Superdry repos) or `./install.sh` fails with "Missing gh on PATH". Then BotFather bot, `git pull`, `./install.sh`, fill `~/.harbourmaster/config.json` (token, chat id, `repos` allowlist), `./install.sh` again.
+- Gotcha hit during setup: Harbourmaster reads `~/.harbourmaster/config.json`, not the repo's `config.json`. Editing the repo copy leaves the real config on placeholder values and Telegram rejects the bot as Unauthorized. Check with `grep telegram ~/.harbourmaster/config.json` first if auth fails.
+- 12 Nov 13:10: still needed Claude Code login on the iMac (`claude` → `/login`, work Claude account, since that's the one Harbourmaster runs under). iMac wasn't accepting SSH on the home network at the time (Remote Login off), so it needed a trip to the machine itself. If a background/launchd run keeps asking to log in again (Mac keychain not reachable from a background process), use `claude setup-token` instead, a year-long token Harbourmaster's config can be pointed at.
 - Open question for Rob: does Superdry have an AI-tools / code policy? Worth a look before it posts at volume.
 
 ## Ideas, not built
