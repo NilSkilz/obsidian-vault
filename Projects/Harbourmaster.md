@@ -16,7 +16,12 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 - Rob asked for it to remember things "the same way you do", but in its own files. `~/.harbourmaster/memory/` on the Mac: `rob.md`, `team.md`, `lessons.md`, `repos/<repo>.md`, its own git repo. Fed into every fix/review/reply/Slack prompt as private context.
 - Free text to the bot = chat: answers from notes, saves what's worth keeping. `/remember`, `/memory`. Approving a revised/hand-edited draft runs a learn step (saves lasting preferences only, pings what it noted).
 - Seeded from `seed/memory/` with WORK-ONLY facts from `Context/Work Context.md`: role/stack, Rob's writing voice, review style, "don't be the team's reading comprehension" reply style, Jira (supergroupbt, DGF, board 305, Digital team, zombie-sprint gotcha), Slack id, Ryan/Charlotte/Isaac/Tim phrased as working patterns, Secure Properties URL, DGF-2757 spike. Deliberately left out: RTO exemption, pension/pay, contract hunt, anything personal or partner-related, all credentials (incl. the Cherwell cert password).
-- Memory Claude runs: no Bash/web/MCP, refuses personal details (tested).
+- Memory Claude runs (learn step): no Bash/web/MCP, refuses personal details (tested).
+
+## Conversational chat (PR #2, 12 Nov)
+- Rob, once installed: "chat doesn't act like a chat the way you do". Cause: free text was a one-shot, no-history, no-tools run told to answer only from notes.
+- Now: `claude --resume` session per conversation (state in `~/.harbourmaster/chat-session.json`, resets after 3 idle hours or `/new`), persona prompt (warm/dry/direct/opinionated), notes injected into the system prompt each turn, read-only lookups (gh, PR checkouts via `--add-dir workDir`, Jira/Confluence/Slack MCP, web). Writes blocked via `--disallowedTools` (git commit/push, gh api/pr writes/issue/repo, Slack send/react/canvas, Atlassian create/edit/comment/transition). Replying to a non-draft message continues the chat.
+- Both tests pass (memory test now checks it remembers the previous turn).
 
 ## Guardrails
 - Claude can't commit/push/gh (`--disallowedTools`), code jobs get `--strict-mcp-config` (no MCP).
@@ -28,7 +33,7 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Status
 - 22 Oct: v0.1 built and smoke-tested here (local bare repo as origin, real Claude run: fix, commit, push, replies with footer, review draft, dashboard screenshots). Dry-run poll against NilSkilz repos worked.
 - 12 Nov: Rob created the repo, v0.1 pushed to `main` (04be3d7). Scanned first: no secrets, only Superdry mentions are the example config allowlist + Jira URL. Repo is public; Rob to flip it private (Settings > Danger Zone).
-- 12 Nov: memory PR #1 merged to `main`, both tests pass.
+- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the work Mac ~13:00. PR #2 (conversational chat) open.
 - Next, on the Mac: install `gh` first (`brew install gh && gh auth login`, HTTPS + browser login, account that can see Superdry repos) or `./install.sh` fails with "Missing gh on PATH". Then BotFather bot, `git pull`, `./install.sh`, fill `~/.harbourmaster/config.json` (token, chat id, `repos` allowlist), `./install.sh` again.
 - Open question for Rob: does Superdry have an AI-tools / code policy? Worth a look before it posts at volume.
 
