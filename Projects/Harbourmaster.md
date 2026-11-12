@@ -1,6 +1,6 @@
 # Harbourmaster (work PR bot)
 
-Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Node daemon that runs **on Rob's work Mac** (his call, 22 Oct: keeps Superdry code off the home Proxmox and inside his work Claude Code login). Walled off from me: no vault, no personal context, its own Telegram bot.
+Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Node daemon that runs **on Rob's old iMac** (his personal machine, used only for work right now; 12 Nov) (his call, 22 Oct: keeps Superdry code off the home Proxmox and inside his work Claude Code login). Walled off from me: no vault, no personal context, its own Telegram bot.
 
 - **Code:** `~/projects/harbourmaster` on CT 110 (authoring copy only, never pointed at Superdry repos from here). GitHub: `NilSkilz/harbourmaster` (private since 12 Nov; must STAY private, the memory seed has colleague names and Jira details).
 - **Runs:** launchd agent `uk.co.cracky.harbourmaster` on the Mac, state/config/logs in `~/.harbourmaster/`.
@@ -23,6 +23,11 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 - Now: `claude --resume` session per conversation (state in `~/.harbourmaster/chat-session.json`, resets after 3 idle hours or `/new`), persona prompt (warm/dry/direct/opinionated), notes injected into the system prompt each turn, read-only lookups (gh, PR checkouts via `--add-dir workDir`, Jira/Confluence/Slack MCP, web). Writes blocked via `--disallowedTools` (git commit/push, gh api/pr writes/issue/repo, Slack send/react/canvas, Atlassian create/edit/comment/transition). Replying to a non-draft message continues the chat.
 - Both tests pass (memory test now checks it remembers the previous turn).
 
+## Full work agent (PR #2 second commit, 12 Nov)
+- Rob: "I want it to be just like you, a mini-Jarvis that only deals with work". So chat is now `mode: 'agent'` (`runAgent` in claude.js): no-prompt shell as his user, clones any repo gh sees into `~/.harbourmaster/work/chat/`, branch, code, test, commit (trailer), push branch, `gh pr create` with `agentFooter` ("Opened by Harbourmaster (AI) at Rob's request"). Research via web/Confluence/Jira/Slack. Jira create/edit/transition allowed.
+- My call, kept blocked at CLI (`agentBlocked(cfg)`): merge, `gh pr review`, force-push, push to protected branches, repo delete/edit/archive, releases, `gh api -X/--method`, Slack send/schedule/react/canvas, Jira comments, Confluence writes. Slack `send_message_draft` allowed. Prefix-matching, so a seatbelt not a vault. Sudo: prompt says ask first (needs NOPASSWD anyway).
+- Streams via `--output-format stream-json`: ack line, work, summary, each text block sent to Telegram in order. 2h turn cap (`claude.agentTimeoutMinutes`), `/stop` aborts running + queued turns and keeps the session for "carry on". `test/agent.js` added; all 3 suites pass.
+
 ## Guardrails
 - Claude can't commit/push/gh (`--disallowedTools`), code jobs get `--strict-mcp-config` (no MCP).
 - Non-force pushes only, refuses if the branch moved; forks + main/master/develop/release are reply-only.
@@ -33,7 +38,7 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Status
 - 22 Oct: v0.1 built and smoke-tested here (local bare repo as origin, real Claude run: fix, commit, push, replies with footer, review draft, dashboard screenshots). Dry-run poll against NilSkilz repos worked.
 - 12 Nov: Rob created the repo, v0.1 pushed to `main` (04be3d7). Scanned first: no secrets, only Superdry mentions are the example config allowlist + Jira URL. Repo is public; Rob to flip it private (Settings > Danger Zone).
-- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the work Mac ~13:00. PR #2 (conversational chat) open.
+- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the iMac ~13:00. PR #2 (conversational chat, then full work agent) open, waiting on Rob to merge + `git pull && ./install.sh`.
 - Next, on the Mac: install `gh` first (`brew install gh && gh auth login`, HTTPS + browser login, account that can see Superdry repos) or `./install.sh` fails with "Missing gh on PATH". Then BotFather bot, `git pull`, `./install.sh`, fill `~/.harbourmaster/config.json` (token, chat id, `repos` allowlist), `./install.sh` again.
 - Open question for Rob: does Superdry have an AI-tools / code policy? Worth a look before it posts at volume.
 
