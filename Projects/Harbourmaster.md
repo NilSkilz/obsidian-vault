@@ -2,7 +2,7 @@
 
 Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Node daemon that runs **on Rob's work Mac** (his call, 22 Oct: keeps Superdry code off the home Proxmox and inside his work Claude Code login). Walled off from me: no vault, no personal context, its own Telegram bot.
 
-- **Code:** `~/projects/harbourmaster` on CT 110 (authoring copy only, never pointed at Superdry repos from here). GitHub: `NilSkilz/harbourmaster` (created PUBLIC by Rob 12 Nov; should be private, my PAT can't change visibility).
+- **Code:** `~/projects/harbourmaster` on CT 110 (authoring copy only, never pointed at Superdry repos from here). GitHub: `NilSkilz/harbourmaster` (private since 12 Nov; must STAY private, the memory seed has colleague names and Jira details).
 - **Runs:** launchd agent `uk.co.cracky.harbourmaster` on the Mac, state/config/logs in `~/.harbourmaster/`.
 - **UI:** Telegram (own bot, Approve / Diff / Skip buttons, reply-to-revise) + local dashboard at `http://localhost:4848`.
 
@@ -11,6 +11,12 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 2. Review requested: drafts overview + verdict + body + inline comments. Re-requests review only the delta since the last reviewed sha.
 3. Discussion on PRs Rob reviewed: drafts replies only when something needs him, otherwise silent.
 4. Slack (off by default): ported from `Jarvis/bin/slack-check.sh`, read-only, uses the claude.ai Slack connector on his work Claude account.
+
+## Memory (v0.2, PR #1, 12 Nov)
+- Rob asked for it to remember things "the same way you do", but in its own files. `~/.harbourmaster/memory/` on the Mac: `rob.md`, `team.md`, `lessons.md`, `repos/<repo>.md`, its own git repo. Fed into every fix/review/reply/Slack prompt as private context.
+- Free text to the bot = chat: answers from notes, saves what's worth keeping. `/remember`, `/memory`. Approving a revised/hand-edited draft runs a learn step (saves lasting preferences only, pings what it noted).
+- Seeded from `seed/memory/` with WORK-ONLY facts from `Context/Work Context.md`: role/stack, Rob's writing voice, review style, "don't be the team's reading comprehension" reply style, Jira (supergroupbt, DGF, board 305, Digital team, zombie-sprint gotcha), Slack id, Ryan/Charlotte/Isaac/Tim phrased as working patterns, Secure Properties URL, DGF-2757 spike. Deliberately left out: RTO exemption, pension/pay, contract hunt, anything personal or partner-related, all credentials (incl. the Cherwell cert password).
+- Memory Claude runs: no Bash/web/MCP, refuses personal details (tested).
 
 ## Guardrails
 - Claude can't commit/push/gh (`--disallowedTools`), code jobs get `--strict-mcp-config` (no MCP).
@@ -22,6 +28,7 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Status
 - 22 Oct: v0.1 built and smoke-tested here (local bare repo as origin, real Claude run: fix, commit, push, replies with footer, review draft, dashboard screenshots). Dry-run poll against NilSkilz repos worked.
 - 12 Nov: Rob created the repo, v0.1 pushed to `main` (04be3d7). Scanned first: no secrets, only Superdry mentions are the example config allowlist + Jira URL. Repo is public; Rob to flip it private (Settings > Danger Zone).
+- 12 Nov: memory added (PR #1, `feature/memory`), both tests pass. Rob to merge before installing.
 - Next, on the Mac: BotFather bot, `./install.sh`, fill `~/.harbourmaster/config.json` (token, chat id, `repos` allowlist), `./install.sh` again.
 - Open question for Rob: does Superdry have an AI-tools / code policy? Worth a look before it posts at volume.
 
