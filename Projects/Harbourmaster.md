@@ -38,7 +38,7 @@ Rob's "work version of Jarvis", started 22 Oct 2026. A small zero-dependency Nod
 ## Status
 - 22 Oct: v0.1 built and smoke-tested here (local bare repo as origin, real Claude run: fix, commit, push, replies with footer, review draft, dashboard screenshots). Dry-run poll against NilSkilz repos worked.
 - 12 Nov: Rob created the repo, v0.1 pushed to `main` (04be3d7). Scanned first: no secrets, only Superdry mentions are the example config allowlist + Jira URL. Repo is public; Rob to flip it private (Settings > Danger Zone).
-- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the iMac ~13:00. PR #2 (conversational chat, then full work agent) open, waiting on Rob to merge + `git pull && ./install.sh`.
+- 12 Nov: memory PR #1 merged to `main`, both tests pass. Installed and running on the iMac ~13:00. PR #2 (conversational chat, then full work agent) merged 13:10; Rob to `git pull && ./install.sh` on the iMac.
 - Next, on the Mac: install `gh` first (`brew install gh && gh auth login`, HTTPS + browser login, account that can see Superdry repos) or `./install.sh` fails with "Missing gh on PATH". Then BotFather bot, `git pull`, `./install.sh`, fill `~/.harbourmaster/config.json` (token, chat id, `repos` allowlist), `./install.sh` again.
 - Open question for Rob: does Superdry have an AI-tools / code policy? Worth a look before it posts at volume.
 
