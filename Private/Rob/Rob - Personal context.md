@@ -21,6 +21,7 @@ _Summary of a long-running reflective conversation. Sensitive, personal. For ass
 
 - **Storm / Natalie (same person)** — submissive, D/s dynamic, poly, ~fortnightly (spring 2025). Rob's jealousy over her other partners; her struggle with not being a priority and with Aimee's "control" over their dynamic.
 - **Tash** — recurring play partner from ~May 2025 onward.
+  - **13 Nov 2026:** Tash told Rob things are getting serious with a new guy, so no more play or overnights at hers. Rob reckons that ends ~80% of their play and meets; events still possible but limited. Note: in Sep he was the one considering a quiet wind-down, this time she closed the door.
 - **Emily** — scene April 2026; Rob later regretted not sleeping with her but also stepped back because it was drifting more sexual than agreed.
 - **Gemma / MM** — mid-2026. MM is the current open question: a planned scene where sex is on the table and Rob is torn.
 
