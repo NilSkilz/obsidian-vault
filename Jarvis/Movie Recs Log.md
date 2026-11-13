@@ -93,3 +93,20 @@ Not in Plex (offered for Radarr):
 - Prisoners (2013) - Villeneuve abduction procedural, modern Seven; confirmed absent (only Prisoner of Azkaban matched).
 
 Notes: Casino (1995, 9.3) IS in the library and unwatched, held back to avoid three Scorsese-adjacent crime picks in one week; strong next-week candidate. Quantum of Solace, Skyfall and Spectre all unwatched behind Casino Royale, so the Bond vein has three more weeks in it. Predator: Badlands now sits at 74% watched (viewCount 0), still not a clean pick. Indiana Jones: Last Crusade and Temple of Doom unwatched but Raiders was already pitched 2 Oct and never played, so the Indy lane is parked. Still banked: Memento (9.4), Snatch (9.3), Lock Stock (9.3), Nightcrawler, No Country, Inside Man, Jackie Brown, Collateral, Insomnia, Sin City, The Princess Bride (9.4, family), The Karate Kid (1984), Blade Runner, John Wick 1/2/4, Predator (1987).
+
+## 2026-11-13
+
+Taste read: Conspiracy Theory (1997) watched 12 Nov, and it is a Richard Donner / Mel Gibson film, same pairing as the full Lethal Weapon 1-4 binge in July. Alongside it, an Archer binge started 8 Nov and ran six episodes on 12 Nov, so spy-comedy is the live TV diet. Two new titles added 12 Nov: The Odyssey (2026, 112 min in, partially watched) and Avengers: Endgame (untouched). Library now 794 titles, 230 watched. Genre rates steady: Fantasy 38%, Horror 36%, Thriller 35%, Adventure 34%, Mystery 34%, Action 33% on 297 titles, Animation still bottom at 12%. Every pick from the last six weeks is still unwatched.
+
+The angle this week is the 90s paranoid thriller, not crime. Conspiracy Theory pointed straight at it and the library is full of unplayed 1993-1998 conspiracy/spy pictures.
+
+In Plex, unwatched (viewCount null, viewOffset null, all verified):
+- Enemy of the State (1998) - Tony Scott, who also made The Last Boy Scout (watched). Surveillance-state paranoia, the purest Conspiracy Theory follow-on in the library.
+- The Fugitive (1993) - 9.6/8.9, highest-rated unwatched thing in the lane. Family sofa pick, 12 cert, pure manhunt momentum.
+- True Lies (1994) - Cameron spy comedy, the live-action version of the Archer binge. After hours, not family.
+
+Not in Plex (offered for Radarr):
+- The Conversation (1974) - Coppola surveillance deep cut; Hackman's Enemy of the State character is effectively the same man thirty years on. Confirmed absent.
+- Kingsman: The Secret Service (2014) - the closest thing to a feature-length Archer. Crowd-pleaser. Confirmed absent.
+
+Notes: The Bourne Supremacy and Ultimatum (9.2/9.1) are both unwatched while Identity is watched, a clean franchise hole held back to avoid a fourth consecutive "the one you skipped" pick. Strong next-week candidate. Mission: Impossible 1996 plus Fallout (9.8), Rogue Nation (9.4) and Dead Reckoning (9.6) all unwatched. Also sitting there: The Hunt for Red October (8.9), Minority Report (8.9), The Matrix, Air Force One, Atomic Blonde, Patriot Games. Bond vein still open: Quantum, Skyfall, Spectre all unwatched behind last week's Casino Royale pitch. Still banked: Casino (1995), Memento, Snatch, Lock Stock, Nightcrawler, No Country, Inside Man, Jackie Brown, Collateral, Insomnia, Sin City, The Princess Bride (family), The Karate Kid (1984), Blade Runner, John Wick 1/2/4, Predator (1987).
