@@ -47,6 +47,17 @@ Stated while droppy but clear, after the 23 Oct Raven night and the Halloween we
 - **Tash:** the best fit. Wants to put real power exchange back in, since it has drifted into "just impact". Needs a conversation with her.
 - **FetLife:** deactivated for a while. The search is effectively paused.
 
+## Dynamic proposal for Aimee (13 Nov 2026)
+
+Rob is drafting a document to show Aimee, spelling out the shape of the ongoing dynamic he wants to pursue (the goal first stated 25 Aug, reaffirmed 28 Oct). Draft 3 is done: `Dynamic Proposal for Aimee.html`, written in his voice, to her. Earlier drafts (`Ideal Dynamic.html`, draft 2) hold his own private processing notes (Mary/Raven references, "for you" boxes) that didn't make the cut for her version.
+
+Shape of the ask:
+- **Priority one:** one ongoing dynamic with a submissive, meeting every 2-3 weeks.
+- Ability to go to events occasionally.
+- Play at hers; overnights a maybe with separate sleeping, less important if she's local.
+- **Location:** ideally Gloucester, or at least not on the local scene, a nice-to-have framed as being for Aimee's benefit.
+- He hasn't sent it yet; he's reviewing draft 3 before handing it to her.
+
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
 - **LittleRedLou** = host of local events. NOT a potential partner, don't read her messages as flirting or file her as a candidate. (Rob, 20 Oct 2026)
