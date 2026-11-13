@@ -57,6 +57,7 @@ Shape of the ask:
 - Play at hers; overnights a maybe with separate sleeping, less important if she's local.
 - **Location:** ideally Gloucester, or at least not on the local scene, a nice-to-have framed as being for Aimee's benefit.
 - He hasn't sent it yet; he's reviewing draft 3 before handing it to her.
+- Review flags on draft 3 (mine, pending his confirmation): "daily messages" and "proud of it" (her calling him Dom online) are the two lines most likely to make Aimee stop; "sleeping separately, the way we already do it" assumes she knows what that refers to and may need unpacking.
 
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
