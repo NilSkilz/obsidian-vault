@@ -64,9 +64,9 @@ PROJECTS = "/home/jarvis/projects"
 # /home/jarvis/family/<name>/ with a voice-only CLAUDE.md and a deny-list settings.json.
 FAMILY = pathlib.Path("/home/jarvis/family")
 FAMILY_TEMPLATE = FAMILY / "_template"
-MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
+MODEL = os.environ.get("JARVIS_MODEL", "claude-fable-5-2")  # model that talks to Rob; override via JARVIS_MODEL in run.sh
 # Usage-aware model choice: usage.sh reads the plan-usage endpoint and returns
-# the model to use (drops to Opus 5 once the Fable weekly limit crosses 80%,
+# the model to use (drops to Opus 5.5 once the Fable weekly limit crosses 80%,
 # Rob's "use the best tool but never hit the limits", 2026-08-21). Cached so we
 # don't hit the endpoint on every message. JARVIS_MODEL_AUTO=0 pins MODEL.
 USAGE_SH = f"{VAULT}/Jarvis/bin/usage.sh"

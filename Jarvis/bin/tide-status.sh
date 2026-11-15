@@ -209,8 +209,8 @@ def parse_usage(data):
             'currency': '£' if ex.get('currency') == 'GBP' else (ex.get('currency') or ''),
         }
     fable_pct = (out['fable'] or {}).get('pct')
-    out['model'] = ('claude-opus-5' if fable_pct is not None and fable_pct >= FABLE_SWITCH_AT
-                    else 'claude-fable-5')
+    out['model'] = ('claude-opus-5-5' if fable_pct is not None and fable_pct >= FABLE_SWITCH_AT
+                    else 'claude-fable-5-2')
     return out
 
 # ---- vitals ---------------------------------------------------------------

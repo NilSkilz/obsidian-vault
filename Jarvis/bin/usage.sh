@@ -5,7 +5,7 @@
 #   usage.sh summary   multi-line human summary (for /stats on Telegram)
 #   usage.sh brief     one-line data string (embedded in the evening briefing)
 #   usage.sh model     prints the chat model the bridge should use right now:
-#                      claude-fable-5 normally, claude-opus-5 once the Fable
+#                      claude-fable-5-2 normally, claude-opus-5-5 once the Fable
 #                      weekly limit crosses FABLE_SWITCH_AT. NEVER fails: on any
 #                      error it prints the default model so the bridge keeps working.
 #   usage.sh json      raw endpoint JSON
@@ -22,8 +22,8 @@ import urllib.request
 MODE = sys.argv[1]
 CRED = pathlib.Path.home() / ".claude/.credentials.json"
 URL = "https://api.anthropic.com/api/oauth/usage"
-DEFAULT_MODEL = "claude-fable-5"
-FALLBACK_MODEL = "claude-opus-5"
+DEFAULT_MODEL = "claude-fable-5-2"
+FALLBACK_MODEL = "claude-opus-5-5"
 FABLE_SWITCH_AT = 80   # % of the Fable weekly limit at which the bridge downshifts to Opus
 
 
@@ -95,9 +95,9 @@ if MODE == "json":
 u = parse(data)
 s, w, f = u["session"], u["weekly_all"], u["fable"]
 fable_pct = (f or {}).get("pct")
-model_note = (f"switched to Opus 5 (Fable at {pct(f)}, back under {FABLE_SWITCH_AT}% after reset)"
+model_note = (f"switched to Opus 5.5 (Fable at {pct(f)}, back under {FABLE_SWITCH_AT}% after reset)"
               if fable_pct is not None and fable_pct >= FABLE_SWITCH_AT
-              else f"Fable 5 (auto-drops to Opus 5 at {FABLE_SWITCH_AT}% Fable weekly)")
+              else f"Fable 5.2 (auto-drops to Opus 5.5 at {FABLE_SWITCH_AT}% Fable weekly)")
 
 if MODE == "brief":
     print(f"session {pct(s)} (resets {when((s or {}).get('resets'))}), "
