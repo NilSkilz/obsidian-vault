@@ -17,7 +17,7 @@
 ## Relationship Context
 ### ENM Structure
 - **Primary relationship:** [[Rob]] and [[Aimee]] (married, family)
-- **Secondary relationship:** Rob and Tash (established since ~May 2025; **play and overnights ended 13 Nov 2026**, see Status)
+- **Secondary relationship:** Rob and Tash (established since ~May 2025; **play and overnights at her house paused 13 Nov 2026**, events and going away still on, see Status)
 - **Parallel relationship:** [[Aimee]] and [[Sean]] (Dom in Andover)
 - **Family integration:** Kids ([[Dexter]], [[Logan]]) are NOT aware — they believe their parents are monogamous
 
@@ -50,7 +50,7 @@
 
 ## Status
 
-> **2026-11-13: play and overnights at Tash's have stopped.** Tash told Rob things are getting serious with a new guy she's seeing, so they can no longer play at hers or have him stay over. That was roughly **80% of their play and meets**, so in practice the dynamic is over in all but name. Occasional events together are still possible but will be limited. Rob told Aimee, and her response was to tell him to work out what he actually wants, which is what kicked off the ideal-dynamic/proposal work (see [[Partner Search]] in Rob's private notes). Note the shape of it: back in September Rob was the one considering a quiet wind-down, and this time she closed the door. **Everything below this line describes how it used to work, kept for context.**
+> **2026-11-13: play and overnights at Tash's house have stopped, for now.** Tash told Rob things are getting more serious with a new guy she's seeing and she has agreed not to have other people staying or playing in the house "for a while". That was roughly **80% of their play and meets**. **What is still on, in her own words:** kink events together, going away, and a hotel ("especially if we're going out"). She said a clear no to "am I being dumped". Dates are proving hard to pin down (her diary is chaos through Christmas), and they are meeting for lunch on **Tue 17 Nov** to talk it through properly. (An earlier version of this note called it "over in all but name"; that was Jarvis over-reading a summary and is withdrawn, corrected 15 Nov after reading the actual conversation.) Rob told Aimee, and her response was to tell him to work out what he actually wants. Back in September Rob was the one considering a quiet wind-down. **Everything below this line describes how it used to work, kept for context.**
 
 - **Overnight arrangement (historic, ended 13 Nov 2026):** Rob stayed over on Tash's **sofa** (used to be a spare room until she moved and gave it up). Established practice, mirrored by Aimee staying in Sean's spare room — both always separate rooms, never sharing a bed/room overnight.
 - **2026-09-07:** Rob said (in conversation with Aimee) he'll probably stop seeing Tash, by simply not arranging new play dates rather than a formal ending. Soft intent, not a hard decision yet.
