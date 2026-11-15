@@ -59,6 +59,10 @@ Shape of the ask:
 - He hasn't sent it yet; he's reviewing draft 3 before handing it to her.
 - Review flags on draft 3 (mine, pending his confirmation): "daily messages" and "proud of it" (her calling him Dom online) are the two lines most likely to make Aimee stop; "sleeping separately, the way we already do it" assumes she knows what that refers to and may need unpacking.
 
+### Unidentified, live as of 14 Nov 2026
+
+Rob asked for help answering a flirty message ("Teehee... Also, define *flirt*? 🤭 Glad you're okay, less so that you're bored!! No plans tonight?") and then explicitly wanted to **move it forward**, subtly: "like flirting; getting a bit hot under the collar". So there is an active, warming thread, the day after Tash closed the door. **He never said who it is**, and I didn't ask. Don't guess, and don't assume it's one of the named candidates above. Worth asking him casually who it is next time it comes up, because it may belong under a candidate heading (or may be nothing).
+
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
 - **LittleRedLou** = host of local events. NOT a potential partner, don't read her messages as flirting or file her as a candidate. (Rob, 20 Oct 2026)

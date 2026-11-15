@@ -343,3 +343,18 @@ Follow-on Rob agreed to but hasn't been done yet: an audit of what's actually in
 - **Cloudflare hides origin cert expiry (30 Oct 2026).** The NPM wildcard expired a month unnoticed because proxied traffic never validates the origin cert. Check certs direct against NPM (`openssl s_client -connect 192.168.1.14:443 -servername <host>`), not through the public name.
 
 - **Faking a sensor in HA hits the live automations (31 Oct 2026).** `POST /api/states` on a real sensor feeds every automation watching it. Testing the cooker guard that way sent Rob a real critical "cooker on" alert. Disable the automation's kill switch (or the automation) before injecting test states, and clear the fake state after.
+
+## Data that stops arriving sets off nothing (2026-11-12, EV health)
+
+Rob asked why the battery-health figure looked wrong. It wasn't wrong, but the real find was underneath: **the MG add-on had logged no charge session since 8 Nov**, through four actual charges, and nothing anywhere had said a word about it. The cause was a blank config value. `sensor.mg_mg4_electric_total_battery_capacity` was `unknown` (the API never reported a pack size for this car), so `compute_charge_session` fell back to a secondary pack-energy counter, and once that counter froze, every session computed as `None` and was **dropped with no error and no warning**. Fixed by setting the integration's `battery_capacity_override_kwh` to 61.7; the four missing sessions were rebuilt from HA history (recorder keeps ~10 days, so a backfill has a deadline).
+
+The generalisable bit, which is the actual lesson:
+
+- **A pipeline that silently discards bad records looks identical to a quiet week.** The failure signature is an *absence*, and absences do not raise alarms. My `ev-health.py` cron ran hourly, exited 0 every time, and cheerfully reported a health figure computed from stale samples for four days.
+- **Freshness monitoring has to assert on new DATA, not a successful RUN.** `cron-health.sh` checks that jobs run and don't print tracebacks. That is necessary and not sufficient: every job that accumulates samples needs a "nothing new in N expected intervals" check of its own.
+- **A required value that is blank rather than missing is the dangerous shape.** Blank let the code take a silent fallback path. An outright missing value would have thrown on the first run and been fixed in minutes.
+- **Rob found it, I didn't.** That is the tell that the monitoring was aimed at the wrong thing.
+
+Same family as [[A paged API can cap you below what you asked for, and the sync will look healthy]]. Related, from the same week: after an indexer outage, Prowlarr **and** each *arr hold their own independent failure backoff, so searches keep returning 0 long after the upstream fix. Fixing the source does not unstick the consumers; they each have to be poked (see `Context/Infrastructure.md`).
+
+**Open follow-up:** add per-dataset staleness checks to the archiving crons (ev-health, finance-sync, anything else accumulating samples), rather than relying on Rob noticing a number that looks off.
