@@ -20,4 +20,6 @@ Waiting on Rob to open it up and report hum vs spin (and ideally a photo of the 
 
 **15 Nov 2026 ~14:35: FOUND.** Rob traced it to a loose **yellow wire**; reseating it fixed the hum-no-start. Connection fault, so the cheap-fix branch: still owed 20 clean cold starts (up and down, some under load) before anyone goes up on it. If it recurs, crimp a fresh spade rather than just pushing the old one back on.
 
+**15 Nov 2026 ~16:24:** separate **black wire** (uninsulated fork/spade-fork terminal, goes under a screw head) has bare copper flaring past the crimp barrel, loose strands or a crimp that never closed. Needs a tug test; if it moves, cut and recrimp before trusting it. Not yet confirmed fixed.
+
 **15 Nov 2026 ~16:30: rewiring the crimps.** Rob is re-terminating rather than reseating. Two terminal types in there: insulated female spade (6.3mm Faston, yellow wire) and an uninsulated fork (black wire, tired crimp with strands flaring). Shopping list given: ratchet crimper for insulated terminals (red/blue/yellow dies), red (0.5 to 1.5mm²) insulated 6.3mm female spades, preferably fully-insulated nylon; red insulated forks sized to the stud (measure the screw, M3/M4/M5); proper wire strippers. Tug-test every crimp. Then the 20 clean cold starts still apply.
