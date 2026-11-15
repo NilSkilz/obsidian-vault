@@ -15,3 +15,5 @@ Nobody goes in the air on this hoist until it starts cleanly from cold, consiste
 Waiting on Rob to open it up and report hum vs spin (and ideally a photo of the capacitor label) before a fix is confirmed.
 
 **18 Sept 2026:** fix on hold for a few days, the hoist is currently doing duty tensioning the freshly dyed rope while it dries. Diagnosis resumes once the rope comes off it. Safety rule above still stands in the meantime.
+
+**15 Nov 2026:** hoist on the bench downstairs, diagnosis resumed. Bench checklist sent: rule out extension lead first (wall socket direct), reproduce cold with short taps up AND down, with and without ~20kg; then unplugged inspection of capacitor (bulge/leak/µF test, ±5% of label), all spade connections, the **pendant switch contacts** (on PA hoists the pendant switches motor current and the capacitor directly, worn contacts give exactly a hum-no-start, intermittent), and the brake end (rust/glazing/oil, look don't dismantle the spring). Verdict rule: cap or pendant/connection fault = cheap fix + 20 clean cold starts before anyone flies; brake or gearbox fault = retire it.
