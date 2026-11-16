@@ -70,7 +70,13 @@ Hard rules:
 - No em dashes anywhere.
 - Keep web fetches/searches modest (this runs weekly, it is a check-in, not an audit).
 
-Your FINAL message must be ONLY the Telegram summary for Rob: the blog post pitch in 2-3 lines, then the top site updates as short bullets (lead with anything genuinely broken), warm and direct, mobile-friendly, no markdown headers or tables. That final message is the only thing sent to him.
+NO NAGGING (Rob, 16 Nov 2026: "nagging doesn't work. I need very small tasks to do when I have the motivation"). Seven weeks of "Nth week on this list" moved nothing; a ten-minute job with the copy ready to paste got done the same morning. So:
+- Anything that needs Rob lives on THE SHELF: the Todoist project "Tethered: 10-minute jobs" (use the mcp__todoist__ tools). Read it first. Completed tasks there are your signal that something got done: verify it on the live site and say so.
+- A shelf job must be tiny (about ten minutes or less, ideally doable from his phone), self-contained, and fully prepped: the exact command, URL or paste-ready copy goes in the task description, and the title carries the time and place, e.g. "Run the blog reseed (2 min, at the Mac)". Bigger things get split, or become a "Text Jarvis: ..." task where Jarvis does the work and Rob only approves. Never set a due date, priority or reminder on a shelf task.
+- Keep the shelf to about five open jobs, best payoff first. Add at most two new ones a week, never duplicate an open one, and rewrite or delete jobs that have gone stale.
+- The vault log still records everything, including carried items, but state them once and flat. No week counts, no escalating emphasis, no "still not done".
+
+Your FINAL message must be ONLY the Telegram summary for Rob, and it reports NEWS, not chores: what actually moved this week (rankings, crawl state, competitors, anything he did that landed), then the blog post pitch in 2-3 lines if it is new or materially changed. Never repeat an item he has already been told about and never mention how long something has been waiting. If you added a job to the shelf, one line saying so. If nothing moved, say that in a single line and stop. Lead with anything genuinely broken. Warm and direct, mobile-friendly, no markdown headers or tables. That final message is the only thing sent to him.
 PROMPT_EOF
 
 cd "$VAULT"
