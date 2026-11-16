@@ -63,6 +63,16 @@ Shape of the ask:
 
 Rob asked for help answering a flirty message ("Teehee... Also, define *flirt*? 🤭 Glad you're okay, less so that you're bored!! No plans tonight?") and then explicitly wanted to **move it forward**, subtly: "like flirting; getting a bit hot under the collar". So there is an active, warming thread, the day after Tash closed the door. **He never said who it is**, and I didn't ask. Don't guess, and don't assume it's one of the named candidates above. Worth asking him casually who it is next time it comes up, because it may belong under a candidate heading (or may be nothing).
 
+### Message to Aimee, 16 Nov 2026
+
+Rob sent Aimee a longer message (not the draft 3 HTML proposal, a separate plain-text one) laying out plainly what he wants: an ongoing D/s dynamic like what she has with Sean, including more "extreme" play (CNC, abduction, heavy impact, needles, sounding), plus interaction beyond scenes (messages/tasks in the week). He named the Tash safety-net/jealousy dynamic explicitly and owns the jealousy risk as his to manage, not hers to fix. No plan yet; he's going to keep going to munches and see what comes up.
+
+Candidate read as of this message:
+- **Shh:** keen to play, good fun, more experienced/extreme, but not particularly submissive.
+- **Gemma:** too busy for longer term.
+- **Lucy (new name):** potentially submissive, lives further away, but in his words "potentially a head case" — unvetted, nothing arranged.
+- **Raven:** already ruled out for sexual play (28 Oct); his own candid read added here is he didn't massively enjoy playing with her.
+
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
 - **LittleRedLou** = host of local events. NOT a potential partner, don't read her messages as flirting or file her as a candidate. (Rob, 20 Oct 2026)
