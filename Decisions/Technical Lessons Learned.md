@@ -358,3 +358,5 @@ The generalisable bit, which is the actual lesson:
 Same family as [[A paged API can cap you below what you asked for, and the sync will look healthy]]. Related, from the same week: after an indexer outage, Prowlarr **and** each *arr hold their own independent failure backoff, so searches keep returning 0 long after the upstream fix. Fixing the source does not unstick the consumers; they each have to be poked (see `Context/Infrastructure.md`).
 
 **Open follow-up:** add per-dataset staleness checks to the archiving crons (ev-health, finance-sync, anything else accumulating samples), rather than relying on Rob noticing a number that looks off.
+
+- **`npm install` passing doesn't mean `npm ci` will (16 Nov 2026, Liaisons).** Amplify's own backend packages had drifted to versions that disagree with each other, so no lockfile `npm install` wrote would satisfy `npm ci`. I only ever run `npm install` locally, so it got past me until Amplify's build (which uses `npm ci`) went red. Worth running `npm ci` before pushing on any Amplify Gen2 project, not just typecheck/tests/build.
