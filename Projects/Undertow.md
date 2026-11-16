@@ -1,12 +1,12 @@
 # Undertow
 
-Party game for consenting adults: "lobby on phones, then phones away". Started 16 Nov 2026 as the no-board successor to the Deviance board game (see `Projects/Deviance Game.md` for the design conversation that led here). Name is Jarvis's pick (sea name; the game is what's going on under the surface), Rob hasn't confirmed it.
+Party game for consenting adults: "lobby on phones, then phones away". Started 16 Nov 2026 as the no-board successor to the Deviance board game (see `Projects/Deviance Game.md` for the design conversation that led here). **Name:** Rob rejected "Undertow" on 16 Nov ("doesn't really land, ignore the sea theme") and floated **"Liaisons"** as a maybe, because he likes the secret-mission side. The on-screen title now says Liaisons (commit `Display name: Liaisons`); the folder, package, Amplify stack names and this file still say undertow until he confirms a name, since nothing is on GitHub or AWS yet and a rename is free until then.
 
 ## Where things live
 
 - Local checkout: `/home/jarvis/projects/undertow`, branch `main`, first commit `9427d3f`.
 - Remote: `git@github.com:NilSkilz/undertow.git`. **The repo does not exist yet**: the gh PAT can't create repositories, so Rob has to create an empty private `NilSkilz/undertow`, then `git push -u origin main` works over the SSH key.
-- LAN build: http://192.168.1.11:3010 (`vite preview` on CT 110, started by hand on 16 Nov, not in cron, so it won't survive a reboot). Rooms persist in `.data/rooms.json`.
+- **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/undertow-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
 - Browser check: `/home/jarvis/tools/browser-check/undertow-flow.js` drives three phones plus a late joiner through a whole night at 390x844.
 
 ## Stack
