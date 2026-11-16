@@ -5,7 +5,7 @@ Party game for consenting adults: "lobby on phones, then phones away". Started 1
 ## Where things live
 
 - Local checkout: `/home/jarvis/projects/liaisons`, branch `main`, first commit `9427d3f`.
-- Remote: `git@github.com:NilSkilz/liaisons.git` (private, Rob created it 16 Nov; the gh PAT can't create repositories). `main` pushed over the SSH key. Not yet connected in the Amplify console.
+- Remote: `git@github.com:NilSkilz/liaisons.git` (private, Rob created it 16 Nov; the gh PAT can't create repositories). `main` pushed over the SSH key. Connected in the Amplify console by Rob 16 Nov: **https://main.d2e01z37q2t37t.amplifyapp.com/** (auto-builds on push to `main`; AppSync in eu-west-1, endpoint and API key are in the public bundle as intended).
 - **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/liaisons-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
 - Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844. `liaisons-formats.js` next to it runs five phones with confessions and screenshots every whole-room format. `liaisons-decks.js` runs four phones with mixed deck opt-ins through 300 cards and fails if a Kink or Swinger dare reaches anyone who didn't switch it on.
 
@@ -54,13 +54,13 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 
 Verified: 31 tests (28 engine, 3 timer parsing) (decks landed in `4af6dad`, six of the tests are deck gating), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
 
-Not verified: nothing has been deployed to AWS (no credentials on this box), so the AppSync and DynamoDB path has never run for real. Nobody has played it with actual people.
+AWS path verified 16 Nov 19:20: a scripted game against the live AppSync endpoint (create, 2 joins, consent, start, 4 turns, end, finale) round-tripped cleanly at ~100-270ms per call, so the AWSJSON double-encoding is fine. Not yet clicked through in a browser on the Amplify URL. Nobody has played it with actual people.
 
 **Unexplained:** the checkout's `node_modules` on CT 110 was found emptied about 15 minutes before the decks build session (16 Nov), cause untraced. Site stayed up throughout; reinstalled and moved on, but worth a second look if it happens again.
 
 ## Next
 
-1. Rob connects `NilSkilz/liaisons` in the Amplify console (repo created and pushed 16 Nov). First deploy will be the first time the backend has run on AWS.
+1. ~~Connect the repo in Amplify~~ done 16 Nov.
 2. First real deploy: check a room survives the AppSync path (the AWSJSON round trip is the likeliest snag).
 3. Play it, then tune: hands-up to dare ratio, forfeit deck, mission difficulty.
 4. Grow the Kink and Swinger decks after a real night; decide whether anal and three-person cards ever come in (each would need its own lobby question).
