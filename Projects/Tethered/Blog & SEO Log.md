@@ -1170,3 +1170,13 @@ Rob reseeded from develop and merged to main; the Amplify build landed at 10:45 
 **Bing:** submitted 16 URLs via `bing.sh submit` (everything in the sitemap except `/signup`, held until the rewrite rule exists so Bing does not index it as a duplicate of home). Quota confirms 16 used.
 
 **Shelf now:** the `/signup` rewrite rule (then "signup rule done" for the check and the Bing submit), and a second Request indexing on the comparison post, `/blog` and `fireplay-101`. Release job ticked off.
+
+### 16 Nov 11:50: `/signup` rule live, safety contact script drafted
+
+**`/signup` rewrite rule:** Rob added it. A fresh (uncached) fetch now returns the signup page with title "Sign Up Free | Tethered" and canonical `/signup`. Catch: CloudFront still holds the old home-shell copy for the gzip and identity variants (`s-maxage` is a year, cached at 10:45 and 11:17), and that is what most crawlers will get until the next deploy invalidates it. Bing submit for `/signup` therefore still held; it goes with the next "rebuilt".
+
+**Safety contact script:** written into `solo-play-safety-guide` rather than a new `safety-contact-script` page, because that post is the only one Google has indexed. New H2 "What to Tell Your Safety Contact (With a Copy-Paste Script)": the five things a contact needs, a script for a contact who knows, a truthful-but-vague one for a contact who does not, the alert message text, "treat it as real", and the limits of a timer (includes a plain line that no timer makes solo breath play safe). Meta description and tags updated to carry the query. The post's 27 em dashes are gone too. Develop `a3e033c`, pushed; typecheck, 500 tests and the build pass. Partnered and first-meet versions of the script are not written; they belong in `meeting-new-partners-safely` or a standalone page if this one earns anything.
+
+**Shelf now:** read the script, then reseed + merge (one job), and the repeat Request indexing on three URLs. After "rebuilt": verify live, submit `/signup` and the solo post to Bing.
+
+**Product note (FetLife question, 16 Nov):** someone asked whether partner linking has an option other than an emailed link. Today: the invite needs the partner's email and the accepting account must use that address, but the link itself can be copied and sent by any channel. No code, username or QR linking. Second signal that the email requirement is friction in a scene where people keep email private; candidate feature is an email-free invite link.
