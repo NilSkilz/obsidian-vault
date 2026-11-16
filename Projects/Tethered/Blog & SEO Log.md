@@ -985,3 +985,111 @@ Broader, all small:
 - Whether home page clicks keep accumulating past 9, or whether brand traffic has found its ceiling
 - If the alternativeto.net listing goes in, whether it produces a referral or an AI citation. Still a clean test of the directory theory
 - Devotion, Collar, Ever Collar, The Dynamic and Binded: pricing, platform and positioning before the comparison post is rewritten. Five names now, and Kneel's own blog is the fastest place to read most of them
+
+## 2026-11-16
+
+Seventh consecutive week with no commits. `develop` and `main` are both still on `4c9cf80` (12 Oct merge), last real work 5 Oct. The handoff file arrived zero bytes again and is again correct: a fetch confirms no new commits on either branch, and no Tethered mentions anywhere in the last week of daily logs. Rob had "Tethered work" penciled in for Thursday 12 Nov (noted in the 11 Nov log); nothing came of it.
+
+This week I re-fetched the live pages and diffed them byte-for-byte against the captures taken on 9 Nov. `/`, `/blog`, the comparison post, `sitemap.xml`, `llms.txt` and `robots.txt` are all **byte-identical**. The site is frozen, not drifting. So rather than re-walk checks whose answers cannot have changed, this entry reports only what moved, and three things did.
+
+### Moved: two posts crawled their way off "unknown"
+
+| URL | 9 Nov | 16 Nov |
+|---|---|---|
+| `/blog` | URL is unknown to Google | **URL is unknown to Google** (unchanged) |
+| `/blog/best-ds-task-apps-compared` | Discovered, not indexed | Discovered, not indexed |
+| `/blog/solo-play-safety-guide` | URL is unknown to Google | **Discovered, currently not indexed** |
+| `/` | indexed | Submitted and indexed, last crawled 15 Nov |
+
+Small but real: `solo-play-safety-guide` has moved from never-seen to discovered. Two posts are now in the discovered state off sitemap hints alone. The hub page `/blog` is still unknown to Google and has still never been fetched, which keeps last week's diagnosis intact: the sitemap is slowly leaking individual URLs into Google's awareness, but nothing is earning an actual crawl, because nothing links in. `lastCrawlTime` is `never` on all three blog URLs. Discovered is not progress toward indexed on its own, it is just the queue.
+
+### Moved: the empty safety niche is being colonised
+
+This is the finding that changes a recommendation. For six weeks the argument for the safety post has been that no competitor occupies the kink-safety query space. That is now qualified. `dominant-guide.pages.dev`, the second Cloudflare Pages vendor-content site identified last week, is publishing directly into it: `articles/self-bondage-safety-guide` surfaced this week on a solo-play safety query, alongside `influencer-landing-av2.pages.dev/blog/self-bondage-guides`. Kneel has also added `best-flr-apps` to its blog since last week, so its publishing cadence has not slowed.
+
+The niche is still winnable, because neither of those pages answers the specific question below, and the engine's summary dismissed both as "low-quality". But the window is no longer open indefinitely, and the one post Tethered already has in that space (`solo-play-safety-guide`) is also the one that just moved to Discovered. That is not a coincidence worth leaning on, but it is the right place to push.
+
+### New: a search engine stated the content gap in its own words
+
+The most directly useful result of the week. A search for what to tell a safety contact before a solo bondage scene returned, verbatim in the engine's summary: "I couldn't find a source that lists what details to share with a contact, such as a planned end time, a release plan, or where the restraints are kept. Those would need to come from other sources."
+
+That is an unserved query, named and described, in the exact phrasing an AI assistant would use when it fails to answer. It is also precisely the section pitched as the link-earning asset of the safety post in each of the last two weeks. The pitch below narrows onto it rather than repeating the broader post unchanged.
+
+Supporting evidence from the same searches: a kink safety check-in query returned no kink-native product at all, and the engine volunteered that for a kink scene "you would likely need to check whether an app lets you add a safeword or a scene end signal, and whether it can notify a trusted person who knows the context". That is Tethered's product description, written by a search engine that does not know Tethered exists.
+
+### New: the generic safe-call field has filled up fast
+
+Last week's post pitch named Deadman Switch and Demumu as the incumbents to compare against. This week's searches surfaced roughly a dozen more, most with App Store IDs in the `id675xxxxxxx` and `id676xxxxxxx` range, meaning brand new: StillHere, Herline, Safety Send Pro, RUOK Safety, Corlo, AreYouOK, Between Days, Beacon Safe, SoloGuard, Tonic, SafeTimer 2 and Ping. Two implementation details worth stealing for the post: RUOK requires the emergency contact to consent on the link they receive, and Tonic adds a five minute grace window plus last known location before alerting.
+
+The read: generic solo-living safety is now a crowded commodity category, which makes the "generic apps fall short" framing easier to argue, and raises the modest risk that one of these entrants notices the kink use case first.
+
+### Unchanged, verified not assumed
+
+- **The reseed still has not run. Week seven.** The live comparison post still serves the pre-October title, has **zero** internal `/blog/` links, still CTAs twice to robots-disallowed `/dashboard`, and mentions Kneel, SubTasks, mysub and Embrace zero times against the repo's 11, 10, 3 and 3. All 51 internal links remain merged and undeployed.
+- **Sitemap and `llms.txt` agree and are complete.** 16 URLs in the sitemap, 11 posts, all 11 present in both files, cross-checked both directions against each other and against the 10 repo source files. Both 200 with correct content types. `robots.txt` correct, `/welcome` correctly excluded from all three. Nothing shipped, so nothing is missing. The only mismatch remains `fireplay-101-a-beginner-s-guide-to-playing-with-fire-safely`, live and in both files but with no source file in the repo.
+- **On-page SEO is still correct where it is code.** Single H1, title, meta and canonical present and right on all three spot-checked pages.
+- **Home page still links to `/blog` twice and to no individual post.** No signup or register link appears in the prerendered home page HTML at all; the CTA is client-rendered and points at `/dashboard`. Worth noting as a second-order problem: the crawlable home page has no crawlable conversion path either.
+- `/blog` index meta description still reads "consent negotiation, scene safety, aftercare and more", still pre-pivot. Sitemap `lastmod` still stale, still absent on the five static pages.
+
+### Traffic: flat, with one improvement and one mild regression
+
+Window 19 Oct to 15 Nov: 7 queries, 110 impressions, 6 clicks. The home page carries 101 impressions and all 6 clicks at average position 8.1.
+
+- Mild regression on the headline number: 6 clicks against 9 last week, and position 8.1 against 7.6. Both are small enough to be noise at this volume, but the brand recovery is no longer visibly accumulating. Worth one more week before calling it a ceiling.
+- Clean improvement: the `/dashboard` zombies are washing out as predicted, down from 7 impressions across two URLs to a single impression on one.
+- `/donate` is quietly the second most visible page at 5 impressions, position 4.4.
+- **Still zero impressions on any blog post, now across 41 days.** That remains the number that matters.
+
+### Blog post pitch
+
+Narrowed, not carried. The same territory as the last two weeks, but pointed at the specific gap a search engine named this week instead of at the general comparison essay. The briefing script stops being one section of six and becomes the whole point of the page, which is what makes it linkable and quotable.
+
+**Title:** What to Tell Your Safety Contact Before a Scene (With a Copy-Paste Script)
+**Slug:** `safety-contact-script`
+
+**Targets:**
+- "what to tell your safety contact", "safe call script BDSM", "solo bondage safety plan"
+- "what information to give emergency contact before a scene", "self-bondage check-in plan"
+- AI-assistant phrasing: "what should I tell someone before a solo bondage session?", "how do I set up a safe call for a BDSM scene?", "what details does my safety contact need?"
+
+**Outline:**
+- The five things a contact actually needs: planned end time, where you are, who you are with and how to reach them, what "I have not heard from them" should trigger, and where the release or keys are. Lead with this, above the fold, as a list someone can screenshot
+- The copy-paste script itself, in three versions: partnered scene, meeting someone new, solo. Each short enough to paste into a message. This is the asset and the reason to link
+- The discretion problem: how to brief someone you are not out to, what to leave out, and why a vague brief still beats no brief
+- Why generic check-in apps break here, naming them. The incumbents are real and numerous now: Deadman Switch, Demumu, RUOK, Tonic, If I'm Quiet, SoloGuard. None of them carry scene context, none know what a safeword is, and several alert with text that outs you
+- The three failure modes that kill a safe call in practice: the contact who falls asleep, the timer you can cancel while still restrained, the friend who gets the alert and does not know what to do
+- Where Tethered fits, in one short honest paragraph: timer, check-in, alert to a chosen contact, SMS on premium, same account runs the dynamic. No overselling
+- Internal links out to `solo-play-safety-guide`, `meeting-new-partners-safely` and `when-things-go-wrong`, all three of which already exist and need the inbound links
+
+**Why this one now:** because a search engine said out loud this week that the answer does not exist online, in a niche where the apps it did find are generic and the kink pages it did find it called low-quality. That is as clean a content gap as this exercise is ever going to surface. It is also the narrowest possible version of the post that has been pitched twice and not written, so it is cheaper to write, and it strengthens `solo-play-safety-guide`, the one post that moved to Discovered this week, by linking to it.
+
+**Caveat to carry into the draft:** do not repeat the claim that solo bondage is the leading cause of BDSM-related death. It traces to class handouts, not to any primary source. One competitor page asserted it again this week.
+
+### Site updates
+
+1. **Run the reseed.** `AWS_PROFILE=personal npx tsx scripts/seed-blog-posts.ts`. Rob only, no AWS creds on this box. **Seventh week on this list.** Nothing below it is worth attempting first, and nothing else on the site has changed by a single byte in seven weeks. 51 internal links, the `/dashboard` CTA fix and the comparison post's 2026 rewrite are all written, merged and inert.
+
+2. **Link individual blog posts from the home page.** Carried, second week. The home page is the only URL on the site Google actually crawls, confirmed again this week (last crawled 15 Nov, indexed, while `/blog` has never been fetched). It links to `/blog` twice and to no post. Three in-body links to the comparison post, task ideas and the solo safety guide is the cheapest crawl path that exists, it is frontend only, and it does not depend on the reseed.
+
+3. **Add the safety-contact script to the existing `solo-play-safety-guide` post.** New, and the cheap alternative to the pitch above if nothing else gets written. That post just moved to Discovered, it already ranks for nothing, and bolting the five-point briefing list and one copy-paste script onto it targets the stated gap without writing a new page or touching routing. If the reseed is going to run anyway, this edit rides along for free in the same seed file.
+
+4. **List Tethered on alternativeto.net.** Carried, fourth week. AlternativeTo surfaced in this week's searches again (Beacon Safe). Kneel, SubTasks, Obedience, The Dynamic and Collar are all listed; Tethered is not. Free, user-submitted, one sitting, still the most direct available route into both inbound links and AI answers while the blog is uncrawlable.
+
+Broader, all small:
+
+5. **Add a crawlable signup link to the home page.** New. The prerendered home page HTML contains no `/signup`, `/login` or `/register` link at all; the only CTA is client-rendered and points at robots-disallowed `/dashboard`. The one page on this site that Google crawls therefore has no crawlable conversion path. One line of markup.
+
+6. **Add a real `/pricing` page.** Carried. Cost and alternatives queries are still three of seven, still ranking at positions 1, 2 and 4, all resolving to the home page. Argument already written in `llms.txt`. Also fixes one soft-404 path.
+
+7. **Fix the sitemap `lastmod` generator.** Carried. No `lastmod` on the five static pages, stale dates on posts because the generator reads `updatedAt` off rows nothing has touched.
+
+8. **Rewrite the `/blog` index meta description** (still pre-pivot) and **fix the fireplay slug** (mangled apostrophe, no source file, cannot survive a reseed). Both carried, both one-liners.
+
+### Follow-ups for next week
+
+- Did the reseed run. Same five-minute check: comparison post title, internal link count, no live post linking to `/dashboard`
+- **Has `/blog` moved off "URL is unknown to Google"**, and have the two Discovered posts moved on or stalled. Discovered is a queue, not progress; if they sit there a third week that confirms links are the only lever
+- Does any blog post record a single GSC impression. Zero across 41 days
+- Home page clicks: 9 then 6. One more week decides whether that is noise or a ceiling
+- Whether `dominant-guide.pages.dev` publishes further into kink safety, and whether any of the new generic check-in apps adds a scene or kink angle. That is the clock on the safety pitch
+- If the alternativeto.net listing goes in, whether it produces a referral or an AI citation
