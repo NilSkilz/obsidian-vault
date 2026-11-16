@@ -32,6 +32,7 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 - **Heat vote:** eyes closed, host taps in the hand count, only unanimous raises it.
 - **Late joiners / changing answers:** host shows the room code; a late joiner gets a mission once they've answered.
 - **End:** host reveals each mission, room votes pulled-it-off or busted, then awards (Bravest, Conscientious Objector, Most Wanted, Smooth Operator, Rumbled, Never Flinched).
+- **Join QR (16 Nov, `d953843`):** the host gets a "Show QR code" button in the lobby, and the dealer's "Room code / QR" sheet shows it mid-game. It encodes `<origin>/?code=XXXX`, which lands on the join screen with the code filled in. A scanned link for a different room overrides a stale saved session; the same room just carries on. Drawn as inline SVG with `qrcode-generator` (zero dependencies, clean `npm ci` re-checked).
 
 ## Decks (added 16 Nov, Rob's call: "vanilla deck, kink deck and swinger deck, host adds 1, 2 or 3 to the pot")
 
