@@ -70,3 +70,15 @@ Full schema reference now lives in the repo: `docs/card-spec.md` (decks, fields,
 - **Unit tests completed** (commit caa479d): suite now 65 tests, closing the last Deviance To Do item. Added coverage for movement wrap-around (Go bonus fires once, not per step) and rent (cash payment, collection below zero, Work It Off gating).
 - **Legacy deck cleanup done** (commit 5a81ca6): card validator now reads **0 errors/warnings across all 1,056 cards**, down from 101. Fixed ~85 duplicate card names (the used-pile excludes by name, so duplicates were burying variety), broken `others_will_orgasm`/massage-oil consent gates, and four "Improv theatre" cards wrongly marked 2-player that need three. Validator now runs in every build, so a bad card fails the Netlify deploy — the rot can't come back silently.
 - **Trello, end of 3 Oct daytime session:** To Do list is empty. Backlog is just "card expansion batch 2" (further rounds, e.g. evening out thin toys) — the earlier batch-2 ticket above covers the sex-content round already shipped.
+
+## Direction rethink: drop the board (16 Nov 2026)
+
+Untouched since 3 Oct; Rob came back to it after playing a party game at a house gathering (12 people, group hands-up questions with forfeits, app-driven, no name/board tracking, "quite tame"). His read: the Monopoly board is the weakest part of Deviance anyway. Proposal on the table is a **new system, no board**: keep the 1,056 cards, consent gates and spice levels, deal them without the property/rent mechanic.
+
+Jarvis's pitch, stacking rather than competing:
+1. **The app knows the room** (the pick) — everyone joins on their own phone with a room code, privately ticks what they're up for and with whom; cards only deal to pairs who both said yes, so declines stay invisible to the group. Fixes the party-game's tameness problem by removing the public-opt-out awkwardness.
+2. **Secret missions** — private per-phone objectives alongside the group cards, scored if pulled off unnoticed; keeps everyone engaged even off-turn (the 12-person problem).
+3. **Stakes instead of a board** — token economy (forfeits pay out, refusing costs, tokens buy dodge/redirect/double), gives win/loss tracking and a natural ending (richest picks the final card for the poorest).
+4. **A night with acts** — hands-up questions -> dares/pairs -> finale, heat escalating only when the room secretly votes for it.
+
+Open question Rob hasn't answered yet: one phone passed around, or everyone on their own device? Jarvis's vote is own phones (private consent + secret missions depend on it). No build started.

@@ -63,3 +63,4 @@ Example worked 26 Sep: a 4x8m + 2x2m set priced £65 natural → dyed comes out 
 - Red (fuchsia) colourway pending the dye test; don't list until a batch has dried and crock-tested clean.
 - 2 direct orders already in hand (25 Sep), pre-Etsy.
 - Etsy fees roughly 10-13% all in; £40 old balance clears on reactivation.
+- **Still not live as of 16 Nov 2026.** Only blocker left is photos (listing copy, shot list and pricing above are all ready). Rob's away from the rope until then; Thursday 19 Nov 10:30 is pencilled in (Telegram nudge + Todoist task) to shoot the photo list while daylight's good.
