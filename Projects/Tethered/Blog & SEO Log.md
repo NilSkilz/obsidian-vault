@@ -1093,3 +1093,14 @@ Broader, all small:
 - Home page clicks: 9 then 6. One more week decides whether that is noise or a ceiling
 - Whether `dominant-guide.pages.dev` publishes further into kink safety, and whether any of the new generic check-in apps adds a scene or kink angle. That is the clock on the safety pitch
 - If the alternativeto.net listing goes in, whether it produces a referral or an AI citation
+
+### AlternativeTo listing submitted (16 Nov, 10:16)
+
+Rob submitted Tethered to alternativeto.net this morning, after four weeks on the list. Pending their moderation, so not live yet.
+
+What went in: short description "D/s dynamic manager: partner-linked tasks, points, rewards and punishments, plus a scene safety timer." plus a flat, factual full description (tasks, points and rewards, punishments, safety timer, consent checklists, PWA, freemium). Suggested as an alternative to Obedience, Kneel, SubTasks, The Dynamic and Collar. Proprietary, Freemium, web-based. Not confirmed which optional fields (tags, alternatives) Rob actually filled in.
+
+This starts the clock on the directory theory. To check in each weekly review from 23 Nov:
+- Is the listing approved and live (search alternativeto.net for Tethered, and check it appears on the Obedience / Kneel / SubTasks alternatives pages)
+- Any referral from alternativeto.net in Plausible
+- Whether the listing gets indexed, and whether an AI answer to "alternatives to Obedience app" names Tethered
