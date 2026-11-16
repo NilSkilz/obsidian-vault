@@ -94,3 +94,5 @@ Rob's two principles: **nobody watches a phone during play** (it's about interac
 - **Dropped:** token economy (made refusing cost something, which is the pressure Rob doesn't want).
 
 Still open: forfeit random or pick-from-two (Jarvis: pick from two, so non-drinkers aren't stuck with "take a drink"); what happens to late joiners or someone wanting to change their ticks mid-night (Jarvis: host's phone shows the room code on request, the one sanctioned phone moment). First build: lobby + dealer loop with the hands-up questions deck and a forfeit deck. No build started.
+
+**Built 16 Nov as a separate game and repo: see `Projects/Undertow.md`.** Forfeits went pick-from-two; late joiners use the room code. The board game repo is untouched.
