@@ -1154,3 +1154,19 @@ Rob said "ship the SEO fixes". All five are in one commit on develop, `74eb6b1`,
 - Then the held Bing submit (now 17 URLs with `/signup`), and a second Request indexing on the comparison post.
 
 A real 301 for the old fireplay URL would be an Amplify console redirect. The meta-refresh stub is the repo-side equivalent and is enough for Google; not worth a console trip on its own.
+
+### 16 Nov 10:47: rebuild verified live, Bing submit done
+
+Rob reseeded from develop and merged to main; the Amplify build landed at 10:45 (CloudFront `last-modified` moved off 12 Oct). Checked with plain `curl`, i.e. what crawlers get:
+
+| Check | Result |
+|---|---|
+| Static pages rebuilt | Yes. Home, `/blog` and posts all carry the 16 Nov build. `/blog` has the new D/s meta description. Zero `/dashboard` links left in the static home, `/blog` or post HTML. |
+| Home page guide links | 6 post links and 2 `/signup` links in the static home page. |
+| Fireplay | `/blog/fireplay-101` serves the article with its own canonical. The old long URL serves the meta-refresh stub with canonical pointing at the new slug. |
+| Sitemap | 17 URLs, all 17 with `lastmod` (so Amplify's clone is not shallow). `/signup` and `fireplay-101` present; `llms.txt` uses the new slug. |
+| `/signup` for crawlers | **Fails.** Serves the home shell with canonical `/`. `dist/signup/index.html` is built correctly (checked the local build: own title and canonical), but the Amplify catch-all rewrite wins. Needs one console rule: `/signup` to `/signup/index.html`, 200, above the catch-all. On the shelf for Rob. |
+
+**Bing:** submitted 16 URLs via `bing.sh submit` (everything in the sitemap except `/signup`, held until the rewrite rule exists so Bing does not index it as a duplicate of home). Quota confirms 16 used.
+
+**Shelf now:** the `/signup` rewrite rule (then "signup rule done" for the check and the Bing submit), and a second Request indexing on the comparison post, `/blog` and `fireplay-101`. Release job ticked off.
