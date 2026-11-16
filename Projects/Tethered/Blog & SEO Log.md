@@ -1132,3 +1132,25 @@ Verdicts on the two not-indexed pages are minutes old and may still move. Google
 Held: the Bing batch submit of all 16 URLs, until the rebuild, so Bing fetches the fixed static pages.
 
 Note on API reach: the service account is already a Full user, so URL Inspection, search analytics and sitemaps are mine. "Request indexing" has no API at all (Google's Indexing API only covers job postings and livestreams), so that button stays Rob's.
+
+### SEO code fixes shipped to develop (16 Nov, 10:45)
+
+Rob said "ship the SEO fixes". All five are in one commit on develop, `74eb6b1`, pushed. Typecheck, 500 tests and the full production build pass; `/signup` and the new home section were checked in headless Chrome at desktop and phone widths. Not on main yet, so nothing below is live.
+
+| Fix | What changed |
+|---|---|
+| Home page post links | New "Guides from the blog" section (six named posts) on the React landing page and in the prerendered home HTML. One shared list in `src/lib/blogMeta.ts`, so the two cannot drift. |
+| Crawlable signup link | New `/signup` route: the landing page with the sign-up form already open, plus a prerendered static page with its own canonical. The blog post CTA, the prerendered home nav and a quiet "Or create your free account" link under the closing CTA all point at it. The main landing CTAs still go to `/dashboard` (Rob's local-mode funnel, left alone). Prerendered posts now end with a signup link too; they had no conversion link at all. |
+| Stale blog meta | `/blog` title, description, H1 and tagline rewritten for the D/s positioning ("D/s Dynamic & Kink Safety Guides"), in the React page, the prerender and the JSON-LD. |
+| Sitemap dates | Static pages now carry `lastmod` (git date of their source files; `/blog` takes the newest post's date), and `/signup` is in the sitemap. The seed script now skips unchanged posts, so `updatedAt` stops jumping to the reseed date on every post. |
+| Fireplay slug | Post written back into the repo as `scripts/blog-posts/fireplay-101.md` (content pulled from the live API, plus a Related Guides block). New slug `fireplay-101`. The seed script renames the existing row in place via `previousSlugs`, the old URL redirects client-side, and the prerender leaves a canonical + meta-refresh stub at the old path. |
+
+**Release order (on the shelf as one job):** reseed from develop first, then merge develop to main. The merge's build is the rebuild the 10:22 reseed was waiting for, so the separate "Redeploy" job is retired. The code is safe in either order: it serves the fireplay post from whichever slug the database has.
+
+**To verify after "rebuilt":**
+- `curl /signup` returns its own canonical, not the home one. Unknown until deployed: if the Amplify rewrite rule only exempts `/blog`, `/signup` will fall through to the home shell (still works for people, wrong canonical for crawlers) and needs one console rule from Rob.
+- Static-page `lastmod` actually appears in the live sitemap. It is omitted if Amplify builds from a shallow clone, which I could not check from here.
+- Old fireplay URL serves the redirect stub; `/blog/fireplay-101` serves the article.
+- Then the held Bing submit (now 17 URLs with `/signup`), and a second Request indexing on the comparison post.
+
+A real 301 for the old fireplay URL would be an Amplify console redirect. The meta-refresh stub is the repo-side equivalent and is enough for Google; not worth a console trip on its own.
