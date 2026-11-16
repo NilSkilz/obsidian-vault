@@ -53,10 +53,12 @@ Verified: 28 engine tests (decks landed in `4af6dad`, six of the tests are deck 
 
 Not verified: nothing has been deployed to AWS (no credentials on this box), so the AppSync and DynamoDB path has never run for real. Nobody has played it with actual people.
 
+**Unexplained:** the checkout's `node_modules` on CT 110 was found emptied about 15 minutes before the decks build session (16 Nov), cause untraced. Site stayed up throughout; reinstalled and moved on, but worth a second look if it happens again.
+
 ## Next
 
 1. Rob connects `NilSkilz/liaisons` in the Amplify console (repo created and pushed 16 Nov). First deploy will be the first time the backend has run on AWS.
 2. First real deploy: check a room survives the AppSync path (the AWSJSON round trip is the likeliest snag).
 3. Play it, then tune: hands-up to dare ratio, forfeit deck, mission difficulty.
 4. Grow the Kink and Swinger decks after a real night; decide whether anal and three-person cards ever come in (each would need its own lobby question).
-5. Open questions for Rob: the name; whether the host should be able to sit out as a non-player dealer.
+5. Open questions for Rob: whether the host should be able to sit out as a non-player dealer; whether the public URL should sit behind a password while testing (matters more now Swinger-deck content is reachable by anyone with the link, no accounts).
