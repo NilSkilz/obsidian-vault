@@ -1104,3 +1104,31 @@ This starts the clock on the directory theory. To check in each weekly review fr
 - Is the listing approved and live (search alternativeto.net for Tethered, and check it appears on the Obedience / Kneel / SubTasks alternatives pages)
 - Any referral from alternativeto.net in Plausible
 - Whether the listing gets indexed, and whether an AI answer to "alternatives to Obedience app" names Tethered
+
+### Reseed ran, indexing requested (16 Nov, 10:22)
+
+Rob ran `seed-blog-posts.ts` and requested indexing in GSC for `/blog`, the comparison post and the solo safety guide. Seven weeks on the list, closed in one sitting off the new shelf.
+
+Verified in headless Chrome (rendered DOM, not curl):
+
+| Check | Result |
+|---|---|
+| Comparison post title | "Best D/s Apps in 2026: Obedience, Kneel, SubTasks and Tethered Compared", Kneel named 16 times |
+| Internal blog-to-blog links | 6 on comparison, 4 on solo, 4 on rules (was 0 everywhere) |
+| Blog index | 11 posts, no duplicates |
+| Fireplay post (no seed file) | survived intact |
+
+**The catch: the prerendered HTML is still the 12 Oct build.** `scripts/prerender.ts` bakes the posts into static HTML at build time, and nothing has rebuilt since (CloudFront `last-modified: 12 Oct`). So `curl` still gets the old title, zero internal links and the old meta. Humans and JS-rendering Googlebot see the new content; Bing, GPTBot, ClaudeBot and Google's first-pass fetch see the old. **A reseed needs an Amplify rebuild after it to reach crawlers.** That was missing from every previous write-up of this item. Fix: "Redeploy this version" in the Amplify console, or any merge to main. On the shelf as a 2-minute job.
+
+**Remaining `/dashboard` links are code, not content.** Every post still renders two: the nav "Open App" button and the "Try Tethered Free" footer CTA in the React post template. The reseed could never have fixed those. They belong to the "ship the SEO fixes" job (crawlable signup link).
+
+**GSC URL Inspection straight after the request (10:23 crawl on all three):**
+- `/blog`: Crawled, currently not indexed (was "unknown to Google" last week)
+- comparison post: Crawled, currently not indexed
+- solo safety guide: **Submitted and indexed**. First blog post in Google's index.
+
+Verdicts on the two not-indexed pages are minutes old and may still move. Google fetched the stale static HTML, so the comparison post is worth a second Request indexing after the rebuild.
+
+Held: the Bing batch submit of all 16 URLs, until the rebuild, so Bing fetches the fixed static pages.
+
+Note on API reach: the service account is already a Full user, so URL Inspection, search analytics and sitemaps are mine. "Request indexing" has no API at all (Google's Indexing API only covers job postings and livestreams), so that button stays Rob's.
