@@ -1,13 +1,13 @@
-# Undertow
+# Liaisons
 
-Party game for consenting adults: "lobby on phones, then phones away". Started 16 Nov 2026 as the no-board successor to the Deviance board game (see `Projects/Deviance Game.md` for the design conversation that led here). **Name:** Rob rejected "Undertow" on 16 Nov ("doesn't really land, ignore the sea theme") and floated **"Liaisons"** as a maybe, because he likes the secret-mission side. The on-screen title now says Liaisons (commit `Display name: Liaisons`); the folder, package, Amplify stack names and this file still say undertow until he confirms a name, since nothing is on GitHub or AWS yet and a rename is free until then.
+Party game for consenting adults: "lobby on phones, then phones away". Started 16 Nov 2026 as the no-board successor to the Deviance board game (see `Projects/Deviance Game.md` for the design conversation that led here). **Name:** Liaisons, settled 16 Nov 2026 when Rob created the repo under that name. It started life as "Undertow" (my pick, he said it didn't land and to ignore the sea theme); folder, package, Amplify stack names, boot script and this file were all renamed the same day.
 
 ## Where things live
 
-- Local checkout: `/home/jarvis/projects/undertow`, branch `main`, first commit `9427d3f`.
-- Remote: `git@github.com:NilSkilz/undertow.git`. **The repo does not exist yet**: the gh PAT can't create repositories, so Rob has to create an empty private `NilSkilz/undertow`, then `git push -u origin main` works over the SSH key.
-- **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/undertow-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
-- Browser check: `/home/jarvis/tools/browser-check/undertow-flow.js` drives three phones plus a late joiner through a whole night at 390x844.
+- Local checkout: `/home/jarvis/projects/liaisons`, branch `main`, first commit `9427d3f`.
+- Remote: `git@github.com:NilSkilz/liaisons.git` (private, Rob created it 16 Nov; the gh PAT can't create repositories). `main` pushed over the SSH key. Not yet connected in the Amplify console.
+- **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/liaisons-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
+- Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844.
 
 ## Stack
 
@@ -40,7 +40,7 @@ Not verified: nothing has been deployed to AWS (no credentials on this box), so 
 
 ## Next
 
-1. Rob creates the GitHub repo, Jarvis pushes, Rob connects it in the Amplify console.
+1. Rob connects `NilSkilz/liaisons` in the Amplify console (repo created and pushed 16 Nov). First deploy will be the first time the backend has run on AWS.
 2. First real deploy: check a room survives the AppSync path (the AWSJSON round trip is the likeliest snag).
 3. Play it, then tune: hands-up to dare ratio, forfeit deck, mission difficulty.
 4. Port the legacy deck and decide how levels 4 and 5 get their consent gates.

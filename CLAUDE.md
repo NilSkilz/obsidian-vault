@@ -57,7 +57,7 @@ Read the relevant file at session start. Write durable new knowledge back to the
 | Haven (family app) | `Projects/Haven.md` |
 | Craft ERP (Aimee's business app) | `Projects/Craft ERP.md` |
 | Deviance (adult board game) | `Projects/Deviance Game.md` |
-| Undertow (party game, no-board successor to Deviance) | `Projects/Undertow.md` |
+| Liaisons (party game, no-board successor to Deviance; briefly "Undertow") | `Projects/Liaisons.md` |
 | Harbourmaster (work PR bot, runs on Rob's work Mac) | `Projects/Harbourmaster.md` |
 | Saline Pump (ESP32 saline-injection rig) | `Projects/Saline Pump/` |
 | Fuck-io (stepper machine + orgasm-detect plug + remote, idea) | `Projects/Fuck-io.md` |
