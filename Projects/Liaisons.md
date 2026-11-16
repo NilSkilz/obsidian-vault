@@ -7,7 +7,7 @@ Party game for consenting adults: "lobby on phones, then phones away". Started 1
 - Local checkout: `/home/jarvis/projects/liaisons`, branch `main`, first commit `9427d3f`.
 - Remote: `git@github.com:NilSkilz/liaisons.git` (private, Rob created it 16 Nov; the gh PAT can't create repositories). `main` pushed over the SSH key. Not yet connected in the Amplify console.
 - **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/liaisons-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
-- Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844. `liaisons-formats.js` next to it runs five phones with confessions and screenshots every whole-room format.
+- Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844. `liaisons-formats.js` next to it runs five phones with confessions and screenshots every whole-room format. `liaisons-decks.js` runs four phones with mixed deck opt-ins through 300 cards and fails if a Kink or Swinger dare reaches anyone who didn't switch it on.
 
 ## Stack
 
@@ -33,13 +33,23 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 - **Late joiners / changing answers:** host shows the room code; a late joiner gets a mission once they've answered.
 - **End:** host reveals each mission, room votes pulled-it-off or busted, then awards (Bravest, Conscientious Objector, Most Wanted, Smooth Operator, Rumbled, Never Flinched).
 
-## Content (starter decks, written 16 Nov)
+## Decks (added 16 Nov, Rob's call: "vanilla deck, kink deck and swinger deck, host adds 1, 2 or 3 to the pot")
 
-198 whole-room cards (60 hands up, 24 swap seats, 22 pick a side, 17 the line, 9 rank yourselves, 20 most likely to, 20 guess the count, 26 eyes closed), 20 solo dares plus 6 hot seats, 34 pair dares, 14 forfeits, 18 missions. **Heat stops at 3 (Flirty / Hot / Filthy).** Levels 4 and 5 don't exist yet; they arrive when the legacy 1,056 Deviance cards are ported. That port needs a decision, because those cards use 19 preference gates (pain, restraint, oral and so on) that this lobby doesn't ask about.
+- **Host picks the pot in the lobby** (op `decks`), default Vanilla only, at least one, fixed once the night starts.
+- **Kink and Swinger are opt-in per player**, privately, on the answers screen ("Not for me" / "Deal me in", default off). A solo card needs that player's switch, a pair card needs both people's (`decksFor` in `shared/engine.ts`). Nobody else's view carries the opt-ins, host included (test asserts it).
+- **Whole-room cards need no opt-in** because they're talk, not touch; they come from every deck in the pot. A pot with no whole-room card at the current heat borrows vanilla's.
+- **Heat stays at three levels and one tick per person covers every deck.** Kink runs Flirty to Filthy. Swinger is the board game's levels 4 and 5 (oral, full sex), and every Swinger dare sits at Filthy, so it takes a mutual Filthy tick plus both opt-ins. This replaced the idea of folding levels 4 and 5 into Filthy for everyone, which would have silently changed what a Filthy tick meant.
+- The host's card shows a "· Kink" or "· Swinger" tag. Extra decks are weighted 2x in the draw so they show up against the bigger vanilla deck.
+- **Deliberately left out:** anal and cards for three or more people (the lobby asks about neither), toys beyond ice/scarf/belt/blindfold-from-whatever. Ties are always "a bow they could pull free". Sex cards say "sort protection first".
+- Cards were written fresh in Liaisons format (no anatomy assumed), mined from the Deviance level 4 and 5 cards rather than auto-ported. The 1,056-card port is no longer the plan for reaching that content.
+
+## Content (16 Nov)
+
+405 cards. **Vanilla:** 198 whole-room (60 hands up, 24 swap seats, 22 pick a side, 17 the line, 9 rank yourselves, 20 most likely to, 20 guess the count, 26 eyes closed), 26 solo dares plus 6 hot seats, 48 pair dares (24 at Filthy after Rob asked for more: alone in a room for two minutes, "open your mouth", blindfold, ice, under a blanket). **Kink:** 34 whole-room, 12 solo, 30 pair. **Swinger:** 26 whole-room, 5 solo, 20 pair. Plus 14 forfeits and 18 missions.
 
 ## State (16 Nov 2026)
 
-Verified: 22 engine tests (16 before the group formats landed in `184b536`), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
+Verified: 28 engine tests (decks landed in `4af6dad`, six of the tests are deck gating), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
 
 Not verified: nothing has been deployed to AWS (no credentials on this box), so the AppSync and DynamoDB path has never run for real. Nobody has played it with actual people.
 
@@ -48,5 +58,5 @@ Not verified: nothing has been deployed to AWS (no credentials on this box), so 
 1. Rob connects `NilSkilz/liaisons` in the Amplify console (repo created and pushed 16 Nov). First deploy will be the first time the backend has run on AWS.
 2. First real deploy: check a room survives the AppSync path (the AWSJSON round trip is the likeliest snag).
 3. Play it, then tune: hands-up to dare ratio, forfeit deck, mission difficulty.
-4. Port the legacy deck and decide how levels 4 and 5 get their consent gates.
+4. Grow the Kink and Swinger decks after a real night; decide whether anal and three-person cards ever come in (each would need its own lobby question).
 5. Open questions for Rob: the name; whether the host should be able to sit out as a non-player dealer.
