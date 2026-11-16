@@ -33,6 +33,8 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 - **Late joiners / changing answers:** host shows the room code; a late joiner gets a mission once they've answered.
 - **End:** host reveals each mission, room votes pulled-it-off or busted, then awards (Bravest, Conscientious Objector, Most Wanted, Smooth Operator, Rumbled, Never Flinched).
 - **Join QR (16 Nov, `d953843`):** the host gets a "Show QR code" button in the lobby, and the dealer's "Room code / QR" sheet shows it mid-game. It encodes `<origin>/?code=XXXX`, which lands on the join screen with the code filled in. A scanned link for a different room overrides a stale saved session; the same room just carries on. Drawn as inline SVG with `qrcode-generator` (zero dependencies, clean `npm ci` re-checked).
+- **Timer on timed dares (16 Nov, `d94b5dd`, Rob asked):** when a solo or pair card names a time limit, the host's card shows a countdown under it: Start, Pause/Resume, +30s, Reset, Finish. It never starts itself. At zero it flashes "Time's up", buzzes (Android only, iOS has no vibrate API) and beeps, and it holds a screen wake lock while running. The limit is parsed from the card wording by `timeLimit` in `shared/timer.ts` (49 cards, 10 seconds to 5 minutes); `shared/timer.test.ts` fails if a new card mentions a time the parser can't read. Local to the host's phone, nothing goes to the engine, so a reload resets it.
+- **Level legend (16 Nov):** the Flirty / Hot / Filthy explanations sit directly above the per-person choices on the answers screen (they used to be at the bottom, Rob flagged it), pinned so they stay in view down a long guest list.
 
 ## Decks (added 16 Nov, Rob's call: "vanilla deck, kink deck and swinger deck, host adds 1, 2 or 3 to the pot")
 
@@ -50,7 +52,7 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 
 ## State (16 Nov 2026)
 
-Verified: 28 engine tests (decks landed in `4af6dad`, six of the tests are deck gating), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
+Verified: 31 tests (28 engine, 3 timer parsing) (decks landed in `4af6dad`, six of the tests are deck gating), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
 
 Not verified: nothing has been deployed to AWS (no credentials on this box), so the AppSync and DynamoDB path has never run for real. Nobody has played it with actual people.
 
