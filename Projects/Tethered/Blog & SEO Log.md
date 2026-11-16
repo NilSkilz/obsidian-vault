@@ -1196,6 +1196,10 @@ Not live until merged to main (shelf job). Checkout itself was only verified by 
 
 **Product note (contact form, 6 Nov):** Ophelia (opheliafoxylittle@gmail.com) suggested a countable task type: a task that can be completed an unlimited or set number of times per day (e.g. "drink a glass of water"), with a counter or target score visible to the task giver. Unanswered as of 16 Nov; reply is on the shelf. Related known gap: recurring daily/weekly tasks complete once forever with no reset (`code-review-2026-07.md`).
 
+**Correction + assessment (16 Nov):** that gap is closed. `src/utils/taskOccurrence.ts` and the `pointsOperation` Lambda now complete daily/weekly tasks per occurrence (completion id `taskId#occurrenceKey`, conditional put), so recurring tasks do reset. Ophelia's idea is the next step on that same mechanism: several completions per occurrence with a visible count. Suggested shape: optional "times per day" target on daily tasks, each tick logged with no per-tick approval, points paid once when the target is hit, Dom sees live progress (3/8). Unlimited-count variant deferred (point farming). Needs a schema field + Lambda change, so it ships with a backend deploy. Awaiting Rob's go.
+
+**First subscription signal (16 Nov):** Stripe payout of £1.73 on 11 Nov, the first subscription-sized payment, five days after Ophelia asked who should subscribe. Amount fits one £1.99 charge after fees. Payer not confirmed (no Stripe access from this box); Rob told her the task creator subscribes, so it may be her Dom's account.
+
 **GitHub Actions "Cypress E2E Tests" is red on every push** (at least since 28 Sep, all six shards fail inside 4 minutes). Not caused by today's commits. Likely cause: the workflow still records to the retired Sorry-Cypress director (`cypress-director.cracky.co.uk` returns 525). The real E2E suite runs on CT 117. Logs not readable with the current PAT (no Actions scope). Candidate fix: delete or disable the workflow.
 
 **Shelf now:** merge the Stripe fix, reply to Ophelia, repeat Request indexing on three URLs.
