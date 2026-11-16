@@ -13,6 +13,7 @@
 - **Consent Checklist** - Pre-scene negotiation tool
 - **Partner Linking** - Connect with play partners
 - **Task/Reward/Punishment system** - Behavioral tracking
+  - **Counted daily tasks (built 16 Nov 2026, develop `a9ee7f5`):** a daily task can have a times-per-day target (e.g. 8 glasses of water), ticked off through the day with a counter both partners see; one approval and one payout when the target is hit. Came from a customer request (Ophelia, the likely first subscriber).
 
 ## Business Model
 **Monetisation:** Freemium model — free to use, some features premium.
