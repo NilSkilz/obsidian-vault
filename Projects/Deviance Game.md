@@ -81,4 +81,16 @@ Jarvis's pitch, stacking rather than competing:
 3. **Stakes instead of a board** — token economy (forfeits pay out, refusing costs, tokens buy dodge/redirect/double), gives win/loss tracking and a natural ending (richest picks the final card for the poorest).
 4. **A night with acts** — hands-up questions -> dares/pairs -> finale, heat escalating only when the room secretly votes for it.
 
-Open question Rob hasn't answered yet: one phone passed around, or everyone on their own device? Jarvis's vote is own phones (private consent + secret missions depend on it). No build started.
+### Settled with Rob, 16 Nov afternoon: "lobby on phones, then phones away"
+
+Rob's two principles: **nobody watches a phone during play** (it's about interacting with each other), and **it's consent based with no real pressure to complete anything** (the arbitrary forfeit, remove clothes / take a drink, is what made the party game work).
+
+- **Lobby (own phones, a few minutes):** join by room code, enter name, privately tick who you're OK interacting with (and at what level). Optionally receive a secret mission. Then phones go away for the night.
+- **Play (host's phone only):** host is the dealer. App picks who's up, using the lobby consent so cards only pair people who both said yes; host reads the card aloud. Two buttons: "Did it" / "Forfeit".
+- **Forfeit is a move, not a loss:** arbitrary, same size whatever card was dodged, so nobody explains themselves. A named second person can wave a card off free and the app redraws.
+- **Secret missions stay:** dealt once in the lobby, so they need no phone mid-game. Reveal and scoring at the end of the night.
+- **Awards, not winners:** app counts quietly, end-of-night awards (most forfeits, bravest, etc).
+- **Heat steps up by eyes-closed hands-up vote**, host taps in the count; one no holds the level.
+- **Dropped:** token economy (made refusing cost something, which is the pressure Rob doesn't want).
+
+Still open: forfeit random or pick-from-two (Jarvis: pick from two, so non-drinkers aren't stuck with "take a drink"); what happens to late joiners or someone wanting to change their ticks mid-night (Jarvis: host's phone shows the room code on request, the one sanctioned phone moment). First build: lobby + dealer loop with the hands-up questions deck and a forfeit deck. No build started.
