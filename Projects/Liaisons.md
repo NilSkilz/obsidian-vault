@@ -7,7 +7,7 @@ Party game for consenting adults: "lobby on phones, then phones away". Started 1
 - Local checkout: `/home/jarvis/projects/liaisons`, branch `main`, first commit `9427d3f`.
 - Remote: `git@github.com:NilSkilz/liaisons.git` (private, Rob created it 16 Nov; the gh PAT can't create repositories). `main` pushed over the SSH key. Not yet connected in the Amplify console.
 - **Public: https://liaisons.cracky.co.uk** (NPM proxy host 24 → `192.168.1.11:3010`, wildcard cert, no access list: anyone with the URL can open a room, there are no accounts). LAN: http://192.168.1.11:3010. Served by `Jarvis/bin/liaisons-preview.sh` (`vite preview` plus the LAN game backend on CT 110), in cron `@reboot`; re-run it after every `npm run build`. Rooms persist in `.data/rooms.json`.
-- Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844.
+- Browser check: `/home/jarvis/tools/browser-check/liaisons-flow.js` drives three phones plus a late joiner through a whole night at 390x844. `liaisons-formats.js` next to it runs five phones with confessions and screenshots every whole-room format.
 
 ## Stack
 
@@ -21,7 +21,12 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 
 - **Lobby:** room code, name, then per person: No / Flirty / Hot / Filthy, plus a separate level for solo dares. Everyone starts unanswered and has to choose for each person. Someone joining later shows up as unanswered and knocks you back to "not ready".
 - **Start** deals each player a secret mission (aimed only at someone who ticked them back; none of the missions need touch).
-- **Host is the dealer:** hands-up questions for the room (rule is random: minority forfeits, hands-up forfeit, or hands-down forfeit), solo dares, pair dares. Pairs need a mutual yes and the card never exceeds the lower of the two answers or the room heat. Turns are shared out evenly.
+- **Host is the dealer:** whole-room cards, solo dares, pair dares.
+- **Whole-room cards come in nine formats** (added 16 Nov, Rob asked for all of them): hands up (rule is random: minority forfeits, hands-up forfeit, or hands-down forfeit), swap seats, pick a side, the line (never to all-the-time wall), rank yourselves, most likely to, guess the count, eyes closed, whose confession. The format never repeats twice running, and each has a minimum room size (`FORMATS` in `shared/decks.ts`): movement ones, eyes closed and confessions need 4+, so a three-person night only gets hands up, pick a side, most likely to and guess the count.
+  - **Eyes closed:** host counts on a stepper and the screen shows only "3 of 5" to announce. No forfeit. The host keeps their eyes open to count, so it is anonymous to everyone except the host.
+  - **Whose confession:** optional box on the answers screen (140 chars). Read out once each with no name attached; the app never reveals the author, owning up is their call. Only dealt once 3+ people have written one. The author id never leaves the engine (test asserts it).
+  - **Singling-out formats stay tame on purpose:** most likely to and rank yourselves have no Filthy cards.
+- **Hot seat** is a solo card (three questions from the room, dodge one), so it respects each person's solo level. Pairs need a mutual yes and the card never exceeds the lower of the two answers or the room heat. Turns are shared out evenly.
 - **Forfeit** is pick-from-two, always two different kinds (so never drink-or-drink), same size whatever was dodged.
 - **Partner pass:** free, redraws for the same player with a different partner or a solo card, records nothing.
 - **Heat vote:** eyes closed, host taps in the hand count, only unanimous raises it.
@@ -30,11 +35,11 @@ The whole game is `shared/engine.ts`, a pure `handle(store, op, args)` used by b
 
 ## Content (starter decks, written 16 Nov)
 
-60 hands-up questions, 20 solo dares, 34 pair dares, 14 forfeits, 18 missions. **Heat stops at 3 (Flirty / Hot / Filthy).** Levels 4 and 5 don't exist yet; they arrive when the legacy 1,056 Deviance cards are ported. That port needs a decision, because those cards use 19 preference gates (pain, restraint, oral and so on) that this lobby doesn't ask about.
+198 whole-room cards (60 hands up, 24 swap seats, 22 pick a side, 17 the line, 9 rank yourselves, 20 most likely to, 20 guess the count, 26 eyes closed), 20 solo dares plus 6 hot seats, 34 pair dares, 14 forfeits, 18 missions. **Heat stops at 3 (Flirty / Hot / Filthy).** Levels 4 and 5 don't exist yet; they arrive when the legacy 1,056 Deviance cards are ported. That port needs a decision, because those cards use 19 preference gates (pain, restraint, oral and so on) that this lobby doesn't ask about.
 
 ## State (16 Nov 2026)
 
-Verified: 16 engine tests, typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
+Verified: 22 engine tests (16 before the group formats landed in `184b536`), typecheck on app and backend, production build, and the full flow in headless Chrome at phone size (zero pairings outside mutual ticks across 120 cards, no console errors, no horizontal overflow). The backend definition synthesizes to CloudFormation with `cdk synth` (command in the README).
 
 Not verified: nothing has been deployed to AWS (no credentials on this box), so the AppSync and DynamoDB path has never run for real. Nobody has played it with actual people.
 
