@@ -1180,3 +1180,22 @@ Rob reseeded from develop and merged to main; the Amplify build landed at 10:45 
 **Shelf now:** read the script, then reseed + merge (one job), and the repeat Request indexing on three URLs. After "rebuilt": verify live, submit `/signup` and the solo post to Bing.
 
 **Product note (FetLife question, 16 Nov):** someone asked whether partner linking has an option other than an emailed link. Today: the invite needs the partner's email and the accepting account must use that address, but the link itself can be copied and sent by any channel. No code, username or QR linking. Second signal that the email requirement is friction in a scene where people keep email private; candidate feature is an email-free invite link.
+
+### 16 Nov 12:00: safety script live, `/signup` clean, Bing submit, Stripe.js fix
+
+Rob merged `a3e033c` to main; the build landed at 11:59. Checked with plain `curl`:
+
+- **Solo post:** the "What to Tell Your Safety Contact (With a Copy-Paste Script)" section, the breath play line and the new meta description are in the static HTML. Zero em dashes. Sitemap `lastmod` for the post is 2026-11-16.
+- **`/signup`:** the deploy cleared the stale cache. Identity, gzip and brotli variants all return "Sign Up Free | Tethered" with canonical `/signup`.
+- **Bing:** `/signup` and the solo post submitted via `bing.sh submit`. All 17 sitemap URLs have now been submitted since the fixes.
+
+**GlitchTip check (Rob asked):** the only live errors are "Failed to load Stripe.js" (issues 9 and 11, 16 events today). Every one of today's events is Google-InspectionTool, i.e. Rob's own Request indexing clicks, fetching blog pages and refusing the Stripe script. No real user is affected. Two root causes, both fixed on develop (`d2376c5`, pushed; typecheck, 500 tests, build pass):
+- The default `@stripe/stripe-js` entry injects the Stripe script on import, and `DonatePage` called `loadStripe` at module level, so **every page on the site loaded js.stripe.com** (9 Stripe requests on the live home page, 0 on the fixed build, checked in headless Chrome). Now uses `@stripe/stripe-js/pure` and loads at checkout only. Side benefit: lighter marketing and blog pages.
+- The Sentry bot filter missed `Google-InspectionTool` and `GoogleOther`. Added.
+Not live until merged to main (shelf job). Checkout itself was only verified by tests and build, not a real payment click-through.
+
+**Product note (contact form, 6 Nov):** Ophelia (opheliafoxylittle@gmail.com) suggested a countable task type: a task that can be completed an unlimited or set number of times per day (e.g. "drink a glass of water"), with a counter or target score visible to the task giver. Unanswered as of 16 Nov; reply is on the shelf. Related known gap: recurring daily/weekly tasks complete once forever with no reset (`code-review-2026-07.md`).
+
+**GitHub Actions "Cypress E2E Tests" is red on every push** (at least since 28 Sep, all six shards fail inside 4 minutes). Not caused by today's commits. Likely cause: the workflow still records to the retired Sorry-Cypress director (`cypress-director.cracky.co.uk` returns 525). The real E2E suite runs on CT 117. Logs not readable with the current PAT (no Actions scope). Candidate fix: delete or disable the workflow.
+
+**Shelf now:** merge the Stripe fix, reply to Ophelia, repeat Request indexing on three URLs.
