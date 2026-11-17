@@ -36,6 +36,8 @@ The household's two cars, with MOT/tax renewal dates. Checked 2026-08-22 against
 - **Pod "new sign in" emails are my own charger checks**, logging in to Pod's cloud every automation run since 14 Oct 2026, not a security event. Auto-binned at Rob's request 3 Nov 2026. Pod support replies still come through (charger fault case still open).
 - **Pod Home app migration, 12 Nov 2026:** Pod's "Home charging is moving" email says the Pod Point app/login is being replaced by a new Pod Home app on this date. Could break the charger-check login (`ev-charge-watch.sh` and related crons) once it lands — watch for charger checks failing after 12 Nov and migrate credentials if so.
 
+- **Work to Mum's to work: leave work on at least 65% (Rob's rule, 17 Nov 2026).** Real run from HA history, 16-17 Nov: left the work charger at 59% (~15:55), reached Mum's on 34% (~48 mi, ~26% used), and the next morning's Mum's-to-work drive (~48 mi, ~21% used) landed at work on 13%, which felt too tight. Rob wants at least +5% on top of that, so 65% is the floor for a Mum's night, more in cold weather. When estimating a work charge on a day he's going to Mum's, check it clears 65% by the time he leaves.
+
 ## Insurance (mapped from the bank ledger, 24 Sep 2026)
 
 - **Halifax DD** (joint Starling, ref 128716577, £45.48/mo, settles last working day): car insurance for the **Dacia**. Policy since Aug 2018; premium doubled mid-term June 2025 (£26 -> £46.50) because the Dacia had a **non-fault, no-damage accident** and the insurer loaded the premium anyway (confirmed by Rob 24 Sep 2026). Nothing owed, but worth shopping around at the April renewal: non-fault loadings often melt away with a new insurer quote.
