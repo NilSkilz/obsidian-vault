@@ -89,3 +89,14 @@ _(behaviour per room, filled in as Rob walks through them)_
 
 ## Living room iPad (29 Oct 2026)
 Rob put an iPad by the sofa. HA dashboard **Sofa** (`/sofa-panel`) built for it: living room presets + lamps, TV (sources, volume, remote), snug light, heating, Echo. Logged in as a non-admin `sofa` user so kiosk-mode hides HA's chrome. Detail in `Context/Home Assistant.md`. Open: is there a snug TV to add?
+
+## Room-level presence: research + recommendation (18 Nov 2026)
+
+Rob wants the house to know which room people are in, without the dogs fooling it. Current state: whole-house presence only (UniFi Wi-Fi, 29 Oct), one IKEA MYGGSPRAY PIR in the play room, Thread border router live (ZBT-2).
+
+- **mmWave radar** = the "someone is in this room, even sitting still" layer. Sees dogs too, no model reliably filters them. Prefer multi-target tracking units with zones (LD2450-based, e.g. Everything Presence Lite, ESPHome) over plain presence (LD2410-class). DIY ESP32 + LD2450 is ~£15/room. Aqara FP2 good but Aqara-app-centric.
+- **BLE room tracking (Bermuda in HA, ESPHome ESP32s as BLE proxies)** = the "who" layer, off phones/watches. Weakness: phones left on tables.
+- **Dog trick:** BLE tag on each dog collar, tracked by the same Bermuda proxies. Room is "human occupied" when radar says occupied AND (a person's phone is there OR radar sees more targets than there are dog tags in the room). Also: pet-immune PIR mounted high as a second "human-height" vote.
+- **Wi-Fi CSI sensing** (ESPectre, TOMMY on ESP32-C5/C6): real but motion-level, can't tell dog from human, immature. Fun tinker, not the foundation.
+- **Indoor cameras (Frigate person detection)**: best at dog vs human, ruled out for privacy in a family house.
+- **Plan:** pilot one room (living room) with an LD2450 sensor + Bermuda + collar tags, prove the fusion logic, then roll out. Needs HA back up.
