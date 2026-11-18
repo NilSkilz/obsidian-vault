@@ -106,3 +106,6 @@ A potential play partner Rob is talking to. She floated full-body encapsulation 
 A prospective new partner Rob was talking to; a Tuesday meet was planned. She pulled back citing a **"bad gut feeling"** because his negotiation style differed from hers (**opt-out vs opt-in**), framed around **consent** (her highest-priority thing). She slept on it; the meet went wobbly. **Second time she's reacted OTT to something innocuous.** Rob was sad + annoyed + went into "I don't know what I'm doing anymore" spiral (that last part is his own wobble, not really about her — see [[Rob Mood Log]]).
 
 My steer to him (for continuity if this comes up again): not a hard no, but don't decide while tired/stung. The self-respecting move isn't "call her out" (that would trample the consent framework she holds sacred) — it's to get *curious* ("help me understand the concern") and then honestly notice whether understanding her costs him this much this early. If it does, that's his data; he's allowed to walk without proving she was wrong.
+
+## FetLife status
+- Deactivated 28 Oct 2026 (drop week). **Back on as of 18 Nov 2026** (Rob, unprompted).
