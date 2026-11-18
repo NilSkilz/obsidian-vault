@@ -1,0 +1,609 @@
+<title>Fuck-io Edge Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: bench instrument. Live scope on the left, knob rack on the right, log and algorithm underneath. Stacks on phones. */
+:root{
+  --bg:#f3f2f6; --panel:#fbfbfd; --fg:#1c1a22; --muted:#686377; --line:#dcd9e3; --grid:#e9e7ef;
+  --trace:#3346a8; --accent:#b8226a; --on-accent:#ffffff; --amber:#b87308; --truth:#8a7fa3; --good:#2b8551; --bad:#c0392b;
+  --font-display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131117; --panel:#1b1921; --fg:#ecebf1; --muted:#9d97ab; --line:#2f2c38; --grid:#24212b;
+    --trace:#8ea0ff; --accent:#f0609f; --on-accent:#1b1921; --amber:#f0a83a; --truth:#a99ec4; --good:#5cc98a; --bad:#ff6b5e;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131117; --panel:#1b1921; --fg:#ecebf1; --muted:#9d97ab; --line:#2f2c38; --grid:#24212b;
+  --trace:#8ea0ff; --accent:#f0609f; --on-accent:#1b1921; --amber:#f0a83a; --truth:#a99ec4; --good:#5cc98a; --bad:#ff6b5e;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.5;
+  padding-block:20px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+h1{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,4vw,32px);letter-spacing:-0.015em;margin:0;line-height:1.1;text-wrap:balance}
+h1 span{color:var(--accent)}
+h2{font-family:var(--font-display);font-weight:600;font-size:16px;margin:0 0 8px;text-wrap:balance}
+.sub{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.presets .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stat{background:var(--panel);padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.stat .k{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--font-mono);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .v small{font-size:12px;color:var(--muted);font-weight:400}
+.pill{display:inline-block;padding:1px 9px;border-radius:999px;font-family:var(--font-body);font-size:13px;font-weight:600;
+  color:var(--pc);background:color-mix(in srgb, var(--pc) 15%, transparent);border:1px solid color-mix(in srgb, var(--pc) 35%, transparent)}
+
+.main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:960px){.main{grid-template-columns:minmax(0,1fr)}}
+.scope{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0;display:flex;flex-direction:column;gap:10px}
+canvas{display:block;width:100%;height:500px}
+@media (max-width:600px){canvas{height:400px}}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar .sp{flex:1 1 auto}
+button{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:7px;padding:6px 11px;cursor:pointer;line-height:1.3}
+button:hover{border-color:var(--muted)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600;min-width:118px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:6px 10px;font-family:var(--font-mono);font-size:13px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+.inject{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.inject .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px;background:var(--c)}
+.legend i.dash{background:repeating-linear-gradient(90deg,var(--c) 0 4px,transparent 4px 7px)}
+
+.rack{display:flex;flex-direction:column;gap:12px;min-width:0}
+fieldset{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:10px 14px 14px;margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+legend{font-family:var(--font-display);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:0 6px;color:var(--fg)}
+legend small{font-family:var(--font-body);text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400;font-size:12px;margin-left:4px}
+.ctl{display:flex;flex-direction:column;gap:3px}
+.ctl .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ctl label{font-weight:500}
+.ctl output{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ctl .help{font-size:12px;color:var(--muted);line-height:1.4}
+input[type=range]{width:100%;accent-color:var(--accent);margin:2px 0}
+select{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg)}
+.check{display:flex;gap:8px;align-items:flex-start;font-weight:500}
+.check input{accent-color:var(--accent);margin-top:3px}
+
+.lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media (max-width:960px){.lower{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.log{list-style:none;margin:0;padding:0;font-family:var(--font-mono);font-size:12.5px;max-height:340px;overflow:auto}
+.log li{display:flex;gap:12px;padding:5px 0;border-bottom:1px solid var(--grid)}
+.log li:last-child{border-bottom:0}
+.log time{color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+.log .m{min-width:0;overflow-wrap:anywhere}
+.log .edge .m{color:var(--amber)} .log .miss .m{color:var(--bad)} .log .orgasm .m{color:var(--good)}
+.log .detect .m{color:var(--trace)} .log .ponr .m{color:var(--accent)}
+.log .empty{color:var(--muted);font-family:var(--font-body)}
+pre{overflow-x:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--font-mono);font-size:12.5px;line-height:1.55;margin:8px 0 12px}
+.card p,.card li{max-width:68ch}
+.card ul{padding-left:18px;margin:6px 0 0;display:flex;flex-direction:column;gap:6px}
+code{font-family:var(--font-mono);font-size:.92em}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Fuck-io <span>Edge Lab</span></h1>
+      <p class="sub">A simulated body wearing the plug, with the detector that will run on the ESP32. Tune it here until it catches the edge without stopping too early, then port the settings.</p>
+    </div>
+    <div class="presets" aria-label="Subject presets">
+      <span class="lbl">Subject</span>
+      <button type="button" data-preset="calm">Calm</button>
+      <button type="button" data-preset="squirmy">Squirmy</button>
+      <button type="button" data-preset="hair">Hair trigger</button>
+      <button type="button" data-preset="defaults">Reset settings</button>
+    </div>
+  </header>
+
+  <section class="status" aria-label="Live status">
+    <div class="stat"><span class="k">Sim time</span><span class="v" id="sTime">0:00</span></div>
+    <div class="stat"><span class="k">Machine</span><span class="v" id="sMachine"></span></div>
+    <div class="stat"><span class="k">Score / threshold</span><span class="v" id="sScore"></span></div>
+    <div class="stat"><span class="k">True arousal (hidden)</span><span class="v" id="sTrue"></span></div>
+    <div class="stat"><span class="k">Edges caught</span><span class="v" id="sEdges"></span></div>
+    <div class="stat"><span class="k">Orgasms</span><span class="v" id="sOrg"></span></div>
+  </section>
+
+  <div class="main">
+    <section class="scope" aria-label="Scope">
+      <div class="toolbar">
+        <button type="button" class="primary" id="bMachine">Stop machine</button>
+        <button type="button" id="bPause">Pause sim</button>
+        <div class="seg" role="group" aria-label="Simulation speed">
+          <button type="button" data-speed="1">1×</button>
+          <button type="button" data-speed="2">2×</button>
+          <button type="button" data-speed="5">5×</button>
+          <button type="button" data-speed="10">10×</button>
+        </div>
+        <span class="sp"></span>
+        <button type="button" id="bReset">Restart session</button>
+      </div>
+      <canvas id="cv" aria-label="Pressure, arousal score and machine speed over time"></canvas>
+      <div class="legend">
+        <span><i style="--c:var(--trace)"></i>Pressure the ESP32 reads</span>
+        <span><i class="dash" style="--c:var(--muted)"></i>Baseline</span>
+        <span><i style="--c:var(--grid);height:6px"></i>Baseline + sensitivity</span>
+        <span><i style="--c:var(--accent)"></i>Arousal score</span>
+        <span><i class="dash" style="--c:var(--amber)"></i>Threshold</span>
+        <span><i class="dash" style="--c:var(--truth)"></i>True arousal</span>
+      </div>
+      <div class="inject">
+        <span class="lbl">Poke the body</span>
+        <button type="button" data-inject="clench">Clench</button>
+        <button type="button" data-inject="shift">Shift position</button>
+        <button type="button" data-inject="squirm">Squirm</button>
+        <button type="button" data-inject="cough">Cough</button>
+        <button type="button" data-inject="edge">Push to the edge</button>
+      </div>
+    </section>
+
+    <aside class="rack" id="rack" aria-label="Settings"></aside>
+  </div>
+
+  <div class="lower">
+    <section class="card">
+      <h2>Session log</h2>
+      <ul class="log" id="log"></ul>
+    </section>
+    <section class="card">
+      <h2>The detector, as it will run on the ESP32</h2>
+      <pre>every 20 ms (50 Hz):
+  p      = read sensor on GPIO 34, 4x oversampled, in kPa
+  fast  += (p - fast) * dt / 0.06            // knock off ADC noise
+  delta  = fast - base
+  if delta &lt; sensitivity or above it for &gt; 3 s:
+    base += (fast - base) * dt / baseWindow  // slow baseline, held still during clenches
+  if delta &gt; sensitivity:
+    score += (delta - sensitivity) * gain    // only the bit above the line counts
+  score *= exp(-dt / decay)
+
+  running  and score &gt; threshold            -&gt; stop, start cooldown
+  cooldown done and score &lt; threshold * resume -&gt; ramp back up from zero</pre>
+      <p>The body model is invented but shaped like the real thing: clenches get stronger and more frequent as arousal climbs, there is a point of no return a few seconds before orgasm, and orgasm shows up as 8 to 12 contractions about 0.8 s apart. The detector never sees the true arousal line. It only sees pressure.</p>
+      <ul>
+        <li><b>Thrust bleed</b> is the machine itself pushing on the plug every stroke. Turn it up and watch the score creep without any clenching.</li>
+        <li><b>Shift position</b> moves the baseline. The freeze rule stops a single clench dragging the baseline up, and the 3 s limit stops a real position change from freezing it forever.</li>
+        <li><b>Early stops</b> are edges called below 60% true arousal. <b>Slipped</b> means the detector stopped too late, after the point of no return.</li>
+        <li>Switch the sensor between the 0-40 and 0-100 kPa versions to see the difference in resolution on the trace.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script>
+// CORE START
+const DT = 0.02; // 50 Hz
+function gauss(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function freshState(S){
+  return { t:0, A:0, oThresh:0.97+Math.random()*0.03, ponr:false, ponrT:0, orgasm:null, refractory:0,
+    leak:0, walk:0, shift:0, pulses:[], breathPh:0, strokePh:0,
+    raw:S.inflation, meas:S.inflation, fast:S.inflation, base:S.inflation, delta:0, score:0, aboveFor:0,
+    inPeak:false, peakTimes:[], lastDetect:-99,
+    machine:'running', speed:0, cooldownT:0, edges:0, released:false, crossed:false,
+    stats:{edges:0, early:0, orgasms:0, missed:0, allowed:0, detected:0} };
+}
+function addPulse(s, amp, rise, fall){ s.pulses.push({t0:s.t, amp, rise, fall}); }
+function clench(s, S, scale){
+  addPulse(s, (0.15+1.3*s.A)*S.clench*(0.6+0.8*Math.random())*(scale||1), 0.12+0.08*Math.random(), 0.25+0.2*Math.random());
+}
+function poke(s, S, kind){
+  if (kind==='clench') clench(s, S, 1.2);
+  else if (kind==='shift') s.shift += (Math.random()<0.5?-1:1)*(0.3+0.7*Math.random());
+  else if (kind==='squirm') addPulse(s, 1+1.5*Math.random(), 0.3+0.2*Math.random(), 0.6+0.4*Math.random());
+  else if (kind==='cough') addPulse(s, 2.5+1.5*Math.random(), 0.04, 0.12);
+}
+function startOrgasm(s, S, log){
+  s.orgasm = {left:8+Math.floor(Math.random()*5), next:0, interval:0.8, amp:(2.0+0.8*Math.random())*S.clench};
+  s.stats.orgasms++;
+  if (S.mode==='edge' && !s.released){ s.stats.missed++; log('miss','Orgasm slipped past the detector'); }
+  else { s.stats.allowed++; log('orgasm', S.mode==='edge' ? 'Orgasm, released on purpose' : 'Orgasm'); }
+}
+function tick(s, S, log){
+  s.t += DT;
+  const stim = s.speed;
+  // the hidden body
+  if (s.orgasm){
+    const o = s.orgasm; o.next -= DT;
+    if (o.next<=0 && o.left>0){ addPulse(s, o.amp, 0.1, 0.22); o.amp*=0.86; o.next=o.interval; o.interval+=0.05; o.left--; }
+    if (o.left===0 && o.next<=0){
+      s.orgasm=null; s.A=0.2; s.refractory=60; s.ponr=false; s.oThresh=0.97+Math.random()*0.03;
+      s.machine='stopped'; s.speed=0; s.edges=0; s.released=false;
+      log('info','Machine stopped. Press Start for another round.');
+    }
+  } else {
+    const r = 1/(S.minutes*60);
+    const k = s.refractory>0 ? 0.15 : 1;
+    if (s.refractory>0) s.refractory -= DT;
+    s.A += stim*r*(0.6+0.8*s.A)*k*DT;
+    if (!s.ponr) s.A -= (1-stim)*s.A*DT/45;
+    if (!s.ponr && s.A>=s.oThresh){ s.ponr=true; s.ponrT=2+2*Math.random(); log('ponr','Point of no return'); }
+    if (s.ponr){ s.A=Math.min(1,s.A); s.ponrT-=DT; if (s.ponrT<=0){ s.A=1; startOrgasm(s,S,log); } }
+    const lam = s.ponr ? 1.6 : 0.04 + 0.7*Math.pow(s.A, 2.2);
+    if (Math.random() < lam*DT) clench(s, S);
+  }
+  if (Math.random() < S.fidget/60*DT) poke(s, S, Math.random()<0.6 ? 'shift' : 'squirm');
+  // pressure in the plug
+  s.leak -= 0.0015*DT;
+  s.walk += gauss()*0.004 - s.walk*DT/30;
+  s.shift -= s.shift*DT/6;
+  s.breathPh += 2*Math.PI*(0.22+0.25*s.A)*DT;
+  s.strokePh += 2*Math.PI*(S.maxSpm/60)*stim*DT;
+  let p = S.inflation + s.leak + s.walk + s.shift + (0.06+0.12*s.A)*Math.sin(s.breathPh);
+  const sn = Math.max(0, Math.sin(s.strokePh)); p += S.coupling*stim*sn*sn;
+  for (let i=s.pulses.length-1; i>=0; i--){
+    const q=s.pulses[i], tau=s.t-q.t0;
+    if (tau > q.rise+6*q.fall){ s.pulses.splice(i,1); continue; }
+    p += tau<q.rise ? q.amp*tau/q.rise : q.amp*Math.exp(-(tau-q.rise)/q.fall);
+  }
+  p += gauss()*0.012; p = Math.max(0,p); s.raw = p;
+  // XGZP6847: 0.5-4.5 V over its range, 2:1 divider, 12-bit ADC on 3.3 V, 4x oversample
+  const R = S.range, v = Math.min(4.5, Math.max(0.5, 0.5+4*p/R))/2;
+  let c = 0;
+  for (let i=0;i<4;i++) c += Math.max(0, Math.min(4095, Math.round(v/3.3*4095 + gauss()*3)));
+  c /= 4;
+  const meas = ((c*3.3/4095)*2 - 0.5)*R/4; s.meas = meas;
+  // the detector (this is the bit that gets ported)
+  s.fast += (meas - s.fast)*Math.min(1, DT/0.06);
+  const d = s.fast - s.base; s.delta = d;
+  const above = d > S.sens;
+  s.aboveFor = above ? s.aboveFor+DT : 0;
+  if (!(S.freeze && above && s.aboveFor<3)) s.base += (s.fast - s.base)*DT/S.baseTau;
+  if (above) s.score += (d - S.sens)*S.gain;
+  s.score *= Math.exp(-DT/S.decay);
+  // contraction-train spotter
+  const big = Math.max(S.sens*2.5, 0.5);
+  if (d > big){ s.inPeak = true; }
+  else if (s.inPeak && d < S.sens){
+    s.inPeak = false; s.peakTimes.push(s.t); if (s.peakTimes.length>6) s.peakTimes.shift();
+    const pt = s.peakTimes, n = pt.length;
+    if (n>=4 && s.t - s.lastDetect > 15){
+      let ok = true;
+      for (let i=n-3; i<n; i++){ const g = pt[i]-pt[i-1]; if (g<0.5 || g>1.6) ok=false; }
+      if (ok){ s.lastDetect = s.t; s.stats.detected++; log('detect','Detector: contraction train, orgasm likely'); }
+    }
+  }
+  // machine controller
+  if (s.machine==='running'){
+    s.speed = Math.min(1, s.speed + DT/S.ramp);
+    const over = s.score > S.thresh;
+    if (S.mode==='edge' && !s.released && over){
+      s.machine='cooldown'; s.speed=0; s.cooldownT=0; s.edges++; s.stats.edges++;
+      const early = s.A < 0.6; if (early) s.stats.early++;
+      log('edge', 'Edge '+s.edges+': stopped at score '+Math.round(s.score)+', true arousal '+Math.round(s.A*100)+'%'+(early?' (early)':''));
+      if (S.release>0 && s.edges>=S.release) log('info','Release armed: the next run will not stop');
+    } else if (S.mode==='manual' && over && !s.crossed){
+      log('info','Score crossed threshold at '+Math.round(s.A*100)+'% true arousal (watching only)');
+    }
+    s.crossed = over;
+  } else if (s.machine==='cooldown'){
+    s.speed = 0; s.cooldownT += DT;
+    if (s.cooldownT >= S.cooldown && s.score < S.thresh*S.resume){
+      s.machine='running';
+      if (S.release>0 && s.edges>=S.release) s.released = true;
+      log('info', s.released ? 'Resuming, no more stops' : 'Resuming');
+    }
+  } else { s.speed = 0; }
+}
+// CORE END
+
+const DEFAULTS = { sens:0.3, gain:1, decay:20, thresh:120, baseTau:4, freeze:true, resume:0.5,
+  mode:'edge', release:0, maxSpm:90, ramp:20, cooldown:10,
+  minutes:2.5, clench:1, fidget:1, coupling:0.12, inflation:3, range:40,
+  window:60, truth:true, simSpeed:1 };
+const PRESETS = {
+  calm:{fidget:0.5, coupling:0.06, clench:0.9, minutes:3},
+  squirmy:{fidget:4, coupling:0.25, clench:1.2, minutes:2.5},
+  hair:{fidget:1, coupling:0.12, clench:0.7, minutes:1.25}
+};
+const KEY = 'fuckio-edge-lab-v1';
+let S = Object.assign({}, DEFAULTS);
+try { const saved = JSON.parse(localStorage.getItem(KEY)||'null'); if (saved) Object.assign(S, saved); } catch(e){}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+const CTRLS = [
+  {g:'Detector', note:'what runs on the ESP32'},
+  {k:'sens', l:'Sensitivity', min:0.05, max:1.5, step:0.05, f:v=>v.toFixed(2)+' kPa', h:'How far above baseline counts as a clench.'},
+  {k:'gain', l:'Gain', min:0.2, max:3, step:0.1, f:v=>v.toFixed(1)+'×'},
+  {k:'decay', l:'Score decay', min:5, max:60, step:1, f:v=>v+' s', h:'How long the score remembers clenches.'},
+  {k:'thresh', l:'Edge threshold', min:20, max:400, step:5, f:v=>String(v)},
+  {k:'baseTau', l:'Baseline window', min:1, max:15, step:0.5, f:v=>v+' s'},
+  {k:'freeze', l:'Hold baseline still during clenches', type:'check'},
+  {g:'Machine'},
+  {k:'mode', l:'Mode', type:'select', opts:[['edge','Edge: detector stops it'],['manual','Manual: detector only watches']]},
+  {k:'release', l:'Edges before release', min:0, max:10, step:1, f:v=>v==0?'never':String(v)},
+  {k:'maxSpm', l:'Top speed', min:30, max:180, step:5, f:v=>v+' strokes/min'},
+  {k:'ramp', l:'Ramp-up time', min:5, max:60, step:1, f:v=>v+' s'},
+  {k:'cooldown', l:'Minimum cooldown', min:3, max:60, step:1, f:v=>v+' s'},
+  {k:'resume', l:'Resume when score drops below', min:0.1, max:0.9, step:0.05, f:v=>Math.round(v*100)+'% of threshold'},
+  {g:'Simulated body'},
+  {k:'minutes', l:'Time to orgasm at full speed', min:1, max:6, step:0.25, f:v=>v+' min'},
+  {k:'clench', l:'Clench strength', min:0.4, max:2, step:0.1, f:v=>v.toFixed(1)+'×'},
+  {k:'fidget', l:'Fidgeting', min:0, max:6, step:0.5, f:v=>v+' per min'},
+  {k:'coupling', l:'Thrust bleed into the plug', min:0, max:0.6, step:0.02, f:v=>v.toFixed(2)+' kPa'},
+  {k:'inflation', l:'Plug inflation', min:1, max:8, step:0.5, f:v=>v+' kPa'},
+  {k:'range', l:'Sensor', type:'select', num:true, opts:[['40','XGZP6847 0-40 kPa'],['100','XGZP6847 0-100 kPa']]},
+  {g:'View'},
+  {k:'window', l:'Time window', type:'select', num:true, opts:[['30','30 seconds'],['60','60 seconds'],['120','120 seconds']]},
+  {k:'truth', l:'Show true arousal', type:'check'}
+];
+const rack = document.getElementById('rack');
+const inputs = {};
+(function buildRack(){
+  let fs = null;
+  for (const c of CTRLS){
+    if (c.g){ fs = document.createElement('fieldset'); const lg = document.createElement('legend'); lg.textContent = c.g;
+      if (c.note){ const sm=document.createElement('small'); sm.textContent=c.note; lg.appendChild(sm); }
+      fs.appendChild(lg); rack.appendChild(fs); continue; }
+    const id = 'c_'+c.k, wrap = document.createElement('div'); wrap.className='ctl';
+    if (c.type==='check'){
+      wrap.innerHTML = '<label class="check"><input type="checkbox" id="'+id+'"><span></span></label>';
+      wrap.querySelector('span').textContent = c.l;
+      const el = wrap.querySelector('input'); el.checked = !!S[c.k];
+      el.addEventListener('change', ()=>{ S[c.k]=el.checked; save(); });
+      inputs[c.k] = {el, c};
+    } else if (c.type==='select'){
+      wrap.innerHTML = '<label for="'+id+'"></label><select id="'+id+'"></select>';
+      wrap.querySelector('label').textContent = c.l;
+      const el = wrap.querySelector('select');
+      for (const [v,t] of c.opts){ const o=document.createElement('option'); o.value=v; o.textContent=t; el.appendChild(o); }
+      el.value = String(S[c.k]);
+      el.addEventListener('change', ()=>{ S[c.k] = c.num ? Number(el.value) : el.value; save(); });
+      inputs[c.k] = {el, c};
+    } else {
+      wrap.innerHTML = '<div class="row"><label for="'+id+'"></label><output for="'+id+'"></output></div><input type="range" id="'+id+'">';
+      wrap.querySelector('label').textContent = c.l;
+      const el = wrap.querySelector('input'), out = wrap.querySelector('output');
+      el.min=c.min; el.max=c.max; el.step=c.step; el.value=S[c.k]; out.textContent=c.f(Number(S[c.k]));
+      el.addEventListener('input', ()=>{ S[c.k]=Number(el.value); out.textContent=c.f(S[c.k]); save(); });
+      inputs[c.k] = {el, c, out};
+      if (c.h){ const h=document.createElement('div'); h.className='help'; h.textContent=c.h; wrap.appendChild(h); }
+    }
+    fs.appendChild(wrap);
+  }
+})();
+function syncRack(){
+  for (const k in inputs){ const {el,c,out} = inputs[k];
+    if (c.type==='check') el.checked = !!S[k];
+    else if (c.type==='select') el.value = String(S[k]);
+    else { el.value = S[k]; out.textContent = c.f(Number(S[k])); } }
+}
+
+// buffers
+const CAP = 6000;
+const buf = { meas:new Float32Array(CAP), base:new Float32Array(CAP), score:new Float32Array(CAP),
+  A:new Float32Array(CAP), speed:new Float32Array(CAP), mach:new Uint8Array(CAP) };
+let head = 0, count = 0;
+let st, logArr, marks, logDirty;
+function push(){
+  buf.meas[head]=st.meas; buf.base[head]=st.base; buf.score[head]=st.score; buf.A[head]=st.A; buf.speed[head]=st.speed;
+  buf.mach[head] = st.machine==='running' ? 0 : st.machine==='cooldown' ? 1 : 2;
+  head = (head+1)%CAP; count = Math.min(CAP, count+1);
+}
+function log(type, msg){
+  logArr.unshift({t:st.t, type, msg}); if (logArr.length>120) logArr.pop();
+  if (type!=='info') marks.push({t:st.t, type});
+  while (marks.length && st.t - marks[0].t > 130) marks.shift();
+  logDirty = true;
+}
+function reset(){
+  st = freshState(S); logArr = []; marks = []; head = 0; count = 0; logDirty = true;
+  // warm up so the scope opens with data on it
+  for (let i=0; i<50*40; i++){ tick(st,S,log); push(); }
+}
+
+// drawing
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+let C = {};
+function readColors(){
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['bg','panel','fg','muted','line','grid','trace','accent','amber','truth','good','bad']) C[k] = cs.getPropertyValue('--'+k).trim();
+}
+function alpha(hex, a){
+  const h = hex.replace('#',''); const n = parseInt(h.length===3 ? h.split('').map(x=>x+x).join('') : h, 16);
+  return 'rgba('+(n>>16&255)+','+(n>>8&255)+','+(n&255)+','+a+')';
+}
+function niceStep(span, target){
+  const raw = span/target, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const m of [1,2,2.5,5,10]) if (m*p >= raw) return m*p; return 10*p;
+}
+function fmtTime(t){ t=Math.max(0,t); const m=Math.floor(t/60), s=Math.floor(t%60); return m+':'+String(s).padStart(2,'0'); }
+
+function draw(){
+  const dpr = window.devicePixelRatio||1, W = cv.clientWidth, H = cv.clientHeight;
+  if (cv.width !== Math.round(W*dpr) || cv.height !== Math.round(H*dpr)){ cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); }
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+  const N = S.window*50, n = Math.min(count, N);
+  const L = 46, Rr = 40, pw = W - L - Rr;
+  const gap = 26, labelH = 20;
+  const usable = H - labelH - gap*2 - 4;
+  const P1 = {y:4, h:usable*0.46}, P2 = {y:0, h:usable*0.38}, P3 = {y:0, h:usable*0.16};
+  P2.y = P1.y + P1.h + gap; P3.y = P2.y + P2.h + gap;
+  const idx = i => (head - n + i + CAP) % CAP;
+  const xOfI = i => L + pw*(N - n + i)/(N - 1);
+  const xOfT = t => L + pw*(1 - (st.t - t)/((N-1)*DT));
+  ctx.font = '11px "IBM Plex Mono", ui-monospace, monospace'; ctx.textBaseline = 'middle';
+
+  // panel frames + titles
+  function frame(P, title){
+    ctx.fillStyle = C.muted; ctx.textAlign = 'left'; ctx.fillText(title, L, P.y + (P===P1?8:-11));
+  }
+  // time grid
+  const tStep = S.window<=30 ? 5 : S.window<=60 ? 10 : 20;
+  ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+  for (let s=0; s<=S.window; s+=tStep){
+    const x = L + pw*(1 - s/S.window);
+    ctx.beginPath(); ctx.moveTo(x, P1.y); ctx.lineTo(x, P3.y+P3.h); ctx.stroke();
+    ctx.fillStyle = C.muted; ctx.textAlign = 'center';
+    ctx.fillText(s===0 ? 'now' : '−'+s+' s', x, P3.y+P3.h+12);
+  }
+
+  // ---- panel 1: pressure
+  let lo=Infinity, hi=-Infinity;
+  for (let i=0;i<n;i++){ const j=idx(i); const a=buf.meas[j], b=buf.base[j]; if(a<lo)lo=a; if(a>hi)hi=a; if(b<lo)lo=b; if(b+S.sens>hi)hi=b+S.sens; }
+  if (!isFinite(lo)){ lo=0; hi=5; }
+  lo -= 0.15; hi += 0.15; if (hi-lo < 1.2){ const m=(hi+lo)/2; lo=m-0.6; hi=m+0.6; }
+  const y1 = v => P1.y + P1.h - (v-lo)/(hi-lo)*P1.h;
+  const st1 = niceStep(hi-lo, 4);
+  ctx.textAlign='right';
+  for (let v=Math.ceil(lo/st1)*st1; v<=hi; v+=st1){
+    const y=y1(v); ctx.strokeStyle=C.grid; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(L+pw,y); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.fillText(v.toFixed(st1<1?2:0).replace(/\.?0+$/,'')||'0', L-6, y);
+  }
+  ctx.save(); ctx.translate(12, P1.y+P1.h/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillStyle=C.muted; ctx.fillText('kPa',0,0); ctx.restore();
+  // sensitivity band
+  if (n>1){
+    ctx.beginPath();
+    for (let i=0;i<n;i++){ const j=idx(i); const x=xOfI(i), y=y1(buf.base[j]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    for (let i=n-1;i>=0;i--){ const j=idx(i); ctx.lineTo(xOfI(i), y1(buf.base[j]+S.sens)); }
+    ctx.closePath(); ctx.fillStyle = alpha(C.muted, 0.13); ctx.fill();
+    // baseline
+    ctx.setLineDash([5,4]); ctx.strokeStyle=C.muted; ctx.lineWidth=1.2; ctx.beginPath();
+    for (let i=0;i<n;i++){ const j=idx(i); const x=xOfI(i), y=y1(buf.base[j]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke(); ctx.setLineDash([]);
+    // pressure: min/max per pixel column so spikes survive
+    ctx.strokeStyle=C.trace; ctx.lineWidth=1.4; ctx.beginPath();
+    let cx=-1, mn=0, mx=0, started=false;
+    const flush=()=>{ const a=y1(mn), b=y1(mx); if(!started){ctx.moveTo(cx,a);started=true;} else ctx.lineTo(cx,a); if (b!==a) ctx.lineTo(cx,b); };
+    for (let i=0;i<n;i++){ const j=idx(i), x=Math.round(xOfI(i)*2)/2, v=buf.meas[j];
+      if (x!==cx){ if(cx>=0) flush(); cx=x; mn=v; mx=v; } else { if(v<mn)mn=v; if(v>mx)mx=v; } }
+    if (cx>=0) flush(); ctx.stroke();
+  }
+  frame(P1, '');
+
+  // ---- panel 2: score
+  let smax = S.thresh*1.5;
+  for (let i=0;i<n;i++){ const v=buf.score[idx(i)]; if (v*1.08>smax) smax=v*1.08; }
+  const y2 = v => P2.y + P2.h - Math.min(1, v/smax)*P2.h;
+  const st2 = niceStep(smax, 3);
+  ctx.textAlign='right';
+  for (let v=0; v<=smax; v+=st2){ const y=y2(v); ctx.strokeStyle=C.grid; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(L+pw,y); ctx.stroke(); ctx.fillStyle=C.muted; ctx.fillText(String(Math.round(v)), L-6, y); }
+  ctx.save(); ctx.translate(12, P2.y+P2.h/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.fillStyle=C.muted; ctx.fillText('score',0,0); ctx.restore();
+  if (S.truth){
+    ctx.textAlign='left'; ctx.fillStyle=C.truth;
+    ctx.fillText('100%', L+pw+5, P2.y); ctx.fillText('0%', L+pw+5, P2.y+P2.h);
+  }
+  if (n>1){
+    ctx.beginPath(); ctx.moveTo(xOfI(0), y2(0));
+    for (let i=0;i<n;i++) ctx.lineTo(xOfI(i), y2(buf.score[idx(i)]));
+    ctx.lineTo(xOfI(n-1), y2(0)); ctx.closePath(); ctx.fillStyle=alpha(C.accent,0.16); ctx.fill();
+    ctx.beginPath(); for (let i=0;i<n;i++){ const x=xOfI(i), y=y2(buf.score[idx(i)]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.strokeStyle=C.accent; ctx.lineWidth=1.8; ctx.stroke();
+    if (S.truth){
+      ctx.setLineDash([2,3]); ctx.strokeStyle=C.truth; ctx.lineWidth=1.6; ctx.beginPath();
+      for (let i=0;i<n;i++){ const x=xOfI(i), y=P2.y+P2.h-buf.A[idx(i)]*P2.h; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  // threshold + resume lines
+  ctx.setLineDash([6,4]); ctx.strokeStyle=C.amber; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.moveTo(L,y2(S.thresh)); ctx.lineTo(L+pw,y2(S.thresh)); ctx.stroke();
+  ctx.setLineDash([1,4]); ctx.beginPath(); ctx.moveTo(L,y2(S.thresh*S.resume)); ctx.lineTo(L+pw,y2(S.thresh*S.resume)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.textAlign='left'; ctx.fillStyle=C.amber; ctx.fillText('threshold', L+6, y2(S.thresh)-8);
+  ctx.fillStyle=C.muted; ctx.fillText('arousal score', L, P2.y-11);
+
+  // ---- panel 3: machine
+  ctx.fillStyle=C.muted; ctx.textAlign='left'; ctx.fillText('machine speed', L, P3.y-11);
+  ctx.strokeStyle=C.line; ctx.strokeRect(L+0.5, P3.y+0.5, pw-1, P3.h-1);
+  if (n>1){
+    for (let i=0;i<n;i++){ const m=buf.mach[idx(i)]; if (!m) continue;
+      ctx.fillStyle = m===1 ? alpha(C.amber,0.2) : alpha(C.muted,0.14);
+      const x=xOfI(i); ctx.fillRect(x, P3.y+1, Math.max(1, pw/(N-1))+0.5, P3.h-2); }
+    ctx.beginPath(); ctx.moveTo(xOfI(0), P3.y+P3.h);
+    for (let i=0;i<n;i++) ctx.lineTo(xOfI(i), P3.y+P3.h-buf.speed[idx(i)]*(P3.h-3));
+    ctx.lineTo(xOfI(n-1), P3.y+P3.h); ctx.closePath(); ctx.fillStyle=alpha(C.trace,0.35); ctx.fill();
+  }
+
+  // event markers across all panels
+  const mc = {edge:C.amber, miss:C.bad, orgasm:C.good, detect:C.trace, ponr:C.accent};
+  for (const m of marks){
+    const x = xOfT(m.t); if (x < L || x > L+pw) continue;
+    ctx.strokeStyle = mc[m.type]||C.muted; ctx.lineWidth = 1.5; ctx.setLineDash(m.type==='detect'?[3,3]:[]);
+    ctx.beginPath(); ctx.moveTo(x, P1.y); ctx.lineTo(x, P3.y+P3.h); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = mc[m.type]||C.muted; ctx.beginPath(); ctx.moveTo(x-5,P1.y); ctx.lineTo(x+5,P1.y); ctx.lineTo(x,P1.y+7); ctx.closePath(); ctx.fill();
+  }
+}
+
+// status
+const el = id => document.getElementById(id);
+const bMachine = el('bMachine'), bPause = el('bPause');
+function pill(text, color){ return '<span class="pill" style="--pc:var(--'+color+')">'+text+'</span>'; }
+function updateUI(){
+  el('sTime').textContent = fmtTime(st.t);
+  let m;
+  if (st.machine==='running') m = pill(st.released?'Release run':'Running','trace')+' <small>'+Math.round(st.speed*S.maxSpm)+' spm</small>';
+  else if (st.machine==='cooldown') m = pill('Cooldown','amber')+' <small>'+Math.max(0,Math.ceil(S.cooldown-st.cooldownT))+' s</small>';
+  else m = pill('Stopped','muted');
+  el('sMachine').innerHTML = m;
+  el('sScore').innerHTML = Math.round(st.score)+' <small>/ '+S.thresh+'</small>';
+  let tag = st.orgasm ? pill('Orgasm','good') : st.ponr ? pill('No return','accent') : st.refractory>0 ? pill('Refractory','muted') : st.A>0.8 ? pill('Close','amber') : '';
+  el('sTrue').innerHTML = S.truth ? Math.round(st.A*100)+'% '+tag : '<small>hidden</small>';
+  el('sEdges').innerHTML = st.stats.edges+' <small>'+st.stats.early+' early</small>';
+  el('sOrg').innerHTML = st.stats.orgasms+' <small>'+st.stats.missed+' slipped</small>';
+  bMachine.textContent = st.machine==='stopped' ? 'Start machine' : 'Stop machine';
+  bPause.textContent = paused ? 'Resume sim' : 'Pause sim';
+  document.querySelectorAll('[data-speed]').forEach(b=>b.setAttribute('aria-pressed', String(Number(b.dataset.speed)===S.simSpeed)));
+  if (logDirty){
+    const ul = el('log'); ul.innerHTML = '';
+    if (!logArr.length){ const li=document.createElement('li'); li.className='empty'; li.textContent='Nothing yet. Edges, orgasms and detector calls land here.'; ul.appendChild(li); }
+    for (const e of logArr){ const li=document.createElement('li'); li.className=e.type;
+      const t=document.createElement('time'); t.textContent=fmtTime(e.t); const s=document.createElement('span'); s.className='m'; s.textContent=e.msg;
+      li.append(t,s); ul.appendChild(li); }
+    logDirty = false;
+  }
+}
+
+// controls
+let paused = false;
+bMachine.addEventListener('click', ()=>{
+  if (st.machine==='stopped'){ st.speed=0; st.edges=0; st.released=false;
+    if (S.mode==='edge' && st.score >= S.thresh*S.resume){ st.machine='cooldown'; st.cooldownT=S.cooldown; log('info','Start pressed: waiting for the score to settle'); }
+    else { st.machine='running'; log('info','Machine started'); } }
+  else { st.machine='stopped'; st.speed=0; log('info','Machine stopped by hand'); }
+  updateUI();
+});
+bPause.addEventListener('click', ()=>{ paused=!paused; updateUI(); });
+el('bReset').addEventListener('click', ()=>{ reset(); updateUI(); });
+document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click', ()=>{ S.simSpeed=Number(b.dataset.speed); save(); updateUI(); }));
+document.querySelectorAll('[data-inject]').forEach(b=>b.addEventListener('click', ()=>{
+  const k=b.dataset.inject;
+  if (k==='edge'){ if (!st.orgasm){ st.A=Math.max(st.A,0.88); log('info','Pushed to 88% true arousal'); } }
+  else poke(st,S,k);
+}));
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click', ()=>{
+  const p=b.dataset.preset;
+  if (p==='defaults') S = Object.assign({}, DEFAULTS, {simSpeed:S.simSpeed});
+  else Object.assign(S, PRESETS[p]);
+  save(); syncRack(); updateUI();
+}));
+
+readColors();
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors); } catch(e){}
+new MutationObserver(readColors).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+reset(); updateUI();
+let last = performance.now(), acc = 0, lastUI = 0;
+function loop(now){
+  const elapsed = Math.min(0.1, (now-last)/1000); last = now;
+  if (!paused){ acc += elapsed*S.simSpeed; let k=0; while (acc >= DT && k < 2000){ tick(st,S,log); push(); acc -= DT; k++; } }
+  draw();
+  if (now - lastUI > 120){ updateUI(); lastUI = now; }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
