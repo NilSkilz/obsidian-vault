@@ -100,3 +100,4 @@ Rob wants the house to know which room people are in, without the dogs fooling i
 - **Wi-Fi CSI sensing** (ESPectre, TOMMY on ESP32-C5/C6): real but motion-level, can't tell dog from human, immature. Fun tinker, not the foundation.
 - **Indoor cameras (Frigate person detection)**: best at dog vs human, ruled out for privacy in a family house.
 - **Plan:** pilot one room (living room) with an LD2450 sensor + Bermuda + collar tags, prove the fusion logic, then roll out. Needs HA back up.
+- **Dog tags spec (18 Nov):** generic iBeacon/Eddystone coin-cell tags (~£5-12), configurable UUID/major/minor, adjustable interval (~1 s) and TX power (lowered for room accuracy), IP67, nRF52 if possible, mounted flat on the collar. Not AirTags/Tile (rotating addresses defeat Bermuda). Buy 3 (2 dogs + spare). Build a "tag low battery / unseen 2 days" alert alongside.
