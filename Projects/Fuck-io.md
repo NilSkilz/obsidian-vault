@@ -98,3 +98,10 @@ Plus the plug (£40-60 above), plus £0 for the remote/backend if it rides on Te
 **Whole fuck-io, realistic: £170-260.** Buying equivalents: OSSM kit ~$300-400, EOM3000 ~$250-300, a Hismith is £250-500 with none of the integration. Build wins comfortably.
 
 **Stalling diagnosis for the old rig:** (1) driver current limit set below motor rating, (2) 12V supply, torque collapses above a few hundred RPM, (3) microstepping too fine with no acceleration ramp in firmware, (4) mechanical binding on the tripod flexing. New driver + 36V PSU + StrokeEngine's acceleration profiles fix 1-3; the base fixes 4.
+
+## Cost rethink (18 Nov 2026)
+
+Rob flagged cost (motor + sensor) as the main blocker. Findings:
+- **Sensor is no longer a cost problem.** CFSensor **XGZP6847A040KPG** (0-40 kPa gauge, ported, 0.5-4.5V analog, calibrated + temp-compensated, DIP) is ~£5 from DigiKey UK. Same wiring as the MPX5050GP (5V supply, 2:1 divider into GPIO 34), a third of the price. HX710B module (~£3) remains the bargain-bin fallback.
+- **Motor is the real spend.** Options in cost order: bench-only NEMA17 salvage (£0, proves firmware, not usable on a person), NEMA23 + DM542 + 36V PSU (~£60-80, StrokeEngine accel ramps fix most of the 2021 stall causes), 57AIM30 closed-loop (£90-130, OSSM standard, 1500 RPM RS485 variant). Second-hand eBay steppers/drivers worth a look.
+- **Re-phased:** plug + sensor first (~£5 sensor + plug), since the detection algorithm is the interesting part and needs no motor. Motor purchase deferred until the plug pipeline works.
