@@ -52,6 +52,7 @@ Prompted by the UK government's "be ready for 72 hours" cyber-attack/disruption 
 - Full research/reasoning trail (microbore pipework, siting, value impact, solar match) logged in `Daily/2026-09-09.md` and `Daily/2026-09-10.md`.
 - Survey-day prep (19 Nov, morning of): heat-loss benchmarks given to Rob. Peak heat loss for this house expected ~7-9 kW (from the ~18,000 kWh/yr demand estimate at roughly 2,000-2,400 full-load hours), i.e. Cosy 9 territory. Yardsticks: <50 W/m2 good, 50-80 typical, 100+ leaky; HLP <1 excellent, 1-2 typical, 2-3 poor, >3 very leaky. No heat-loss figure rules a heat pump out, it only sets pump size and radiator count. Real gate to watch: BUS grant needs a valid EPC with no outstanding loft/cavity insulation recommendations. Ask for the room-by-room heat-loss report itself, not just the pump size.
 - Rob was leaning positive (off-oil economics, solar/cylinder synergy, PD-legal siting); decided and booked the survey by 23 Sep.
+- DIY-vs-Octopus call (19 Nov, survey day): let Octopus fit every radiator the heat-loss report flags, at £250 each (DIY only saves ~£80-150/radiator after parts/drain/refill, and risks the commissioning flow-temp design the grant/warranty rest on). DIY reserved for optional extras later, e.g. upsizing a radiator post-install to lower flow temp further.
 
 ## Downstairs flooring (laminate, measured 30 Oct 2026)
 Long-standing job: laminate the downstairs living room and hallway, on soft hold since 28 Aug 2026 (original plan was to floor before buying the TV). Tracked as a Todoist task.
