@@ -68,7 +68,7 @@ Rob's plan: build it himself, likely in exchange for free venue hire sometime, p
 
 Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availability (e.g. Mon-Thu 08:00-20:00), settable prices, hardcoded login on `/admin`, Amplify Gen 2.
 
-- **Repo:** `NilSkilz/twisted-boudoir` (private, Rob created it 19 Nov; pushed to `main`). Local: `/home/jarvis/projects/twisted-boudoir`. Workflow not stated yet; I pushed the first commit straight to main as the repo was empty.
+- **Repo:** `NilSkilz/twisted-boudoir` (private, Rob created it 19 Nov; pushed to `main`). Local: `/home/jarvis/projects/twisted-boudoir`. First commit went straight to main (empty repo); since then branch + PR (Rob hasn't said otherwise).
 - **Shape:** Liaisons pattern. All logic in `shared/engine.ts`, one Lambda behind an AppSync `read` query + `call` mutation (API key), DynamoDB single table (pk/sk, RETAIN + PITR). LAN dev server runs the same engine with `.data/db.json`.
 - **Availability** = weekly hours (multiple windows per day) minus closed dates, existing bookings + buffer, Google Calendar busy times (owner blocks time by adding an event in Google), notice period, max days ahead. London wall time, UTC storage, clock change tested.
 - **Prices** = "hire options": name, length, price, optional deposit, show/hide, order.
@@ -77,5 +77,7 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - **Admin login:** hardcoded in `shared/adminCredentials.ts`, username `admin`. Replace before the owner relies on it.
 - **Verified:** 12 vitest tests, both typechecks, vite build, offline `cdk synth`, puppeteer flow (`/home/jarvis/tools/browser-check/tb-flow.js`, needs `TB_PW`): customer books on a phone, owner confirms in /admin.
 - **LAN preview:** http://192.168.1.11:3020 (and /admin), `Jarvis/bin/twisted-bookings-preview.sh` @reboot. Not public on purpose (hardcoded password).
-- **Not built yet:** payments (need her gateway list), customer/owner emails (SES, she has the unmanaged-hire copy), pulling edits made directly in Google back into bookings, events listing (links to Fet), the public site from the mockup.
+- **Public site wired in (19 Nov, PR #1, branch `feature/public-site`):** mockup is now `/`, booking moved to `/book` inside the same nav/footer, homepage prices pulled live from /admin, "Book this" goes to `/book?package=<id>`. Events are display only with "On FetLife" links (placeholder events, `FETLIFE_URL` still generic `fetlife.com`). Per-page CSS chunks; gotcha: a ternary of `import()`s made Vite give every page the homepage's CSS preloads, so the imports are separate functions.
+- **Her current setup (pulled from the live WordPress/Amelia site, 19 Nov):** gateways **PayPal + Square** (Stripe/Mollie off). Hours 7 days 10:00-23:30. Amelia charges 1h £45, 2h £70, 3h £105, 4h £140, 5h £175, 6h £210, 8h £280 (standard, up to 4 people); group bookings same prices +£10 per extra person over 4. These are now the defaults. **Mismatch to flag to her:** her "Private hire prices" page says £55 for 1 hour and £45/h for 2h+ (so 2h = £90), but Amelia actually charges £35/h-ish. Also her Amelia "8 Hour Booking" is set to 6 hours long (bug).
+- **Not built yet:** payments (PayPal + Square), group pricing (guest count), customer/owner emails (SES, she has the unmanaged-hire copy), pulling edits made directly in Google back into bookings, real events + FetLife URL.
 - **Rob to do:** connect the repo in the Amplify console, set the secret, add the SPA rewrite for /admin (in README).
