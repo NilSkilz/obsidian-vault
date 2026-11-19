@@ -5,4 +5,4 @@
 set -euo pipefail
 pkill -f "http\.server 4620" 2>/dev/null || true
 sleep 1
-setsid python3 -m http.server 4620 --directory /home/jarvis/projects/twisted-boudoir/dist >>"$HOME/.local/state/twisted-preview.log" 2>&1 < /dev/null &
+setsid python3 -m http.server 4620 --directory /home/jarvis/projects/twisted-boudoir-mockup/dist >>"$HOME/.local/state/twisted-preview.log" 2>&1 < /dev/null &

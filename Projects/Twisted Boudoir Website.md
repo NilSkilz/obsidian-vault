@@ -39,7 +39,7 @@ Rob's plan: build it himself, likely in exchange for free venue hire sometime, p
 
 ## Mockup (built 30 Sep 2026)
 
-- Repo: `/home/jarvis/projects/twisted-boudoir` (local git, no remote yet). Vite + React + TS, single-page marketing mock. Target stack per Rob: React/Vite on Amplify.
+- Repo: `/home/jarvis/projects/twisted-boudoir-mockup` (local git only; renamed 19 Nov when the real build took the `twisted-boudoir` name). Vite + React + TS, single-page marketing mock. Target stack per Rob: React/Vite on Amplify.
 - Design: near-black plum background, violet/fuchsia/pink gradients (Tide-adjacent but its own look), Fraunces display serif + Outfit body. Real photos pulled from their current site into `public/photos/`.
 - Sections: hero (playroom wide shot), The Space feature grid, private-hire pricing tiers (sample prices), events/workshops list (sample), Boudoir Bar split, gallery, booking CTA, footer with an "Owners: edit site content" teaser for the custom-admin pitch.
 - Served on LAN at http://192.168.1.11:4620 (python http.server on the dist build). Screenshots sent to Rob 30 Sep.
@@ -63,3 +63,19 @@ Rob's plan: build it himself, likely in exchange for free venue hire sometime, p
 
 - Rob to continue the conversation; next step is the open questions above.
 - If the owner bites: real prices/events from their current site, decide Amelia vs replacement booking flow, then scope the admin backend (the actual build).
+
+## The build (started 19 Nov 2026)
+
+Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availability (e.g. Mon-Thu 08:00-20:00), settable prices, hardcoded login on `/admin`, Amplify Gen 2.
+
+- **Repo:** `NilSkilz/twisted-boudoir` (private, Rob created it 19 Nov; pushed to `main`). Local: `/home/jarvis/projects/twisted-boudoir`. Workflow not stated yet; I pushed the first commit straight to main as the repo was empty.
+- **Shape:** Liaisons pattern. All logic in `shared/engine.ts`, one Lambda behind an AppSync `read` query + `call` mutation (API key), DynamoDB single table (pk/sk, RETAIN + PITR). LAN dev server runs the same engine with `.data/db.json`.
+- **Availability** = weekly hours (multiple windows per day) minus closed dates, existing bookings + buffer, Google Calendar busy times (owner blocks time by adding an event in Google), notice period, max days ahead. London wall time, UTC storage, clock change tested.
+- **Prices** = "hire options": name, length, price, optional deposit, show/hide, order.
+- **Bookings** start `pending` (tentative in Google), owner marks confirmed / cancels / moves / notes them from a week-view calendar in `/admin`. Every change syncs to Google.
+- **Google:** service account JWT via node:crypto (no googleapis dep). Needs the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret (or `none`) before the first deploy, calendar shared with the SA email, calendar ID set in /admin Settings. README has the steps.
+- **Admin login:** hardcoded in `shared/adminCredentials.ts`, username `admin`. Replace before the owner relies on it.
+- **Verified:** 12 vitest tests, both typechecks, vite build, offline `cdk synth`, puppeteer flow (`/home/jarvis/tools/browser-check/tb-flow.js`, needs `TB_PW`): customer books on a phone, owner confirms in /admin.
+- **LAN preview:** http://192.168.1.11:3020 (and /admin), `Jarvis/bin/twisted-bookings-preview.sh` @reboot. Not public on purpose (hardcoded password).
+- **Not built yet:** payments (need her gateway list), customer/owner emails (SES, she has the unmanaged-hire copy), pulling edits made directly in Google back into bookings, events listing (links to Fet), the public site from the mockup.
+- **Rob to do:** connect the repo in the Amplify console, set the secret, add the SPA rewrite for /admin (in README).
