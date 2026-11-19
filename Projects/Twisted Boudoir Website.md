@@ -45,6 +45,20 @@ Rob's plan: build it himself, likely in exchange for free venue hire sometime, p
 - Served on LAN at http://192.168.1.11:4620 (python http.server on the dist build). Screenshots sent to Rob 30 Sep.
 - **Public since 19 Nov 2026: https://twisted.cracky.co.uk** (NPM host 25, `Jarvis/bin/twisted-preview.sh` @reboot) so Rob can share it with the owner. Sample events now compute rolling future dates (next few weekends from whenever it's opened), and both the prices and events sections carry a "sample for the mock-up" note. Rebuild after edits: `npm run build` in the repo, the server picks up `dist` live.
 
+## Owner's brief (19 Nov 2026, after seeing the mockup)
+
+- Loves the colour scheme, wants a few visual tweaks.
+- **Main need is bookings**, "what we have now but less complicated": automatic bookings into a calendar she can see and adjust, her existing payment gateways (which ones still unknown), automatic emails to customers with instructions + the "unmanaged" (unsupervised hire) info (she has or can write the copy).
+- **Events: list only, no purchasing.** Tickets stay on Fet.
+- Asked: same domain or start again? (Answer: same domain, swap over at launch, keep old URLs redirecting so traffic/Google rank carries over.)
+- Asked: would Rob be paid emergency tech support? Not a novice, not techy.
+- Asked for cost, "business is business".
+
+### Price I suggested to Rob (19 Nov)
+- Build: about **£1,500** (site + admin + booking/calendar/payments/emails), half up front, half at launch. Option to knock some off for venue-hire credit (the original swap idea).
+- Ongoing: about **£35/month** for hosting, backups, keeping bookings/payments working, emergency support and small edits; bigger changes quoted separately.
+- Caveat: custom booking with payments is the real build and the real support liability, so it's priced in, not a freebie. Need her gateway list before committing.
+
 ## Follow-ups
 
 - Rob to continue the conversation; next step is the open questions above.
