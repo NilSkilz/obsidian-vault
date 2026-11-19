@@ -43,6 +43,7 @@ Rob's plan: build it himself, likely in exchange for free venue hire sometime, p
 - Design: near-black plum background, violet/fuchsia/pink gradients (Tide-adjacent but its own look), Fraunces display serif + Outfit body. Real photos pulled from their current site into `public/photos/`.
 - Sections: hero (playroom wide shot), The Space feature grid, private-hire pricing tiers (sample prices), events/workshops list (sample), Boudoir Bar split, gallery, booking CTA, footer with an "Owners: edit site content" teaser for the custom-admin pitch.
 - Served on LAN at http://192.168.1.11:4620 (python http.server on the dist build). Screenshots sent to Rob 30 Sep.
+- **Public since 19 Nov 2026: https://twisted.cracky.co.uk** (NPM host 25, `Jarvis/bin/twisted-preview.sh` @reboot) so Rob can share it with the owner. Sample events now compute rolling future dates (next few weekends from whenever it's opened), and both the prices and events sections carry a "sample for the mock-up" note. Rebuild after edits: `npm run build` in the repo, the server picks up `dist` live.
 
 ## Follow-ups
 
