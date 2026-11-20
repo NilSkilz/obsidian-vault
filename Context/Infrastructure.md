@@ -269,6 +269,16 @@ This is the channel Rob actually talks to me through, distinct from the family c
 - **Photos / images (added 2026-08-07):** the bridge used to handle **only text and voice**, so any photo sent with no caption silently vanished before it reached me (Rob hit this twice trying to send a nutrition label — the message just didn't arrive). Fixed: the bridge now downloads photos and image files (caption or not) and passes them into the run, so I can read them directly — nutrition labels for health logging, scene/kit photos, screenshots, whatever. If a photo ever "doesn't arrive," suspect the bridge dropped it, not the sender.
 - **Voice notes (added 2026-07-17):** voice / audio / round-video-note messages are transcribed locally with **faster-whisper** (CPU, no cloud key). Standalone helper `Jarvis/bridge/transcribe.py` in its own venv at `~/.local/share/jarvis-whisper/venv`, model cache `~/.local/share/jarvis-whisper/models` (both outside the git repo). Default model `base.en`/int8 (~141M, warm run ~1s for a short note); PyAV wheels bundle ffmpeg so no system ffmpeg needed. Bump `JARVIS_WHISPER_MODEL=small.en` if proper nouns get mangled. The worker (not the poll loop) does the transcribe, echoes “🎙️ Heard: …” back so Rob can catch a mishear, then runs the transcript as a normal job.
 
+## Alexa voice access (proposed 2026-11-20, awaiting Rob's go-ahead)
+
+Rob asked if he can talk to me via Echo. Not out of the box, Alexa only talks to Amazon's own assistant, so it needs a custom skill.
+
+- **How it would work:** "Alexa, ask Jarvis [x]" hits an endpoint I expose via `cracky.co.uk`. Alexa only waits ~8s for a reply, so she'd say "on it" and I'd speak the real answer back through the Echo afterwards via `jarvis-say.sh` (already works), more walkie-talkie than chat.
+- **What Rob needs to do:** register a free Amazon developer account and the skill (~10 min of clicking). I build the rest.
+- **Privacy constraint, not a tech one:** Alexa can't reliably tell who's speaking, and Dexter and Logan have Dots in their rooms. So any Alexa-reachable version must be a cut-down household Jarvis only (lights, heating, calendar, shopping list, car charge status), nothing from `Private/` and nothing personal, on any device. Full me stays on Telegram.
+- **Alternative considered:** flash an Echo with TECHO5 (open firmware, logged in `Ideas/Inspiration Log.md`) to run Home Assistant's own voice assistant locally, no Amazon in the loop, but it's a tinkering project limited to certain Echo models.
+- **My recommendation:** build the Alexa skill as the safe household version, about an evening of my time plus Rob's 10-minute Amazon signup. Waiting on Rob to say go.
+
 ## Jarvis wall panel / DAKboard (rebuilt 2026-07-17)
 
 The successor to the old NUC's DAKboard alert iframe. A transparent-background HTML panel I host and push alerts to, that Rob iframes into DAKboard.
