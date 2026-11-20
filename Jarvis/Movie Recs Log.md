@@ -110,3 +110,20 @@ Not in Plex (offered for Radarr):
 - Kingsman: The Secret Service (2014) - the closest thing to a feature-length Archer. Crowd-pleaser. Confirmed absent.
 
 Notes: The Bourne Supremacy and Ultimatum (9.2/9.1) are both unwatched while Identity is watched, a clean franchise hole held back to avoid a fourth consecutive "the one you skipped" pick. Strong next-week candidate. Mission: Impossible 1996 plus Fallout (9.8), Rogue Nation (9.4) and Dead Reckoning (9.6) all unwatched. Also sitting there: The Hunt for Red October (8.9), Minority Report (8.9), The Matrix, Air Force One, Atomic Blonde, Patriot Games. Bond vein still open: Quantum, Skyfall, Spectre all unwatched behind last week's Casino Royale pitch. Still banked: Casino (1995), Memento, Snatch, Lock Stock, Nightcrawler, No Country, Inside Man, Jackie Brown, Collateral, Insomnia, Sin City, The Princess Bride (family), The Karate Kid (1984), Blade Runner, John Wick 1/2/4, Predator (1987).
+
+## 2026-11-20
+
+Taste read: three movies this week and they point one way. Fracture (2007) on 14 Nov, Gregory Hoblit courtroom cat-and-mouse with Hopkins and Gosling. The Odyssey (2026) finished 14 Nov, which is Nolan. Alien: Romulus rewatched 15 Nov (second time, first was Nov 2024). Archer binge still going hard, nine more episodes 14-19 Nov. Library now 794 titles, 231 watched. Genre rates steady: Fantasy 38%, Horror 36%, Thriller 35%, Adventure 35%, Mystery 34%, Action 33% on 297 titles, Animation bottom at 12%.
+
+The angle: Nolan completion. He has watched Prestige, Inception, Interstellar and all three Dark Knights, plus The Odyssey this week. Insomnia and Memento are the two that matter and both are sitting there clean. Insomnia doubles as the Fracture follow-on (detective vs killer, psychological, 2002).
+
+In Plex, unwatched (viewCount null, viewOffset null, all verified):
+- Insomnia (2002) - Nolan, Pacino vs Robin Williams. Cat-and-mouse detective thriller, direct Fracture follow-on and a Nolan hole in one. After hours.
+- Memento (2000) - 9.4 audience, the highest-rated unwatched Nolan. Banked since 6 Nov, finally pitched. After hours.
+- Twisters (2024) - 9.0 audience, PG-13, 122 min. Family sofa pick. Deliberately NOT a franchise-hole pick (Twister 1996 is absent and not needed); big, loud, zero homework, Action/Adventure are his two biggest genres.
+
+Not in Plex (offered for Radarr):
+- Primal Fear (1996) - same director as Fracture (Gregory Hoblit, confirmed), same courtroom twist shape, Norton's debut. Confirmed absent.
+- The Thing (1982) - Carpenter, the Alien lane he actually watches (Aliens watched, Romulus twice). Horror is his top watch-through genre. Confirmed absent (no match in library).
+
+Notes: Avengers: Endgame added 12 Nov but the entire MCU is unwatched apart from Iron Man 1/2, Guardians 1 and the Deadpools, so it is not a clean pick and nor is any Marvel title. Star Wars original trilogy ALL unwatched while the sequels and Solo are watched, a huge hole, but deliberately held back to avoid a fifth consecutive "the one you skipped" pick (same reason the Indy lane is parked). Blade Runner, Blade Runner 2049, Dune and Dune: Part Two (9.5) all unwatched, strong sci-fi run for a future week. The Matrix unwatched. Predator: Badlands still stuck at 74%, A Quiet Place: Day One still at 80%, Split at 10%, none are clean picks. Still banked: Nightcrawler (9.5 critic), Casino (1995), Snatch, Lock Stock, No Country, Ex Machina, Inside Man, Jackie Brown, Collateral, Sin City, The Princess Bride (family, 9.4), The Karate Kid (1984), John Wick 1/2/4, Predator (1987), Mission: Impossible series, Oppenheimer and Dunkirk (the remaining Nolans after these two).
