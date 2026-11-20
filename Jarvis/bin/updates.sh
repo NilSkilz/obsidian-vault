@@ -19,6 +19,27 @@ mode="${1:-check}"
 
 ha_json() { $HA_SSH "ha $1 --raw-json" 2>/dev/null; }
 
+# Install an HA update entity through the core REST API (used for add-ons that
+# can't update themselves over the SSH session we're driving them from).
+ha_update_entity() {
+  local ent="$1" i state
+  [ -r "$HOME/.config/jarvis/ha.env" ] || return 1
+  # shellcheck disable=SC1091
+  . "$HOME/.config/jarvis/ha.env"
+  curl -s -m 110 -X POST \
+    -H "Authorization: Bearer $HA_TOKEN" -H "Content-Type: application/json" \
+    -d "{\"entity_id\":\"$ent\",\"backup\":true}" \
+    "$HA_URL/api/services/update/install" >/dev/null 2>&1 || return 1
+  for i in $(seq 1 15); do
+    sleep 20
+    state=$(curl -s -m 10 -H "Authorization: Bearer $HA_TOKEN" \
+      "$HA_URL/api/states/$ent" 2>/dev/null \
+      | python3 -c 'import json,sys; print(json.load(sys.stdin)["state"])' 2>/dev/null)
+    [ "$state" = "off" ] && return 0
+  done
+  return 1
+}
+
 check_ha() {
   local core os addons
   core=$(ha_json "core info") || { echo "NEEDS-ROB: cannot reach HAOS over SSH"; return 1; }
@@ -34,7 +55,15 @@ apply_ha() {
   addons=$(ha_json "addons" | jq -r '.data.addons[] | select(.update_available) | .slug')
   for slug in $addons; do
     if [ "$slug" = "core_ssh" ]; then
-      echo "note: ha-addon core_ssh can't update itself over its own SSH, update via HA UI (Settings > Add-ons > Terminal & SSH)"
+      # core_ssh can't update itself over its own SSH session, but the Supervisor
+      # exposes it as an HA update entity, so drive it through the core REST API
+      # instead (fixed 2026-11-20, was bouncing to Rob in Proposals.md for a month).
+      echo "updating ha-addon core_ssh via HA update entity (not over its own SSH)..."
+      if ha_update_entity "update.terminal_ssh_update"; then
+        echo "ha-addon core_ssh: updated"
+      else
+        echo "NEEDS-ROB: ha-addon core_ssh update failed, do it in HA (Settings > Add-ons > Terminal & SSH)"
+      fi
       continue
     fi
     echo "updating ha-addon $slug..."
