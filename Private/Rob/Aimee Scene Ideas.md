@@ -7,6 +7,8 @@ metadata:
 
 Rob's idea bank for scenes with Aimee. Private because half the value is surprise. Fully planned scenes graduate to their own `<Name> Scene Plan.md` (see [[wax-pour-scene-plan]]).
 
+See also [[witch-trial-club-scene-plan]] (planned 21 Nov).
+
 ## Ideas (added 7 Nov 2026)
 
 ### What3Words
