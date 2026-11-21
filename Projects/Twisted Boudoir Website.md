@@ -84,3 +84,12 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - **Not built yet:** her real unmanaged-hire text (placeholder in place), day-before reminder email, pulling edits made directly in Google back into bookings, real events + FetLife URL.
 - **Needs before emails go live:** SES domain verification (DKIM records on her domain's DNS) + SES production access, in whichever AWS account hosts it.
 - **Rob to do:** connect the repo in the Amplify console, set the secret, add the SPA rewrite for /admin (in README).
+
+## Booking types, events, white-label admin (21 Nov 2026, commit 5ef8105 on main)
+
+- **Booking types** now first-class, mirroring her Amelia categories (checked live 21 Nov): **Standard** (up to 4, 1-8h, general 12h notice) and **Group** (4 included, +£10/head once per booking, max 34, 2-8h, no 1-hour, **1h notice**). Same hourly prices. Each type has its own rules + hire options; /book is type, then length; booking label reads "Group booking, 3 hours". Old configs auto-upgrade.
+- **Events** managed in /admin > Events (add/edit/duplicate/hide, tickets link). Homepage "What's on" reads them live; empty state points to FetLife. Preview has 3 sample events (Rope Fundamentals, Twisted Social, Low-Light Masterclass), delete before launch.
+- **White-label admin:** product name **"Berth"** (`src/admin/brand.ts`), neutral teal theme in `src/admin/admin.css`, light + dark, sidebar on desktop, top bar on phone. Venue name + booking-ref prefix live in Settings > Business. Rob's idea: resell it to other venues.
+- **Homepage pricing** redesigned: one card per booking type with a price list, instead of seven near-identical boxes.
+- Preview dev data was reset to the new defaults (old db backed up at /tmp/tb-db-backup.json).
+- Still open: the Amelia "8 Hour Booking" is actually 6h long on her current site (both types); FETLIFE_URL still generic.
