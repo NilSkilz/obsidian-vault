@@ -100,3 +100,10 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - **Google push button** was greyed out because no service account key is installed (calendar ID alone isn't enough), and the page didn't say so. Now it explains itself, shows the SA address to share the calendar with once connected, saves an unsaved ID before pushing, and probes freeBusy first so an unshared calendar returns a clear error instead of "sent 0".
 - **Still the gate:** someone (Rob) has to create the Google Cloud service account + JSON key, then put it in the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret (or `.data/google-service-account.json` on the LAN preview). For resale ("Berth") an OAuth "Connect Google" button would be the cleaner long-term answer.
 - Reminder: the LAN preview never sends email (writes to `.data/outbox/`), and SES in sandbox mode only delivers to verified addresses, so both test inboxes need verifying in SES until production access is granted.
+- **Admin login (for Jarvis quick reference, hardcoded in `shared/adminCredentials.ts`):** username `admin`, password `rbZ5Io5r3IRKrgcd`. LAN preview only (:3020), not on public internet; replace before the owner relies on it.
+
+### Google Calendar setup (23 Nov 2026)
+
+- Rob created the service account `twisted-email-service@twisted-boudoir.iam.gserviceaccount.com` in the `twisted-boudoir` GCP project (name is a misnomer, it's only used for Calendar, not email, which stays on SES).
+- **No IAM roles needed** on the service account itself, that's the trap. Calendar access comes purely from sharing the calendar with it.
+- Remaining steps for Rob: enable the Calendar API in that project, create a JSON key for the service account, share her Google Calendar with that address as "Make changes to events", then send the JSON to Jarvis or paste it into the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret. Watch for the org policy `iam.disableServiceAccountKeyCreation` blocking key creation.
