@@ -112,6 +112,7 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - twistedboudoir.co.uk DNS is hosted at WHUK (nameservers shn47/48.whukns.com); MX points at the domain itself, so office@ is a mailbox on that host.
 - Existing SPF (long ip4 list + include:pinkapplestudios.co.uk) and DMARC `p=none` already present.
 - SES sending from office@ only needs the 3 Easy DKIM CNAMEs added at WHUK; no SPF change needed (default MAIL FROM is amazonses.com, DKIM gives DMARC alignment). No domain transfer required.
+- Cutover plan (23 Nov): no nameserver change needed (WHUK panel doesn't expose NS anyway). `www` is currently a CNAME to the apex; swap it for Amplify's CloudFront target + add Amplify's ACM validation CNAME. Map only `www` in Amplify. LEAVE the apex A record (213.175.196.66): the MX points at the apex, so changing it kills her mail. Apex already 301s to https://www.../same-path via her WordPress (Let's Encrypt cert, paths preserved), so old links land on Amplify. If the WP hosting is ever cancelled, replace that redirect (WHUK forwarding or .htaccess) and point MX at a mail. host first.
 - If DNS ever moves to Route 53: copy EVERY record (MX, SPF, DMARC, DKIM CNAMEs) first or her inbox and SES both break.
 
 ## Contact form (23 Nov 2026, ac46377 + f260777 on main)
