@@ -107,3 +107,9 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - Rob created the service account `twisted-email-service@twisted-boudoir.iam.gserviceaccount.com` in the `twisted-boudoir` GCP project (name is a misnomer, it's only used for Calendar, not email, which stays on SES).
 - **No IAM roles needed** on the service account itself, that's the trap. Calendar access comes purely from sharing the calendar with it.
 - Remaining steps for Rob: enable the Calendar API in that project, create a JSON key for the service account, share her Google Calendar with that address as "Make changes to events", then send the JSON to Jarvis or paste it into the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret. Watch for the org policy `iam.disableServiceAccountKeyCreation` blocking key creation.
+
+## Domain / email DNS (checked 23 Nov 2026)
+- twistedboudoir.co.uk DNS is hosted at WHUK (nameservers shn47/48.whukns.com); MX points at the domain itself, so office@ is a mailbox on that host.
+- Existing SPF (long ip4 list + include:pinkapplestudios.co.uk) and DMARC `p=none` already present.
+- SES sending from office@ only needs the 3 Easy DKIM CNAMEs added at WHUK; no SPF change needed (default MAIL FROM is amazonses.com, DKIM gives DMARC alignment). No domain transfer required.
+- If DNS ever moves to Route 53: copy EVERY record (MX, SPF, DMARC, DKIM CNAMEs) first or her inbox and SES both break.
