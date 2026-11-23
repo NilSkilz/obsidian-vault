@@ -113,3 +113,10 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - Existing SPF (long ip4 list + include:pinkapplestudios.co.uk) and DMARC `p=none` already present.
 - SES sending from office@ only needs the 3 Easy DKIM CNAMEs added at WHUK; no SPF change needed (default MAIL FROM is amazonses.com, DKIM gives DMARC alignment). No domain transfer required.
 - If DNS ever moves to Route 53: copy EVERY record (MX, SPF, DMARC, DKIM CNAMEs) first or her inbox and SES both break.
+
+## Contact form (23 Nov 2026, ac46377 + f260777 on main)
+- Homepage "Get in touch" section (`#contact`, `src/site/Contact.tsx`); "Contact us" buttons + footer link point to it. Engine op `contact` (public, no token).
+- Emails go to Settings `contactEmail` (admin > Emails, "Contact form messages go to"), **several comma-separated addresses allowed**, default `office@twistedboudoir.co.uk`, empty = falls back to the owner alert addresses. Reply-To is the sender. Needs `emailFrom` set (same as booking emails).
+- Spam guard: hidden honeypot field `website` + must be on the page 3s+ (`CONTACT_MIN_MS`); bots get a fake "sent". No rate limit or message storage: a send failure shows the visitor an error rather than losing the message silently.
+- SES sandbox note: once the twistedboudoir.co.uk domain identity is verified, office@ can receive even before production access (recipient on a verified domain). Any other recipient (e.g. Rob's) still needs verifying until production access.
+- LAN preview `.data/db.json` now has emailFrom = office@twistedboudoir.co.uk so preview emails land in `.data/outbox/`. Browser check script: `/home/jarvis/tools/browser-check/tb-contact.js`.
