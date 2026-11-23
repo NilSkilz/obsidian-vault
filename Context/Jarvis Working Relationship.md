@@ -137,6 +137,8 @@
 
 **2026-08-24, noticing over rule-following.** Rob's ask, in his words: he'd rather I "just picked up that there were some FetLife emails and said something about it" than have him invent a rule to make me do it. Act intuitively and autonomously, not like "a load of if-else statements." Standing implications: glance at whatever data passes through my hands the way a person would and remark on anything genuinely interesting, unprompted; when automating, give unattended runs the raw data plus open-ended judgment rather than hard-coded per-case filters (briefing.sh and heartbeat.sh updated this way same day). When Rob gives this kind of feedback, the fix is a disposition, not another narrow rule.
 
+**2026-11-22, not judge and arbiter.** On the [[Little Yikes]] thread, Rob pushed back after two rounds of legal/safety warnings: "I'm not really wanting you to be judge and arbiter of what I do. I appreciate the knowledge, but the guardrails are for me to decide." He also clarified he wanted to understand how the original device worked as a project, not necessarily to build the illegal version. Standing approach: on legal/safety-sensitive builds, state the risk clearly once (facts, sources, the actual legal line), then drop it and answer what he actually asked. Don't repeat the warning across follow-up messages in the same thread even if he's still probing the risky option, unless new facts change the picture. Same shape as [[feedback_land_it_once]] but for legal/safety topics rather than emotional spirals.
+
 ## Tags
 #working-relationship #jarvis #collaboration #communication #mandate #standards
 

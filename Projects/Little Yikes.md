@@ -1,6 +1,6 @@
 # Little Yikes
 
-**Status:** IDEA, parked 10 Oct 2026. Rob: "will come back to it later."
+**Status:** IDEA, picked back up 22 Nov 2026. Rob no longer wants the toy styling (see below) — still parked pending his pick of version + finish.
 
 ## The idea
 
@@ -10,13 +10,15 @@ Inspired by a r/BdsmDIY post (Oct 2026): **"My First Cattle Prod" by Little Yike
 
 Found 10 Oct 2026 (I missed it on the first pass). In England & Wales **a stun gun is a prohibited weapon** under s.5(1)(b) Firearms Act 1968: anything that discharges electricity counts (*Flack v Baldry* 1988; "it's non-lethal" was rejected in *R v Brereton* 2012). Up to 10 years. Worse, a stun gun **disguised as another object** is s.5(1A)(a), which carries a **mandatory minimum of 5 years**. A working HV discharge device styled as a children's toy is very close to the textbook disguised-weapon case. The parts are legal to buy separately; assembled into a handheld shock device is the problem. A BDSM purpose isn't a defence. Source: HJA Solicitors' stun-gun law piece (hja.net).
 
-So the Little Yikes *styling* is the keeper, and the business end has to be something that isn't a weapon.
+So the Little Yikes *styling* is the keeper, and the business end has to be something that isn't a weapon. **Update 22 Nov 2026:** Rob revisited this and decided against the toy look after all ("Not doing the toy look") — wants a plain shell instead, leaning matte black or brushed aluminium so it reads as a tool, not a toy. The toy-shell BOM below is kept for reference but the live plan is a plain enclosure around whichever internals he picks.
+
+**Cattle prod angle, checked 22 Nov 2026:** Rob asked whether buying a real cattle prod sidesteps the law. Short answer: voltage isn't the test, s.5 turns on what the thing is designed/adapted for. A genuine farm prod from a UK agricultural supplier (Hotshot etc.) is a livestock tool and generally isn't caught, though it's a tolerated grey area rather than a clean yes. Kink-market "prods" are either legit low-output e-stim (legal, same basis as a TENS unit) or a stun gun in a different case shipped from abroad (illegal regardless of who's selling it). This doesn't change the verdict on the original Yikes build.
 
 ## Legal versions (pick one when we come back to it)
 
-**A. "My First Zapper": Little Yikes shell around the e-stim kit we already have (recommended).** The printed toy body holds a 2-pin contact head wired to the Boots EM43 TENS (see `reference_estim_kit` memory and the e-stim notes). Real bite, from a medical device, nothing weapon-like. Add the menace back with **sound**: the button plays a stun-gun crackle sample through a small speaker (DFPlayer Mini + speaker), so you get the terror without the HV. Optional red LED that flashes with it. Same e-stim safety rule: below the waist only.
+**A. "My First Zapper": e-stim kit we already have, in a shell.** A 2-pin contact head wired to the Boots EM43 TENS (see `reference_estim_kit` memory and the e-stim notes). Real bite, from a medical device, nothing weapon-like. Add the menace back with **sound**: the button plays a stun-gun crackle sample through a small speaker (DFPlayer Mini + speaker), so you get the terror without the HV. Optional red LED that flashes with it. Same e-stim safety rule: below the waist only. Design idea from the 22 Nov chat: drive it from an ESP32 for rapid burst pulses (10-20Hz, mimicking the real stun-gun rhythm) synced to the crackle sample rather than a flat TENS output — basically the same skill set as [[Saline Pump]].
 
-**B. "My First Violet Wand": Little Yikes sleeve around a cordless violet wand.** Violet wands are sold openly as erotic toys in the UK and you get real crackle and visible sparks. Cordless rechargeable models exist (XR Master Series Electra, Shockgasm 2.0 Unplugged). Costs more, and you're dressing up a bought product rather than building one.
+**B. "My First Violet Wand": sleeve around a cordless violet wand.** Violet wands are sold openly as erotic toys in the UK and you get real crackle and visible sparks. Cordless rechargeable models exist (XR Master Series Electra, Shockgasm 2.0 Unplugged / XR Electra). Costs more, and you're dressing up a bought product rather than building one. As of 22 Nov this is Rob's preferred direction if he wants the arc/crackle theatre, in a plain shell rather than the toy one.
 
 ## BOM: version A (My First Zapper)
 
