@@ -120,3 +120,11 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - Spam guard: hidden honeypot field `website` + must be on the page 3s+ (`CONTACT_MIN_MS`); bots get a fake "sent". No rate limit or message storage: a send failure shows the visitor an error rather than losing the message silently.
 - SES sandbox note: once the twistedboudoir.co.uk domain identity is verified, office@ can receive even before production access (recipient on a verified domain). Any other recipient (e.g. Rob's) still needs verifying until production access.
 - LAN preview `.data/db.json` now has emailFrom = office@twistedboudoir.co.uk so preview emails land in `.data/outbox/`. Browser check script: `/home/jarvis/tools/browser-check/tb-contact.js`.
+
+### Small-print pages (23 Nov 2026, `6c6801a`)
+- `/find-us`, `/rules`, `/terms`, `/privacy`, each editable in **admin > Pages** (title, intro line, body; Find us also a map pin). Text lives in `Config.pages`, defaults in `shared/sitePages.ts` (her own wording from the WordPress site). Public engine op `page`, admin op `admin.savePage`.
+- Body format: one line = paragraph, `## ` heading, `- ` bullet; URLs, emails and `///w3w` addresses auto-link. No HTML, no `dangerouslySetInnerHTML`.
+- Old WordPress URLs alias to the same pages (`/terms-of-use`, `/privicy-policy` [her typo], `/privacy-policy`, `/house-rules`, `/directions`), covered by the existing Amplify `</^[^.]+$/>` rewrite.
+- Her live `/rules/` page is actually a stale copy of the terms (Pink Apple, tickets wording). New House rules = the on-site conduct sections only (age/ID, consent, arriving, alcohol, sharps/flames [only on her rules page], breakages, equipment, CCTV, filming, insurance, behaviour). Terms = her `/terms-of-use/` verbatim, tidied.
+- Footer blurb now says "just off the M5 at junction 23, Bridgwater" (was "exact address shared on booking"; her site publishes the address openly). Nav "Find Us" goes to `/find-us`.
+- **For her to fix:** privacy policy data-controller email is `info@pinkapplestudios.co.uk`, "Last updated April 2026", and it doesn't mention the new site's contact form, Google Calendar or AWS email. Browser check: `/home/jarvis/tools/browser-check/tb-pages.js` (needs `TB_PW`).
