@@ -1205,3 +1205,117 @@ Not live until merged to main (shelf job). Checkout itself was only verified by 
 **GitHub Actions "Cypress E2E Tests" is red on every push** (at least since 28 Sep, all six shards fail inside 4 minutes). Not caused by today's commits. Likely cause: the workflow still records to the retired Sorry-Cypress director (`cypress-director.cracky.co.uk` returns 525). The real E2E suite runs on CT 117. Logs not readable with the current PAT (no Actions scope). Candidate fix: delete or disable the workflow.
 
 **Shelf now:** merge develop (Stripe fix + counted tasks) and try one counted task, reply to Ophelia, repeat Request indexing on three URLs.
+
+## 2026-11-23
+
+Quiet week on the repo: every commit in the window landed on 16 Nov (the day of the last review), and nothing has touched Tethered since. So this is a pure measurement week, and for the first time the measurements moved.
+
+### What moved
+
+**Google: the first blog-post impression ever.** `solo-play-safety-guide` took 1 impression at average position 7 in the 16 to 22 Nov window. Across the previous 41 days the blog had zero impressions of any kind, so this is the first evidence that a post can surface at all. It is also the only post Google has indexed, which makes the pattern easy to read: the page that got indexed is the safety page, and the page that earned the first impression is the same safety page.
+
+**Google: 2 clicks, all to the home page.** Week on week, 09 to 15 Nov was 0 clicks / 22 impressions, and 16 to 22 Nov was 2 clicks / 21 impressions. Impressions are flat, clicks are off the floor. Average position worsened (13.9 to 22.1), which is what happens when a site starts appearing for more things it ranks badly for rather than fewer things it ranks well for. Visible queries are branded only (`tethered`, `tethered app`); the rest are anonymised. `/donate` picked up 1 impression at position 3.
+
+**Bing: the first non-branded intent query since mid-October.** Week of 20 Nov: "how to keep rules for sub in a d/s dynamic", position 6. That maps exactly onto `setting-rules-ds-dynamic`. Bing's only other non-branded cluster was the 16 Oct batch of long, natural-language consent-negotiation queries (positions 3 to 7), which has not recurred. Those long multi-concept strings are the fingerprint of assistant-driven retrieval rather than a human typing, and Bing is what ChatGPT search reads, so the consent and rules content is the part of the site that machines pick up.
+
+### Broken
+
+**`/blog/fireplay-101` is a Soft 404 in Google.** Crawled 20 Nov 04:43, `pageFetchState: SUCCESSFUL`, user canonical correct, robots allowed, and Google still filed it as Soft 404. The page itself is fine, verified three ways:
+
+| Check | Result |
+|---|---|
+| `curl` static HTML | 12,630 bytes, 7,244 chars of article text, correct title, canonical `/blog/fireplay-101` |
+| All CloudFront encoding variants (identity, gzip, br) | Same build (16 Nov 14:07), same title and canonical, full article text in each |
+| Rendered as Googlebot mobile in headless Chrome | Correct title, H1, canonical, 7,345 chars, 12 internal links, no console errors |
+
+So this is a stale verdict left over from the 16 Nov slug change, when the old URL 404'd and the new one existed only client-side for a few minutes, not a live breakage. It clears with a re-inspection, not a code change. The only referring URL Google records for it is the solo play post, which is a second reason the verdict stuck: it has thin internal support and no sitemap record (see below).
+
+**Google has not re-fetched the sitemap since the fixes.** Last downloaded 16 Nov 09:26, which is before the 14:07 rebuild. Google therefore still holds the old 16 URL sitemap, has never seen `/signup`, and URL inspection confirms it: `/signup` is "URL is unknown to Google", never crawled, 0 referring URLs recorded. The live sitemap is correct (17 URLs, all with `lastmod`). Google simply has not come back for it. One console click fixes this.
+
+### Site health check (read-only)
+
+| Check | Result |
+|---|---|
+| Sitemap vs blog posts | All 11 posts present, all with `lastmod` 2026-11-16. Complete. |
+| llms.txt vs blog posts | All 11 posts present in "Common questions, best link". Complete. |
+| llms.txt vs sitemap | One gap: `/signup` is in the sitemap but not in llms.txt. Canonical pages list only home, blog, privacy, contact, with donate and sitemap under Optional. |
+| Home page | Title, meta description and H1 all on the D/s positioning. 7 blog links, 2 `/signup` links, 0 `/dashboard` links. Healthy. |
+| `/blog` index | New D/s title and meta live, all 11 posts linked. Healthy. |
+| `/signup` | Own title, own canonical, own meta description, served correctly on all encodings. But only 552 chars of body text, which is thin enough to be soft-404 bait once Google does crawl it. 1 blog link. |
+| `solo-play-safety-guide` | 6 internal blog links plus 1 `/signup` link. Healthy. |
+| robots.txt | Correct. Dashboard, admin, share, invite, welcome disallowed; sitemap declared. |
+| GSC index state | Indexed: home, `solo-play-safety-guide`. Crawled not indexed: `/blog`, `best-ds-task-apps-compared`. Soft 404: `fireplay-101`. Unknown: `/signup`. |
+
+### Competitors and AI answers
+
+Three searches, on the safety lane, the safety-contact lane and the app-comparison lane.
+
+**The safety lane is still unclaimed, and that is now a measured fact rather than a guess.** A search for a BDSM safety check-in app with a solo play timer returns no kink-specific result at all. What ranks is generic personal-safety check-in apps: RUOK, Herline, Still Here, Alive, plus workplace lone-worker tools. The BDSM apps that do appear (SubTasks, mysub) are task trackers with no emergency alerting. The search engine's own summary said it did not turn up any app built specifically for BDSM solo play with a safety timer. Tethered, which is exactly that, did not appear.
+
+**The safety-contact question is still unanswered on the open web.** A search for what to tell a safety contact before a scene returned only generic pre-scene negotiation advice, and the engine again said in its own words that it did not find guidance on what to tell a safety contact specifically, then improvised its own list. Tethered shipped that exact section into `solo-play-safety-guide` on 16 Nov, and Google has indexed the page, so the content now exists; it is simply not yet retrieved for the question. One week is too early to call.
+
+**The app-comparison lane has a committed incumbent, and it is Kneel.**
+
+- AlternativeTo's Obedience page lists exactly three alternatives: Kneel (freemium, Android and iPhone, UK), SubTasks (free, online plus mobile, US), The Dynamic (subscription, online). Kneel is first.
+- `kneelapp.pages.dev/blog/best-ds-relationship-apps` is a ~28,000 character, 13 minute comparison post, first published 24 Feb 2026 and **updated 20 Nov 2026**, i.e. during this review window. It covers Kneel, Obedience, Embrace and mysub, plus spreadsheets and chastity-only apps (Chaster, ChastiSafe, Keyholdr), and names SubTasks, KNKI and Collared as not reviewed. It does not mention Tethered.
+- It is vendor-written and says so. Its safety coverage stops at overnight miss detection, mood check-ins, biometric lock, discreet icon and encrypted photo proof. **No emergency contacts, no safewords, no consent negotiation.** The gap in the incumbent's own comparison is precisely Tethered's differentiator.
+- Tethered's own comparison post is about 14,800 characters against Kneel's 28,000, and has not been touched since 5 Oct. It also predates Devotion, Collar and The Dynamic, all of which now show up in results for this query.
+
+**AlternativeTo: the 16 Nov submission is not live, and there is a name collision that probably explains it.** `alternativeto.net/software/tethered/` returns 200, but it is a different Tethered: a space 4X strategy game, with FreeOrion, Endless Space and Stellaris listed as its alternatives. Tethered the app appears nowhere on that page and nowhere on the Obedience alternatives page. Moderation there can be slow, so this is not yet proof of rejection, but the slug is taken, and a resubmission will need a disambiguated name. Not worth retrying while the original may still be queued; re-check next week.
+
+### This week's post pitch
+
+**Title:** Safety Check-In Apps for Kink in 2026: Safe Calls, Timers and Dead Man's Switches Compared
+**Slug:** `safety-check-in-apps-compared`
+
+**Target queries and assistant questions:**
+- safe call app, kink safe call, BDSM safety app, solo play safety app
+- self-bondage safety timer app, dead man's switch app emergency contact
+- safety check-in app that alerts someone if I do not respond
+- "Is there an app that alerts someone if I do not check in after a scene?"
+- "What is the safest way to do solo bondage alone?"
+- "What should I use for a safe call when meeting someone from FetLife?"
+
+**Outline:**
+- What a safety check-in actually has to do: a timer, a check-in, an escalation, and a contact who knows what they are being asked for. Links straight to the new safety contact script in the solo play guide.
+- The generic check-in apps, honestly: RUOK, Herline, Still Here, Alive, plus the phone-native options (iPhone Check In, Android safety check). What they genuinely do well, and where they fall down for kink: no scene context, the contact gets a vague alert with no instructions, nothing about discretion, no negotiation layer.
+- The improvised versions almost everyone actually uses: a phone timer, a text to a friend, a shared location pin, a scheduled message. Why each one fails quietly rather than loudly.
+- The kink-native option: Tethered's safety timer and SMS escalation, including what it does not do. No GPS, no 999 dialling, no help at all with breath play. Say the limits plainly; the honesty is the ranking asset.
+- A decision table by situation: solo bondage at home, first meet from FetLife, heavy scene with a known partner, play party.
+- The part no app fixes: a contact who treats the alert as a joke, suspension alone, breath play. Closes into `solo-play-safety-guide` and `meeting-new-partners-safely`.
+
+**Why this one now.** Three independent signals point at the same lane in the same week. The only Tethered page Google has indexed is the safety post, and it took the site's first ever blog impression at position 7. A direct search for a kink safety check-in app returns nothing kink-specific, which means no incumbent and no page for an assistant to cite. And the incumbent in the lane we were targeting instead, Kneel, refreshed its 28,000 word comparison on 20 Nov and still does not cover emergency contacts, safewords or consent negotiation. Competing with that post head-on is a long grind; the comparison post in the lane nobody has written is the same proven format with no defender. It also reuses the format that already works for us rather than inventing one.
+
+### Suggested site updates
+
+Gaps found above, smallest first. All are one sitting each. Nothing was changed this run; the repo and the live site were read-only throughout.
+
+1. **Resubmit the sitemap in Search Console.** Google is still working from the pre-rebuild 16 URL copy and has consequently never seen `/signup`. One click. On the shelf.
+2. **Re-request indexing on `fireplay-101`, `/signup` and `best-ds-task-apps-compared`.** The first clears a stale Soft 404, the second gets a page Google has never fetched into the queue, the third is still "crawled not indexed" and was last fetched against the pre-fix HTML. On the shelf, merged into the existing request-indexing job.
+3. **Add `/signup` to llms.txt** under Canonical pages, with a one-line description. It is in the sitemap and linked from the home page, so leaving it out of the file assistants read is an inconsistency with no upside. Code job, mine, about ten minutes.
+4. **Give `/signup` real copy.** 552 chars of body text is thin enough to risk the same Soft 404 treatment the moment Google crawls it. Three short bullets on what the free tier includes, a line on partner linking, and links to two guides would roughly triple it and add internal links to the blog. Code job, mine, one sitting.
+5. **Refresh the comparison post.** It has not been touched since 5 Oct, runs about half the length of Kneel's, and is missing Devotion, Collar and The Dynamic, all of which now surface for the query. Adding three honest short entries and a safety-features column (the column Kneel's post does not have) is the cheapest way to make it a different document rather than a shorter one. Code job, mine, one sitting.
+6. **Merge `cc66957` to main.** The auth fix for GlitchTip #12, a real signup looking signed out after a back navigation, is the only commit on develop that is not live. Not SEO, but it is the one piece of shipped work still sitting in the shed. On the shelf.
+
+### Shelf
+
+Read at the start of this run: three open jobs, all added 16 Nov, none completed since. Seven jobs were completed on 16 Nov itself, all already reported.
+
+Two of the three open jobs had gone stale and were rewritten rather than duplicated:
+
+- The merge job described merging `d2376c5` and `a9ee7f5`. GitHub compare shows main is only one commit behind develop, so that merge happened; the live build is 16 Nov 14:07 and the counted-task and Stripe changes are in it. Rewritten to cover the one commit that is actually still unmerged (`cc66957`) plus the live counted-task test, which has still never been run against the backend.
+- The request-indexing job listed the three URLs that mattered a week ago. Rewritten to the three that matter now, with the sitemap resubmit added as the first step.
+
+One new job added: create a Plausible API key. Plausible is self-hosted and has no API key stored on this box, and there is no SSH path from here to the host, so referral and traffic data cannot be read headlessly. That is the one blind spot in this review, and it is the data that would answer the AlternativeTo question directly. Two minutes in the Plausible UI closes it permanently.
+
+Unchanged and left alone: the reply to Ophelia, which waits on the live counted-task test.
+
+Shelf after this run: four open jobs.
+
+### Follow-ups for next week
+
+- Did `fireplay-101` clear the Soft 404, and has Google re-fetched the sitemap and found `/signup`
+- Does `solo-play-safety-guide` hold or build on its first impression, and does any second post get an impression
+- Whether Bing's "how to keep rules for sub in a d/s dynamic" placing recurs, and whether the October assistant-shaped consent cluster comes back
+- AlternativeTo: is the 16 Nov submission approved, and if it is still absent after a fortnight, resubmit under a disambiguated name
+- Whether Kneel publishes further, and in particular whether its comparison post ever grows a safety section. That is the clock on the safety pitch
