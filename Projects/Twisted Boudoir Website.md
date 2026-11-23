@@ -93,3 +93,10 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - **Homepage pricing** redesigned: one card per booking type with a price list, instead of seven near-identical boxes.
 - Preview dev data was reset to the new defaults (old db backed up at /tmp/tb-db-backup.json).
 - Still open: the Amelia "8 Hour Booking" is actually 6h long on her current site (both types); FETLIFE_URL still generic.
+
+## Settings fixes (23 Nov 2026, commit 02480a3 on main)
+
+- **"Your email" takes several addresses**, comma-separated (Rob wants his + the owner's for testing). All get the new-booking alert; customer Reply-To uses the first. Stored as one normalised string, `ownerEmails()` in `shared/emails.ts`; `Email.to` is now `string[]`.
+- **Google push button** was greyed out because no service account key is installed (calendar ID alone isn't enough), and the page didn't say so. Now it explains itself, shows the SA address to share the calendar with once connected, saves an unsaved ID before pushing, and probes freeBusy first so an unshared calendar returns a clear error instead of "sent 0".
+- **Still the gate:** someone (Rob) has to create the Google Cloud service account + JSON key, then put it in the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret (or `.data/google-service-account.json` on the LAN preview). For resale ("Berth") an OAuth "Connect Google" button would be the cleaner long-term answer.
+- Reminder: the LAN preview never sends email (writes to `.data/outbox/`), and SES in sandbox mode only delivers to verified addresses, so both test inboxes need verifying in SES until production access is granted.
