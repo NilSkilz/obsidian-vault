@@ -88,7 +88,7 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 ## Booking types, events, white-label admin (21 Nov 2026, commit 5ef8105 on main)
 
 - **Booking types** now first-class, mirroring her Amelia categories (checked live 21 Nov): **Standard** (up to 4, 1-8h, general 12h notice) and **Group** (4 included, +£10/head once per booking, max 34, 2-8h, no 1-hour, **1h notice**). Same hourly prices. Each type has its own rules + hire options; /book is type, then length; booking label reads "Group booking, 3 hours". Old configs auto-upgrade.
-- **Events** managed in /admin > Events (add/edit/duplicate/hide, tickets link). Homepage "What's on" reads them live; empty state points to FetLife. Preview has 3 sample events (Rope Fundamentals, Twisted Social, Low-Light Masterclass), delete before launch.
+- **Events** managed in /admin > Events (add/edit/duplicate/hide, tickets link). Homepage "What's on" reads them live; empty state points to FetLife. Event button wording changed 23 Nov (`ae46800`) from "Tickets ↗" to "Event Info ↗" (admin field renamed to match); events with no link still say "On FetLife ↗". Preview has 3 sample events (Rope Fundamentals, Twisted Social, Low-Light Masterclass), delete before launch.
 - **White-label admin:** product name **"Admin"** (was "Berth" until 23 Nov, Rob wanted generic) (`src/admin/brand.ts`), neutral teal theme in `src/admin/admin.css`, light + dark, sidebar on desktop, top bar on phone. Venue name + booking-ref prefix live in Settings > Business. Rob's idea: resell it to other venues.
 - **Homepage pricing** redesigned: one card per booking type with a price list, instead of seven near-identical boxes.
 - Preview dev data was reset to the new defaults (old db backed up at /tmp/tb-db-backup.json).
@@ -107,12 +107,15 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 - Rob created the service account `twisted-email-service@twisted-boudoir.iam.gserviceaccount.com` in the `twisted-boudoir` GCP project (name is a misnomer, it's only used for Calendar, not email, which stays on SES).
 - **No IAM roles needed** on the service account itself, that's the trap. Calendar access comes purely from sharing the calendar with it.
 - Remaining steps for Rob: enable the Calendar API in that project, create a JSON key for the service account, share her Google Calendar with that address as "Make changes to events", then send the JSON to Jarvis or paste it into the `TB_GOOGLE_SERVICE_ACCOUNT` Amplify secret. Watch for the org policy `iam.disableServiceAccountKeyCreation` blocking key creation.
+- **Done 23 Nov night:** Rob sent the JSON key, Calendar API confirmed on, key verified working and installed on the :3020 preview. Still to do before it's live: share her actual calendar with the service-account address and push the calendar ID in admin > Settings.
+- **Amplify first deploy:** needs exactly two secrets set before the first build or it fails: `TB_GOOGLE_SERVICE_ACCOUNT` (the whole JSON, unedited) and `TB_PAYMENTS` (`none` until her gateway keys arrive, then the JSON blob per gateway). Plus the SPA rewrite for `/admin` (source `</^[^.]+$/>`, target `/index.html`, type 200 Rewrite). Rob started this deploy 23 Nov 21:36.
 
 ## Domain / email DNS (checked 23 Nov 2026)
 - twistedboudoir.co.uk DNS is hosted at WHUK (nameservers shn47/48.whukns.com); MX points at the domain itself, so office@ is a mailbox on that host.
 - Existing SPF (long ip4 list + include:pinkapplestudios.co.uk) and DMARC `p=none` already present.
 - SES sending from office@ only needs the 3 Easy DKIM CNAMEs added at WHUK; no SPF change needed (default MAIL FROM is amazonses.com, DKIM gives DMARC alignment). No domain transfer required.
 - Cutover plan (23 Nov): no nameserver change needed (WHUK panel doesn't expose NS anyway). `www` is currently a CNAME to the apex; swap it for Amplify's CloudFront target + add Amplify's ACM validation CNAME. Map only `www` in Amplify. LEAVE the apex A record (213.175.196.66): the MX points at the apex, so changing it kills her mail. Apex already 301s to https://www.../same-path via her WordPress (Let's Encrypt cert, paths preserved), so old links land on Amplify. If the WP hosting is ever cancelled, replace that redirect (WHUK forwarding or .htaccess) and point MX at a mail. host first.
+- Rob got WHUK account/DNS access 23 Nov 22:22. Decision: hold off on the `www` CNAME swap until ready to go fully live, not before (emails already sorted separately).
 - twistedboudoir.com (checked 23 Nov): registered at **IONOS** (1&1), since 29 Jun 2016, renews 29 Jun 2027. DNS on IONOS too (ns1070.ui-dns.*). MX = mx00/mx01.ionos.co.uk, SPF includes IONOS, apex A 217.160.0.199 (IONOS parking/builder). So the .com mail is IONOS-hosted, entirely separate from WHUK. Managed in a separate IONOS account.
 - If DNS ever moves to Route 53: copy EVERY record (MX, SPF, DMARC, DKIM CNAMEs) first or her inbox and SES both break.
 
