@@ -74,3 +74,18 @@ Swap the middle clause to mirror the ad's top requirement. Never mention the flo
 - **GitHub: omitted.** Rob's call ("a mess of half-finished projects"). The two live SaaS products are the portfolio; nothing public needed.
 - **Education: omitted.** Rob's call; normal at this seniority.
 - **LinkedIn: linkedin.com/in/rbstokes on the header. Rob confirmed the profile DOES name Superdry and accepts it.** Known, deliberate trade-off: anyone who clicks through can un-anonymise the CV, but the CV anonymisation still keeps Superdry out of recruiter keyword databases and mass-forwarded CV copies. Don't re-raise this.
+
+## Recruiter-call cheat sheet (added 25 Nov 2026)
+
+Rob froze on a cold recruiter call (AI role, London, 4 days on site) when asked "tell me about your work". This is the answer to have ready.
+
+**The 30-second version:**
+> I'm a senior engineer, about 13 years in. Right now I'm at a big UK fashion retailer building their marketplace integrations, Amazon, eBay, Next, around £100k a day goes through them. Serverless, event-driven, TypeScript on AWS. I also worked on their AI product search on Bedrock. Before that I ran my own consultancy for four years, so I'm used to owning things end to end. And outside work I've had an agentic AI system running in production for over a year, agents with tools, memory and scheduled jobs doing real work every day.
+
+**Lead with the AI line** for AI roles; lead with the people/consultancy line for manager roles.
+
+**Stock answers:**
+- *What are you looking for?* "Remote or mostly remote, interesting problems, ideally AI-adjacent. Open to perm or outside-IR35 contract."
+- *Salary?* Don't go first: "What's the budget on this one?" Then: "I'd need to be comfortable with that, let me think about it."
+- *Why move?* "Not desperate to, but I want more of the AI work and less maintenance."
+- *Freeze escape hatch:* "Good question, give me a second." Silence is fine. Or: "Can you tell me more about the role first, so I pitch the right bits?" (makes them talk, buys time)
