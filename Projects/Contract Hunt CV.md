@@ -1,6 +1,6 @@
 # Contract Hunt: CV draft (master)
 
-> **Superseded 13 Oct 2026:** the source of truth is now `~/contract-hunt/cv/bank.json` (v2, Rob's voice, per-ad tailoring). This page is the v1 record. See [[Contract Hunt]].
+> **Superseded 13 Oct 2026:** the source of truth is now `~/contract-hunt/cv/bank.json` (v2, Rob's voice, per-ad tailoring). This page is the v1 record. **Perm variant (25 Nov 2026):** tailor JSON can set `terms` to a value from `terms_options` in bank.json ("Open to permanent roles"); first perm CV at `~/contract-hunt/out/cv-perm/` (render with `--tailor tailor.json --full-contact`). See [[Contract Hunt]].
 
 Working draft, 2026-08-24. This is the master contractor CV. Per-application we trim to two pages and reorder bullets to match the role. Career history backfilled from Rob's 2024 CV (received 24 Aug); remaining `[TBC]` markers are listed at the bottom.
 
