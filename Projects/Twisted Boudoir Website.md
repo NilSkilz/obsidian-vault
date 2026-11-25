@@ -138,3 +138,15 @@ Rob asked for the TB backend: Google Calendar-linked bookings, owner-set availab
 
 ## Priority order (25 Nov 2026)
 Needs Rob/her: Amplify build going green (started 23 Nov), her calendar shared with the service account, SES DKIM + production access, her PayPal/Square keys + one sandbox booking each, her real content (events, price fix, privacy policy), replacing the hardcoded admin password, then the `www` CNAME swap. Jarvis can build ahead of that: proper admin login, day-before reminder email, Square webhook for instant paid-booking confirmation, syncing Google edits back into bookings. Picked next: admin login + reminder email, while Rob confirms the Amplify build.
+
+## Launch status (25 Nov 2026)
+- **Amplify deploy: live and green** at https://main.d9ohkpul3f7bw.amplifyapp.com/ (Rob, 25 Nov).
+- **Google Calendar: set up** (Rob, 25 Nov).
+- **Email: .co.uk done** (Rob set up SES for twistedboudoir.co.uk). Still needs DNS access for twistedboudoir.com from her (IONOS account) for the .com side.
+- **Rewrite bug found 25 Nov:** every non-home path (`/book`, `/admin`, old WP URLs) 301s to a trailing-slash version and returns **HTTP 404** with index.html as the body. Pages render fine in a real browser (checked headless), so visitors are unaffected, but Google will drop those URLs at launch. Cause: Amplify's default `/<*>` -> `/index.html` **404 (Rewrite)** rule is winning. Fix (console, no AWS creds on this box): Hosting > Rewrites and redirects, put `</^[^.]+$/>` -> `/index.html` **200 (Rewrite)** at the top and delete the default 404 rule. Re-check with `curl -sI <url>/book` expecting 200, no redirect.
+- **Payments ask (what to get from her):**
+  - Sandbox testing does NOT need her: any free developer account (Rob's own) at developer.paypal.com / developer.squareup.com gives sandbox keys. Put them in `TB_PAYMENTS` with `"env": "sandbox"`, run one booking per gateway, then swap in her live keys.
+  - **PayPal (live):** she logs into developer.paypal.com with her business PayPal login > Apps & Credentials > **Live** tab > Create App (Merchant) > copy **Client ID** and **Secret**. Her old Amelia install may already hold these (Amelia > Settings > Payments > PayPal).
+  - **Square (live):** she logs into developer.squareup.com with her Square login > create an application > switch to **Production** > Credentials: **Production Access Token**; Locations: the **Location ID** for the studio.
+  - Both are full-account secrets: send via a password manager share or similar, not plain chat/email. Rob pastes them into the `TB_PAYMENTS` Amplify secret and redeploys.
+- **Admin password:** deferred by Rob (do later, before she relies on it).
