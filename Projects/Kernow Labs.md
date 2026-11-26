@@ -2,6 +2,8 @@
 
 Rob's personal software studio, site at kernowlabs.co.uk (CF Pages, see daily logs for build/deploy plumbing). Used as the public face for freelance/side client work, separate from the Superdry day job.
 
+**Open bug (flagged 23 Nov 2026):** the contact form can't deliver, `hello@kernowlabs.co.uk` was never set up to forward to Rob. Now more urgent: Twisted Boudoir's footer links to Kernow Labs ("Site by Kernow Labs", shipped 23 Nov), so any client who clicks through and tries to get in touch won't reach him until this is fixed.
+
 ## PVF Scaffolding outreach (started 25 Nov 2026)
 
 Rob is cold-emailing PVF Scaffolding Ltd (via Jack Leaver, MD) through Kernow Labs. Context: Tank Recruitment (Mike Burn) had put Rob forward for a Software Development Manager perm role at PVF, ceiling £55k, which Rob rejected as underpaid; the Kernow Labs angle is a separate approach to the same company.
