@@ -74,6 +74,7 @@
 - [[Tethered]] - Primary side project
 - [[Mission Control]] - Side project
 - [[Haven]] - Side project
+- [[Superdry Big Ideas]] - big SD projects + ideas list (PRISM, MuleSoft, PIM, etc.)
 ## Security follow-up: creds leaked in personal finance spreadsheet (found 25 Sep 2026)
 - Rob's old personal finance spreadsheet (uploaded to Jarvis over Telegram for the /finances wishlist work) had a Sheet4 with **plaintext Superdry credentials**: Rundeck prod, Salesforce (incl. production), SFTP, GitHub, PIM. The file has evidently travelled outside any vault.
 - **Resolved 25 Sep 2026:** Rob checked them the same afternoon; all of the credentials were old/expired, nothing live. No rotation needed, follow-up closed.
