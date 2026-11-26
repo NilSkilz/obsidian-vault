@@ -12,6 +12,7 @@ Confluence base: https://supergroupbt.atlassian.net/wiki/spaces/TP
 - Consumers: StraightLine (replaced the ZigZag product feed), Marketplace Image Export (Next/Rithum zoom images), V11 category remap (Isaac, JWT service token).
 - Auth roadmap (Trello "PRISM" board): Phases 1-2 done (Cognito + Azure AD SAML, frontend auth); 3-4 in progress (Lambda authoriser permissive, then scope enforcement); 5 to do (M2M clients + API-consumer UI); 6 backlog (split API into its own repo, frontend becomes plain OIDC client).
 - **Next big step (Rob's own words, Jun 2026):** replace the SFCC product exporter with PRISM endpoints, it's the most comprehensive feed. Then write endpoints (POST to create PIM records). Niko helped improve the design.
+- **Gap:** no PRISM overview page in Confluence, the Trello board and Slack PRs are the only record. Needs one if Rob wants credit for it (e.g. for BRP/appraisal).
 
 ### MuleSoft decommission
 - Rob's view: business logic shouldn't live in MuleSoft; it's costly, brittle, and the Sep 2025 outage already forced the Nedap rebuild.
