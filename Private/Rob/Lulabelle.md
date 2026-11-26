@@ -28,3 +28,7 @@ Old scene friend of Rob's, reconnected 28 Sep 2026 after over a year off-grid. R
 
 - Confirm which evening (Mon 12 or Tue 13 Oct) once Cheltenham travel is fixed, then lock it with her.
 - Thursday evenings = never schedule her.
+
+## Health (26 Nov 2026)
+
+- Under cardiology workup: low heart rate and a conduction delay ("delayed electrical function") already seen on ECG; echocardiogram next. Appointment Wed 2 Dec. She knows what'd help in the interim but is struggling to do it. Check in after the 2nd. Any rope plans wait for her cardiology all-clear.
