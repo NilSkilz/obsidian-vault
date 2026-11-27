@@ -40,3 +40,13 @@ Rob shared his pre-Jarvis finance spreadsheet (2023-era numbers, so the figures 
 - **Sinking funds inside savings**: Oil £50, Boiler £100, MOT £75, Appliances £75 (monthly set-asides for lumpy costs).
 
 Possible future feature: budget-vs-actual (expected line amounts vs what the ledger says). The wishlist tab became the /finances wishlist section (shipped 25 Sep 2026, `financeWishlist` table, seeded with his house items).
+
+## Bills Space (Starling joint), what it actually pays
+
+Checked 27 Nov 2026 from the space's own feed. The Bills space pays the DDs and SOs AND a virtual card for subscriptions, so Starling's own "upcoming" estimate undercounts it (it ignores card payments). Monthly need is about **£2,700, top up £2,750** on payday:
+
+- DD/SO ~£2,439: HSBC mortgages £837.88 + £181.54, council tax £191, Octopus £100, SW Water £95.50, Halifax £45.48, Aviva £13.51 + £45.05, DVLA £17.06, EE £30.99 + £31.00, Anne £350 (one SO, £300 car + £50), NS&I £500.
+- Virtual card ~£165: BoilerJuice £40, Spotify £21.99, Netflix £20.99, Microsoft £16.99 + £6.99, DigitalOcean ~£19, Newshosting ~£13, Nabu Casa £6.50, JetBrains £5.64, Dakboard ~£4.60, Google Cloud/AWS a few £.
+- ParentPay DDs vary, £90-220/month in term time.
+- Until Nov 2026 the top-up was £2,500, which ran short every month (card declines + small rescue transfers from main).
+- Sheilas' Wheels stopped after Sep 2026.
