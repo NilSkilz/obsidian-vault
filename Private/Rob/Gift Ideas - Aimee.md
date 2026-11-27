@@ -91,8 +91,9 @@ Floated:
 Floated (non-forest, all unwrap-able, nothing anxiety-making):
 - **Massage gun:** Theragun Mini 3rd gen ~£149 (list ~£175) on a HotUKDeals BF 2026 listing, unconfirmed if live. Hoop is hard on the shoulders; "her body looked after" without a stranger's hands.
 - **Sunrise alarm:** Lumie Sunrise Alarm ~£30-35 (was £49.99) at Amazon, or Bodyclock Shine 300 ~£107 (was £149). Dark Cornish winter mornings. Dates mixed, check before buying.
-- **Hoop upgrades (private, at home):** a proper 360 spinner/swivel, a crash mat, or an LED hoop for night practice. Same "self suspension" thing, just better. Unpriced.
-- **Changing robe:** Dryrobe never discounts; rivals do (Orla Kiely robe reported £56 from £140, one size only). Warm + paddle board.
+- **Hoop upgrades (private, at home):** a proper 360 spinner/swivel, a crash mat, or an LED hoop for night practice. Same "self suspension" thing, just better.
+  - **LED aerial hoop (Rob: "sounds awesome", 27 Nov, worried about price):** Firetoys x Echo LED Aerial Hoop, 1-point, 100+ light modes, UK-made, independently safety-certified. **~£299-304** at firetoys.co.uk (two listings, no BF discount seen). https://www.firetoys.co.uk/products/firetoys-x-echo-led-aerial-hoops-1-point-glow-aerial-hoop-with-100-modes . Her hoop is AERIAL, so the cheap £40-75 LED hula hoops are the wrong thing. Check her current hoop's diameter before buying.
+- ~~**Changing robe:**~~ OUT, she already has one (27 Nov). Dryrobe never discounts; rivals do (Orla Kiely robe reported £56 from £140, one size only). Warm + paddle board.
 - **Plain comfort:** a really good dressing gown, sheepskin slippers (Celtic & Co, Cornish), heated gilet still on file.
 - Earlier non-forest options still standing: heated throw, Gucci Guilty £49 at Boots (to 8 Dec), Kindle Colorsoft (unverified).
 
