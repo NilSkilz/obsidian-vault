@@ -29,3 +29,23 @@ Rob asked for a buy list. Built around the one idea he landed on (warm things):
 - **Heated gilet** for cold yard/office days (warm theme, wearable, ~£40-70 in sales).
 - **Stocking-scale warm stuff:** sheepskin-style slippers, a proper hot water bottle with a knitted cover, nice hand cream.
 - Still unbuilt from before: the hidden-in-plain-sight shibari frame (her own ask, 28 Aug). Rob passed on it 4 Nov, not re-pitching.
+
+## 2026-11-27 (Black Friday, round 2: wider search)
+Rob asked to widen the net. New signal from him: **last Christmas he bought her an aerial hoop and she loved it.** She doesn't need more kit like that, but it says she lights up at doing something physical and a bit showy, not just owning things. Experiences in that space are the strongest new lead.
+
+**Aerial / experience (my pick):**
+- **Flying trapeze, Cotswolds (WonderDays):** 2hr shared session on a full bar-to-bar outdoor rig, listed up to 24% off for Black Friday, 12-month validity. The "next level" from a hoop at home. Pair with a night away, maybe while Sean/away dates are sorted.
+- **Circomedia (Bristol) gift voucher:** adult classes in hoop, silks, static/flying trapeze, rope. 12-month vouchers. Closer than Cotswolds.
+- **Aerial Allsorts (Plymouth + Wadebridge):** hoop/silks/trapeze/pole. Only seen on a 2023 listing, not verified as still trading. Wadebridge is ~40 min from home, worth a direct check.
+- **Photoshoot of her on her own hoop** (Rob shoots, or hire someone). Imaginative, cheap, very her.
+
+**Warm (still the frontrunner theme):**
+- Silentnight live BF page: code SLEEP10 (10% sitewide) + up to 30% off bedding/throws. Dual control "Yours & Mine" blanket, bed size still unconfirmed.
+- Heated throws: Cosi Home £37.39 on Amazon (to 30 Nov), Bedsure 130x160 ~£30 (was ~£52), Lakeland StaySnug £34.99.
+- Heated gilet: Cycyheat £56.97 on Amazon (was ~£90).
+
+**Other deals:**
+- Boots: Gucci Guilty EdP for Her 50ml £49 (was £105), runs to 8 Dec.
+- Kindle Colorsoft (2024 model) reported 35-40% off (~£145-158). Unverified.
+- Spa: Woolacombe Bay Hotel spa day for two £149 (was £250) on Groupon, date unclear; Cornwall Hotel & Spa pamper £84 Mon-Fri till 18 Dec (not a BF deal).
+- Dyson Airwrap: in Currys' BF beauty deals but no confirmed 2026 price; 2025 low was ~£299-330. Don't buy above that.
