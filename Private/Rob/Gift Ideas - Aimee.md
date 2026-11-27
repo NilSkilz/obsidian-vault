@@ -49,3 +49,13 @@ Rob asked to widen the net. New signal from him: **last Christmas he bought her 
 - Kindle Colorsoft (2024 model) reported 35-40% off (~£145-158). Unverified.
 - Spa: Woolacombe Bay Hotel spa day for two £149 (was £250) on Groupon, date unclear; Cornwall Hotel & Spa pamper £84 Mon-Fri till 18 Dec (not a BF deal).
 - Dyson Airwrap: in Currys' BF beauty deals but no confirmed 2026 price; 2025 low was ~£299-330. Don't buy above that.
+
+## 2026-11-27 (round 3: correction + steer)
+**Correction to round 2:** the hoop is NOT about showing off. She'd never do it in front of people; Rob describes it as "self suspension" for her. So the aerial class/trapeze ideas miss. The pattern from past hits (paddle board, hoop): physical, solo, private, a bit out of the box. Not a "girly" girl, no real hobbies, so kit-for-a-hobby rarely works.
+
+Directions pitched for Rob to steer (none picked yet):
+- **Floating / held:** float tank session, weighted blanket.
+- **Water, extending the paddle board:** changing robe (dryrobe-style, also "warm"), guided night/bioluminescence paddle voucher for summer, better wetsuit for year-round.
+- **Heat:** wood-fired beach sauna session (Cornwall has several).
+- **Body:** proper sports massage voucher.
+- **Rope:** a private self-tie lesson, the literal version of "self suspension". Shared rope territory with Rob, so fine (collars stay Sean's).
