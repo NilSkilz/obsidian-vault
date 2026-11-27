@@ -32,3 +32,12 @@ Old scene friend of Rob's, reconnected 28 Sep 2026 after over a year off-grid. R
 ## Health (26 Nov 2026)
 
 - Under cardiology workup: low heart rate and a conduction delay ("delayed electrical function") already seen on ECG; echocardiogram next. Appointment Wed 2 Dec. She knows what'd help in the interim but is struggling to do it. Check in after the 2nd. Any rope plans wait for her cardiology all-clear.
+
+## The meet that keeps slipping (27 Nov 2026)
+
+Updated export: `Assets/Lulabelle WhatsApp export 2026-11-27.txt` (to 26 Nov 22:45).
+
+- Since the Oct party: Rob initiates almost everything. Meet attempts: 17/18 Nov (she cancelled, deadline), "Thu or Fri next week" sent 20 Nov sat unanswered 6 days until the "MASSIVE NUDGE" on the 26th.
+- 26 Nov: she replied within a minute, told him about the heart scare, and SHE proposed meeting Fri 27 (Costa, open till 18:30). Rob cleared it at 18:36 and asked time/place; no reply by 08:48 Fri. She'd already said on 17 Nov she's in Bridgwater on Fri 27, last meeting done 15:00, and she keeps notifications off in work hours.
+- Read: the asymmetry is real (he does the chasing), but this specific silence is overnight, during a cardiac scare, from someone who asked for the meet herself and told him she's working on not disappearing. Not evidence. Rob brought it to me 27 Nov as the explanation for his mood, same morning as the Raven/Tash/Fen burst.
+- Watch: "Come flirt with me!!" / "sexy girl" landed on someone who'd said she's not ready; she deflected with a GIF. Friend-first is still the brief.
