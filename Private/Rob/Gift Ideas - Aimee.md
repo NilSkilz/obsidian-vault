@@ -59,3 +59,18 @@ Directions pitched for Rob to steer (none picked yet):
 - **Heat:** wood-fired beach sauna session (Cornwall has several).
 - **Body:** proper sports massage voucher.
 - **Rope:** a private self-tie lesson, the literal version of "self suspension". Shared rope territory with Rob, so fine (collars stay Sean's).
+
+## 2026-11-27 (round 4: Rob's steer)
+**Rob's verdicts:** experience days are OUT (she'd be too anxious, don't re-pitch float tanks, saunas, trapeze, classes). **Weighted blanket: YES, on the list.** Wood-fired hot tub: he loves it, thought too expensive.
+**New context:** she ran a forest school for a while, so outdoor stuff lands. She bought the kids a slackline and seemed to like it herself. **They own woodland**, and Rob has always wanted a hot tub there.
+
+**On the list:**
+- **Weighted blanket.** Silentnight 9kg adult on Tesco Marketplace ~£67.99 (triple Clubcard points to 7 Dec, price unverified). Sizing rule: ~10% of body weight. Pairs with the "warm/held" theme.
+
+**Woodland hot tub, the DIY route (pitch: a build, not a purchase):**
+- Bought: cheapest barrel tub ~£2,286 (Tuin 1.8m, external heater), mainstream £3,000-6,000. Too much.
+- DIY: galvanised/poly stock tank + wood-fired heater. UK-made 32mm coil heater w/ fireguard ~£344 (eBay); stove-only 35kW ~£895 (Gumtree). Realistic total ~£700-1,300 plus Rob's time. Outdoor Iconic sell UK stock-tank kits (£1,300) but sold out.
+- Questions before committing: water source in the woods (stream, bowser, IBC?), getting the tank in, level base. Smoke control areas don't apply to rural woodland in practice, but check.
+- Gift framing: on the day, a card/drawn plan + one real part (e.g. the coil heater), build it together in spring. Fits Rob's "make something" driver.
+
+**Other woodland ideas (unpriced):** tree tent/hammock (Tentsile, UK code SAT15 for 15% reported, unverified), slackline upgrade (tree protectors, longer line, a training line), fire pit / cooking kit (Petromax, no confirmed UK BF deal), a rope swing or hanging seat.
