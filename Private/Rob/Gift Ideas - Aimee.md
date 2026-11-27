@@ -22,3 +22,10 @@ Rob passed on all of the above ("don't rly like any of those"). Don't re-pitch t
 
 ## 2026-11-06
 Rob's own idea: **an electric blanket.** "She likes warm things." First idea he's actually landed on, so this is the frontrunner. When buying: dual control if it's going on the shared bed (so Rob isn't cooked), washable, auto shut-off timer. Check the bed size first. A heated throw for the sofa is the alternative if she runs cold in the evenings rather than at bedtime.
+
+## 2026-11-27 (Black Friday)
+Rob asked for a buy list. Built around the one idea he landed on (warm things):
+- **Electric blanket, dual control** (frontrunner). Silentnight "Yours & Mine" dual control is the obvious pick, PriceSpy floor ~£92, Silentnight advertising up to 30% off bedding. Bed size still unconfirmed, check before buying.
+- **Heated gilet** for cold yard/office days (warm theme, wearable, ~£40-70 in sales).
+- **Stocking-scale warm stuff:** sheepskin-style slippers, a proper hot water bottle with a knitted cover, nice hand cream.
+- Still unbuilt from before: the hidden-in-plain-sight shibari frame (her own ask, 28 Aug). Rob passed on it 4 Nov, not re-pitching.
