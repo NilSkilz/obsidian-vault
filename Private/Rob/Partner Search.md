@@ -73,6 +73,7 @@ Candidate read as of this message:
 - **Lucy (new name):** potentially submissive, lives further away, but in his words "potentially a head case" — unvetted, nothing arranged.
 - **Raven:** already ruled out for sexual play (28 Oct); his own candid read added here is he didn't massively enjoy playing with her.
 - **Raven, 27 Nov:** Rob shared the full WhatsApp export (`Assets/Raven WhatsApp log 2026-09-27 to 11-13.txt`). Shape: 30 Oct she asked to play again with "kookier stuff"; Rob didn't reply for 6 days; 5 Nov she sent "Understood." (read the silence as a no); Rob then replied "would be cool to do kooky stuff" (mixed signal vs his 28 Oct decision), then 10 Nov "Hope ur ok…" and 13 Nov "chat one day", both unanswered. She's gone quiet since 5 Nov. My read: she's hurt and protecting herself, not busy. Suggested one honest message owning the gap and naming where he actually is (friends, impact maybe, not sexual), then leave it with her.
+- **Raven, 27 Nov (Rob's own account, 08:53):** he owns the 6-day gap as him being distant, but says he addressed it properly: told her in person he needed to step back for a minute, and apologised. Thought they were good after that. Still being blanked since, which he reads as unfair given he did the repair work and is entitled to take his time responding generally. This is a genuine rupture-after-repair, not just his anxiety reading silence.
 
 ## Fet handles, who's who
 - **RainPeachtea** = Mary (Stroud), see `Mary (Stroud).md`. Now on WhatsApp.
