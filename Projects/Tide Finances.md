@@ -116,3 +116,10 @@ Rob asked for a way to refetch on demand instead of waiting for 05:20.
 - **Jarvis side:** `Jarvis/bin/finance-refresh-poll.sh`, cron every minute, checks Tide every 10s for ~50s and runs `finance-sync.py` under `flock /tmp/finance-sync.lock` when a refresh is pending (the 05:20 nightly takes the same lock). Heartbeat in `~/.local/state/jarvis-finance-poll.log`, in cron-health's JOBS (1h). `finance-sync.py` now reports start/finish itself, so the nightly also updates "synced at".
 - **Starling 429 fix:** the nightly had died on Starling rate limits on 18, 21 and 27 Nov (page silently a day stale). `http()` now retries 429/5xx with 5/20/60s backoff (honours Retry-After). The 27 Nov gap was filled by the first test run.
 - Verified end to end on live: tap -> picked up in ~2s -> sync ~3s -> "synced just now · updated" (headless Chrome, 420px). Kids get 403.
+
+## NS&I + Wealthify weren't actually live (27 Nov 2026)
+
+Rob spotted it: he'd paid into NS&I and withdrawn from both NS&I and Wealthify, but the page didn't move. Both had been frozen at the 24 Sep seed values despite the page claiming "tracked from your bank feed".
+- **Fix:** both now sum from the Starling ledger each page load (seed + deposits - withdrawals): NS&I £4,000 + £1,000 in (Oct/Nov) - £525 out (20 Nov) = £4,475; Wealthify £1,226 + £100 in - £79.89 out (24 Nov) = £1,246.
+- **Second bug on the way:** Wealthify withdrawals (£480.11 Jul, £79.89 Nov) were being counted as income in the P&L. Now excluded.
+- **Still manual:** NS&I reinvested prize wins and Wealthify investment growth/loss don't show in the bank feed; true-up by tapping the value on the page when Rob checks the Wealthify app.
