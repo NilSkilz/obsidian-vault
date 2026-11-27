@@ -127,3 +127,20 @@ Not in Plex (offered for Radarr):
 - The Thing (1982) - Carpenter, the Alien lane he actually watches (Aliens watched, Romulus twice). Horror is his top watch-through genre. Confirmed absent (no match in library).
 
 Notes: Avengers: Endgame added 12 Nov but the entire MCU is unwatched apart from Iron Man 1/2, Guardians 1 and the Deadpools, so it is not a clean pick and nor is any Marvel title. Star Wars original trilogy ALL unwatched while the sequels and Solo are watched, a huge hole, but deliberately held back to avoid a fifth consecutive "the one you skipped" pick (same reason the Indy lane is parked). Blade Runner, Blade Runner 2049, Dune and Dune: Part Two (9.5) all unwatched, strong sci-fi run for a future week. The Matrix unwatched. Predator: Badlands still stuck at 74%, A Quiet Place: Day One still at 80%, Split at 10%, none are clean picks. Still banked: Nightcrawler (9.5 critic), Casino (1995), Snatch, Lock Stock, No Country, Ex Machina, Inside Man, Jackie Brown, Collateral, Sin City, The Princess Bride (family, 9.4), The Karate Kid (1984), John Wick 1/2/4, Predator (1987), Mission: Impossible series, Oppenheimer and Dunkirk (the remaining Nolans after these two).
+
+## 2026-11-27
+
+Taste read: the busiest watch week since July, and it has one shape. Split added to the library 23 Nov and watched that night, Glass watched twice on 25 Nov, Primal Fear 25 Nov, Civil War (2024) 25 Nov, Wicker (2026) three plays overnight into 27 Nov. Both of last week's Radarr offers landed on 20 Nov: Primal Fear was watched five days later, The Thing is still unwatched. Archer binge ended 20 Nov. Library now 799 titles, 235 watched.
+
+The angle is twist-thriller, and the hole is enormous: he went and fetched Split specially, watched Glass straight after, and has never touched Unbreakable, which has been sitting in the library since Aug 2023. Two thirds of a trilogy, in order, skipping the first film. Second thread: Civil War is Alex Garland, and Ex Machina and Annihilation are both unwatched.
+
+In Plex, unwatched (viewCount null, viewOffset null, lastViewedAt null, all verified):
+- Unbreakable (2000) - the first Eastrail 177 film. He watched Split Monday and Glass Wednesday. Glass is the sequel to this. After hours.
+- Ex Machina (2014) - 9.2/8.6, Garland's directorial debut, straight off Civil War on Wednesday. After hours.
+- The Princess Bride (1987) - 9.3/9.4, PG, 97 min. Family sofa pick, banked since 20 Nov and finally pitched. Deliberate change of gear after a week of dark twisty stuff.
+
+Not in Plex (offered for Radarr):
+- 28 Days Later (2002) - Garland wrote it; confirmed absent, and 28 Years Later is sitting unwatched in the library so this unlocks it.
+- Shutter Island (2010) - Scorsese/DiCaprio psychiatric twist thriller; confirmed absent. Exact match for the Primal Fear / Fracture / Split / Glass run, and The Departed is already watched.
+
+Notes: Wicker (2026) has viewCount 3 but the plays are 01:29, 02:45 and 06:50, which reads as someone falling asleep and restarting rather than a taste signal. Not built on. Annihilation (2018) held back to avoid two Garland in-Plex picks in one week, strong next-week candidate. The Thing (1982) arrived 20 Nov on last week's say-so and is still clean, so it needs a nudge not a re-pitch. Gone Girl confirmed absent and is a good future Fincher offer. Star Wars original trilogy still entirely unwatched (Empire 9.7, A New Hope 9.6), the biggest remaining family hole, still parked. Indiana Jones Last Crusade (9.4) and Ferris Bueller (9.2) also unwatched and family-viable. Still banked: Nightcrawler, Casino (1995), Snatch, Lock Stock, No Country, Inside Man, Jackie Brown, Collateral, Sin City, The Sixth Sense (9.0), Signs lane, The Karate Kid (1984), Blade Runner and 2049, Dune and Dune Part Two (9.5), The Matrix, John Wick 1/2/4, Predator (1987), Mission: Impossible series, Oppenheimer and Dunkirk.
