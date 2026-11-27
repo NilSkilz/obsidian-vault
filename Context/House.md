@@ -8,7 +8,7 @@ Durable facts about the property, gathered during the heat pump research (Sep 20
 - Boiler sits inside the **garage**, which juts ~1m forward of the house at the front.
 - Has **solar PV** installed.
 - **Local oil top-up supplier: Certas**, depots in Bodmin and Redruth (01208 72551). Winter deliveries can take a week or more, so order before the tank's empty. Most suppliers' minimum order is 500L, some (e.g. BoilerJuice) do 300L for a few pence/L more.
-- **Rob is on a BoilerJuice monthly plan: £40/mo since spring 2026** (see `Projects/Tide Finances Spending Analysis.md`), so there is usually several hundred pounds of credit sitting on that account. **Check the BoilerJuice balance before paying for a delivery by card.**
+- **BoilerJuice monthly plan CANCELLED 27 Nov 2026** (Rob: heat pump means no more oil). Was £40/mo since spring 2026 (see `Projects/Tide Finances Spending Analysis.md`), so there is usually several hundred pounds of credit sitting on that account. **Check the BoilerJuice balance before paying for a delivery by card.**
 - **Price benchmark (6 Nov 2026):** ~111-113p/L ex-VAT nationally, so ~£1.15-1.20/L inc. VAT. Roughly £360-400 for 300L, £575-600 for 500L, £1,100-1,150 for 1000L. Cornwall usually sits at or just above the national average. Check live prices (Pricetank / Fueltool / Oilcompare) rather than quoting these.
 - Village is in an **AONB**, not a conservation area, not listed. Confirmed via GPDO Class G that AONB carries no extra permitted-development restriction for ground-mounted heat pump units (only conservation areas/World Heritage Sites do) — front garden by the garage is PD-legal, pending the surveyor's noise calc and no Article 4 direction on the village.
 
