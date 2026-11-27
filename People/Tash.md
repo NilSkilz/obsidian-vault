@@ -46,6 +46,7 @@
 - **Flexibility:** Remote work arrangement enables relationship maintenance
 
 ## Calendar signal
+- **Tash works away most weeks, Thursday ~6am to Friday ~6pm** (25 Nov 2026), so Thu/Fri meets are out.
 - When **Rob is marked "away"** on the calendar, that usually means he's at work. It used to be roughly **50/50** that he was also seeing Tash; after the 13 Nov pause that dropped to "assume work only", but **from 17 Nov 2026 it's back on the table**, though she's too busy to see him much before January.
 
 ## Status

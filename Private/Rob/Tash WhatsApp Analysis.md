@@ -68,3 +68,15 @@ Three things worth coming away with:
 3. **Give her a real exit.** She declines by being busy rather than by saying no (three dates in five minutes on the 13th). If the answer is "I can't do this right now", make it easy to say, or the diary will say it for her over the next three months.
 
 And one for Rob to hold separately: even at full strength, what Tash offers and what the Ideal Dynamic doc describes are different things. Tuesday decides what Tash is. It doesn't decide the search.
+
+## Update 27 Nov 2026: the ten days after lunch
+
+Second export, 3 Jul 2025 to 25 Nov 2026 (raw at `/home/jarvis/tmp/whatsapp-tash/_chat-2026-11-27.txt`, outside the vault). New material is 15 to 25 Nov.
+
+- **17 Nov lunch** (Spoons, Gloucester Quays) went well by Rob's own after-message: "thanks for the reassurance", he'd feared she wanted to end it, and he wrote "I'll assume you won't be able to get together" in December, looking forward to the new year. **She didn't reply to that message.**
+- Since then Rob has made **four asks, four declines, no counter-offers**: vet website spec (19 Nov, "No 😂", she'd built her own on Canva), hotel night 16/17 Dec around his Xmas party (her Xmas drinks the same day), Gloucester munch 26 Nov, and popping round for his burgundy rope bag (25 Nov). The last two failed on new info: **she works away Thursday 6am to Friday 6pm most weeks.**
+- Her only unprompted message in this stretch: 15 Nov, 00:56, the lube question.
+- Unanswered from Rob: "Everything ok with you?" (14 Nov), the 17 Nov thank-you, "I guess you're in Glos for yours?" (20 Nov).
+- Replies when they come are still friendly and same-day. No coldness, no "no".
+
+**My read:** not an ending, but she's putting nothing in. Compare 12 Oct ("free the next four mon/tues") with now: zero offered dates. The asks since lunch also contradict Rob's own "I'll assume December's out" line, which turns each decline into a small rejection he's booking himself. Steer: hold to what he said on the 17th. Stop asking for December, let the next date be hers to offer, and treat mid-January as the real test (if she hasn't proposed anything by then, that's the answer, not her diary). Rope: ask her once to leave it somewhere he can grab, or collect in January; it isn't a reason to keep asking for meets.
