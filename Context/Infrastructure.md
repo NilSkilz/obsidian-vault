@@ -59,7 +59,7 @@ The host has an **NVIDIA GTX 1080 Ti** passed through to **Plex (CT 100)** and *
 | Sonarr | http://192.168.1.8:8989 | TV |
 | Radarr | http://192.168.1.9:7878 | Movies |
 | Craft ERP | http://192.168.1.10:7273 | Aimee's craft business inventory/sales (CT 116, static IP + DM reservation, installed 2026-07-13). LAN-only. See section below. Replaced the destroyed Homepage CT 106 on `.10` (its stale DM reservation was cleared 2026-07-13; final Homepage backup `vzdump-lxc-106-2026_07_10` on `data1-backups`). |
-| **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110) |
+| **Jarvis (me)** | 192.168.1.11 | This LXC (CT 110). Only normal Linux user is `jarvis` (password in `Private/Rob/Jarvis Box Credentials.md`); there is no `rob` account here or on the Proxmox host. `ssh jarvis@192.168.1.11` then `sudo -i`, not "ssh as rob" (corrected 27 Nov 2026 after that confused a login attempt). |
 | Seerr | http://192.168.1.12:5055 | Media requests (CT 107). **Was on plain DHCP and drifted (.111/.119/.133) → seerr.cracky.co.uk 502'd; pinned static .12 in the CT config 2026-07-03 and NPM repointed.** |
 | Tdarr | http://192.168.1.13:8265 | Transcoding (CT 109) |
 | Play room speakers (main) | 192.168.1.219 (`play-room-main-speakers`) | Raspberry Pi (b8:27:eb:a5:b3:a8) + amp, **snapclient 0.31**, SSH `rob@`, key installed. Full detail in `Context/Play Room Speakers.md`. |
