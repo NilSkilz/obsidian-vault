@@ -43,9 +43,9 @@ Possible future feature: budget-vs-actual (expected line amounts vs what the led
 
 ## Bills Space (Starling joint), what it actually pays
 
-Checked 27 Nov 2026 from the space's own feed. The Bills space pays the DDs and SOs AND a virtual card for subscriptions, so Starling's own "upcoming" estimate undercounts it (it ignores card payments). Monthly need is about **£2,660, top up £2,700** on payday (was £2,750 until BoilerJuice was cancelled 27 Nov 2026):
+Checked 27 Nov 2026 from the space's own feed. The Bills space pays the DDs and SOs AND a virtual card for subscriptions, so Starling's own "upcoming" estimate undercounts it (it ignores card payments). Monthly need is about **£2,860, top up £2,900** on payday (Octopus DD raised £100 to £300 on 27 Nov 2026 to cover EV charging; before that £2,700 after BoilerJuice was cancelled the same day):
 
-- DD/SO ~£2,439: HSBC mortgages £837.88 + £181.54, council tax £191, Octopus £100, SW Water £95.50, Halifax £45.48, Aviva £13.51 + £45.05, DVLA £17.06, EE £30.99 + £31.00, Anne £350 (one SO, £300 car + £50), NS&I £500.
+- DD/SO ~£2,639: HSBC mortgages £837.88 + £181.54, council tax £191, Octopus £300 (raised from £100 27 Nov 2026 to cover the EV), SW Water £95.50, Halifax £45.48, Aviva £13.51 + £45.05, DVLA £17.06, EE £30.99 + £31.00, Anne £350 (one SO, £300 car + £50), NS&I £500.
 - Virtual card ~£125: Spotify £21.99, Netflix £20.99, Microsoft £16.99 + £6.99, DigitalOcean ~£19, Newshosting ~£13, Nabu Casa £6.50, JetBrains £5.64, Dakboard ~£4.60, Google Cloud/AWS a few £.
 - BoilerJuice £40/mo plan CANCELLED by Rob 27 Nov 2026 (heat pump coming, no more oil buys planned).
 - ParentPay DDs vary, £90-220/month in term time.
