@@ -19,6 +19,7 @@ glitchtip check|$STATE/jarvis-glitchtip-check.log|10
 contract hunt|$STATE/jarvis-contract-hunt.log|15
 evening briefing|$STATE/jarvis-briefing.log|26
 food nudge|$STATE/jarvis-food-nudge.log|26
+OT reminder|$STATE/jarvis-ot-reminder.log|26
 vault git sync|$STATE/memory-git-sync.log|26
 finance sync|$HOME/finance/sync.log|30
 finance refresh poller|$STATE/jarvis-finance-poll.log|1
