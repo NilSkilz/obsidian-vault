@@ -111,3 +111,6 @@ My steer to him (for continuity if this comes up again): not a hard no, but don'
 
 ## FetLife status
 - Deactivated 28 Oct 2026 (drop week). **Back on as of 18 Nov 2026** (Rob, unprompted).
+
+## 27 Nov 2026: Abi (Barebones)
+Met at the last Barebones night. Interested in a scene, but busy with uni work and may not make the December Barebones (Aimee away that month; dates not on calendar yet). Rob's Dec Barebones shortlist: Abi first realistic option. Fen was his #1 but she closed the play side herself on 23 Oct (see [[Fen]]); steer given: don't ask her, and never ask on the night in person (public on-the-spot ask makes no hard to say).
