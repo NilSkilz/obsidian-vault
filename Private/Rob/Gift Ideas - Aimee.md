@@ -74,3 +74,13 @@ Directions pitched for Rob to steer (none picked yet):
 - Gift framing: on the day, a card/drawn plan + one real part (e.g. the coil heater), build it together in spring. Fits Rob's "make something" driver.
 
 **Other woodland ideas (unpriced):** tree tent/hammock (Tentsile, UK code SAT15 for 15% reported, unverified), slackline upgrade (tree protectors, longer line, a training line), fire pit / cooking kit (Petromax, no confirmed UK BF deal), a rope swing or hanging seat.
+
+## 2026-11-27 (round 5: an actual thing, not a promise)
+**Rob's steer:** no IOUs or "we'll build it in spring" cards at Christmas, he wants a real thing to unwrap. Tempted by an inflatable hot tub for the garden but "prob not". Explicitly: don't go all in on any one idea yet, keep floating options.
+
+Floated:
+- **Inflatable hot tub (garden):** Lay-Z-Spa Miami (2-4 person) £299 at Amazon on HotUKDeals BF listing (usually ~£380). Catch: electric, so garden only, and winter heating costs bite. Helsinki ~£601 (undated BF report).
+- **Sauna tent + wood stove (woods):** the unwrap-able version of "hot water in the woods". PortaSauna HEX packages exist (tent + stove + stones, no price confirmed); standalone hot-tent sauna stoves £100-190 on listings dated Oct. No confirmed BF deal.
+- **Trail camera for the woodland:** Browning Strike Force Pro X 1080 £143.99 (was £159.99) at NatureSpy, sale ends midnight 1 Dec. Forest-school brain + own woods = badger/deer footage. Strong candidate.
+- **Proper forest-school tools:** Gransfors Bruk small forest axe, Mora knife + hook knife spoon-carving set, Kelly Kettle. No 2026 BF deals found, prices unchecked.
+- Still live from earlier: weighted blanket (YES), hammock/tree tent, slackline upgrade, fire pit.
