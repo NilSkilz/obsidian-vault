@@ -60,7 +60,7 @@ Rob sent the DiscordChatExporter dump of the whole Rob/Fen DM history, 14 Jun to
 
 ## 24 Sep: WhatsApp log received, combined read complete
 
-Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Superseded 26 Sep by `Private/Rob/Assets/Fen WhatsApp log 2026-07-19 to 09-26.txt` (same log, extended). This answers the open question from the Discord pass: did the caretaking dynamic cool off or compound?
+Rob sent the WhatsApp export (19 Jul to 24 Sep 2026, 808 lines). Superseded by `Private/Rob/Assets/Fen WhatsApp log 2026-07-19 to 11-25.txt` (same log, extended to 25 Nov). This answers the open question from the Discord pass: did the caretaking dynamic cool off or compound?
 
 **Answer: it cooled off, and she did the cooling.** On 12 Aug, after Rob offered to send nudges to help her through a depressive patch, she said flat out "telling me what to do isn't gonna help im afraid". Rob took it cleanly. Since then he's been a friend among several, not the rescuer: her support net is now Keith (van, move help, lifts), Ash, housemates (Luke), landlady Josephine, Caitlin. The move to Paignton (completed ~22 Aug) visibly did her good; she describes loving the new place.
 
@@ -177,3 +177,13 @@ Steer given:
 - Distance: his theory is plausible and fits Fen's own self-description (intense, jealous when attached); keeping a married man at arm's length is self-protection, not a verdict on him. Also partly his own amber flag: venting about Aimee to her told her he's spoken for and it's complicated.
 - Strung along: by the log, not deliberately. But scene attempts since the 4 Jul night out: 26 Sep (drop risk), 1 Oct (cabaret clash), 3 Oct (silence), nothing since. Warm words, zero landings. Honest read: her capacity doesn't match his want right now, and his deeper want (27 Sep, "someone of my own") is something she's signalling she can't be.
 - Move: stop organising for her. One plain, warm, no-pressure line naming it ("I like you, I'd love to play when you're up for it, I'll leave the next move with you"), then she proposes the next plan. Fancying her is fine; just stop paying the chase cost.
+
+## 23 Oct: Fen closed the play side; friends only (log received 27 Nov)
+
+Updated export (19 Jul to 25 Nov) received 27 Nov. What happened after the 18 Oct advice:
+- 21 Oct she offered Saturday daytime (storm week); Rob couldn't, Aimee away and he had the kids. That was her making the move, exactly what 18 Oct asked for, and it fell on a bad weekend.
+- **23 Oct, 02:06, Fen:** "i think we should nip this in the bud, its making me feel weirdly sad... Aimee doesnt like me, our schedules arent aligning, you're playing with other people no problem, i feel like an absolute freak... would rather it wasnt a temptation bc it's really disappointing."
+- 25 Oct Rob agreed, kindly, friends only. She: "thanks for understanding", hugs "probably Saturday".
+- Since then Rob has opened every exchange (8 Nov no reply, 16 Nov "heylo" got "hei", 18 Nov she replied warmly with room/futon/shoes photos, 20 Nov "Don't feel like I belong anywhere atm" got no reply, 25 Nov "Loved the outfit on Saturday!!" unanswered so far). Saw her in person Sat 21 Nov.
+
+Read given 27 Nov: the play prospect is closed, by her, for self-protection, and it was handled well on both sides. The friendship is real but runs at her pace, which was always slow. Keep it about her actual life (the room, Ash, the Bristol play club she wants to try); appearance compliments sit close to the "temptation" line she drew, so drop them. Don't take the belonging stuff to her. This was the third chat export in two minutes (Raven, Tash, Fen): the real thread is belonging, not any one of them.
