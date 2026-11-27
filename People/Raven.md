@@ -1,6 +1,6 @@
 # Raven
 
-One half of a couple with **Luke**, friends of Rob and Aimee from the kink scene. The pair are on the /us page agreements (cracky.co.uk/us) as Luke/Raven.
+One half of a couple with **Luke**, friends of Rob and Aimee from the kink scene. The pair are on the /us page agreements (cracky.co.uk/us) as Luke/Raven. She's staff at Barebones (BB), so Rob will see her there regardless of how things stand between them personally.
 
 ## Status (24 Oct 2026)
 
