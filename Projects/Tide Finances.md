@@ -107,3 +107,12 @@ Both loans are HSBC (DDs on the Starling joint). Unverified: whether the "field"
 - ~~Field purchase price + date~~ £42k total, ~Dec 2021 (calculated 24 Sep)
 - ~~Wealthify market value~~ £1,226.07 as of 24 Sep (but see the discrepancy note in the table)
 - ~~Pension values (PensionBee + both private pensions)~~ done 25 Sep, both on the site
+
+## Manual refresh button (27 Nov 2026)
+
+Rob asked for a way to refetch on demand instead of waiting for 05:20.
+- **Page:** a "synced <when> · ↻ refresh" line above the stat tiles on /finances. A tap queues a sync, the page polls status every 3s, then reloads overview / typical-month / P&L when the run lands (all the maths is computed on read, so a reload is the recalculation). Shows "synced X ago", "last sync failed", or "Jarvis didn't pick that up".
+- **Server:** single-row `financeSync` table; `POST /api/finance/refresh` (parents; no-op if already queued/running, 429 within 60s of the last finish so Starling isn't hammered), `GET /api/finance/sync-status` (parents/Jarvis), `POST /api/finance/sync-status` (Jarvis key, `{phase:'start'|'finish', ok, message}`).
+- **Jarvis side:** `Jarvis/bin/finance-refresh-poll.sh`, cron every minute, checks Tide every 10s for ~50s and runs `finance-sync.py` under `flock /tmp/finance-sync.lock` when a refresh is pending (the 05:20 nightly takes the same lock). Heartbeat in `~/.local/state/jarvis-finance-poll.log`, in cron-health's JOBS (1h). `finance-sync.py` now reports start/finish itself, so the nightly also updates "synced at".
+- **Starling 429 fix:** the nightly had died on Starling rate limits on 18, 21 and 27 Nov (page silently a day stale). `http()` now retries 429/5xx with 5/20/60s backoff (honours Retry-After). The 27 Nov gap was filled by the first test run.
+- Verified end to end on live: tap -> picked up in ~2s -> sync ~3s -> "synced just now · updated" (headless Chrome, 420px). Kids get 403.

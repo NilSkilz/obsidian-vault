@@ -21,6 +21,7 @@ evening briefing|$STATE/jarvis-briefing.log|26
 food nudge|$STATE/jarvis-food-nudge.log|26
 vault git sync|$STATE/memory-git-sync.log|26
 finance sync|$HOME/finance/sync.log|30
+finance refresh poller|$STATE/jarvis-finance-poll.log|1
 weekly self-learn|$STATE/jarvis-self-learn.log|192
 movie recs|$STATE/jarvis-movie-recs.log|192
 idea scout|$STATE/jarvis-inspiration.log|192

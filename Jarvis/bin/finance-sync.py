@@ -27,6 +27,8 @@ scaled from the £199,950 Feb 2015 purchase.
 """
 import json
 import sys
+import time
+import urllib.error
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta, timezone
@@ -114,11 +116,25 @@ def env(name):
 
 
 def http(url, headers=None, data=None, form=None):
+    """JSON request with backoff on 429/5xx. Starling rate-limits the 89-day
+    feed pull now and then (killed the 05:20 sync on 18, 21 and 27 Nov 2026);
+    a short wait and retry gets through."""
     if form is not None:
         data = urllib.parse.urlencode(form).encode()
-    req = urllib.request.Request(url, data=data, headers=headers or {})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.loads(r.read() or '{}')
+    delays = [5, 20, 60]
+    for attempt in range(len(delays) + 1):
+        req = urllib.request.Request(url, data=data, headers=headers or {})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.loads(r.read() or '{}')
+        except urllib.error.HTTPError as e:
+            if attempt == len(delays) or not (e.code == 429 or e.code >= 500):
+                raise
+            wait = delays[attempt]
+            ra = e.headers.get('Retry-After') if e.headers else None
+            if ra and ra.isdigit():
+                wait = min(max(int(ra), wait), 120)
+            time.sleep(wait)
 
 
 def iso(dt):
@@ -413,5 +429,25 @@ def main():
     print(f"{datetime.now().isoformat(timespec='seconds')} finance-sync: {totals} house-hpi: {hpi} field-index: {field}")
 
 
+def report(phase, **body):
+    """Tell Tide where the sync is, so the page's refresh button and its
+    'synced at' line are honest. Never lets a reporting hiccup kill the sync."""
+    try:
+        conf = env('health.env')
+        base = conf.get('TIDE_API_BASE', 'http://192.168.1.16:3001')
+        hdr = {'X-Jarvis-Key': conf['JARVIS_API_KEY'], 'Content-Type': 'application/json'}
+        req = urllib.request.Request(f'{base}/api/finance/sync-status', headers=hdr,
+                                     data=json.dumps({'phase': phase, **body}).encode())
+        urllib.request.urlopen(req, timeout=15).read()
+    except Exception as e:
+        print(f'finance-sync: status report ({phase}) failed: {e}', file=sys.stderr)
+
+
 if __name__ == '__main__':
-    main()
+    report('start')
+    try:
+        main()
+    except Exception as e:
+        report('finish', ok=False, message=f'{type(e).__name__}: {e}')
+        raise
+    report('finish', ok=True)
