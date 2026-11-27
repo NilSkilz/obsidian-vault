@@ -47,7 +47,7 @@ Checked 27 Nov 2026 from the space's own feed. The Bills space pays the DDs and 
 
 - DD/SO ~£2,639: HSBC mortgages £837.88 + £181.54, council tax £191, Octopus £300 (raised from £100 27 Nov 2026 to cover the EV), SW Water £95.50, Halifax £45.48, Aviva £13.51 + £45.05, DVLA £17.06, EE £30.99 + £31.00, Anne £350 (one SO, £300 car + £50), NS&I £500.
 - Virtual card ~£125: Spotify £21.99, Netflix £20.99, Microsoft £16.99 + £6.99, DigitalOcean ~£19, Newshosting ~£13, Nabu Casa £6.50, JetBrains £5.64, Dakboard ~£4.60, Google Cloud/AWS a few £.
-- BoilerJuice £40/mo plan CANCELLED by Rob 27 Nov 2026 (heat pump coming, no more oil buys planned).
+- BoilerJuice £40/mo plan CANCELLED by Rob 27 Nov 2026 (heat pump coming, no more oil buys planned). Credit already spent on a 500L top-up ~20 Nov, expected to last to the heat pump install ~April 2027.
 - ParentPay DDs vary, £90-220/month in term time.
 - Until Nov 2026 the top-up was £2,500, which ran short every month (card declines + small rescue transfers from main).
 - Sheilas' Wheels stopped after Sep 2026.
